@@ -1,0 +1,38 @@
+#!/usr/bin/env Rscript
+
+stopifnot(
+  requireNamespace("jsonlite", quietly = TRUE),
+  requireNamespace("rlang", quietly = TRUE),
+  requireNamespace("bibtex", quietly = TRUE)
+)
+
+arg <- commandArgs(trailingOnly = TRUE)
+infile <- arg[1]
+outfile <- arg[2]
+reffile <- arg[3]
+
+if (is.na(infile)) infile <- "analysis/paper/paper.Rmd"
+if (is.na(outfile)) outfile <- "analysis/paper/references.bib"
+if (is.na(reffile)) reffile <- "~/Dropbox/references/library.bib"
+
+stopifnot(
+  file.exists(infile),
+  file.exists(reffile)
+)
+
+message("Searching for citations in file ", infile)
+temp_json <- tempfile()
+json_raw <- system2("pandoc", c("-t", "json", infile), stdout = temp_json)
+json <- jsonlite::read_json(temp_json)
+json_flat <- suppressWarnings(rlang::squash(json))
+all_citations <- unlist(json_flat[names(json_flat) == "citationId"])
+citations <- unique(unname(all_citations))
+citations <- citations[order(citations)]
+
+# Read bibtex file
+message("Reading bibfile...")
+bibfile <- bibtex::read.bib(reffile)
+selected_references <- bibfile[citations]
+message("Writing ", length(selected_references), " citations to file ", outfile)
+bibtex::write.bib(selected_references, outfile)
+message("Done!")
