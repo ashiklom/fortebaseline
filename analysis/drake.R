@@ -3,8 +3,26 @@ library(ggplot2)
 pkgconfig::set_config("drake::strings_in_dots" = "literals")
 
 import::from(magrittr, "%>%")
-
 options("pecanapi.docker_port" = 7999)
+
+ystart <- function(year, tz = "UTC") ISOdatetime(year, 1, 1, 0, 0, 0, tz = tz)
+
+read_soil <- function(year) {
+  filename <- sprintf(
+    "http://localhost:7999/thredds/dodsC/outputs/PEcAn_99000000032/out/99000000030/analysis-T-%d-00-00-000000-g01.h5",
+    year
+  )
+  hf <- ncdf4::nc_open(filename)
+  on.exit(ncdf4::nc_close(hf))
+  soil_raw <- ncdf4::ncvar_get(hf, "FMEAN_SOIL_WATER_PY")
+  t(soil_raw) %>%
+    tibble::as_tibble() %>%
+    dplyr::mutate(
+      time = ystart(year) + 30 * lubridate::minutes(dplyr::row_number())
+    ) %>%
+    tidyr::gather(layer, value, -time) %>%
+    dplyr::mutate(layer = as.factor(layer))
+}
 
 plan <- drake_plan(
   workflow_id = 99000000032,
@@ -15,12 +33,17 @@ plan <- drake_plan(
     paste0(run_years, ".nc"),
     run_id = run_id
   ),
-  raw_output = PEcAn.utils::read.output(
-    ncfiles = file_names,
-    variables = NULL,                   # All variables
-    verbose = TRUE,
-    dataframe = TRUE
-  ),
+  raw_output = target(
+    command = PEcAn.utils::read.output(
+      ncfiles = file_names,
+      variables = NULL,                   # All variables
+      verbose = TRUE,
+      dataframe = TRUE
+    ), trigger = trigger(condition = FALSE, mode = "condition")),
+  raw_soil = purrr::map(run_years, purrr::safely(read_soil)),
+  soil_output = raw_soil %>%
+    purrr::map_if(., ~is.null(.[["error"]]), "result") %>%
+    dplyr::bind_rows(),
   daily_output = raw_output %>%
     dplyr::mutate(date = lubridate::as_date(posix)) %>%
     dplyr::select(-posix, -year) %>%
@@ -35,10 +58,11 @@ plan <- drake_plan(
   annual_output = raw_output %>%
     dplyr::select(-posix) %>%
     dplyr::group_by(year) %>%
-    dplyr::summarize_all(mean, na.rm = TRUE)
+    dplyr::summarize_all(mean, na.rm = TRUE),
 )
 plan_config <- drake_config(plan)
 make(plan)
+readd(soil_output)
 
 readd(annual_output) %>%
   dplyr::select(year, GPP, NPP, TotalResp, TotSoilCarb, LAI, Tair, Rainf) %>%
@@ -54,7 +78,7 @@ readd(annual_output) %>%
   ggcorrplot::ggcorrplot(type = "lower")
 
 readd(annual_output) %>%
-  dplyr::select(year, LAI, Wind) %>%
+  dplyr::select(year, LAI, Wa) %>%
   tidyr::gather(variable, value, -year) %>%
   ggplot() +
   aes(x = year, y = value) +
@@ -63,7 +87,7 @@ readd(annual_output) %>%
 
 readd(monthly_output) %>%
   dplyr::ungroup() %>%
-  dplyr::select(my, Tair, Rainf, Wind) %>%
+  dplyr::select(my, LAI, WaterTableD) %>%
   tidyr::gather(variable, value, -my) %>%
   ggplot() +
   aes(x = my, y = value) +
@@ -77,3 +101,11 @@ readd(daily_output) %>%
   aes(x = date, y = Wind) +
   geom_line()
 
+readd(daily_output) %>% dplyr::glimpse()
+
+## raw_output = PEcAn.utils::read.output(
+##   ncfiles = readd(file_names),
+##   variables = NULL,                   # All variables
+##   verbose = TRUE,
+##   dataframe = TRUE
+## )

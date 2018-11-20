@@ -28,3 +28,23 @@ ggplot(wind_df) +
 
 # Yes, yes it is.
 ############################################################
+# Is read.output actually loading everything it can from the ED output?
+# No! 
+
+filename <- "http://localhost:7999/thredds/dodsC/outputs/PEcAn_99000000032/out/99000000030/analysis-T-1932-00-00-000000-g01.h5"
+hf <- ncdf4::nc_open(filename)
+soil_moist <- ncdf4::ncvar_get(hf, "FMEAN_SOIL_WATER_PY")
+ncdf4::nc_close(hf)
+
+tsoil_moist <- tibble::as_tibble(t(soil_moist)) %>%
+  dplyr::mutate(t = dplyr::row_number()) %>%
+  tidyr::gather(layer, value, -t) %>%
+  dplyr::mutate(layer = as.factor(layer))
+
+ggplot(tsoil_moist) +
+  aes(x = t, y = value, color = layer) +
+  geom_line() +
+  scale_color_viridis_d()
+
+tot_soil_moist <- colSums(soil_moist)
+plot(tot_soil_moist, type = "l")
