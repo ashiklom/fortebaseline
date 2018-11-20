@@ -1,6 +1,12 @@
 if (FALSE) {
   filename <- "http://localhost:7999/thredds/dodsC/outputs/PEcAn_99000000032/out/99000000030/analysis-T-1932-00-00-000000-g01.h5"
   filename <- "http://localhost:7999/thredds/dodsC/outputs/PEcAn_99000000032/out/99000000030/analysis-Y-1932-00-00-000000-g01.h5"
+  filename <- "http://localhost:7999/thredds/dodsC/outputs/PEcAn_99000000032/out/99000000030/1950.nc"
+  run_id <- 99000000030
+  workflow_id <- 99000000032
+
+  basedir <- "http://localhost:7999/thredds/dodsC/outputs/PEcAn_99000000032/out/99000000030"
+  ncfiles <- file.path(basedir, paste0(1910:1920, ".nc"))
 }
 
 #' Read ED output files
@@ -19,8 +25,15 @@ if (FALSE) {
 #' frequency (`FRQANL`)
 #' - Observation output files (O) -- Same as F files, but only at
 #' timesteps specified by `OBSTIME_DB`
-
 read_ed_t_file <- function(filename) {
+  nc <- ncdf4::nc_open(filename)
+  out <- PEcAn.utils::read.output(
+    dataframe = TRUE,
+    variables = NULL,
+    ncfiles = ncfiles,
+    verbose = TRUE
+  )
+  out_tbl <- tibble::as_tibble(out)
   hf <- ncdf4::nc_open(filename)
   dim_lengths <- purrr::map_int(hf[["dim"]], "len")
   udim_lengths <- unique(dim_lengths)
