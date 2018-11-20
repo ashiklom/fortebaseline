@@ -38,13 +38,35 @@ library(fortebaseline) # Or use devtools::load_all('.', quiet = T) if your code 
 Here is a citation [@bond-lamberty_2015_moderate] and another citation [@clm45_note;@norman_1979_modelling].
 Another citation [@bond-lamberty_2015_moderate].
 
-# Background
-
-```{r demo, eval = FALSE}
-1 + 1
-```
-
 # Methods
+
+## Site description
+
+- Secondary successional forest -- bigtooth aspen (_Populus grandidentata_), northern red oak (_Quercus rubra_), red maple (/Acer rubrum/), paper birch (_Betula papyrifera_), eastern white pine (_Pinus strobus_)
+- Average age -- 95 years (2013)
+- NEP in UMBS tower is 1.58 MG C ha-1 yr-1 (0.80-1.98) (1999-2006), but with landscape variation (REF?)
+- Heavily logged in late 1800s and early 1900s, disturbed by fire until 1923
+- Present day composition typical of upper Great Lakes region
+- Previously, the site of the FASET experiment [@gough_2013_sustained; @gough_2008_multi]
+
+## Model description: ED2
+
+The Ecosystem Demography Model, version 2 (ED2) [@medvigy_2009_mechanistic].
+
+Summary of common features (can move into supplement if necessary):
+
+- Cohort-based scaling approach
+- Photosynthesis / stomatal conductance
+- Allometries
+
+In this study, we run a factorial experiment of ED2 with the following features enabled or disabled:
+
+- Radiative transfer
+  - Two-stream model
+    - Same general approach as in CLM 4.5 [@clm45_note], but rather than solving for just two layers (sunlit and shaded), solve for each canopy layer.
+    - Set up the two-stream equations for each layer as a linear system and solve the entire set of equations numerically
+    - Similar to approaches used in other models: JULES [@mercado_2007_improving], ORCHIDEE-CAN [@naudts_2015_vertically], CLM(SPA) [@bonan_2014_modeling]
+  - Multiple scatter model **TODO**
 
 # Results
 
