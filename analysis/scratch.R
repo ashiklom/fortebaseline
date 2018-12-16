@@ -48,3 +48,51 @@ ggplot(tsoil_moist) +
 
 tot_soil_moist <- colSums(soil_moist)
 plot(tot_soil_moist, type = "l")
+
+#########################################
+
+library(pecanapi)
+library(magrittr)
+
+options(pecanapi.user_id = 99000000002,
+        pecanapi.docker_port = 7999)
+
+con <- DBI::dbConnect(
+  RPostgres::Postgres(),
+  user = "bety",
+  password = "bety",
+  host = "localhost",
+  port = 7990
+)
+
+model_id <- get_model_id(con, "ED2", "develop")
+site_id <- 1000000033
+
+workflow <- insert_new_workflow(
+  con,
+  site_id,
+  model_id,
+  start_date = "2004-07-01",
+  end_date = "2004-08-01"
+)
+workflow_id <- workflow[["id"]]
+
+settings <- list() %>%
+  add_workflow(workflow) %>%
+  add_database() %>%
+  add_pft("Optics.Temperate_Early_Hardwood") %>%
+  add_rabbitmq(con = con) %>%
+  modifyList(list(
+    meta.analysis = list(iter = 3000, random.effects = FALSE),
+    run = list(inputs = list(met = list(source = "CRUNCEP", output = "ED2", method = "ncss"),
+                             lu = list(id = 294),
+                             soil = list(id = 297),
+                             thsum = list(id = 295),
+                             veg = list(id = 296))),
+    ensemble = list(size = 10, variable = "NPP"),
+    model = list(revision = "git",
+                 prerun = "ulimit -s unlimited")
+  ))
+
+submit_workflow(settings)
+watch_workflow(workflow_id)
