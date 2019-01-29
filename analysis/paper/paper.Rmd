@@ -35,8 +35,8 @@ library(fortebaseline) # Or use devtools::load_all('.', quiet = T) if your code 
 
 # Introduction
 
-Here is a citation [@bond-lamberty_2015_moderate] and another citation [@clm45_note;@norman_1979_modelling].
-Another citation [@bond-lamberty_2015_moderate].
+Net ecosystem productivity (NEP) declines immediately after disturbance, but recovers in 10-20 years [@amiro_2010_ecosystem].
+Extent of recovery depends on balance of gross (aboveground?) primary productivity (GPP) and respiration; GPP increase during recovery, while respiration may stay constant [@amiro_2010_ecosystem].
 
 # Methods
 
