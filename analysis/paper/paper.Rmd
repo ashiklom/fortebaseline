@@ -35,8 +35,59 @@ library(fortebaseline) # Or use devtools::load_all('.', quiet = T) if your code 
 
 # Introduction
 
+Earth's climate is changing, and its terrestrial ecosystems are likely to be affected (REF: IPCC).
+Many of these ecosystems will be affected through persistent changes in their environment, for instance through elevated atmospheric CO~2~ concentrations and temperature, changing precipitation regimes (REF).
+At the same time, climate change is likely change the frequency and severity of disturbances [@dale_2001_climate], and the impacts of these changes may be more acute.
+
+<!-- Add something positive about each of these? Then, the section about models is more compelling. -->
+In trying to anticipate future changes to terrestrial ecosystems, ecologists have four general techniques.
+One approach is to look to the past to see how ecosystems responded to similar changes (REFs).
+This is challenging for two reasons:
+For one, we often have to look very far back to find similar climate changes, and the techniques we have for determining the state of ecosystems in the distant past have limited detail (REF).
+More importantly, there are few (if any) times where the climate has changed as rapidly as it is now, and it is unclear whether slower changes in the past will trigger responses similar to the faster changes happening now (REF).
+A second approach is space-for-time substitution, whereby we use existing climatic gradients through space (e.g. with latitude or elevation) to infer the corresponding changes through time (REF).
+However, many processes that drive spatial variation in ecosystems play out over hundreds or thousands of years (e.g. evolution), far longer than policy-relevant timescales of years to decades and far slower than the current pace of climate change (REF).
+A third approach is to conduct experimental manipulations, where individuals are subjected to controlled changes in environmental conditions [@medlyn_2015_using].
+Because they are able to isolate specific changes by controlling for most other factors, experiments are very useful for testing mechanisms.
+Unfortunately, resource constraints limit the spatial and temporal extent of experiments, and emerging evidence from (the relatively few) long-term experiments suggests that short-term results cannot always be extrapolated from longer-term results [@reich_2018_unexpected].
+
+The fourth approach is to use computer models based on existing understanding of ecosystem function.
+Models unconstrained by data are little more than thought experiments with limited value to decision-making.
+However, models provide a useful tool for confronting hypotheses with observations from a variety of sources, including the three described above [@dietze_2013_improving].
+
+Model design involves an invariable trade-off between complexity and predictive uncertainty.
+The more processes are represented in a model (and the more parameters are used to represent those processes), the higher the uncertainty in the "true" value of each parameter, and the higher the uncertainty in model predictions (especially out of sample) (REF -- information theory, e.g. AIC?).
+On the other hand, simplistic models often fail to match important properties of the observations.
+A key challenge in model development is to find the balance between these two extremes.
+
+
+Big leaf models (e.g. CLM) fail to capture vegetation dynamics (REF).
+This is due to their inability to represent demographic processes, which are important (REF).
+An emerging class of models can simulate vegetation demographic processes, including competition for resources within a patch, recruitment, and mortality [@fisher_2017_vegetation].
+Individually-based models are one possibility (REFs -- Shugart, Ensheng Wang, etc.).
+However, they are complicated (REF).
+An alternative are models of intermediate complexity ("middle ground"), which use approximations.
+One such approximation is the "Ecosystem Demography" approach, whereby groups of individuals ("cohorts") of similar species, size, and structure are modeled together, and the statistical properties of these cohorts are modeled rather than the characteristics of each individual [@moorcroft_2001_method].
+
+One realization of this is the Ecosystem Demography (v2) model [@moorcroft_2001_method; @medvigy_2011_predicting; @medvigy_2009_mechanistic].
+This model has been used to simulate (examples...).
+
+
 Net ecosystem productivity (NEP) declines immediately after disturbance, but recovers in 10-20 years [@amiro_2010_ecosystem].
 Extent of recovery depends on balance of gross (aboveground?) primary productivity (GPP) and respiration; GPP increase during recovery, while respiration may stay constant [@amiro_2010_ecosystem].
+
+<!--
+TODO: Also discuss the other ED modules.
+-->
+
+This manuscript addresses the following research questions:
+(Q1) To what extent can the ED2 model reproduce 100 years of observed succession (or observed _anything_) at UMBS starting from bare ground?
+(Q2) How does the inclusion of various processes affect the accuracy and predictive uncertainty of ED2 predictions?
+(Q3) What drives the predictive uncertainty of the ED2 model at UMBS, and what additional observations are necessary to improve predictions / constrain uncertainty?
+
+Based on previous results [@fisher_2015_taking], we predict ED2 will over-predict dominance of early-successional canopy species (and under-predict understory productivity) under its default configuration.
+Enabling dynamic N cycling and a finite canopy radius model will alleviate these issues, but will significantly increase the parameteric uncertainty due to strong sensitivity to N-cycling and canopy gap fraction parameters, respectively.
+Constraining these parameters should be a high priority 
 
 # Methods
 
