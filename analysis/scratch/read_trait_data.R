@@ -43,7 +43,7 @@ trait_data <- collect(trait_data_sql)
 
 trait_data %>%
   filter(!is.na(mean)) %>%
-  dplyr::count(Symbol, name.variable, sort = TRUE) %>%
+  dplyr::count(notes.value, sort = TRUE) %>%
   print(n = 50)
  
 
@@ -54,3 +54,13 @@ ggplot(trait_data) +
   geom_boxplot() +
   ## geom_jitter() +
   facet_wrap(~name.variable, scales = "free_y")
+
+## con2 <- dbConnect(
+##   RPostgreSQL::PostgreSQL(),
+##   user = "bety",
+##   password = "bety",
+##   host = "localhost",
+##   port = 7990
+## )
+## pftids <- unique(pft_species[["id.pft"]])
+## purrr::map(pftids, PEcAn.DB::query.priors, con = con2)
