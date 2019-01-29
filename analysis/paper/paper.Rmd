@@ -89,6 +89,81 @@ Based on previous results [@fisher_2015_taking], we predict ED2 will over-predic
 Enabling dynamic N cycling and a finite canopy radius model will alleviate these issues, but will significantly increase the parameteric uncertainty due to strong sensitivity to N-cycling and canopy gap fraction parameters, respectively.
 Constraining these parameters should be a high priority 
 
+## ED modules
+
+(NOTE: Not a real section; just brainstorming notes for now)
+
+- Big leaf model (no demographics) (`IBIGLEAF`)
+    - Simplistic case
+    - Only one PFT per patch (by definition). Can ask: Does it get the right one?
+    - Compare fluxes against other cases.
+- Branches (`IBRANCH_THERMO`)
+    - Options:
+        - (0) No branches in energy balance or biophysics
+        - (1; default) Branches in energy balance, but not biophysics
+        - (2) Branches in both
+    - In theory, should be a minor component of the energy balance, so impact should be small. This is the hypothesis?
+- Temperature variation of physiology (`IPHYSIOL`)
+    - Options:
+        - (0) Arrhenius function, `Gamma*` based on Foley et al. (1996) (TODO: REF)
+        - (1) Arrhenius, `Gamma*` based on Michaelis-Mentel coefficients for CO2 and O2, as in Farquhar et al. (1980) (TODO: REF)
+        - (2; default) Q10 equations and parameters of Collatz et al. (1991), with MM coefficients. High/low temperature correction in Moorcroft et al. (2001)
+        - (3) As (2), but `Gamma*` as in Farquhar et al. (1980) and CLM.
+    - Need to do some exploratory analysis here. Grab the relevant equations and coefficients and plot them (outside of ED) to compare behavior.
+        - Possible angle: More important at temperature extremes?
+    - Consult @rogers_2016_roadmap for inspiration
+- Finite canopy radius (`CROWN_MOD`)
+    - Options:
+        - (0; default): Complete shading
+        - (1): Finite canopy radius (Dietze 2008)
+    - See current hypotheses
+- Soil decomposition (`DECOMP_SCHEME`)
+    - Options:
+        - (0; default): Exponential
+        - (1) Lloyd and Taylor (1994)
+    - (1) requires additional parameters, so should increase parameteric uncertainty.
+    - Hypothesis: Affects overall GPP/R~E~ balance, but not successional dynamics.
+- Water limitation of photosynthesis (`H2O_PLANT_LIM`)
+    - Options:
+        - (0) No limitation.
+        - (1; default): Supply is total soil water above wilting point integrated across all levels in rooting zone.
+        - (2): Supply is total soil water at field capacity minus wilting point, scaled by "wilting factor":
+          ```
+          # k -- Soil layer
+          # z -- Layer depth
+          # psi -- Matric potential (for layer, or at wp or fc)
+          # wp -- wilting point
+          # fc -- field capacity
+          (psi(k) - (H - z(k)) - psi_wp) / (psi_fc - psi_wp)
+          ```
+    - Sensitivity should depend on site climate and soil conditions.
+    - UMBS are pretty wet sites, so shouldn't expect a huge effect.
+- Structural growth (`ISTRUCT_GROWTH_SCHEME`)
+    - Options:
+        - (0; default) Use all `bstorage` (NSC?)
+        - (1) Reserve `bstorage` to re-flush canopy and fine roots once before calculating structural growth.
+    - (1) is a more conservative strategy, so should reduce the growth and relative dominance of early-successional PFTs. In particular, growth rate should decline more with size (because more LAI and fine roots means more reserves needed).
+- Stomatal conductance model (`ISTOMATA_SCHEME`)
+    - Options:
+        - (0, default): Leuning
+        - (1) Katul optimization model (see Xu et al. 2016 New Phyt.)
+    - Need to read more about this...
+- Trait plasticity (`TRAIT_PLASTICITY_SCHEME`)
+    - Options:
+        - (0, default): Static traits
+        - (1) Vm0 (SLA) decrease (increase) with shading, based on Lloyd et al. (2010 Biogeosciences). Updated yearly.
+        - (2) Same as (1), but updated monthly
+        - (-1) Same as 1, but adjust SLA using height
+        - (-2) Same as (2), but adjust SLA using height
+    - If trait plasticity is optimal, this should reduce (?) the relative dominance of early-successional PFTs.
+    - Probably introduces considerable predictive uncertainty, given new parameters for plasticity models.
+- Other configs that ED has, but that we will probably ignore:
+    - Allometry (`IALLOM`) -- Seems to mostly affect tropical PFTs. Worth checking.
+    - Grass (`IGRASS`) -- I'm not running with any grass PFTs.
+    - Phenology (`IPHEN_SCHEME`) -- Differences affect grasses and tropical species. Conifers are always evergreen, and hardwoods are always cold-deciduous (need to check that schemes are the same).
+    - Seed dispersal (`REPRO_SCHEME`) -- Only seems to matter for multi-site runs, with some toggles for tropical (drought-deciduous) species.
+    - Hydrodynamics (`PLANT_HYDRO_SCHEME`) -- Seems mostly tropics-focused? Look into the Xu et al. (2016; New Phyt.) paper.
+
 # Methods
 
 ## Site description
