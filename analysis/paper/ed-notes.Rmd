@@ -1,0 +1,42 @@
+---
+title: ED2 model notes
+author: Alexey Shiklomanov
+---
+
+# ED2 switches
+
+## Finite canopy radius (`CROWN_MOD`)
+
+In `src/dynamics/radiate_driver.f90:L550`:
+If disabled, set canopy crown area for all patches to 1.
+If enabled, set finite crown areas for each cohort.
+
+Crown area used in some of the following places:
+
+- Canopy structural dynamics (`dynamics/canopy_struct_dynamics.f90:L470`)
+- Plant hydrology (`dynamics/plant_hydro.f90:L145,204,240,447,626`)
+
+Crown area comes from @dietze_2008_capturing.
+Crown area calculated by allometry in `utils/allometry.f90:L633` (inside subroutine `area_indices`), as `min(1, nplant * dbh2ca(dbh, hite, sla, pft))`.
+`dbh2ca` is defined in `utils/allometry.f90:L373` as:
+
+```
+ca = biCa[pft] * dbh ^ b2Ca[pft]
+```
+
+But, note that crown area is restricted such that "Local LAI / Crown area" is never less than one (i.e you cannot have more crown area than leaf area index -- your maximum crown area is the leaf area index):
+
+```
+loclai = sla * size2bl(dbh, hite, pft)
+ca = min(loclai, ca)
+```
+
+where `size2bl` is the leaf biomass allometry (so leaf biomass; therefore, `sla * size2bl` gives LAI).
+
+Crown area set or calculated in:
+ 
+- `dynamics/strcutral_growth.f90:L669,929`
+
+## Nitrogen limitation of photosynthesis (`N_PLANT_LIM`)
+
+## Nitrogen limitation of decomposition (`N_DECOMP_LIM`)

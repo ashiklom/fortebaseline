@@ -103,12 +103,13 @@ These are switches that I understand (more-or-less), and that I think will be mo
         - (0; default): Complete shading
         - (1): Finite canopy radius (Dietze 2008)
     - See current hypotheses
+    - This model is based on @dietze_2008_capturing
 - Nitrogen limitation of photosynthesis (`N_PLANT_LIM`)
     - Options:
         - (0, default): No limitation
         - (1) Limitation based on internal model (TODO: what is it?)
     - Turning this on _should_ favor mid-successional species, and substantially increase uncertainty.
-- Nitrogen limitation of decomposition (`N_PLANT_LIM`)
+- Nitrogen limitation of decomposition (`N_DECOMP_LIM`)
     - Options:
         - (0, default): No limitation
         - (1) Limitation based on internal model (TODO: what is it?)
