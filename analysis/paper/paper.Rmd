@@ -103,7 +103,7 @@ These are switches that I understand (more-or-less), and that I think will be mo
         - (0; default): Complete shading
         - (1): Finite canopy radius (Dietze 2008)
     - See current hypotheses
-    - This model is based on @dietze_2008_capturing
+    - This model is based on crown area allometries from @dietze_2008_capturing
 - Nitrogen limitation of photosynthesis (`N_PLANT_LIM`)
     - Options:
         - (0, default): No limitation
@@ -123,12 +123,30 @@ These are switches that may be relevant to FoRTE, but may be harder to pull off.
     - Simplistic case
     - Only one PFT per patch (by definition). Can ask: Does it get the right one?
     - Compare fluxes against other cases.
+- Canopy radiative transfer model (`ICANRAD`)
+    - Options:
+        - (0, deprecated?) Original two-stream model (Medvigy 2006)
+        - (1) Multiple-scattering model [@zhao_2006_modeling; @zhao_2005_multiple]
+        - (2, default) Updated two-stream model [@liou_2002]
+    - In theory, multiple-scattering model is more detailed and should give "better" results. Open question as to how that affects predictions.
+    - Good candidate for exploratory analysis. I already implemented the two-stream model in R -- could be a good idea to implement the multi-scatter model as well and compare their radiation profiles.
+- Allometry (`IALLOM`)
+    - Options:
+        - (0, default): Original ED2
+        - (1)
+            - Structural biomass parameterized so total AGB similar to @baker_2004_variation, eq. 2. `Balive` similar to ED2.
+            - Root depth configured so root depth is 5m for canopy trees and 0.5 m for grasses/seedlings
+            - Crown area as in @poorter_2006_architecture, with maximum crown area
+        - (2) Like (1), but...
+            - Height to DBH allometry from @poorter_2006_architecture
+            - `Balive` has extra allometric equations (see @cole_2006_allometric and @calvo-alvarado_2008_allometric)
+        - (3) Like (2), but tropical leaf biomass estimated from @lescure_1983_la, and PFT differences in leaf biomass based on SLA rather than wood density. Also, split leaf allometry into small (sapling) and large (tree) classes, as in @cole_2006_allometric
 - Temperature variation of physiology (`IPHYSIOL`)
     - Options:
         - (0) Arrhenius function, `Gamma*` based on Foley et al. (1996) (TODO: REF)
-        - (1) Arrhenius, `Gamma*` based on Michaelis-Mentel coefficients for CO2 and O2, as in Farquhar et al. (1980) (TODO: REF)
-        - (2; default) Q10 equations and parameters of Collatz et al. (1991), with MM coefficients. High/low temperature correction in Moorcroft et al. (2001)
-        - (3) As (2), but `Gamma*` as in Farquhar et al. (1980) and CLM.
+        - (1) Arrhenius, `Gamma*` based on Michaelis-Mentel coefficients for CO2 and O2, as in @farquhar_1980_biochemical
+        - (2; default) Q10 equations and parameters of @collatz_1991_physiological, with MM coefficients. High/low temperature correction in @moorcroft_2001_method
+        - (3) As (2), but `Gamma*` as in @farquhar_1980_biochemical and CLM.
     - Need to do some exploratory analysis here. Grab the relevant equations and coefficients and plot them (outside of ED) to compare behavior.
         - Possible angle: More important at temperature extremes?
     - Consult @rogers_2016_roadmap for inspiration
@@ -251,7 +269,6 @@ These are processes that I think will not have huge impacts, are farther-removed
 These configurations are almost certainly irrelevant to the goals of this paper or will not apply at UMBS (e.g. grass or tropical species).
 Mostly for reference.
 
-- Allometry (`IALLOM`) -- Seems to mostly affect tropical PFTs (TODO: Check that this is the case).
 - Grass (`IGRASS`) -- I'm not running with any grass PFTs.
 - Phenology (`IPHEN_SCHEME`) -- Differences affect grasses and tropical species. Conifers are always evergreen, and hardwoods are always cold-deciduous (need to check that schemes are the same).
 - Seed dispersal (`REPRO_SCHEME`) -- Only seems to matter for multi-site runs, with some toggles for tropical (drought-deciduous) species.
@@ -260,6 +277,9 @@ Mostly for reference.
     - This could potentially be fun to play with in a later paper about disturbance regimes. Potentially, with Jackie Matthes?
 - Anthropogenic disturbances (`IANTH_DISTURB`) -- We are currently looking at stable state, without disturbances. But, since this pulls values from a dataset, this could be one way to apply the FoRTE treatments.
 
+### Additional references
+
+@katul_2003_relationship
 
 # Methods
 

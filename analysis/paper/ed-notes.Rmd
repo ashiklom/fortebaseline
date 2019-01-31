@@ -7,24 +7,17 @@ author: Alexey Shiklomanov
 
 ## Finite canopy radius (`CROWN_MOD`)
 
-In `src/dynamics/radiate_driver.f90:L550`:
-If disabled, set canopy crown area for all patches to 1.
-If enabled, set finite crown areas for each cohort.
-
-Crown area used in some of the following places:
-
-- Canopy structural dynamics (`dynamics/canopy_struct_dynamics.f90:L470`)
-- Plant hydrology (`dynamics/plant_hydro.f90:L145,204,240,447,626`)
+### Calculating crown area
 
 Crown area comes from @dietze_2008_capturing.
 Crown area calculated by allometry in `utils/allometry.f90:L633` (inside subroutine `area_indices`), as `min(1, nplant * dbh2ca(dbh, hite, sla, pft))`.
 `dbh2ca` is defined in `utils/allometry.f90:L373` as:
 
 ```
-ca = biCa[pft] * dbh ^ b2Ca[pft]
+ca = b1Ca[pft] * dbh ^ b2Ca[pft]
 ```
 
-But, note that crown area is restricted such that "Local LAI / Crown area" is never less than one (i.e you cannot have more crown area than leaf area index -- your maximum crown area is the leaf area index):
+Note that crown area is restricted such that "Local LAI / Crown area" is never less than one (i.e you cannot have more crown area than leaf area index -- your maximum crown area is the leaf area index):
 
 ```
 loclai = sla * size2bl(dbh, hite, pft)
@@ -33,9 +26,146 @@ ca = min(loclai, ca)
 
 where `size2bl` is the leaf biomass allometry (so leaf biomass; therefore, `sla * size2bl` gives LAI).
 
-Crown area set or calculated in:
- 
-- `dynamics/strcutral_growth.f90:L669,929`
+The allometry coefficients `b1Ca` and `b2Ca` have the following defaults (from `init/ed_params.f90:L3055`):
+
+- `b1Ca`
+    - 5:13 (C3 grass and temperate trees) -- `2.490154` (constant)
+    - All others -- `exp(-1.853) * exp(b1Ht(pft)) ** 1.888`; log-linear relationship with height allometry
+- `b2Ca`
+    - 5:13 -- `0.8068806` (constant)
+    - All others -- `b2Ht(pft) * 1.888`; linear relationship with height allometry
+
+Note that only tropical PFTs are affected by the allometry model (`IALLOM`); coefficient adjustments are wrapped in `if (is_tropical(pft))`.
+
+If two cohorts are fused, their crown areas are summed, up to a maximum of 1 (in `utils/fuse_fiss_utils.f90:L2932`).
+
+### Radiative transfer
+
+In `src/dynamics/radiate_driver.f90:L550`:
+If disabled, set canopy crown area for all patches to 1.
+If enabled, set finite crown areas for each cohort.
+
+Crown area array (for each cohort) is passed to the various radiative transfer models (see `ICANRAD` parameter).
+Inside the RTMs, it is the `cai` variable.
+
+The following sections focus on the contributions of finite canopy radius to radiative transfer calculations.
+For the full descriptions, consult the "Canopy radiative transfer" module section.
+
+#### Two-stream
+
+In the two-stream model, crown area is used to correct `mu_bar` (average inverse optical depth per unit leaf and stem area) for crown area (resulting variable `mu`):
+
+```
+mu = -etai / log(1 - cai + cai * exp(-etai / (cai * mu_bar)))
+```
+
+where `etai` is the total area index (TAI = LAI * clumping factor + WAI) of the layer.
+
+(If `cai = 1`, this simplifies to just `mu_bar`).
+
+In the longwave (thermal), crown area is also used as a linear scaling of the blackbody emissivity.
+
+In the shortwave two-stream model, the crown area correction also happens for direct radiation (`mu0`):
+
+```
+mu0 = -etai / log(1 - cai + cai * exp((-proj_area * etai) / (cai * czen)))
+```
+
+where `czen` is the cosine of the solar zenith angle (radians) and `proj_area` is the projected area, calculated as a function of leaf orientation angle (`orient`):
+
+```
+phi1 = 0.5 - orient * (0.633 + 0.33 * orient)
+phi2 = 0.877 * (1 - 2 * phi1)
+proj_area = phi1 + phi2 * czen
+```
+
+These calculations follow CLM 4.5 [@clm45_note] (section 3.1, eq. 3.3), which in turn is based on @sellers_1985_canopy.
+This is described in more detail in the canopy radiative transfer section.
+
+
+#### Multiple-scatter
+
+In the multiple-scatter model [@zhao_2005_multiple; @zhao_2006_modeling], crown area is used calculate the exposed total area index (TAI) of each layer (`locetai`):
+
+```
+locetai = etai / cai
+```
+
+Crown area is also used to adjust the layer transmittance coefficient for beam radiation (`tau_beam`):
+
+```
+lambda = proj_area / mu
+tau_beam = (1 - cai) + cai * exp(-lambda * locetai)
+```
+
+A similar correction is applied to diffuse radiation, but the contribution from each hemisphere has to be integrated.
+This uses the analytical solution for that integral.
+
+```
+d1 = phi1 * locetai
+d2 = phi2 * locetai
+tau_diff = (1 - cai) - cai * exp(-d1 * d2) * (d1^2 * exp(d1) * eifun(-d1) + (d1 - 1))
+```
+
+where `eifun` is the exponential integral function.
+
+### Plant hydraulics
+
+Source: `dynamcs/plant_hydro.f90`.
+
+Subroutine `plant_hydro_driver`:
+Crown area for each cohort calculated as `crown_area / nplant`, then passed to `calc_plant_water_flux` (as variable `crown_area`).
+
+Calculate the root area index (RAI) at each depth:
+
+```
+RAI = broot_d * SRA * root_frac / (4 * crown_area)
+```
+
+where SRA is the PFT specific root area parameter, and `root_frac` is the fraction of roots in that layer (function of PFT parameter `root_beta` and depth).
+
+Calculate the soil-root water conductance at each depth:
+
+```
+gw_cond = (4 * crown_area) * soil_cond * sqrt(RAI) / (pi * dslz)
+```
+
+where `soil_cond` is soil conductivity at that depth and `dslz` is the soil layer thickness.
+This is based on @katul_2003_relationship.
+
+### Canopy turbulence
+
+In file `dynamics/canopy_struct_dynamics.f90`, subroutine `canopy_turbulence`.
+
+Crown area used in calculation of the wind profile extinction coefficients.
+
+```
+#-- dynamics/canopy_struct_dynamics.f90:L470 --
+extinct_full = crown_area * exp(-0.25 * lai / crown_area) + (1 - crown_area)
+extinct_full = crown_area * exp(-0.5 * lai / crown_area) + (1 - crown_area)
+veg_wind = max(ugbmin, uh[i - 1] * extinct_half)
+uh[i] = uh[i - 1] * extinct_full
+```
+
+Note that there is a copy of the same calculation performed in double precision (subroutine `canopy_turbulence8`) later in the file.
+
+Crown area is also used to calculate the open canopy fraction of each cohort by subroutine `update_patch_derived_props` (file `utils/update_derived_props.f90:L43`).
+That subroutine is in turn called by subroutine `structural_growth_eq_0` (file `dynamics/structural_growth.f90`).
+This open canopy fraction is used to calculate the canopy roughness (`rough`).
+
+```
+rough = snow_rough * snowfac_can +
+    (soil_rough * opencan_frac + veg_rough * (1 - opencan_frac)) *
+    (1 - snowfac_can)
+```
+
+Open canopy fraction is also used to calculate the net ground conductance (`ggnet`):
+
+```
+ggnet = ggbare * ggveg / (ggveg + ggbare * (1 - opencan_frac))
+```
+
+
 
 ## Nitrogen limitation of photosynthesis (`N_PLANT_LIM`)
 
