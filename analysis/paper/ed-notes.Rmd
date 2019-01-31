@@ -169,4 +169,37 @@ ggnet = ggbare * ggveg / (ggveg + ggbare * (1 - opencan_frac))
 
 ## Nitrogen limitation of photosynthesis (`N_PLANT_LIM`)
 
+### Calculating N supply and demand for live tissue growth
+
+Basically, N limitation places a limit on the fraction of stomata that are open (due to N limitation; `cpatch%fsn`).
+
+Calculating changes in live biomass (subroutines `dbalive_dt` and `dbalive_dt_eq_0` in `dynamics/growth_balive.f90`).
+
+If plant limitation enabled, call subroutine `potential_N_uptake` to see what would happen if stomata were open.
+This sets the value of potential N uptake (`N_uptake_pot`).
+
+If no limitation, set fraction of open stomata (from N limitation; `fsn`) to 1.
+Otherwise, calculate N limitation factor.
+
+```
+#- dynamics/growth_balive.f90:L293
+nitrogen_supply = plant_N_supply_scale * broot * mineralized_soil_N
+fsn = nitrogen_supply / (nitrogen_supply + N_uptake_pot)
+```
+
+### Initialization from near bare ground
+
+Subroutines `near_bare_ground_init` and `near_barea_ground_big_leaf_init` (in `init/ed_nbg_init.f90`):
+
+If there is N limitation, initialize as follows:
+
+- Fast soil C (`fast_soil_C`): 0.2
+- Slow soil C (`slow_soil_C`): 0.01
+- Structural soil C (`structural_soil_C`): 10.0
+- Structural soil lignin (`structural_soil_L`): 10.0
+- Mineralized soil N (`mineralized_soil_N`): 1.0
+- Fast soil N (`fast_soil_N`): 1.0
+
+If no N limitation, set all of these to zero.
+
 ## Nitrogen limitation of decomposition (`N_DECOMP_LIM`)
