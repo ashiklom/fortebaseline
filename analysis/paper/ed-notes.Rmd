@@ -203,3 +203,24 @@ If there is N limitation, initialize as follows:
 If no N limitation, set all of these to zero.
 
 ## Nitrogen limitation of decomposition (`N_DECOMP_LIM`)
+
+Calculation of N immobilization factor (subroutine `resp_f_decomp`, in `dynamics/soil_respiration.f90`).
+
+N decomposition limitation affects the decomposition fraction (`csite%f_decomp`).
+If no limitation, this is set to 1.
+
+If limitation, calculate similarly to plant (supply relative to demand):
+
+```
+#-- dynamics/soil_respiration.f90:L226
+Lc = exp(-3 * structural_soil_L / structural_soil_C)
+
+N_immobilization_demand = A_decomp * Lc * decay_rate_stsc * structural_soil_C *
+  ((1 - r_stsc) / c2n_slow - 1 / c2n_structural)
+  
+f_decomp = N_immobil_supply_scale * mineralized_soil_N / 
+  (N_immobilization_demand + N_immobil_supply_scale * mineralized_soil_N)
+```
+
+Whether N decomposition limitation is enabled also affects decay rate of slow carbon pool if using `DECOMP_SCHEME = 2`.
+With N limitation, decay rate is 100.2 year^-1^; otherwise, 0.2 year^-1^.
