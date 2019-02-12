@@ -8,3 +8,8 @@
 
 # Model outputs
 analysis/data/model_output/
+
+# Rmd output
+analysis/paper/exploratory_cache/
+analysis/paper/exploratory_files/
+analysis/paper/exploratory.html
