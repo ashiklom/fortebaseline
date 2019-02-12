@@ -96,3 +96,44 @@ settings <- list() %>%
 
 submit_workflow(settings)
 watch_workflow(workflow_id)
+
+##################################################
+# Related to reading ED 
+##################################################
+ed_summary %>%
+  filter(variable == "nee") %>%
+  ggplot() +
+  aes(x = ymonth, y = value_mean) +
+  geom_col()
+
+
+time <- read_nc_time(nc)
+npp <- ncdf4::ncvar_get(nc, "NPP")
+lai <- ncdf4::ncvar_get(nc, "LAI")
+
+## nc <- ncdf4::nc_open(run_dap(workflow_id, "1902.nc", run1))
+
+## catalog_url <- pecanapi:::thredds_fs_url()
+## raw_catalog <- 
+
+## con <- DBI::dbConnect(
+##   RPostgres::Postgres(),
+##   user = "bety",
+##   password = "bety",
+##   host = "localhost",
+##   port = 7990
+## )
+
+##################################################
+workflow_id <- 99000000066
+outdir <- file.path("analysis", "data", "model_output", workflow_id)
+runs <- list.files(outdir)
+
+run <- runs[[1]]
+
+rundir <- file.path(outdir, run)
+ncfiles <- list.files(rundir, "[[:digit:]]+\\.nc$",
+                      full.names = TRUE)
+
+x <- stars::read_stars(ncfiles, quiet = TRUE, proxy = TRUE,
+                       along = "time")
