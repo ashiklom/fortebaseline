@@ -53,12 +53,12 @@ read_ncfile <- function(file) {
 
 read_member <- function(rundir, pb = NULL) {
   if (!is.null(pb)) pb$tick()
+  run_id <- basename(rundir)
   all_nc_files <- list.files(rundir, "[[:digit:]]{4}\\.nc", full.names = TRUE)
   ed_results <- purrr::map_dfr(all_nc_files, read_ncfile)
-  ed_results_long <- ed_results %>%
+  ed_results %>%
     tidyr::gather(variable, value, -time) %>%
-    dplyr::mutate(rundir = !!rundir)
-  ed_results_long
+    dplyr::mutate(run_id = !!run_id)
 }
 
 ## pb <- progress::progress_bar$new(total = NROW(finished_ct))
