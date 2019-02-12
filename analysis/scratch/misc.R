@@ -137,3 +137,43 @@ ncfiles <- list.files(rundir, "[[:digit:]]+\\.nc$",
 
 x <- stars::read_stars(ncfiles, quiet = TRUE, proxy = TRUE,
                        along = "time")
+
+##################################################
+
+remove_txt_tag <- function(string, tag) {
+  start_rxp <- paste0("<", tag, ">")
+  end_rxp <- paste0("</", tag, ">")
+  istart <- suppressWarnings(grep(start_rxp, string))
+  iend <- suppressWarnings(grep(end_rxp, string))
+  stopifnot(length(istart) == length(iend))
+  inds <- Reduce(c, Map(seq, istart, iend))
+  string[-inds]
+}
+
+remove_invalid_xml <- function(string) {
+  # Specific unicode characters
+  ## rxp <- paste0(
+  ##   "[^",
+  ##   "\u0001-\uD7FF",
+  ##   "\uE000-\uFFFD",
+  ##   "\ud800\udc00-\udbff\udfff",
+  ##   "]+"
+  ## )
+  rxp <- "[^-[:alnum:]/<>_.]"
+  string <- gsub(rxp, "", string)
+  string
+}
+
+
+## proc_text <- remove_txt_tag(raw_txt, "output_filepath") %>%
+##   remove_txt_tag("input_filepath") %>%
+##   remove_txt_tag("history_out_filepath")
+## Encoding(raw_txt) <- "latin1"
+## raw_txt_c <- paste(raw_txt, collapse = "\n")
+## proc_text <- stringi::stri_trans_general(raw_txt_c, "latin-ascii")
+## raw_xml <- xml2::read_xml(proc_txt)
+## raw_xml <- xml2::read_xml(paste(proc_txt, collapse = "\n"))
+## raw_xml <- XML::xmlParse(proc_txt, asText = TRUE)
+## raw_xml <- XML::xmlParse(proc_txt, asText = TRUE)
+
+## raw_xml[[1]]
