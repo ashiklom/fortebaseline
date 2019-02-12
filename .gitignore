@@ -5,3 +5,6 @@
 
 # Drake files
 .drake/
+
+# Model outputs
+analysis/data/model_output/
