@@ -109,16 +109,7 @@ for (i in seq_along(years)) {
 #   - Loop through first 
 
 ##################################################
-library(magrittr)
-library(data.table)
-library(ggplot2)
 
-workflow_id <- 99000000066
-outdir <- file.path("analysis", "data", "model_output", workflow_id)
-runs <- list.files(outdir)
-
-run <- runs[[1]]
-rundir <- file.path(outdir, run)
 
 read_variable <- function(nc, varname) {
   var_dimnames <- purrr::map_chr(nc[[c("var", varname, "dim")]], "name")
