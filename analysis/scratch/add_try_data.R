@@ -1,9 +1,17 @@
 library(data.table)
 import::from(magrittr, "%>%")
+import::from(DBI, "dbConnect")
+import::from(RPostgres, "Postgres")
 
-tryfile <- "~/Projects/try-raw-data/4143.txt"
 
-trydata <- fread(tryfile)
+fst_file <- "~/Projects/try-raw-data/4143.fst"
+if (!file.exists(fst_file)) {
+  tryfile <- "~/Projects/try-raw-data/4143.txt"
+  trydata <- fread(tryfile)
+  fst::write_fst(trydata, fst_file)
+} else {
+  trydata <- fst::read_fst(fst_file, as.data.table = TRUE)
+}
 
 # Subset to selected species 
 species <- readLines(file.path("analysis", "data",

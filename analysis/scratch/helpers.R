@@ -53,3 +53,6 @@ read_ed_year_lai <- function(year, workflow_id, run_id = NULL,
     tidyr::gather("pft", "lai", -time) %>%
     dplyr::mutate(pft = as.integer(pft))
 }
+
+# Source test-pecan follow workflow functions
+source("~/Projects/pecan_project/test-pecan/follow_workflow.R")

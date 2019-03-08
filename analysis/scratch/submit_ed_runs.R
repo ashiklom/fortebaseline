@@ -54,9 +54,11 @@ submit_workflow(settings)
 watch_workflow(workflow_id)
 
 while (TRUE) {
-  readLines(run_url(workflow_id, "logfile.txt")) %>% tail(2) %>% writeLines()
+  runid <- 99000000117
+  message("As of: ", Sys.time())
+  readLines(run_url(workflow_id, "logfile.txt", runid)) %>% tail(2) %>% writeLines()
   writeLines("---------------")
-  Sys.sleep(2)
+  ## Sys.sleep(2)
 }
 
 if (FALSE) {
