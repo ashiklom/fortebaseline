@@ -13,3 +13,6 @@ analysis/data/model_output/
 analysis/paper/exploratory_cache/
 analysis/paper/exploratory_files/
 analysis/paper/exploratory.html
+
+# Figures
+analysis/figures/
