@@ -24,8 +24,8 @@ machine_id <- 99000000001
 ##   dplyr::pull(id)
 
 workflow <- insert_new_workflow(con, site_id, model_id,
-                                start_date = "1940-06-01",
-                                end_date = "1940-08-31")
+                                start_date = "1901-06-01",
+                                end_date = "1901-08-31")
 workflow_id <- workflow[["id"]]
 
 pft_list <- list(
@@ -83,7 +83,7 @@ if (FALSE) {
 
   # Follow model log file
   logfile <- run_url(workflow_id, "logfile.txt")
-  tail_file(logfile, refresh = 2)
+  tail_file(logfile)
 
   read_output_var <- function(workflow_id, variable) {
     ncfile <- run_dap(workflow_id, "1980.nc")
