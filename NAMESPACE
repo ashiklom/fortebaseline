@@ -2,6 +2,7 @@
 
 export(default_connection)
 export(follow_workflow)
+export(load_local)
 export(pb_along)
 export(qdate)
 export(read_notes)
