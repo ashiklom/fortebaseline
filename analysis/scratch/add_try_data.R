@@ -1,16 +1,30 @@
 library(data.table)
-import::from(magrittr, "%>%")
-import::from(DBI, "dbConnect")
-import::from(RPostgres, "Postgres")
 
+# begin imports
+import::from("magrittr", "%>%", .into = "")
+import::from("DBI", "dbConnect", "dbBind", "dbClearResult", "dbSendStatement", .into = "")
+import::from("RPostgres", "Postgres", .into = "")
+import::from("fst", "read_fst", .into = "")
+import::from("dplyr", "tbl", "filter", "select", "collect", "inner_join", .into = "")
+# end imports
+
+con <- dbConnect(
+  Postgres(),
+  user = "bety",
+  password = "bety",
+  host = "localhost",
+  port = 7990
+)
 
 fst_file <- "~/Projects/try-raw-data/4143.fst"
 if (!file.exists(fst_file)) {
+  message("Creating new FST file.")
   tryfile <- "~/Projects/try-raw-data/4143.txt"
   trydata <- fread(tryfile)
   fst::write_fst(trydata, fst_file)
 } else {
-  trydata <- fst::read_fst(fst_file, as.data.table = TRUE)
+  message("Reading existing FST file")
+  trydata <- read_fst(fst_file, as.data.table = TRUE)
 }
 
 # Subset to selected species 
@@ -28,14 +42,6 @@ species_data <- trydata[
     Reference)
 ][!is.na(StdValue)][ValueKindName == "Single"]
 
-con <- dbConnect(
-  Postgres(),
-  user = "bety",
-  password = "bety",
-  host = "localhost",
-  port = 7990
-)
-
 bety2try <- tibble::tribble(
   ~bety_name, ~DataID,
   "SLA", 6582,
@@ -46,8 +52,8 @@ bety2try <- tibble::tribble(
   "leaf_width", 447,
   "root_respiration_rate", 1189
 ) %>%
-  dplyr::inner_join(
-    dplyr::tbl(con, "variables") %>% dplyr::select(id, name),
+  inner_join(
+    tbl(con, "variables") %>% select(id, name),
     by = c("bety_name" = "name"),
     copy = TRUE
   )
@@ -56,26 +62,37 @@ setDT(bety2try)
 
 species_data_sub <- species_data[bety2try, on = "DataID"]
 
+if (FALSE) {
+  ggplot(species_data_sub) +
+    aes(x = AccSpeciesName, y = StdValue) +
+    geom_violin() +
+    geom_jitter(size = 0.5, alpha = 0.5) +
+    facet_wrap(vars(bety_name), scales = "free_y")
+}
+
 bety_species <- con %>%
-  dplyr::tbl("species") %>%
-  dplyr::filter(scientificname %in% !!species) %>%
-  dplyr::select(AccSpeciesName = scientificname,
+  tbl("species") %>%
+  filter(scientificname %in% !!species) %>%
+  select(AccSpeciesName = scientificname,
                 specie_id = id) %>%
-  dplyr::collect()
+  collect()
 
 setDT(bety_species)
 species_data_final <- bety_species[species_data_sub, on = "AccSpeciesName"]
+species_data_final[, notes := paste0("TRY.ObservationID = ", ObservationID, "|",
+                                     "TRY.DataID = ", DataID)]
 
-stmt <- DBI::dbSendStatement(con, paste(
+stmt <- dbSendStatement(con, paste(
   "INSERT INTO traits (variable_id, specie_id, mean, n, notes)",
-  "VALUES ($1, $2, $3, 1, '__TRY-DB__')"
+  "VALUES ($1, $2, $3, 1, $4)"
 ))
-qry <- DBI::dbBind(stmt, list(
+qry <- dbBind(stmt, list(
   species_data_final[["id"]],
   species_data_final[["specie_id"]],
-  species_data_final[["StdValue"]]
+  species_data_final[["StdValue"]],
+  species_data_final[["notes"]]
 ))
-DBI::dbClearResult(qry)
+dbClearResult(qry)
 
 ## con %>%
 ##   dplyr::tbl("traits") %>%
