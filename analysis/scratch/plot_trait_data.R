@@ -4,7 +4,7 @@ library(ggplot2)
 import::from("magrittr", "%>%", .into = "")
 import::from("DBI", "dbConnect", .into = "")
 import::from("RPostgres", "Postgres", .into = "")
-import::from("dplyr", "tbl", "inner_join", "select", "filter", "collect", "pull", "count", "group_by", "summarize", "if_else", "mutate", "left_join", "distinct", "semi_join", "ungroup", .into = "")
+import::from("dplyr", "tbl", "inner_join", "select", "filter", "collect", "pull", "count", "group_by", "summarize", "if_else", "mutate", "left_join", "distinct", "semi_join", "ungroup", "anti_join", .into = "")
 import::from("purrr", "pmap_dbl", "exec", .into = "")
 # end imports
 
@@ -54,9 +54,10 @@ trait_data <- collect(trait_data_sql) %>%
     species_id = specie_id, species = Symbol, scientificname,
     trait = name.variable, trait_id = variable_id,
     n, mean, statname, stat, max, min,
-    units, standard_name, standard_units
+    units, standard_name, standard_units, notes = notes.value
   ) %>%
-  mutate(n = if_else(is.na(n), 1L, n))
+  mutate(n = if_else(is.na(n), 1L, n),
+         is_try = grepl("TRY", notes))
 
 # Summary table by PFT
 trait_summary <- trait_data %>%
@@ -105,9 +106,9 @@ pft_labeller <- function(x) {
 trait_data %>%
   semi_join(prior_stats) %>%
   ggplot() +
-  aes(x = pft, y = mean) +
-  geom_violin() +
-  geom_jitter() +
+  aes(x = pft, y = mean, color = is_try) +
+  geom_violin(aes(group = pft)) +
+  geom_jitter(alpha = 0.5, size = 0.5) +
   geom_point(aes(y = mid), data = prior_stats, color = "red") +
   geom_errorbar(aes(y = NULL, ymin = lo, ymax = hi), data = prior_stats, color = "red") +
   facet_wrap(vars(trait), scales = "free_y") +
