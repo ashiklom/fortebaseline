@@ -177,3 +177,33 @@ remove_invalid_xml <- function(string) {
 ## raw_xml <- XML::xmlParse(proc_txt, asText = TRUE)
 
 ## raw_xml[[1]]
+
+########################################
+workflow_id <- workflow_ids[[3]]
+year <- 1902
+
+lai_raw <- ncdf4::ncvar_get(nc, "LAI_PY")
+dim(lai_raw)
+zz2 <- apply(lai_raw, c(1, 3), sum)
+dim(zz)
+dim(zz2)
+ztboth <- rbind(t(zz[c(6, 9:11), ]), t(zz2[c(6, 9:11), ]))
+matplot(ztboth, type = "l")
+abline(v = 2 * 24 * 365)
+abline(v = 24 * 365, lty = "dashed")
+plot(zz, type = 'l')
+plot(lai_raw, )
+
+########################################
+e2in <- parse_ed2ins(workflow_id)
+logfile <- runfile(workflow_id, "logfile.txt")
+readLines(logfile) %>% writeLines()
+e2in$IMONTHA
+
+########################################
+hf <- ncdf4::nc_open("~/Downloads/analysis-T-1902-00-00-000000-g01.h5")
+hf$dim$phony_dim_0$len
+
+ncpecan <- ncdf4::nc_open(pecanapi::run_dap(workflow_id, "1903.nc"))
+lai <- ncdf4::ncvar_get(ncpecan, "LAI")
+plot(lai, type = "l")
