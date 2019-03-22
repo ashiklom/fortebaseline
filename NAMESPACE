@@ -2,6 +2,7 @@
 
 export(default_connection)
 export(follow_workflow)
+export(get_monthly_lai)
 export(load_local)
 export(parse_configs)
 export(parse_notes)
