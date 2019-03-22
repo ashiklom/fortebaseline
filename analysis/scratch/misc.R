@@ -207,3 +207,70 @@ hf$dim$phony_dim_0$len
 ncpecan <- ncdf4::nc_open(pecanapi::run_dap(workflow_id, "1903.nc"))
 lai <- ncdf4::ncvar_get(ncpecan, "LAI")
 plot(lai, type = "l")
+
+##################################################
+# Old code for working with ED2IN
+parse_ed2ins <- function(workflow_id, con = default_connection()) {
+  filepath <- runfile(workflow_id, "ED2IN", con)
+  PEcAn.ED2::read_ed2in(filepath)
+}
+
+ed2in_dat <- tibble(workflow_id = workflow_ids) %>%
+  mutate(ed2in = map(
+    workflow_id, possibly(parse_ed2ins, NULL),
+    con = default_connection()
+  )) %>%
+  filter(map_lgl(ed2in, negate(is.null)))
+
+ed2in_full <- ed2in_dat %>%
+  mutate(ed2in = map(
+    ed2in,
+    ~as_tibble(modify_if(.x, ~length(.x) > 1, list))
+  )) %>%
+  unnest()
+
+run_info <- ed2in_dat %>%
+  mutate(
+    rtm = map_dbl(ed2in, "ICANRAD"),
+    crown_model = map_dbl(ed2in, "CROWN_MOD"),
+    n_plant_lim = map_dbl(ed2in, "N_PLANT_LIM"),
+    n_decomp_lim = map_dbl(ed2in, "N_DECOMP_LIM"),
+    trait_plasticity = map_dbl(ed2in, "TRAIT_PLASTICITY_SCHEME")
+    ) %>%
+  select(-ed2in)
+
+##################################################
+# Old code for reading ED config.xml
+all_configs <- tibble(workflow_id = workflow_ids) %>%
+  mutate(configs = map(
+    workflow_id, possibly(parse_configs, NULL),
+    con = default_connection()
+  )) %>%
+  filter(map_lgl(configs, negate(is.null))) %>%
+  unnest()
+
+configs_long <- all_configs %>%
+  select(-num) %>%
+  select_if(negate(is.list)) %>%
+  gather(variable, value, -workflow_id, -pft)
+
+configs_long %>%
+  semi_join(
+    configs_long %>%
+      group_by(pft, variable) %>%
+      summarize(variance = var(value)) %>%
+      filter(variance != 0)
+  ) %>%
+  ggplot() +
+  aes(x = pft, y = value) +
+  geom_jitter() +
+  facet_wrap(vars(variable), scales = "free_y")
+
+##################################################
+# Old code for reading an ensemble of LAI values
+get_ensemble_lai <- function(rundir, years = seq(1902, 1990)) {
+  ensemble <- basename(rundir)
+  future_map_dfr(years, get_monthly_lai, rundir = rundir) %>%
+    dplyr::mutate(ensemble = !!ensemble)
+}
+

@@ -57,3 +57,13 @@ load_local <- function(file) {
   load(file, envir = menv)
   as.list(menv)
 }
+
+#' Try to convert a value to numeric. If unsuccessful, return the
+#' original value.
+#'
+#' @param x Vector to be converted
+#' @return `as.numeric(x)` if successful, or unaltered `x` if not
+#' @export
+try_numeric <- function(x) {
+  tryCatch(as.numeric(x), error = function(e) x)
+}
