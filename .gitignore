@@ -14,5 +14,7 @@ analysis/paper/exploratory_cache/
 analysis/paper/exploratory_files/
 analysis/paper/exploratory.html
 
+_rendered_output/
+
 # Figures
 analysis/figures/

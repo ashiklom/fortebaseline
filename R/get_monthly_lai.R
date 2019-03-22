@@ -21,7 +21,7 @@ get_monthly_lai <- function(workflow_id, year,
   nt <- nday * 24 * 2 # Half-hourly output
 
   filename <- glue::glue("analysis-T-{year}-00-00-000000-g01.h5")
-  filepath <- pecanapi::run_dap(workflow_id, filename)
+  filepath <- pecanapi::run_dap(workflow_id, filename, port = 7999)
 
   nc <- ncdf4::nc_open(filepath)
   on.exit(ncdf4::nc_close(nc), add = TRUE)

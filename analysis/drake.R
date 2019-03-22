@@ -1,182 +1,111 @@
-library(fortebaseline)
 library(drake)
+library(fortebaseline)
 library(ggplot2)
-pkgconfig::set_config("drake::strings_in_dots" = "literals")
 
-stopifnot(
-  requireNamespace("glue"),
-  requireNamespace("progress")
-)
+# begin imports
+import::from("dplyr", "tbl", "filter", "select", "collect", "mutate",
+             "pull", "case_when", "rename", "ungroup", "group_by", "left_join",
+             "if_else", "group_by_at", "bind_rows", .into = "")
+import::from("tidyr", "unnest", .into = "")
+import::from("tibble", "as_tibble", .into = "")
+import::from("here", "here", .into = "")
+import::from("fs", "dir_create", "path", .into = "")
+import::from("fst", "write_fst", .into = "")
+import::from("forcats", "fct_relabel", .into = "")
+import::from("cowplot", "save_plot", "theme_cowplot", .into = "")
+import::from("furrr", "future_pmap_dfr", .into = "")
+import::from("magrittr", "%>%", .into = "")
+import::from("purrr", "map", "possibly", .into = "")
+import::from("future.callr", "callr", .into = "")
+import::from("future", "plan", "availableCores", .into = "")
+# end imports
 
-import::from(magrittr, "%>%")
-options("pecanapi.docker_port" = 7999)
+expose_imports("fortebaseline")
+theme_set(theme_cowplot())
 
-read_ed_variables <- function(year, workflow_id, run_id,
-                              variables = NULL,
-                              ftype = "T",
-                              listify = TRUE,
-                              pb = NULL) {
-  if (!is.null(pb)) pb$tick()
-  filename <- glue::glue(
-    "http://localhost:{getOption('pecanapi.docker_port')}",
-    "/thredds/dodsC/outputs/",
-    "PEcAn_{workflow_id}/out/{run_id}/analysis-{ftype}-{year}-00-00-000000-g01.h5"
-  )
-  hf <- ncdf4::nc_open(filename)
-  on.exit(ncdf4::nc_close(hf), add = TRUE)
-  if (is.null(variables)) variables <- names(hf[["var"]])
-  outlist <- list(year = year)
-  for (v in variables) {
-    value <- tryCatch({
-      ncdf4::ncvar_get(hf, v)
-    },
-    error = function(e) {
-      message("Variable ", v, "hit the following error:\n", e)
-      message("Returning NULL")
-      return(NULL)
-    })
-    if (listify && length(value) > 1) value <- list(value)
-    outlist[[v]] <- value
-  }
-  outlist
-}
+created_since <- "2019-03-20"
 
-add_ed_timestep <- function(data, year) {
-  stopifnot(is.data.frame(data), is.numeric(year), length(year) == 1)
-  dplyr::mutate(
-    data,
-    time = qdate(year) + 30 * lubridate::minutes(dplyr::row_number())
-  )
-}
+workflow_df <- tbl(default_connection(), "workflows") %>%
+  filter(start_date == "1902-06-01",
+         end_date == "1912-12-31",
+         created_at > created_since) %>%
+  select(workflow_id = id, start_date, end_date, notes) %>%
+  collect() %>%
+  mutate(configs_df = map(notes, parse_notes),
+         workflow_id = as.numeric(workflow_id)) %>%
+  unnest(configs_df) %>%
+  select(-notes)
 
-read_soil <- function(year, workflow_id, run_id) {
-  soil_raw <- read_ed_variables(
-    year,
-    variables = "FMEAN_SOIL_WATER_PY",
-    workflow_id = workflow_id,
-    run_id = run_id
-  )[[1]]
-  t(soil_raw) %>%
-    tibble::as_tibble() %>%
-    add_ed_timestep(year) %>%
-    tidyr::gather(layer, value, -time) %>%
-    dplyr::mutate(layer = as.factor(layer))
-}
+workflows_years = expand.grid(
+  workflow_id = as.numeric(pull(workflow_df, workflow_id)),
+  year = seq(1902, 1912)
+) %>%
+  as_tibble() %>%
+  mutate(startmonth = case_when(year == 1902 ~ 6, TRUE ~ 1))
 
 plan <- drake_plan(
-  workflow_id = 99000000032,
-  run_id = 99000000030,
-  run_years = seq(1902, 2000),
-  file_names = pecanapi::run_dap(
-    workflow_id,
-    paste0(run_years, ".nc"),
-    run_id = run_id
+  lai_raw = target(
+    possibly(get_monthly_lai, NULL)(workflow_id, year, startmonth),
+    transform = map(!!!workflows_years)
   ),
-  raw_output = target(
-    command = PEcAn.utils::read.output(
-      ncfiles = file_names,
-      variables = NULL,                   # All variables
-      verbose = TRUE,
-      dataframe = TRUE
-    ), trigger = trigger(condition = FALSE, mode = "condition")),
-  raw_year_output = purrr::map(
-    run_years,
-    read_ed_variables,
-    workflow_id = workflow_id,
-    run_id = run_id,
-    ftype = "Y"
-    ## pb = pb_along(run_years),
+  lai_data = target(
+    bind_rows(lai_raw),
+    transform = combine(lai_raw)
   ),
-  raw_soil = purrr::map(
-    run_years,
-    purrr::safely(read_soil),
-    workflow_id = workflow_id,
-    run_id = run_id
-    ## pb = pb_along(run_years)
-  ),
-  soil_output = raw_soil %>%
-    purrr::map_if(., ~is.null(.[["error"]]), "result") %>%
-    dplyr::bind_rows(),
-  soil_monthly = soil_output %>%
-    dplyr::mutate(
-      year = lubridate::year(time),
-      month = lubridate::month(time),
-      ymonth = ISOdate(year, month, 01, tz = "UTC")
-    ) %>%
-    dplyr::group_by(ymonth, layer) %>%
-    dplyr::summarize(
-      mean = mean(value),
-      median = median(value),
-      hi = quantile(value, 0.95),
-      lo = quantile(value, 0.05)
+  lai_results = workflow_df %>%
+    select(-start_date, -end_date) %>%
+    left_join(lai_data) %>%
+    filter(!is.na(lai)) %>%
+    group_by(month, workflow_id) %>%
+    mutate(total_lai = sum(lai)) %>%
+    ungroup(month, workflow_id) %>%
+    rename(rtm = multiple_scatter) %>%
+    mutate(
+      rtm = if_else(rtm, "multiple scatter", "two-stream") %>%
+        factor(c("two-stream", "multiple scatter")),
+      crown_model = if_else(crown_model, "gap", "complete shading") %>%
+        factor(c("complete shading", "gap")),
+      n_limitation = case_when(n_limit_ps & n_limit_soil ~ "both",
+                               n_limit_ps ~ "plant",
+                               n_limit_soil ~ "decomp",
+                               TRUE ~ "none") %>%
+        factor(c("both", "plant", "decomp", "none")) %>%
+        fct_relabel(~paste("N limit:", .x)),
+      trait_plasticity = if_else(trait_plasticity,
+                                 "static traits", "plastic traits") %>%
+        factor(c("static traits", "plastic traits"))
     ),
-  daily_output = raw_output %>%
-    dplyr::mutate(date = lubridate::as_date(posix)) %>%
-    dplyr::select(-posix, -year) %>%
-    dplyr::group_by(date) %>%
-    dplyr::summarize_all(mean, na.rm = TRUE),
-  monthly_output = raw_output %>%
-    dplyr::mutate(month = lubridate::month(posix)) %>%
-    dplyr::select(-posix) %>%
-    dplyr::group_by(month, year) %>%
-    dplyr::mutate(my = ISOdate(year, month, 1)) %>%
-    dplyr::summarize_all(mean, na.rm = TRUE),
-  annual_output = raw_output %>%
-    dplyr::select(-posix) %>%
-    dplyr::group_by(year) %>%
-    dplyr::summarize_all(mean, na.rm = TRUE),
+  lai_results_fst = write_fst(
+    lai_results,
+    file_out(!!(
+      here("analysis", "data", "derived-data",
+           paste0("results-", created_since)) %>%
+        dir_create() %>%
+        path("lai_results.fst")
+    ))
+  ),
+  results_plot = ggplot(lai_results) +
+    aes(x = month, y = lai, color = pft) +
+    geom_line() +
+    facet_grid(rows = vars(crown_model, rtm),
+               cols = vars(trait_plasticity, n_limitation)) +
+    labs(y = "Leaf area index", color = "PFT") +
+    scale_x_datetime(date_breaks = "2 years",
+                     date_labels = "%Y") +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5),
+          axis.title.x = element_blank()),
+  results_plot_png = save_plot(file_out(!!(
+    here("analysis", "figures", created_since) %>%
+      dir_create() %>%
+      path("lai_10year.png")
+  )), results_plot, base_width = 10, base_height = 7),
+  paper = rmarkdown::render(
+    file_in(!!(here("analysis", "paper", "paper.Rmd"))),
+    "github_document",
+    output_dir = "_rendered_output"
   )
-plan_config <- drake_config(plan)
-make(plan, targets = "raw_year_output")
+)
 
-readd(soil_monthly) %>%
-  ggplot() +
-  aes(x = ymonth, y = mean, ymin = lo, ymax = hi) +
-  geom_line() +
-  facet_wrap(~layer)
-
-readd(annual_output) %>%
-  dplyr::select(year, GPP, NPP, TotalResp, TotSoilCarb, LAI, Tair, Rainf) %>%
-  tidyr::gather(variable, value, -year) %>%
-  ggplot() +
-  aes(x = year, y = value) +
-  geom_line() +
-  facet_grid(variable ~ ., scales = "free_y")
-
-readd(annual_output) %>%
-  dplyr::select(-year) %>%
-  cor() %>%
-  ggcorrplot::ggcorrplot(type = "lower")
-
-readd(annual_output) %>%
-  dplyr::select(year, LAI, Wa) %>%
-  tidyr::gather(variable, value, -year) %>%
-  ggplot() +
-  aes(x = year, y = value) +
-  geom_line() +
-  facet_grid(variable ~ ., scales = "free_y")
-
-readd(monthly_output) %>%
-  dplyr::ungroup() %>%
-  dplyr::select(my, LAI, WaterTableD) %>%
-  tidyr::gather(variable, value, -my) %>%
-  ggplot() +
-  aes(x = my, y = value) +
-  geom_line() +
-  facet_grid(variable ~ ., scales = "free_y")
-
-ggsave("analysis/figures/ed_cruncep_climate.pdf", width = 8, height = 5)
-
-readd(daily_output) %>%
-  ggplot() +
-  aes(x = date, y = Wind) +
-  geom_line()
-
-readd(daily_output) %>% dplyr::glimpse()
-
-## raw_output = PEcAn.utils::read.output(
-##   ncfiles = readd(file_names),
-##   variables = NULL,                   # All variables
-##   verbose = TRUE,
-##   dataframe = TRUE
-## )
+future::plan(future.callr::callr)
+dconf <- drake_config(plan)
+make(plan, parallelism = "future", jobs = availableCores())
