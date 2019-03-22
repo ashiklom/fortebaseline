@@ -77,7 +77,8 @@ run_ed_ensemble <- function(start_date, end_date,
   site_id <- 1000000033                   # UMBS disturbance
   workflow <- pecanapi::insert_new_workflow(con, site_id, model_id,
                                             start_date = start_date,
-                                            end_date = end_date)
+                                            end_date = end_date,
+                                            notes = notes)
 
   settings <- list() %>%
     pecanapi::add_workflow(workflow) %>%
@@ -104,6 +105,10 @@ run_ed_ensemble <- function(start_date, end_date,
         prerun = "ulimit -s unlimited",
         barebones_ed2in = "true",
         ed2in_tags = list(
+          IMOUTPUT = 3,  # Monthly analysis files
+          ISOUTPUT = 3,  # History files...
+          FRQSTATE = 1,  # ...every 1
+          UNITSTATE = 2, # ...month
           IOOUTPUT = 0,
           PLANT_HYDRO_SCHEME = 0,
           ISTOMATA_SCHEME = 0,
@@ -113,7 +118,7 @@ run_ed_ensemble <- function(start_date, end_date,
           CROWN_MOD = as.integer(crown_model),
           N_PLANT_LIM = as.integer(n_limit_ps),
           N_DECOMP_LIM = as.integer(n_limit_soil),
-          INCLUDE_THESE_PFT = "6,9,10,11",
+          INCLUDE_THESE_PFT = "6,9,10,11"
         )
       )
     )) %>%

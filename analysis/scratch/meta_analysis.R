@@ -1,8 +1,5 @@
-# begin imports
-import::from("RPostgres", "Postgres", .into = "")
-import::from("DBI", "dbConnect", .into = "")
-import::from("tibble", "tribble", .into = "")
-# end imports
+library(tidyverse)
+library(RPostgres)
 
 con <- dbConnect(
   Postgres(),
@@ -23,42 +20,22 @@ bety2try <- tribble(
   "root_respiration_rate", 1189
 )
 
-# Begin example
-## con <- PEcAn.DB::db.open(...)
-## if (FALSE) {
-##   pft <- "temperate.Early_Hardwood"
-##   pft_id <- PEcAn.DB::db.query("SELECT id FROM pfts WHERE name = $1", con,
-##                                values = list(pft))[[1]]
-##   traits <- c("SLA", "Vcmax")
-##   trait_string <- paste(shQuote(traits), collapse = ",")
-
-##   species <- PEcAn.DB::query.pft_species(pft, con = con)
-##   trait.data <- PEcAn.DB::query.traits(species[["id"]], c("SLA", "Vcmax"), con = con)
-##   prior.distns <- PEcAn.DB::query.priors(pft_id, trait_string, con = con)
-
-##   jagged.data <- lapply(trait.data, PEcAn.MA::jagify)
-##   taupriors <- list(tauA = 0.01,
-##                     tauB = c(SLA = 1000, Vcmax = 1000))
-##   result <- pecan.ma(jagged.data, prior.distns, taupriors,
-##                      j.iter = 5000, outdir = tempdir(),
-##                      logfile = NULL)
-## }
-# End example
-
-pft <- "umbs.early_hardwood"
+pft <- "umbs.northern_pine"
 pft_id <- PEcAn.DB::db.query("SELECT id FROM pfts WHERE name = $1", con, values = list(pft))[[1]]
 species <- PEcAn.DB::query.pft_species("umbs.early_hardwood", con = con)
+
+priors <- PEcAn.DB::query.priors(
+  pft_id,
+  ## trtstr = bety2try[["bety_name"]],
+  con = con
+)
+
 trait_data <- PEcAn.DB::query.traits(
   species[["id"]],
-  bety2try[["bety_name"]],
+  rownames(priors),
   con = con
 )
 jagged_data <- lapply(trait_data, PEcAn.MA::jagify)
-priors <- PEcAn.DB::query.priors(
-  pft_id,
-  trtstr = bety2try[["bety_name"]],
-  con = con
-)
 taupriors <- list(
   tauA = 0.01,
   tauB = setNames(rep(0.01, nrow(priors)), rownames(priors))
@@ -72,3 +49,16 @@ ma_result <- PEcAn.MA::pecan.ma(
   outdir = outdir,
   logfile = NULL
 )
+
+summarize_ma <- function(result) {
+  smry <- summary(result)
+  dfs <- purrr::map(smry[1:2], tibble::as_tibble, rownames = "variable")
+  dplyr::left_join(dfs[[1]], dfs[[2]], by = "variable")
+}
+
+ma_summary <- map_dfr(ma_result, summarize_ma, .id = "pft")
+ma_traits <- ma_summary %>%
+  select(pft, variable, Mean) %>%
+  filter(variable %in% c("beta.o", "sd.y")) %>%
+  spread(variable, Mean)
+ma_traits
