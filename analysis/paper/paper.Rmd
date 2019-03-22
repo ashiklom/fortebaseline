@@ -26,11 +26,11 @@ knitr::opts_chunk$set(
   warning = FALSE,
   message = FALSE,
   echo = FALSE,
-  comment = "#>",
-  fig.path = "../figures/"
+  comment = "#>"
+  ## fig.path = "../figures/"
 )
 
-library(fortebaseline) # Or use devtools::load_all('.', quiet = T) if your code is in script files, rather than as functions in the `/R` diretory
+## library(fortebaseline) # Or use devtools::load_all('.', quiet = T) if your code is in script files, rather than as functions in the `/R` diretory
 ```
 
 # Introduction
@@ -313,9 +313,14 @@ In this study, we run a factorial experiment of ED2 with the following features 
 
 # Results
 
-```{r get-data, eval = FALSE}
-# Note the path that we need to use to access our data files when rendering this document
-my_data <- readr::read_csv("../data/raw_data/my_csv_file.csv")
+```{r, include = FALSE}
+lai_10yr_cap <- paste(
+  "ED2 leaf area index (LAI) predictions by plant functional type."
+)
+```
+
+```{r lai_10yr, fig.cap = lai_10yr_cap, fig.dim = c(10, 7)}
+readd(results_plot)
 ```
 
 # Discussion

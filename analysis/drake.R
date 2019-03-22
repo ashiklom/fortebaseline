@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 library(drake)
 library(fortebaseline)
 library(ggplot2)
@@ -21,7 +22,6 @@ import::from("future", "plan", "availableCores", .into = "")
 # end imports
 
 expose_imports("fortebaseline")
-theme_set(theme_cowplot())
 
 created_since <- "2019-03-20"
 
@@ -92,6 +92,7 @@ plan <- drake_plan(
     labs(y = "Leaf area index", color = "PFT") +
     scale_x_datetime(date_breaks = "2 years",
                      date_labels = "%Y") +
+    cowplot::theme_cowplot() +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5),
           axis.title.x = element_blank()),
   results_plot_png = save_plot(file_out(!!(
@@ -99,11 +100,11 @@ plan <- drake_plan(
       dir_create() %>%
       path("lai_10year.png")
   )), results_plot, base_width = 10, base_height = 7),
-  paper = rmarkdown::render(
+  paper = target(
+    rmarkdown::render(
     file_in(!!(here("analysis", "paper", "paper.Rmd"))),
-    "github_document",
-    output_dir = "_rendered_output"
-  )
+    "github_document"
+  ), trigger = trigger(condition = !file.exists("analysis/paper/paper.md")) )
 )
 
 future::plan(future.callr::callr)
