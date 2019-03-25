@@ -41,7 +41,7 @@ At the same time, climate change is likely change the frequency and severity of 
 
 <!-- Add something positive about each of these? Then, the section about models is more compelling. -->
 In trying to anticipate future changes to terrestrial ecosystems, ecologists have four general techniques.
-One approach is to look to the past to see how ecosystems responded to similar changes (REFs).
+One approach is to look to the past to see how ecosystems responded to similar changes (REFs -- e.g. PALEON?).
 This is challenging for two reasons:
 For one, we often have to look very far back to find similar climate changes, and the techniques we have for determining the state of ecosystems in the distant past have limited detail (REF).
 More importantly, there are few (if any) times where the climate has changed as rapidly as it is now, and it is unclear whether slower changes in the past will trigger responses similar to the faster changes happening now (REF).
@@ -117,11 +117,19 @@ Summary of common features (can move into supplement if necessary):
 In this study, we run a factorial experiment of ED2 with the following features enabled or disabled:
 
 - Radiative transfer
-  - Two-stream model
+  - Two-stream model (ED default)
     - Same general approach as in CLM 4.5 [@clm45_note], but rather than solving for just two layers (sunlit and shaded), solve for each canopy layer.
     - Set up the two-stream equations for each layer as a linear system and solve the entire set of equations numerically
     - Similar to approaches used in other models: JULES [@mercado_2007_improving], ORCHIDEE-CAN [@naudts_2015_vertically], CLM(SPA) [@bonan_2014_modeling]
-  - Multiple scatter model **TODO**
+  - Multiple scatter model
+    - Based on @zhao_2005_multiple
+- Crown model
+  - Infinite (ED2 default)
+    - Marginally taller cohorts completely shade out shorter ones
+  - Finite
+    - Cohorts have a finite crown area, so multiple cohorts have access to the same light level
+    - Based on crown area allometries from @dietze_2008_changing
+- Trait plasticity
 
 # Results
 
