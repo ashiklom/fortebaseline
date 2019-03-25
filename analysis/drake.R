@@ -36,7 +36,7 @@ workflow_df <- tbl(default_connection(), "workflows") %>%
   unnest(configs_df) %>%
   select(-notes)
 
-workflows_years = expand.grid(
+workflows_years <- expand.grid(
   workflow_id = as.numeric(pull(workflow_df, workflow_id)),
   year = seq(1902, 1912)
 ) %>%
@@ -72,9 +72,9 @@ plan <- drake_plan(
         factor(c("both", "plant", "decomp", "none")) %>%
         fct_relabel(~paste("N limit:", .x)),
       trait_plasticity = if_else(trait_plasticity,
-                                 "static traits", "plastic traits") %>%
+                                 "plastic traits", "static traits") %>%
         factor(c("static traits", "plastic traits"))
-    ),
+      ),
   lai_results_fst = write_fst(
     lai_results,
     file_out(!!(
@@ -102,9 +102,9 @@ plan <- drake_plan(
   )), results_plot, base_width = 10, base_height = 7),
   paper = target(
     rmarkdown::render(
-    file_in(!!(here("analysis", "paper", "paper.Rmd"))),
-    "github_document"
-  ), trigger = trigger(condition = !file.exists("analysis/paper/paper.md")) )
+      file_in(!!(here("analysis", "paper", "paper.Rmd"))),
+      "github_document"
+    ), trigger = trigger(condition = !file.exists("analysis/paper/paper.md")) )
 )
 
 future::plan(future.callr::callr)
