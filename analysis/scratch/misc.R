@@ -274,3 +274,39 @@ get_ensemble_lai <- function(rundir, years = seq(1902, 1990)) {
     dplyr::mutate(ensemble = !!ensemble)
 }
 
+##################################################
+url_e <- "http://localhost:7999/thredds/dodsC/outputs/PEcAn_99000000080/out/99000000048/analysis-E-1902-06-00-000000-g01.h5"
+hf <- ncdf4::nc_open(url)
+
+names(hf$var)
+
+light <- ncdf4::ncvar_get(hf, "CB_LIGHTMAX")
+light
+
+get_rad_profile <- function(workflow_id, year, month) {
+  filename <- sprintf("history-S-%d-%02d-01-000000-g01.h5", year, month)
+  filepath <- pecanapi::run_dap(workflow_id, filename, port = 7999)
+  nc <- ncdf4::nc_open(filepath)
+  radprof <- ncdf4::ncvar_get(nc, "RAD_PROFILE_CO")
+  radprof
+}
+
+all_rad <- purrr::map(7:12, get_rad_profile,
+                      workflow_id = 99000000080,
+                      year = 1902)
+
+
+all_rad[[1]]
+
+workflow_id <- 99000000080
+year <- 1902
+month <- 7
+
+url_s <- "http://localhost:7999/thredds/dodsC/outputs/PEcAn_99000000080/out/99000000048/history-S-1902-07-01-000000-g01.h5"
+histfile <- ncdf4::nc_open(url_s)
+h_light <- ncdf4::ncvar_get(histfile, "RAD_PROFILE_CO")
+rowMeans(h_light)
+
+url_t <- "http://localhost:7999/thredds/dodsC/outputs/PEcAn_99000000080/out/99000000048/analysis-T-1903-00-00-000000-g01.h5"
+hf_t <- ncdf4::nc_open(url_t)
+light <- ncdf4::ncvar_get(hf_t, "FMEAN_RAD_PRO")
