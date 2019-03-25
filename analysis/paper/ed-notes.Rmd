@@ -224,3 +224,194 @@ f_decomp = N_immobil_supply_scale * mineralized_soil_N /
 
 Whether N decomposition limitation is enabled also affects decay rate of slow carbon pool if using `DECOMP_SCHEME = 2`.
 With N limitation, decay rate is 100.2 year^-1^; otherwise, 0.2 year^-1^.
+
+# Old notes
+
+## ED modules
+
+NOTE: Not a real section; just brainstorming notes for now
+Details about these sub-models will probably makes their way into the methods and/or appendices.
+
+### High priority
+
+These are switches that I understand (more-or-less), and that I think will be most relevant to FoRTe.
+
+- Finite canopy radius (`CROWN_MOD`)
+    - Options:
+        - (0; default): Complete shading
+        - (1): Finite canopy radius (Dietze 2008)
+    - See current hypotheses
+    - This model is based on crown area allometries from @dietze_2008_capturing
+- Nitrogen limitation of photosynthesis (`N_PLANT_LIM`)
+    - Options:
+        - (0, default): No limitation
+        - (1) Limitation based on internal model (TODO: what is it?)
+    - Turning this on _should_ favor mid-successional species, and substantially increase uncertainty.
+- Nitrogen limitation of decomposition (`N_DECOMP_LIM`)
+    - Options:
+        - (0, default): No limitation
+        - (1) Limitation based on internal model (TODO: what is it?)
+    - Same as above
+    
+### Medium priority
+
+These are switches that may be relevant to FoRTE, but may be harder to pull off.
+
+- Big leaf model (no demographics) (`IBIGLEAF`)
+    - Simplistic case
+    - Only one PFT per patch (by definition). Can ask: Does it get the right one?
+    - Compare fluxes against other cases.
+- Canopy radiative transfer model (`ICANRAD`)
+    - Options:
+        - (0, deprecated?) Original two-stream model (Medvigy 2006)
+        - (1) Multiple-scattering model [@zhao_2006_modeling; @zhao_2005_multiple]
+        - (2, default) Updated two-stream model [@liou_2002]
+    - In theory, multiple-scattering model is more detailed and should give "better" results. Open question as to how that affects predictions.
+    - Good candidate for exploratory analysis. I already implemented the two-stream model in R -- could be a good idea to implement the multi-scatter model as well and compare their radiation profiles.
+- Allometry (`IALLOM`)
+    - Options:
+        - (0, default): Original ED2
+        - (1)
+            - Structural biomass parameterized so total AGB similar to @baker_2004_variation, eq. 2. `Balive` similar to ED2.
+            - Root depth configured so root depth is 5m for canopy trees and 0.5 m for grasses/seedlings
+            - Crown area as in @poorter_2006_architecture, with maximum crown area
+        - (2) Like (1), but...
+            - Height to DBH allometry from @poorter_2006_architecture
+            - `Balive` has extra allometric equations (see @cole_2006_allometric and @calvo-alvarado_2008_allometric)
+        - (3) Like (2), but tropical leaf biomass estimated from @lescure_1983_la, and PFT differences in leaf biomass based on SLA rather than wood density. Also, split leaf allometry into small (sapling) and large (tree) classes, as in @cole_2006_allometric
+- Temperature variation of physiology (`IPHYSIOL`)
+    - Options:
+        - (0) Arrhenius function, `Gamma*` based on Foley et al. (1996) (TODO: REF)
+        - (1) Arrhenius, `Gamma*` based on Michaelis-Mentel coefficients for CO2 and O2, as in @farquhar_1980_biochemical
+        - (2; default) Q10 equations and parameters of @collatz_1991_physiological, with MM coefficients. High/low temperature correction in @moorcroft_2001_method
+        - (3) As (2), but `Gamma*` as in @farquhar_1980_biochemical and CLM.
+    - Need to do some exploratory analysis here. Grab the relevant equations and coefficients and plot them (outside of ED) to compare behavior.
+        - Possible angle: More important at temperature extremes?
+    - Consult @rogers_2016_roadmap for inspiration
+- Soil decomposition temperature sensitivity (`DECOMP_SCHEME`)
+    - Options:
+        - (0; default): Exponential
+        - (1) Lloyd and Taylor (1994)
+    - (1) requires additional parameters, so should increase parameteric uncertainty.
+    - Hypothesis: Affects overall GPP/R~E~ balance, but not successional dynamics.
+- Water limitation of photosynthesis (`H2O_PLANT_LIM`)
+    - Options:
+        - (0) No limitation.
+        - (1; default): Supply is total soil water above wilting point integrated across all levels in rooting zone.
+        - (2): Supply is total soil water at field capacity minus wilting point, scaled by "wilting factor":
+          ```
+          # k -- Soil layer
+          # z -- Layer depth
+          # psi -- Matric potential (for layer, or at wp or fc)
+          # wp -- wilting point
+          # fc -- field capacity
+          (psi(k) - (H - z(k)) - psi_wp) / (psi_fc - psi_wp)
+          ```
+    - Sensitivity should depend on site climate and soil conditions.
+    - UMBS are pretty wet sites, so shouldn't expect a huge effect.
+- Quantum yield model (`QUANTUM_EFFICIENCY_T`)
+    - Options:
+        - (0, default): Constant quantum efficiency
+        - (1): Quantum efficiency varies with temperature, based on Ehleringer (1978) (TODO: Get ref)
+    - Uncertainty should increase with (1) assuming parameters are tunable. 
+    - Depends on where UMBS conditions fall within the range of temperatures. Good candidate for exploratory analysis outside of ED.
+- Structural growth (`ISTRUCT_GROWTH_SCHEME`)
+    - Options:
+        - (0; default) Use all `bstorage` (NSC?)
+        - (1) Reserve `bstorage` to re-flush canopy and fine roots once before calculating structural growth.
+    - (1) is a more conservative strategy, so should reduce the growth and relative dominance of early-successional PFTs. In particular, growth rate should decline more with size (because more LAI and fine roots means more reserves needed).
+- Stomatal conductance model (`ISTOMATA_SCHEME`)
+    - Options:
+        - (0, default): Leuning
+        - (1) Katul optimization model (see Xu et al. 2016 New Phyt.)
+    - Need to read more about this...
+- Trait plasticity (`TRAIT_PLASTICITY_SCHEME`)
+    - Options:
+        - (0, default): Static traits
+        - (1) Vm0 (SLA) decrease (increase) with shading, based on Lloyd et al. (2010 Biogeosciences). Updated yearly.
+        - (2) Same as (1), but updated monthly
+        - (-1) Same as 1, but adjust SLA using height
+        - (-2) Same as (2), but adjust SLA using height
+    - If trait plasticity is optimal, this should reduce (?) the relative dominance of early-successional PFTs.
+    - Probably introduces considerable predictive uncertainty, given new parameters for plasticity models.
+- Carbon balance contribution to mortality (`IDDMORT_SCHEME`)
+    - Options:
+        - (0, default): Carbon balance in terms of fluxes only
+        - (1) Carbon balance is offset by storage pool (i.e. carbon storage is an additional buffer against mortality)
+    - Additional protection from (1) should reduce mortality for all trees, so will probably reinforce dominance of early successional trees?
+    - But likely to interact with other schemes, especially structural growth, which determines size of NSC reserves
+- Percolation and infiltration (`IPERCOL`)
+    - Options:
+        - (0) Constant soil conductivity. Temporary surface water (only exists if top soil layer is saturated) exceeding 1:9 liquid:ice ratio shed via percolation.
+        - (1, default) Constant soil conductivity, with percolation model from Anderson (1976 NOAA technical report NWS 19 TODO). Temporary surface water can exist after heavy rain event even if soil doesn't saturate.
+        - (2) Like (1), but soil conductivity decreases with depth even under constant soil moisture
+    - Presumably, not a huge impact at UMBS because water shouldn't be an issue.
+    - See also `RUNOFF_TIME` (e-folding lifetime of temporary surface water)
+- Carbon stress scheme (`CBR_SCHEME`)
+    - Options:
+        - (0, default): Single stress, with maximum carbon balance determined at full sun and no moisture
+        - (1) Co-limitation of light and moisture; calculate `cb/cb_lightmax` and `cb/cb_moistmax`, and weight based on `DDMORT_CONST` (tunable global[?] parameter)
+        - (2) "Leibig style"; limitation based on whether soil or light are more important (`cb/max(cb_lightmax, cb_moistmax)`)
+    - No idea about this one. Need to do more reading.
+
+### Lower priority
+
+These are processes that I think will not have huge impacts, are farther-removed from the FoRTE project goals, or are things I simply don't understand very well (particularly all the micro-meteorology stuff).
+
+- Branches (`IBRANCH_THERMO`)
+    - Options:
+        - (0) No branches in energy balance or biophysics
+        - (1; default) Branches in energy balance, but not biophysics
+        - (2) Branches in both
+    - In theory, should be a minor component of the energy balance, so impact should be small. This is the hypothesis?
+- Canopy roughness model (`ICANTURB`)
+    - Options:
+        - (0): Based on Leuning et al. (1995; TODO REF). Wind computed using "similarity theory" for top cohort, then extinguished with cumulative LAI.
+        - (1, default) "Default ED2.1 scheme" (TODO: 0? Figure it out!), but using "zero-plane" displacement height.
+        - (2) Massman (1997; TODO) using constant drag and no sheltering factor
+        - (3) Also Massman, but with varying drag and sheltering within canopy
+        - (4) Like 0, but calculate ground conductance following CLM (eq. 5.98-5.100)
+    - No idea, except that (3) will have higher uncertainty than (2). Need to read more about this.
+- Similarity theory model (for canopy roughness) (`ISFCLYRM`)
+    - Computes `u*`, `T*`, etc.
+    - Options:
+        - (1) BRAMS default, based on Louis (1979 TODO). 
+        - (2) Oncley and Dudhia (1995 TODO), based on MM5
+        - (3) Beljaars and Holtslag (1991 TODO); Like (2), but alternative method for stable case that has more mixing
+        - (4, default) CLM (2004; TODO: Check that this is same as 2013?). Like (2) and (3), but with special functions to deal with very stable cases.
+    - Again, no idea. Need to read more about micro-meteorology and how it affects vegetation processes.
+- Ground to canopy conductance (`IED_GRNDVAP`)
+    - Options:
+        - (0, default): Modified Lee Pielke (1992 TODO), with field capacity, but with beta factor without square (as in Noilhan and Planton 1989 TODO). Like original ED2 and LEAF-3.
+        - (1-4) Mahfouf and Noilhan (1991 TODO), #1-4
+        - (5) Combination of (1) (alpha) and (2) (soil resistance)
+    - No idea. Again, need to do some micro-met reading.
+- Tree-fall disturbance rate (`TREEFALL_DISTURBANCE_RATE`)
+    - Options:
+        - (0, default) No treefall disturbance
+        - (> 0) Disturbance rate, in 1/years. Will create new patches.
+        - (< 0) Also rate, but will be added to mortality (kill plants, but no new patches)
+    - Reference value for this is 0.014 trees year^-1^ (note that because of ED's cohort approximation, number of individuals is continuous, not discrete)
+    - See also `TIME2CANOPY`, minimum age for tree-fall disturbance.
+- Growth respiration (`GROWTH_RESP_SCHEME`)
+    - Options:
+        - (0, default) Growth respiration is a tax on GPP, at PFT-specific rate. Treated as aboveground wood to canopy-airspace flux.
+        - (1) Growth respiration calculated as in (0), but split into leaf, sapwood-a, sapwood-b, and root sources proportionally to biomass. No effect on overall C budget, but greater within-ecosystem flux resolution.
+    - These should produce identical results, and if they don't, that means there is a bug!
+    - If output is identical, we should set to (1), since we can always calculate total respiration otherwise.
+- Storage respiration (`STORAGE_RESP_SCHEME`) -- same as growth
+    - Note that this whole system is a _hack_, because there is no real "storage respiration" process. In PEcAn, we hard-code the relevant parameters to zero. An interesting question is whether we may be able to get better results with this hack enabled -- i.e. if it compensates a problem in some other process.
+
+### Almost-certainly omit
+
+These configurations are almost certainly irrelevant to the goals of this paper or will not apply at UMBS (e.g. grass or tropical species).
+Mostly for reference.
+
+- Grass (`IGRASS`) -- I'm not running with any grass PFTs.
+- Phenology (`IPHEN_SCHEME`) -- Differences affect grasses and tropical species. Conifers are always evergreen, and hardwoods are always cold-deciduous (need to check that schemes are the same).
+- Seed dispersal (`REPRO_SCHEME`) -- Only seems to matter for multi-site runs, with some toggles for tropical (drought-deciduous) species.
+- Hydrodynamics (`PLANT_HYDRO_SCHEME`) -- Seems mostly tropics-focused? Look into the Xu et al. (2016; New Phyt.) paper.
+- Fire disturbance (`INCLUDE_FIRE`) -- We know there weren't any fires at UMBS during this time, and more generally are interested in stability.
+    - This could potentially be fun to play with in a later paper about disturbance regimes. Potentially, with Jackie Matthes?
+- Anthropogenic disturbances (`IANTH_DISTURB`) -- We are currently looking at stable state, without disturbances. But, since this pulls values from a dataset, this could be one way to apply the FoRTE treatments.
+
