@@ -147,6 +147,9 @@ In this study, we run a factorial experiment of ED2 with the following features 
     - Cohorts have a finite crown area, so multiple cohorts have access to the same light level
     - Based on crown area allometries from @dietze_2008_changing
 - Trait plasticity
+  - None (ED default) -- Trait values are the same at all canopy heights and light levels
+  - Plastic
+    - V~cmax~(0) decreases with shading, and SLA increases with shading, based on @lloyd_2010_optimisation
 
 # Results
 
@@ -178,6 +181,39 @@ Extent of recovery depends on balance of gross (aboveground?) primary productivi
 # References 
 <!-- The following line ensures the references appear here for the MS Word or HTML output files, rather than right at the end of the document (this will not work for PDF files):  -->
 <div id="refs"></div>
+
+# Appendix 1: Submodel descriptions
+
+## Radiative transfer: Definitions
+
+- $\omega$ -- Clumping factor
+- $LAI$ -- Leaf area index
+- TAI -- Total area index (leaf and woody area)
+- $LAI_e$ / $TAI_e$ -- "Effective" area indices (accounting for clumping)
+
+## Two-stream RTM
+
+<!-- TODO -->
+
+## Multiple scatter RTM
+
+$$ LAI_e = \omega LAI $$
+
+$$ TAI_e = LAI_e + WAI $$
+
+$$ TAI_{l} = \frac{TAI_e}{CAI} $$
+
+Leaf ($w_l$) and wood ($w_w$) weights:
+
+$$ w_l = \frac{LAI_e}{TAI_e} $$
+$$ w_w = 1 - w_l $$
+
+Projected area, based on coefficients $\phi_1$ and $\phi_2$.
+
+$$ a_{proj} = \phi_1 + \phi_2 \mu $$
+
+$$ \lambda = \frac{a_{proj}}{\mu} $$
+
 
 ##### pagebreak
 
