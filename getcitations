@@ -1,8 +1,7 @@
 #!/usr/bin/env Rscript
 
 stopifnot(
-  requireNamespace("jsonlite", quietly = TRUE),
-  requireNamespace("rlang", quietly = TRUE),
+  requireNamespace("stringr", quietly = TRUE),
   requireNamespace("bibtex", quietly = TRUE)
 )
 
@@ -21,13 +20,11 @@ stopifnot(
 )
 
 message("Searching for citations in file ", infile)
-temp_json <- tempfile()
-json_raw <- system2("pandoc", c("-t", "json", infile), stdout = temp_json)
-json <- jsonlite::read_json(temp_json)
-json_flat <- suppressWarnings(rlang::squash(json))
-all_citations <- unlist(json_flat[names(json_flat) == "citationId"])
-citations <- unique(unname(all_citations))
-citations <- citations[order(citations)]
+raw_file <- readLines(infile)
+rxp <- "@[[:alnum:]_]+"
+results_raw <- stringr::str_match_all(raw_file, rxp)
+citations <- sort(unique(do.call(c, results_raw)))
+citations <- stringr::str_remove(citations, "@")
 
 # Read bibtex file
 message("Reading bibfile...")
