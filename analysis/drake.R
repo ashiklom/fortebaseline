@@ -177,8 +177,30 @@ plan <- drake_plan(
 )
 
 future::plan(future.callr::callr)
-dconf <- drake_config(plan)
-make(plan,
-     parallelism = "future",
-     jobs = availableCores(),
-     prework = "devtools::load_all(here::here(), attach_testthat = FALSE)")
+dconf <- drake_config(
+  plan,
+  parallelism = "future",
+  jobs = availableCores(),
+  prework = paste0("devtools::load_all(",
+                   "here::here(), ",
+                   "quiet = TRUE, ",
+                   "attach_testthat = FALSE)")
+)
+
+# It's not recommended to run `drake::make` interactively, but it's
+# convenient. This is a workaround.
+called_with_callr <- as.logical(nchar(Sys.getenv("CALLR")))
+if (interactive()) {
+  # Use r_make to build this reproducibly
+  r_make(here("analysis/drake.R"),
+         callr::r,
+         r_args = list(env = c(callr::rcmd_safe_env(), "CALLR" = "TRUE")))
+} else if (called_with_callr) {
+  # Called with callr::r -- return `dconf`
+  message("Called with callr -- returning dconf")
+  dconf
+} else {
+  # Probably called from a script 
+  message("Called from script. Running `drake::make`.")
+  make(config = dconf)
+}
