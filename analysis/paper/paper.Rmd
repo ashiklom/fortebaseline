@@ -33,6 +33,73 @@ knitr::opts_chunk$set(
 ## library(fortebaseline) # Or use devtools::load_all('.', quiet = T) if your code is in script files, rather than as functions in the `/R` diretory
 ```
 
+# Outline
+
+
+- **Introduction**
+    - Why we need models?
+        - Forests are important, for C sequestration, other ecosystem services
+        - Policy decisions related to forests depend on future projections
+        - We need models to make future projections
+    - What kinds of models are out there?
+        - Traditional: "Big leaf" models
+            - Needed to be simple to run on old computers
+            - Don't need as much data
+            - ...but they fail to capture important processes, which matter not only for accurate predictions about C cycle, but also because they are processes we care about (habitat, forestry, tourism, etc.)!
+        - Individual-based models
+            - Much more detailed, but harder to run, and need much more data.
+            - Trade-off between complexity and accuracy.
+        - Cohort-based models like ED2 as a middle ground?
+    - How much complexity do we need to accurately model ecological succession?
+        - Lots of existing work on parameteric uncertainty (e.g. Dietze, Raczka, others).
+        - Less on structural uncertainty -- i.e. not just what coefficients do we use, but what _equations_, and more generally, what _processes_ do we even consider?
+    - What are the processes that drive succession of ecological communities?
+        - Competition for light
+        - Competition for nutrients
+        - Competition for water?
+        - Others?
+        - Brief review of community/ecosystem ecology of the Upper Midwest
+    - Guiding questions:
+        - Which of these processes do we need to be able to accurately model what happens ("community succession and C cycle dynamics") to Midwestern forests?
+        - What is the cost of considering these processes, in terms of additional parameteric uncertainty?
+        - What are the relative contributions of parameteric uncertainty (data limitation) vs. structural uncertainty (theoretical limitation?)?
+    - Study overview:
+        - ED with factorial combination of submodels
+        - Ensemble analysis to look at parameter uncertainty
+- **Methods**
+    - Site description
+    - ED2 model description
+        - Common features
+        - Submodel descriptions (in brief; more details in appendices)
+            - Two-stream RTM
+            - Multiple-scatter RTM
+            - Finite canopy radius model
+            - Trait plasticity scheme
+            - N limitation (?)
+    - Data sources
+        - TRY data
+        - Other data? FIA? Remote sensing?
+    - Modeling workflow (PEcAn, etc.)
+    - Data analysis
+        - Structural vs. parametric uncertainty
+        - Comparison against "reality"
+- **Results**
+    - Summary:
+        - LAI time series with uncertainties, faceted by model structure
+    - Structural uncertainty details
+        - Fig: RTM comparison (Radiation profile)
+        - Fig: Crown model comparison
+        - Fig: Trait plasticity?
+    - Uncertainty analysis
+        - Which parameters contribute the most uncertainty?
+        - Structural vs. parameteric uncertainty
+- **Discussion**
+    - (Generally, mirrors results section)
+    - Overview of major findings
+    - Ecological implications of structural uncertainty
+    - Implications of uncertainty analysis for future data collection and model development
+    - Future directions: Predicting disturbance response
+
 # Introduction
 
 Earth's climate is changing, and its terrestrial ecosystems are likely to be affected (REF: IPCC).
@@ -111,6 +178,9 @@ Constraining these parameters should be a high priority...
 @katul_2003_relationship
 
 # Methods
+
+## General outline
+
 
 ## Site description
 
