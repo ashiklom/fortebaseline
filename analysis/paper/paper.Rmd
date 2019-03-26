@@ -153,14 +153,25 @@ In this study, we run a factorial experiment of ED2 with the following features 
 
 # Results
 
-```{r, include = FALSE}
+```{r captions, include = FALSE}
 lai_10yr_cap <- paste(
   "ED2 leaf area index (LAI) predictions by plant functional type."
 )
+
+rad_barplot_cap <- paste(
+  "Comparison of radiation profiles under two-stream and multiple scatter",
+  "canopy radiative transfer models."
+)
 ```
+
+Different model configurations produce significantly different ecological trajectories.
 
 ```{r lai_10yr, fig.cap = lai_10yr_cap, fig.dim = c(10, 7)}
 readd(results_plot)
+```
+
+```{r rad_prof, fig.cap = rad_barplot_cap, fig.dim = c(5, 7)}
+readd(rad_lineplot)
 ```
 
 # Discussion

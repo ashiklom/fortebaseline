@@ -1,12 +1,15 @@
 #!/usr/bin/env Rscript
 library(drake)
-library(fortebaseline)
 library(ggplot2)
+
+## library(fortebaseline)
+devtools::load_all(here::here(), attach_testthat = FALSE)
+expose_imports("fortebaseline")
 
 # begin imports
 import::from("dplyr", "tbl", "filter", "select", "collect", "mutate",
              "pull", "case_when", "rename", "ungroup", "group_by", "left_join",
-             "if_else", "group_by_at", "bind_rows", .into = "")
+             "if_else", "group_by_at", "bind_rows", "summarize_all", .into = "")
 import::from("tidyr", "unnest", .into = "")
 import::from("tibble", "as_tibble", .into = "")
 import::from("here", "here", .into = "")
@@ -21,32 +24,43 @@ import::from("future.callr", "callr", .into = "")
 import::from("future", "plan", "availableCores", .into = "")
 # end imports
 
-expose_imports("fortebaseline")
-
 created_since <- "2019-03-20"
 
-workflow_df <- tbl(default_connection(), "workflows") %>%
-  filter(start_date == "1902-06-01",
-         end_date == "1912-12-31",
-         created_at > created_since) %>%
-  select(workflow_id = id, start_date, end_date, notes) %>%
-  collect() %>%
-  mutate(configs_df = map(notes, parse_notes),
-         workflow_id = as.numeric(workflow_id)) %>%
-  unnest(configs_df) %>%
-  select(-notes)
+workflow_df <- tryCatch(
+  readd(workflow_df_drake),
+  error = function(e) {
+    tbl(default_connection(), "workflows") %>%
+      filter(start_date == "1902-06-01",
+             end_date == "1912-12-31",
+             created_at > created_since) %>%
+      select(workflow_id = id, start_date, end_date, notes) %>%
+      collect() %>%
+      mutate(configs_df = map(notes, parse_notes),
+             workflow_id = as.numeric(workflow_id)) %>%
+      unnest(configs_df) %>%
+      select(-notes)
+  }
+)
 
-workflows_years <- expand.grid(
-  workflow_id = as.numeric(pull(workflow_df, workflow_id)),
-  year = seq(1902, 1912)
-) %>%
-  as_tibble() %>%
-  mutate(startmonth = case_when(year == 1902 ~ 6, TRUE ~ 1))
+workflows_years <- tryCatch(
+  readd(workflows_years_drake),
+  error = function(e) {
+    expand.grid(
+      workflow_id = as.numeric(pull(workflow_df, workflow_id)),
+      year = seq(1902, 1912)
+    ) %>%
+      as_tibble() %>%
+      mutate(startmonth = case_when(year == 1902 ~ 6, TRUE ~ 1))
+  }
+)
 
 plan <- drake_plan(
+  workflow_df_drake = workflow_df,
+  workflows_years_drake = workflows_years,
   lai_raw = target(
     possibly(get_monthly_lai, NULL)(workflow_id, year, startmonth),
-    transform = map(!!!workflows_years)
+    transform = map(!!!workflows_years),
+    trigger = trigger(condition = FALSE, mode = "condition")
   ),
   lai_data = target(
     bind_rows(lai_raw),
@@ -74,7 +88,7 @@ plan <- drake_plan(
       trait_plasticity = if_else(trait_plasticity,
                                  "plastic traits", "static traits") %>%
         factor(c("static traits", "plastic traits"))
-      ),
+    ),
   lai_results_fst = write_fst(
     lai_results,
     file_out(!!(
@@ -104,9 +118,64 @@ plan <- drake_plan(
     rmarkdown::render(
       file_in(!!(here("analysis", "paper", "paper.Rmd"))),
       "github_document"
-    ), trigger = trigger(condition = !file.exists("analysis/paper/paper.md")) )
+    )),
+  # Representative workflows for two-stream and multiple scatter
+  wfid_twostream = workflow_df %>%
+    filter(!multiple_scatter, !crown_model, !trait_plasticity,
+           !n_limit_soil, n_limit_ps) %>%
+    pull(workflow_id),
+  wfid_multiscatter = workflow_df %>%
+    filter(multiple_scatter, !crown_model, !trait_plasticity,
+           !n_limit_soil, n_limit_ps) %>%
+    pull(workflow_id),
+  rad_histfile = target(
+    download_history_file(wid, 1910, 7, day, hour),
+    transform = cross(wid = c(wfid_twostream, wfid_multiscatter),
+                      day = !!(seq(1, 10)),
+                      hour = !!(seq(0, 18, 6)))
+  ),
+  rad_results_tidy = target(
+    read_tidy_rad_profile(rad_histfile),
+    transform = map(rad_histfile)
+  ),
+  rad_results = target(
+    bind_rows(rad_results_tidy) %>%
+      mutate(rtm = case_when(workflow_id == wfid_twostream ~ "two stream",
+                             workflow_id == wfid_multiscatter ~ "multiple scatter") %>%
+               factor(c("two stream", "multiple scatter"))),
+    transform = combine(rad_results_tidy)
+  ),
+  rad_results_long = rad_results %>%
+    filter(lubridate::hour(datetime) == 18) %>%
+    group_by(workflow_id, rtm, cohort) %>%
+    select(-datetime) %>%
+    summarize_all(mean) %>%
+    tidyr::gather(variable, value, -workflow_id, -rtm, -cohort) %>%
+    tidyr::separate(variable, c("wave", "type", "direction")),
+  rad_lineplot = rad_results_long %>%
+    filter(value > 0) %>%
+    ggplot() +
+    aes(x = cohort, y = value, linetype = rtm) +
+    geom_line() +
+    facet_grid(vars(wave, type), vars(direction), scales = "free") +
+    labs(x = "Cohort (tallest -> shortest)",
+         y = expression("Radiation" ~ (W ~ m ^ {-2})),
+         linetype = "RTM type") +
+    theme_cowplot(),
+  rad_barplot = rad_results_long %>%
+    filter(cohort == 1) %>%
+    ggplot() +
+    aes(x = rtm, y = value) +
+    geom_col() +
+    facet_grid(vars(wave, type), vars(direction), scales = "free") +
+    labs(x = "RTM type",
+         y = expression("Radiation" ~ (W ~ m ^ {-2}))) +
+    theme_cowplot()
 )
 
 future::plan(future.callr::callr)
 dconf <- drake_config(plan)
-make(plan, parallelism = "future", jobs = availableCores())
+make(plan,
+     parallelism = "future",
+     jobs = availableCores(),
+     prework = "devtools::load_all(here::here(), attach_testthat = FALSE)")

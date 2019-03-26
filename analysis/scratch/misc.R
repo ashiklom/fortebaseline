@@ -310,3 +310,79 @@ rowMeans(h_light)
 url_t <- "http://localhost:7999/thredds/dodsC/outputs/PEcAn_99000000080/out/99000000048/analysis-T-1903-00-00-000000-g01.h5"
 hf_t <- ncdf4::nc_open(url_t)
 light <- ncdf4::ncvar_get(hf_t, "FMEAN_RAD_PRO")
+
+##################################################
+wf_sub <- workflow_df %>%
+  filter(!(n_limit_soil & !n_limit_ps)) %>%
+  select(-dplyr::ends_with("_date")) %>%
+  dplyr::arrange(workflow_id)
+
+ids <- wf_sub %>%
+  filter(!trait_plasticity, n_limit_ps, !n_limit_soil)
+# 88, 90, 104, 106
+
+wfid <- 99000000088
+## outfile <- pecanapi::run_dap(wfid, "analysis-D-1910-07-05-000000-g01.h5")
+hist_dates <- as_tibble(expand.grid(time = seq(0, 18, 6), day = seq(1, 10)))
+files <- with(hist_dates, sprintf("history-S-1910-07-%02d-%02d0000-g01.h5", day, time))
+
+outdir <- file.path("analysis/data/model_output/histfiles/", wfid)
+dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
+for (f in files) {
+  message("Processing file: ", f)
+  url <- pecanapi::run_url(wfid, f)
+  outfile <- file.path(outdir, f)
+  if (!file.exists(outfile)) download.file(url, outfile)
+  ## nc <- ncdf4::nc_open(url)
+  ## l[[f]] <- ncdf4::ncvar_get(nc, "RAD_PROFILE_CO")
+  ## ncdf4::nc_close(nc)
+}
+
+result <- purrr::map(
+  files,
+  function(x) {
+    path <- pecanapi::run_dap(wfid, x)
+    ## path <- file.path(outdir, x)
+    nc <- ncdf4::nc_open(path)
+    on.exit(ncdf4::nc_close(nc), add = TRUE)
+    ncdf4::ncvar_get(nc, "RAD_PROFILE_CO")
+  }
+)
+names(result) <- files
+
+tidy_rad_profile <- function(rad_prof) {
+  trad_prof <- t(rad_prof)
+  colnames(trad_prof) <- c(
+    "PAR_beam_down", "PAR_beam_up",
+    "PAR_diff_down", "PAR_diff_up",
+    "NIR_beam_down", "NIR_beam_up",
+    "NIR_diff_down", "NIR_diff_up",
+    "TIR_diff_down", "TIR_diff_up"
+  )
+  tibble::as_tibble(trad_prof) %>%
+    dplyr::mutate(cohort = dplyr::row_number()) %>%
+    dplyr::select(cohort, dplyr::everything())
+}
+
+result_tidy <- purrr::map_dfr(result, tidy_rad_profile, .id = "file") %>%
+  dplyr::mutate(datetime = file %>%
+                  stringr::str_extract( "([[:digit:]]+-)+[[:digit:]]+") %>%
+                  lubridate::ymd_hms()) %>%
+  dplyr::select(datetime, cohort, dplyr::everything())
+
+result_tidy %>%
+  dplyr::select(-file) %>%
+  tidyr::gather(variable, value, -datetime, -cohort) %>%
+  dplyr::mutate(variable = forcats::fct_inorder(variable)) %>%
+  ## filter(cohort == 1,
+  ##        datetime < "1910-07-03") %>%
+  ggplot() +
+  aes(x = datetime, y = value, color = factor(cohort)) +
+  geom_line() +
+  facet_wrap(vars(variable), scales = "free_y")
+
+stringr::str_extract(files[[2]], "([[:digit:]]+-)+[[:digit:]]+") %>% lubridate::ymd_hms()
+
+
+outfile <- pecanapi::run_dap(wfid, "history-S-1910-07-05-120000-g01.h5")
+nc <- ncdf4::nc_open(outfile)
