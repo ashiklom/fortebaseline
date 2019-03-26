@@ -60,6 +60,8 @@ plan <- drake_plan(
   lai_raw = target(
     possibly(get_monthly_lai, NULL)(workflow_id, year, startmonth),
     transform = map(!!!workflows_years),
+    # HACK: Don't re-download all of these. It takes forever, and
+    # isn't very reliable.
     trigger = trigger(condition = FALSE, mode = "condition")
   ),
   lai_data = target(
