@@ -163,7 +163,8 @@ plan <- drake_plan(
     labs(x = "Cohort (tallest -> shortest)",
          y = expression("Radiation" ~ (W ~ m ^ {-2})),
          linetype = "RTM type") +
-    theme_cowplot(),
+    theme_cowplot() +
+    theme(legend.position = "bottom"),
   rad_barplot = rad_results_long %>%
     filter(cohort == 1) %>%
     ggplot() +
