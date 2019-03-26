@@ -19,7 +19,8 @@ import::from("forcats", "fct_relabel", .into = "")
 import::from("cowplot", "save_plot", "theme_cowplot", .into = "")
 import::from("furrr", "future_pmap_dfr", .into = "")
 import::from("magrittr", "%>%", .into = "")
-import::from("purrr", "map", "possibly", .into = "")
+import::from("purrr", "map", "possibly", "discard", "safely",
+             "negate", "map_dfr", .into = "")
 import::from("future.callr", "callr", .into = "")
 import::from("future", "plan", "availableCores", .into = "")
 # end imports
@@ -173,10 +174,30 @@ plan <- drake_plan(
     facet_grid(vars(wave, type), vars(direction), scales = "free") +
     labs(x = "RTM type",
          y = expression("Radiation" ~ (W ~ m ^ {-2}))) +
-    theme_cowplot()
+    theme_cowplot(),
+  # Trait plasticity analysis
+  plastic_wfids = workflow_df %>%
+    filter(trait_plasticity) %>%
+    pull(workflow_id),
+  cohort_raw_data = target(
+    map(plastic_wfids, safely(read_cohort_history),
+        year = years, month = months),
+    transform = cross(years = !!seq(1902, 1910),
+                      months = !!seq(7, 8, 9))
+  ),
+  cohort_raw_list = target(
+    c(cohort_raw_data),
+    transform = combine(cohort_raw_data)
+  ),
+  cohort_data = cohort_raw_list %>%
+    discard(~is.null(.x[["result"]])) %>%
+    map_dfr("result")
 )
 
+# Parallelism configuration. Not sure which of these is better...
 future::plan(future.callr::callr)
+## future::plan(future::multiprocess)
+
 dconf <- drake_config(
   plan,
   parallelism = "future",

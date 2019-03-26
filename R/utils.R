@@ -41,6 +41,29 @@ pb_along <- function(x, ...) {
   progress::progress_bar$new(total = length(x), ...)
 }
 
+#' Add progress bar to function `.f`
+#'
+#' @param .f Function call to which to add a progress bar.
+#' @param ... Arguments to `.f`
+#' @param .pb Progress bar object
+#' @return Function call that includes a call to `pb$tick()`.
+#' @export
+with_prog <- function(.f, ..., .pb = NULL) {
+  function(...) {
+    if (!is.null(.pb)) .pb$tick()
+    .f(...)
+  }
+}
+
+#' Create a progress bar with total = `n`
+#'
+#' @param n Number of progress ticks
+#' @return Progress bar object
+#' @export
+pbn <- function(n, ...) {
+  progress::progress_bar$new(total = n, ...)
+}
+
 #' Read an `Rdata` file into a list (rather than into the global
 #' environment)
 #'

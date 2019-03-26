@@ -370,19 +370,48 @@ result_tidy <- purrr::map_dfr(result, tidy_rad_profile, .id = "file") %>%
                   lubridate::ymd_hms()) %>%
   dplyr::select(datetime, cohort, dplyr::everything())
 
-result_tidy %>%
-  dplyr::select(-file) %>%
-  tidyr::gather(variable, value, -datetime, -cohort) %>%
-  dplyr::mutate(variable = forcats::fct_inorder(variable)) %>%
-  ## filter(cohort == 1,
-  ##        datetime < "1910-07-03") %>%
+##################################################
+# Plastic traits
+##################################################
+library(tidyverse)
+
+year <- 1910
+month <- 7
+workflow_id <- readd(plastic_wfids)[[3]]
+filename <- sprintf("history-S-%04d-%02d-%02d-%02d0000-g01.h5", year, month, 1, 0)
+url <- pecanapi::run_dap(workflow_id, filename, port = 7999)
+nc <- ncdf4::nc_open(url)
+ncdf4::nc_close(nc)
+
+hist_matrix <- as_tibble(expand.grid(
+  workflow_id = pull(workflows_years, workflow_id) %>% head(3),
+  year = seq(1902, 1905),
+  month = seq(6, 8)
+))
+
+future::plan(future.callr::callr)
+
+cohorts <- pmap(hist_matrix, with_prog(safely(read_cohort_history), .pb = pbn(NROW(hist_matrix))))
+cohorts <- future_map(hist_matrix, safely(read_cohort_history))
+cohort_data <- cohorts %>%
+  discard(~is.null(.x[["result"]])) %>%
+  map_dfr("result")
+## cohorts <- purrr::pmap(hist_matrix, with_prog(read_cohort_history, .pb = pbn(NROW(hist_matrix))))
+
+cohort_data %>%
+  group_by(pft) %>%
+  summarize(vm0 = var(vm0), sla = var(sla))
+
+cohort_data %>%
+  group_by(workflow_id, datetime) %>%
+  mutate(cohort = row_number()) %>%
+  ungroup(workflow_id, datetime) %>%
   ggplot() +
-  aes(x = datetime, y = value, color = factor(cohort)) +
+  aes(x = datetime, y = lai_co, color = factor(pft)) +
   geom_line() +
-  facet_wrap(vars(variable), scales = "free_y")
+  geom_point() +
+  facet_wrap(vars(workflow_id), scales = "free_y")
 
-stringr::str_extract(files[[2]], "([[:digit:]]+-)+[[:digit:]]+") %>% lubridate::ymd_hms()
-
-
-outfile <- pecanapi::run_dap(wfid, "history-S-1910-07-05-120000-g01.h5")
-nc <- ncdf4::nc_open(outfile)
+readd(workflow_df) %>%
+  filter(workflow_id == 99000000089) %>%
+  dplyr::glimpse()
