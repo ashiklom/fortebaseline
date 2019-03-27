@@ -31,10 +31,19 @@ knitr::opts_chunk$set(
 )
 
 ## library(fortebaseline) # Or use devtools::load_all('.', quiet = T) if your code is in script files, rather than as functions in the `/R` diretory
+n <- 0
+mdcap <- function(text) {
+  n <<- n + 1
+  out <- sprintf("**Figure %d**: %s", n, text)
+  if (grepl("gfm", knitr::opts_knit$get("rmarkdown.pandoc.to"), ignore.case = TRUE)) {
+    out
+  } else {
+    invisible(NULL)
+  }
+}
 ```
 
 # Outline
-
 
 - **Introduction**
     - Why we need models?
@@ -87,17 +96,28 @@ knitr::opts_chunk$set(
     - Summary:
         - LAI time series with uncertainties, faceted by model structure
     - Structural uncertainty details
-        - Fig: RTM comparison (Radiation profile)
-        - Fig: Crown model comparison
-        - Fig: Trait plasticity?
+        - Understory light environment and how it affects species matters
+        - The multiple-scatter
+            - Fig: RTM comparison (Radiation profile)
+            - Fig: Crown model comparison
+            - Fig: Trait plasticity?
     - Uncertainty analysis
         - Which parameters contribute the most uncertainty?
         - Structural vs. parameteric uncertainty
 - **Discussion**
-    - (Generally, mirrors results section)
-    - Overview of major findings
     - Ecological implications of structural uncertainty
+        - Predictions about ecological succession are very sensitive to the understory light environment.
+            - Need a good representation of canopy structure (finite canopy radius)
+            - How you model canopy radiative transfer matters! Small differences in the model can give significant results.
+        - But, trait plasticity can provide an alternative mechanism for success in the understory.
+            - Important modeling implication for all the emerging research on intra-specific trait variability.
+            - This combination of discrete functional types with plastic traits is closer to reality than purely trait-based ("eco-evolutionary?") models or completely discretized models with static traits on the other.
+            - Important caveat: Current implementation is based entirely on tropical data, which has more extreme canopy shading than temperate forests (REF), so tropical species may have evolved stronger trait plasticity than temperate species (REF).
     - Implications of uncertainty analysis for future data collection and model development
+        - Parameter uncertainty is still a _huge_ source of overall model predictive uncertainty. Different parameters can give _qualitatively_ different ecological outcomes.
+        - Looking beyond aggregate variables (e.g. net primary productivity, total LAI) is essential to model evaluation and calibration. It's possible to generate a relatively?
+        - (Expected) Subsurface parameters (e.g. leaf-root ratios) have high sensitivity, but are poorly constrained.
+        - Trait covariance may alleviate some data limitation (Shiklomanov et al. 2018 [preprint])
     - Future directions: Predicting disturbance response
 
 # Introduction
@@ -237,14 +257,16 @@ rad_barplot_cap <- paste(
 ```{r lai_10yr, fig.cap = lai_10yr_cap, fig.dim = c(10, 7)}
 readd(results_plot)
 ```
-`r lai_10yr_cap`
+
+`r mdcap(lai_10yr_cap)`
 
 Different model configurations produce significantly different ecological trajectories.
 
 ```{r rad_prof, fig.cap = rad_barplot_cap, fig.dim = c(5, 7)}
 readd(rad_lineplot)
 ```
-`r rad_barplot_cap`
+
+`r mdcap(rad_barplot_cap)`
 
 # Discussion
 
