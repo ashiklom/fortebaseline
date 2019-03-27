@@ -234,15 +234,17 @@ rad_barplot_cap <- paste(
 )
 ```
 
-Different model configurations produce significantly different ecological trajectories.
-
 ```{r lai_10yr, fig.cap = lai_10yr_cap, fig.dim = c(10, 7)}
 readd(results_plot)
 ```
+`r lai_10yr_cap`
+
+Different model configurations produce significantly different ecological trajectories.
 
 ```{r rad_prof, fig.cap = rad_barplot_cap, fig.dim = c(5, 7)}
 readd(rad_lineplot)
 ```
+`r rad_barplot_cap`
 
 # Discussion
 
