@@ -266,11 +266,6 @@ rad_barplot_cap <- paste(
   "Comparison of radiation profiles under two-stream and multiple scatter",
   "canopy radiative transfer models."
 )
-
-annual_lai_workflows_cap <- paste(
-  "Max annual leaf area index predictions by plant functional type",
-  "across different parameter combinations."
-)
 ```
 
 ```{r lai_10yr, fig.cap = lai_10yr_cap, fig.dim = c(10, 7)}
@@ -293,7 +288,28 @@ Compared to the default two-stream model, the multiple scatter model leads to sl
 
 ## Parameter uncertainty
 
+```{r captions_uncertainty}
+annual_means_cap <- paste(
+  "Total annual gross (GPP) and net (NPP) primary productivity,",
+  "and maximum annual leaf area index (LAI)",
+  "from ED2 parameter ensemble simulations.",
+  "Red lines are mean (solid) and min/max (dashed) values",
+  "from Hardiman et al. (2013)."
+)
+
+annual_lai_workflows_cap <- paste(
+  "Max annual leaf area index predictions by plant functional type",
+  "across different parameter combinations."
+)
+```
+
 {TODO: PEcAn variance decomposition analysis, by configuration.}
+
+```{r annual_means, fig.cap = annual_means_cap, fig.dim = c(5, 7)}
+readd(old_ensemble_plot)
+```
+
+`r mdcap(annual_means_cap)`
 
 ```{r annual_lai_workflows, fig.cap = annual_lai_workflows_cap, fig.dim = c(10, 8)}
 readd(old_lai_plot)
@@ -301,7 +317,7 @@ readd(old_lai_plot)
 
 `r mdcap(annual_lai_workflows_cap)`
 
-Different parameter combinations produce
+Different parameter combinations produce qualitatively different successional outcomes.
 
 # Discussion
 

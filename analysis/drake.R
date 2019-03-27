@@ -11,12 +11,12 @@ import::from("dplyr", "tbl", "filter", "select", "collect", "mutate",
              "pull", "case_when", "rename", "ungroup", "group_by", "left_join",
              "if_else", "group_by_at", "bind_rows", "summarize_all", "summarize",
              .into = "")
-import::from("tidyr", "unnest", .into = "")
-import::from("tibble", "as_tibble", .into = "")
+import::from("tidyr", "unnest", "spread", .into = "")
+import::from("tibble", "as_tibble", "tribble", .into = "")
 import::from("here", "here", .into = "")
 import::from("fs", "dir_create", "path", .into = "")
 import::from("fst", "write_fst", "read_fst", .into = "")
-import::from("forcats", "fct_relabel", .into = "")
+import::from("forcats", "fct_relabel", "lvls_revalue", .into = "")
 import::from("cowplot", "save_plot", "theme_cowplot", .into = "")
 import::from("furrr", "future_pmap_dfr", .into = "")
 import::from("magrittr", "%>%", .into = "")
@@ -121,7 +121,7 @@ plan <- drake_plan(
   )), results_plot, base_width = 10, base_height = 7),
   paper = target(
     rmarkdown::render(
-      file_in(!!(here("analysis", "paper", "paper.Rmd"))),
+      knitr_in(!!(here("analysis", "paper", "paper.Rmd"))),
       "github_document"
     )),
   # Representative workflows for two-stream and multiple scatter
@@ -214,7 +214,50 @@ plan <- drake_plan(
     theme_cowplot() +
     theme(axis.title.x = element_blank(),
           axis.text.x = element_text(angle = 90, vjust = 0.5),
-          legend.position = "bottom")
+          legend.position = "bottom"),
+  old_ensemble = file_in(!!file.path("analysis", "data",
+                                     "derived-data", "ed-ensemble-out.fst")) %>%
+    read_fst() %>%
+    as_tibble() %>%
+    spread(variable, value) %>%
+    group_by(run_id, year = floor_date(time, "year")) %>%
+    summarize(
+      npp = udunits2::ud.convert(sum(npp), "kg m-2", "Mg ha-1") * 60 * 30,
+      gpp = udunits2::ud.convert(sum(gpp), "kg m-2", "Mg ha-1") * 60 * 30,
+      lai = max(lai)
+    ) %>%
+    ungroup() %>%
+    tidyr::gather(variable, value, npp, gpp, lai),
+  hardiman = tribble(
+    ~variable, ~low, ~mean, ~hi,
+    "LAI", 1.8, 4.14, 6.56,
+    "NPP", 1.68, 3.11, 7.26
+  ) %>% mutate(variable = factor(variable, c("GPP", "NPP", "LAI"))),
+  old_ensemble_plot = old_ensemble %>%
+    mutate(variable = factor(variable, c("gpp", "npp", "lai")) %>%
+             lvls_revalue(c("GPP", "NPP", "LAI"))) %>%
+    ggplot() +
+    aes(x = year, y = value, group = run_id) +
+    geom_line(alpha = 0.2) +
+    geom_hline(aes(yintercept = low), data = hardiman,
+               color = "red", linetype = "dashed") +
+    geom_hline(aes(yintercept = mean), data = hardiman,
+               color = "red") +
+    geom_hline(aes(yintercept = hi), data = hardiman,
+               color = "red", linetype = "dashed") +
+    facet_grid(
+      rows = vars(variable),
+      scales = "free_y",
+      labeller = labeller(
+        variable = as_labeller(c(
+          GPP = "GPP ~ (Mg ~ ha^{-1})",
+          NPP = "NPP ~ (Mg ~ ha^{-1})",
+          LAI = "LAI"
+        ), default = label_parsed)
+      )
+    ) +
+    theme_cowplot() +
+    theme(axis.title = element_blank())
 )
 
 # Parallelism configuration. Not sure which of these is better...
@@ -224,8 +267,8 @@ future::plan(future.callr::callr)
 dconf <- drake_config(
   plan,
   parallelism = "future",
-  ## jobs = availableCores(),
-  jobs = 1,
+  jobs = availableCores(),
+  ## jobs = 1,
   prework = paste0("devtools::load_all(",
                    "here::here(), ",
                    "quiet = TRUE, ",

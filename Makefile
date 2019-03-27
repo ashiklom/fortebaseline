@@ -12,7 +12,6 @@ drake: refs analysis/drake.R
 publish: analysis/paper/paper.md
 	cp -rf analysis/paper/paper.md analysis/paper/paper_files analysis/paper/_rendered_output/
 	cd analysis/paper/_rendered_output &&\
-	pwd &&\
 	git checkout rendered &&\
 	git add . &&\
 	git commit --amend -m "Rendered output" &&\

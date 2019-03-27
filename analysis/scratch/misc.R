@@ -415,3 +415,33 @@ cohort_data %>%
 readd(workflow_df) %>%
   filter(workflow_id == 99000000089) %>%
   dplyr::glimpse()
+
+##################################################
+# Old ED ensemble output
+ed_out <- read_fst("analysis/data/derived-data/ed-ensemble-out.fst") %>%
+  as_tibble()
+
+old_ensemble_summary <- ed_out %>%
+  spread(variable, value) %>%
+  group_by(run_id, year = lubridate::floor_date(time, "year")) %>%
+  summarize(npp = sum(npp), gpp = sum(gpp), lai = max(lai)) %>%
+  ungroup() %>%
+  gather(variable, value, npp, gpp, lai)
+
+old_ensemble_summary %>%
+  mutate(variable = factor(variable, c("gpp", "npp", "lai")) %>%
+           lvls_revalue(c("GPP", "NPP", "LAI"))) %>%
+  ggplot() +
+  aes(x = year, y = value, group = run_id) +
+  geom_line(alpha = 0.2) +
+  facet_wrap(vars(variable), scales = "free") +
+  theme_cowplot() +
+  theme(axis.title.x = element_blank())
+
+old_ensemble_summary %>%
+  filter(year == floor_date(year, "10 years")) %>%
+  ggplot() +
+  aes(x = factor(strftime(year, "%Y")), y = value) +
+  geom_violin() +
+  ## geom_jitter() +
+  facet_wrap(vars(variable), scales = "free")
