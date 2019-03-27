@@ -10,13 +10,14 @@ expose_imports("fortebaseline")
 import::from("dplyr", "tbl", "filter", "select", "collect", "mutate",
              "pull", "case_when", "rename", "ungroup", "group_by", "left_join",
              "if_else", "group_by_at", "bind_rows", "summarize_all", "summarize",
-             .into = "")
+             "arrange", .into = "")
 import::from("tidyr", "unnest", "spread", .into = "")
 import::from("tibble", "as_tibble", "tribble", .into = "")
 import::from("here", "here", .into = "")
 import::from("fs", "dir_create", "path", .into = "")
 import::from("fst", "write_fst", "read_fst", .into = "")
-import::from("forcats", "fct_relabel", "lvls_revalue", .into = "")
+import::from("forcats", "fct_relabel", "lvls_revalue", "fct_inorder",
+             .into = "")
 import::from("cowplot", "save_plot", "theme_cowplot", .into = "")
 import::from("furrr", "future_pmap_dfr", .into = "")
 import::from("magrittr", "%>%", .into = "")
@@ -208,7 +209,7 @@ plan <- drake_plan(
     ggplot() +
     aes(x = year, y = max_lai, color = pft) +
     geom_line() +
-    facet_wrap(~run_id) +
+    facet_wrap(vars(factor(run_id, old_npp_max[["run_id"]]))) +
     labs(y = "Max annual leaf area index",
          color = "PFT") +
     theme_cowplot() +
@@ -228,6 +229,12 @@ plan <- drake_plan(
     ) %>%
     ungroup() %>%
     tidyr::gather(variable, value, npp, gpp, lai),
+  old_npp_max = old_ensemble %>%
+    filter(year > "1959-12-31", variable == "npp") %>%
+    group_by(run_id) %>%
+    summarize(npp = mean(value)) %>%
+    ungroup() %>%
+    arrange(npp),
   hardiman = tribble(
     ~variable, ~low, ~mean, ~hi,
     "LAI", 1.8, 4.14, 6.56,

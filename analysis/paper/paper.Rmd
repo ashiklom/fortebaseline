@@ -299,7 +299,9 @@ annual_means_cap <- paste(
 
 annual_lai_workflows_cap <- paste(
   "Max annual leaf area index predictions by plant functional type",
-  "across different parameter combinations."
+  "across different parameter combinations.",
+  "Facets are arranged in order of increasing mean annual NPP",
+  "after 1940."
 )
 ```
 
