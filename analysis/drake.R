@@ -9,12 +9,13 @@ expose_imports("fortebaseline")
 # begin imports
 import::from("dplyr", "tbl", "filter", "select", "collect", "mutate",
              "pull", "case_when", "rename", "ungroup", "group_by", "left_join",
-             "if_else", "group_by_at", "bind_rows", "summarize_all", .into = "")
+             "if_else", "group_by_at", "bind_rows", "summarize_all", "summarize",
+             .into = "")
 import::from("tidyr", "unnest", .into = "")
 import::from("tibble", "as_tibble", .into = "")
 import::from("here", "here", .into = "")
 import::from("fs", "dir_create", "path", .into = "")
-import::from("fst", "write_fst", .into = "")
+import::from("fst", "write_fst", "read_fst", .into = "")
 import::from("forcats", "fct_relabel", .into = "")
 import::from("cowplot", "save_plot", "theme_cowplot", .into = "")
 import::from("furrr", "future_pmap_dfr", .into = "")
@@ -23,6 +24,7 @@ import::from("purrr", "map", "possibly", "discard", "safely",
              "negate", "map_dfr", .into = "")
 import::from("future.callr", "callr", .into = "")
 import::from("future", "plan", "availableCores", .into = "")
+import::from("lubridate", "floor_date", .into = "")
 # end imports
 
 created_since <- "2019-03-20"
@@ -191,7 +193,28 @@ plan <- drake_plan(
   ),
   cohort_data = cohort_raw_list %>%
     discard(~is.null(.x[["result"]])) %>%
-    map_dfr("result")
+    map_dfr("result"),
+  # Old parameter sensitivity analysis
+  old_lai_summary = file_in(!!file.path("analysis", "data",
+                                        "derived-data", "ed-lai-output.fst")) %>%
+    read_fst() %>%
+    as_tibble() %>%
+    group_by(year = floor_date(month, "year"),
+             pft, run_id = ensemble) %>%
+    summarize(max_lai = max(lai)) %>%
+    ungroup(),
+  old_lai_plot = old_lai_summary %>%
+    filter(pft != "Late conifer") %>%
+    ggplot() +
+    aes(x = year, y = max_lai, color = pft) +
+    geom_line() +
+    facet_wrap(~run_id) +
+    labs(y = "Max annual leaf area index",
+         color = "PFT") +
+    theme_cowplot() +
+    theme(axis.title.x = element_blank(),
+          axis.text.x = element_text(angle = 90, vjust = 0.5),
+          legend.position = "bottom")
 )
 
 # Parallelism configuration. Not sure which of these is better...
@@ -201,7 +224,8 @@ future::plan(future.callr::callr)
 dconf <- drake_config(
   plan,
   parallelism = "future",
-  jobs = availableCores(),
+  ## jobs = availableCores(),
+  jobs = 1,
   prework = paste0("devtools::load_all(",
                    "here::here(), ",
                    "quiet = TRUE, ",

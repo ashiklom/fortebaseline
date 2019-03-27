@@ -119,6 +119,13 @@ mdcap <- function(text) {
         - (Expected) Subsurface parameters (e.g. leaf-root ratios) have high sensitivity, but are poorly constrained.
         - Trait covariance may alleviate some data limitation (Shiklomanov et al. 2018 [preprint])
     - Future directions: Predicting disturbance response
+        - FoRTE project -- Forecasting a disturbance.
+            - Compare ecological resilience/memory between model and reality
+    
+Journal ideas:
+
+- _Global Change Biology_ -- 8000 word limit may be OK, especially if many methodological details are punted to the appendices.
+- _Ecological Monographs_ -- To do this topic justice may require a lot of words and figures. It may be hard to squeeze all of this information into a regular research paper.
 
 # Introduction
 
@@ -193,14 +200,7 @@ Based on previous results [@fisher_2015_taking], we predict ED2 will over-predic
 Enabling dynamic N cycling and a finite canopy radius model will alleviate these issues, but will significantly increase the parameteric uncertainty due to strong sensitivity to N-cycling and canopy gap fraction parameters, respectively.
 Constraining these parameters should be a high priority...
 
-### Additional references
-
-@katul_2003_relationship
-
 # Methods
-
-## General outline
-
 
 ## Site description
 
@@ -213,12 +213,13 @@ Constraining these parameters should be a high priority...
 
 ## Model description: ED2
 
-The Ecosystem Demography Model, version 2 (ED2) [@medvigy_2009_mechanistic].
+The Ecosystem Demography Model, version 2.X (ED2) [@medvigy_2009_mechanistic].
 
 Summary of common features (can move into supplement if necessary):
 
 - Cohort-based scaling approach
 - Photosynthesis / stomatal conductance
+    - I think I need to cite @katul_2003_relationship somewhere in here
 - Allometries
 
 In this study, we run a factorial experiment of ED2 with the following features enabled or disabled:
@@ -241,9 +242,22 @@ In this study, we run a factorial experiment of ED2 with the following features 
   - Plastic
     - V~cmax~(0) decreases with shading, and SLA increases with shading, based on @lloyd_2010_optimisation
 
+## Data sources
+
+TRY data [@kattge_2011_try].
+
+Other data from FoRTE? FIA? Remote sensing?
+
+## Modeling workflow
+
+PEcAn parameter sensitivity and uncertainty analysis [@lebauer_2013_facilitating].
+Other PEcAn references: [@dietze_2013_improving].
+
+{TODO: Conceptual diagram of workflow}
+
 # Results
 
-```{r captions, include = FALSE}
+```{r captions}
 lai_10yr_cap <- paste(
   "ED2 leaf area index (LAI) predictions by plant functional type."
 )
@@ -251,6 +265,11 @@ lai_10yr_cap <- paste(
 rad_barplot_cap <- paste(
   "Comparison of radiation profiles under two-stream and multiple scatter",
   "canopy radiative transfer models."
+)
+
+annual_lai_workflows_cap <- paste(
+  "Max annual leaf area index predictions by plant functional type",
+  "across different parameter combinations."
 )
 ```
 
@@ -262,11 +281,27 @@ readd(results_plot)
 
 Different model configurations produce significantly different ecological trajectories.
 
+## Structural uncertainty
+
 ```{r rad_prof, fig.cap = rad_barplot_cap, fig.dim = c(5, 7)}
 readd(rad_lineplot)
 ```
 
 `r mdcap(rad_barplot_cap)`
+
+Compared to the default two-stream model, the multiple scatter model leads to slightly less beam (direct) radiation in the understory but slightly more diffuse radiation.
+
+## Parameter uncertainty
+
+{TODO: PEcAn variance decomposition analysis, by configuration.}
+
+```{r annual_lai_workflows, fig.cap = annual_lai_workflows_cap, fig.dim = c(10, 8)}
+readd(old_lai_plot)
+```
+
+`r mdcap(annual_lai_workflows_cap)`
+
+Different parameter combinations produce
 
 # Discussion
 
