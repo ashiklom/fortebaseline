@@ -21,8 +21,8 @@ bety_workflows <- tbl(con, "workflows") %>%
 
 run_matrix <- tibble(
   crown_model = c(TRUE, FALSE),
-  n_limit_ps = c(TRUE, FALSE),
-  n_limit_soil = c(TRUE, FALSE),
+  ## n_limit_ps = c(TRUE, FALSE),
+  ## n_limit_soil = c(TRUE, FALSE),
   multiple_scatter = c(TRUE, FALSE),
   trait_plasticity = c(TRUE, FALSE)
 ) %>%
@@ -33,7 +33,9 @@ if (!isTRUE(start_workflows)) {
 }
 runs <- purrr::pmap(run_matrix, run_ed_ensemble,
                     start_date = start_date,
-                    end_date = end_date)
+                    end_date = end_date,
+                    nowait = TRUE,
+                    ensemble_size = 10)
 
 workflows <- run_matrix %>%
   mutate(workflow_id = map(runs, "workflow_id") %>% reduce(c),

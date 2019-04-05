@@ -1,3 +1,5 @@
+library(fortebaseline)
+
 # begin imports
 import::from("magrittr", "%>%", .into = "")
 import::from("DBI", "dbConnect", .into = "")
@@ -7,13 +9,7 @@ import::from("dplyr", "mutate", "case_when", "tbl", "inner_join", "semi_join", "
 import::from("pecanapi", "prepared_statement", .into = "")
 # end imports
 
-con <- dbConnect(
-  Postgres(),
-  user = "bety",
-  password = "bety",
-  host = "localhost",
-  port = 7990
-)
+con <- default_connection()
 
 species_list <- file.path("analysis", "data",
                           "derived-data", "species_list.txt") %>%

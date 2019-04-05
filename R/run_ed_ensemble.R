@@ -7,6 +7,8 @@
 #'   "standard".
 #' @param con PEcAn database connection. If `NULL` (default), create a
 #'   connection using default settings.
+#' @param nowait Logical. If `TRUE` (default), tell PEcAn not to wait
+#'   for models to finish running before starting another workflow.
 #' @param crown_model Whether or not to use the finite canopy radius
 #'   model (default = `FALSE`)
 #' @param n_limit_ps Whether or not photosynthesis is N-limited
@@ -18,7 +20,8 @@
 #'   two-stream RTM.
 #' @param trait_plasticity Whether or not to enable the trait
 #'   plasticity scheme (default = `FALSE`)
-#' @param ... Additional modifications to the settings, passed to [utils::modifyList()]
+#' @param ... Additional modifications to the settings, passed to
+#'   [utils::modifyList()]
 #' @return List containing the workflow ID (`workflow_id`) and the
 #'   full settings list object (`settings`)
 #' @author Alexey Shiklomanov
@@ -27,6 +30,7 @@ run_ed_ensemble <- function(start_date, end_date,
                             ensemble_size = 1,
                             pft_type = "umbs",
                             con = NULL,
+                            nowait = TRUE,
                             crown_model = FALSE,
                             n_limit_ps = FALSE,
                             n_limit_soil = FALSE,
@@ -73,7 +77,7 @@ run_ed_ensemble <- function(start_date, end_date,
 
   if (is.null(con)) con <- default_connection()
 
-  model_id <- 99000000001                 # ED develop
+  model_id <- pecanapi::get_model_id(con, "ED2-experimental", "experimental")
   site_id <- 1000000033                   # UMBS disturbance
   workflow <- pecanapi::insert_new_workflow(con, site_id, model_id,
                                             start_date = start_date,
@@ -120,7 +124,8 @@ run_ed_ensemble <- function(start_date, end_date,
           N_DECOMP_LIM = as.integer(n_limit_soil),
           INCLUDE_THESE_PFT = "6,9,10,11"
         )
-      )
+      ),
+      workflow = list(nowait = isTRUE(nowait))
     )) %>%
     modifyList(list(...))
 
