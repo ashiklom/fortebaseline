@@ -447,10 +447,50 @@ old_ensemble_summary %>%
   facet_wrap(vars(variable), scales = "free")
 
 ##################################################
+library(drake)
+
+dplan <- drake_plan(
+  cdat = target(
+    mutate(read_month(file_in(file)),
+           workflow = workflow,
+           run = run,
+           date = date),
+    transform = map(
+      file = !!inputs$month_path,
+      workflow = !!inputs$workflows,
+      run = !!inputs$runs,
+      date = !!inputs$date
+    )
+  ),
+  cohort_data = target(
+    bind_rows(cdat),
+    transform = combine(cdat)
+  )
+)
+
+## dconf <- drake_config(dplan, parallelism = "future", jobs = parallel::detectCores())
+## make(config = dconf)
+future::plan("multiprocess")
+make(dplan, parallelism = "future", jobs = parallel::detectCores())
+
+##################################################
+
 library(tidyverse)
-library(fortebaseline)
-con <- default_connection()
+result <- read_csv("analysis/data/derived-data/lai_10_ensemble.csv") %>%
+  mutate(
+    workflow_id = as.numeric(gsub("PEcAn_", "", workflows))
+  )
 
-
-tbl(con, "pfts") %>%
-  filter(name %like% "umbs%")
+result %>%
+  select(workflow_id, date, pft:wai_co) %>%
+  group_by(workflow_id, date, pft) %>%
+  summarize(lai = sum(lai_co)) %>%
+  summarize(lai_mean = mean(lai),
+            lai_sd = sd(lai),
+            lai_lo = quantile(lai, 0.1),
+            lai_hi = quantile(lai, 0.9)) %>%
+  ggplot() +
+  aes(x = date, y = lai_mean, ymin = lai_lo, ymax = lai_hi) +
+  geom_ribbon(fill = "blue", alpha = 0.5) +
+  geom_line() +
+  facet_wrap(vars(workflow_id))
