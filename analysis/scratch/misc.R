@@ -476,21 +476,108 @@ make(dplan, parallelism = "future", jobs = parallel::detectCores())
 ##################################################
 
 library(tidyverse)
+library(fortebaseline)
+
+result_dir <- file.path("analysis", "data", "model_output", "workflows")
+wf <- tibble(
+  workflows = list.files(result_dir),
+  workflow_id = as.numeric(gsub("PEcAn_", "", workflows)),
+  workflow_paths = file.path(result_dir, workflows),
+  notes = purrr::map(file.path(workflow_paths, "pecan.xml"),
+                     purrr::compose(parse_notes,
+                                    purrr::as_mapper(list("pecan", "info", "notes", 1)),
+                                    xml2::as_list, xml2::read_xml)),
+  xml = purrr::map(file.path(workflow_paths, "pecan.xml"),
+                     purrr::compose(xml2::as_list, xml2::read_xml))
+) %>%
+  select(workflow_id, notes) %>%
+  unnest(notes) %>%
+  transmute(
+    workflow_id = workflow_id,
+    crown = fct_inorder(if_else(crown_model, "finite", "closed")),
+    rtm = fct_inorder(if_else(multiple_scatter, "multi-scatter", "two-stream")),
+    traits = fct_inorder(if_else(trait_plasticity, "plastic", "static"))
+  )
+
+wf %>%
+  unnest(notes) %>%
+  mutate(xml_crown = purrr::map_chr(xml, list("pecan", "model", "ed2in_tags", "CROWN_MOD", 1)),
+         xml_rtm = purrr::map_chr(xml, list("pecan", "model", "ed2in_tags", "ICANRAD", 1))) %>%
+  select(crown_model, xml_crown, multiple_scatter, xml_rtm)
+
+x$pecan$model$ed2in_tags
+
 result <- read_csv("analysis/data/derived-data/lai_10_ensemble.csv") %>%
   mutate(
     workflow_id = as.numeric(gsub("PEcAn_", "", workflows))
   )
 
+# LAI by PFT
+result %>%
+  select(workflow_id, date, pft:wai_co) %>%
+  mutate(pft = factor(pft)) %>%
+  group_by(workflow_id, date, pft) %>%
+  summarize(lai_mean = mean(lai_co),
+            lai_sd = sd(lai_co),
+            lai_lo = quantile(lai_co, 0.25),
+            lai_hi = quantile(lai_co, 0.75)) %>%
+  left_join(wf) %>%
+  ggplot() +
+  aes(x = date, y = lai_mean, ymin = lai_lo, ymax = lai_hi) +
+  geom_ribbon(aes(color = pft, fill = pft), alpha = 0.5) +
+  ## geom_line(aes(color = pft)) +
+  facet_grid(vars(traits), vars(crown, rtm), labeller = label_both)
+
+# Total LAI plot
 result %>%
   select(workflow_id, date, pft:wai_co) %>%
   group_by(workflow_id, date, pft) %>%
   summarize(lai = sum(lai_co)) %>%
   summarize(lai_mean = mean(lai),
             lai_sd = sd(lai),
-            lai_lo = quantile(lai, 0.1),
-            lai_hi = quantile(lai, 0.9)) %>%
+            lai_lo = quantile(lai, 0.25),
+            lai_hi = quantile(lai, 0.75)) %>%
+  left_join(wf) %>%
   ggplot() +
   aes(x = date, y = lai_mean, ymin = lai_lo, ymax = lai_hi) +
   geom_ribbon(fill = "blue", alpha = 0.5) +
   geom_line() +
-  facet_wrap(vars(workflow_id))
+  facet_grid(vars(trait_plasticity), vars(crown_model, multiple_scatter),
+             labeller = label_both)
+
+result %>%
+  select(workflow_id, date, pft, value = crown_area_co) %>%
+  mutate(pft = factor(pft)) %>%
+  group_by(workflow_id, date, pft) %>%
+  summarize(mean = mean(value),
+            lo = quantile(value, 0.25),
+            hi = quantile(value, 0.75)) %>%
+  left_join(wf) %>%
+  ggplot() +
+  aes(x = date, y = mean, ymin = lo, ymax = hi) +
+  geom_ribbon(aes(fill = pft), alpha = 0.5) +
+  facet_grid(vars(traits), vars(crown, rtm), labeller = label_both)
+
+result %>%
+  select(workflow_id, date, pft, runs, value = cbr_bar) %>%
+  mutate(pft = factor(pft)) %>%
+  filter(date < "1904-01-01", pft != 6) %>%
+  ## group_by(workflow_id, pft, runs, date = lubridate::floor_date(date, "years")) %>%
+  ## summarize(value = max(value)) %>%
+  left_join(wf) %>%
+  ggplot() +
+  aes(x = date, y = value) +
+  geom_line(aes(color = pft, group = interaction(runs, pft))) +
+  facet_grid(vars(traits), vars(crown, rtm), labeller = label_both)
+
+# cbr_bar (relative carbon balance) explains death of early hardwood
+# at the beginning of year 2
+
+## Aggregate LAI
+## result %>%
+##   filter(date >= "1909-12-31",
+##          lubridate::month(date) %in% 6:8) %>%
+##   select(workflow_id, runs, pft:wai_co) %>%
+##   group_by(workflow_id, pft, runs) %>%
+##   summarize_all(mean) %>%
+##   gather(variable, value, )
