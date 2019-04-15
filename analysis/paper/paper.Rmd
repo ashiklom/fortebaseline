@@ -168,6 +168,10 @@ Previous uncertainty analyses with ED:
 [@dietze_2014_quantitative]...
 More recently, [@raczka_2018_what]...
 
+[@longo_2019_ed1] provide a description of the most recent version of ED (2.2), and [@longo_2019_ed2] provide an evaluation.
+However, these studies only consider the default configuration of ED2.
+In fact, ED2 provides several alternative structures for some of its submodels.
+
 Light availability is a first order control on photosynthesis, and competition for light is a key process in driving competitive dynamics and community succession.
 How light is distributed through a canopy is therefore critically important to accurately simulating community dynamics.
 Radiative transfer models are used to simulate light proliferation through a canopy.
@@ -213,9 +217,9 @@ Constraining these parameters should be a high priority...
 
 ## Model description: ED2
 
-The Ecosystem Demography Model, version 2.X (ED2) [@medvigy_2009_mechanistic].
-
-Summary of common features (can move into supplement if necessary):
+The Ecosystem Demography Model, version 2.2 (ED2).
+Default configuration is described in [@longo_2019_ed1].
+A brief summary of common features is as follows:
 
 - Cohort-based scaling approach
 - Photosynthesis / stomatal conductance
@@ -229,6 +233,7 @@ In this study, we run a factorial experiment of ED2 with the following features 
     - Same general approach as in CLM 4.5 [@clm45_note], but rather than solving for just two layers (sunlit and shaded), solve for each canopy layer.
     - Set up the two-stream equations for each layer as a linear system and solve the entire set of equations numerically
     - Similar to approaches used in other models: JULES [@mercado_2007_improving], ORCHIDEE-CAN [@naudts_2015_vertically], CLM(SPA) [@bonan_2014_modeling]
+    - For details, see Supplements S9 and S10 in [@longo_2019_ed1].
   - Multiple scatter model
     - Based on @zhao_2005_multiple
 - Crown model
@@ -322,6 +327,11 @@ readd(old_lai_plot)
 Different parameter combinations produce qualitatively different successional outcomes.
 
 # Discussion
+
+## Comparison against other studies
+
+In two tropical sites, ED2 did a good job simulating observed top-of-canopy outgoing shortwave radiation, as well as radiation profiles [@longo_2019_ed2].
+Completely closed canopy (i.e. no finite canopy radius) did not lead to an excessively dark understory; in fact, understory was slightly brighter than observed.
 
 ## Future directions: Disturbance response modeling
 
