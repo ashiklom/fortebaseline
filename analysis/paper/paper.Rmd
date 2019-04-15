@@ -168,6 +168,10 @@ Previous uncertainty analyses with ED:
 [@dietze_2014_quantitative]...
 More recently, [@raczka_2018_what]...
 
+[@rollinson_2017_emergent] -- ED2 paleoclimate
+[@miller_2015_alteration] -- ED2 at Duke FACE
+[@dekauwe_2013_forest] -- ED2 at Duke and Oak Ridge FACE
+
 [@longo_2019_ed1] provide a description of the most recent version of ED (2.2), and [@longo_2019_ed2] provide an evaluation.
 However, these studies only consider the default configuration of ED2.
 In fact, ED2 provides several alternative structures for some of its submodels.
