@@ -176,7 +176,7 @@ More recently, [@raczka_2018_what]...
 However, these studies only consider the default configuration of ED2.
 In fact, ED2 provides several alternative structures for some of its submodels.
 
-Light availability is a first order control on photosynthesis, and competition for light is a key process in driving competitive dynamics and community succession.
+Light availability is a first order control on photosynthesis, and competition for light is a key process in driving competitive dynamics and community succession [@bazzaz_1979_physiological].
 How light is distributed through a canopy is therefore critically important to accurately simulating community dynamics.
 Radiative transfer models are used to simulate light proliferation through a canopy.
 Detailed, 3D representations [@widlowski_2014_abstract; @widlowski_2007_third; @malenovsky_2008_influence] have prohibitively high computational costs for use in dynamic vegetation models.
@@ -250,6 +250,7 @@ In this study, we run a factorial experiment of ED2 with the following features 
   - None (ED default) -- Trait values are the same at all canopy heights and light levels
   - Plastic
     - V~cmax~(0) decreases with shading, and SLA increases with shading, based on @lloyd_2010_optimisation
+    - V~cmax~(0) decline with shade tolerance is supported by classic ecological theory on succession [@bazzaz_1979_physiological]
 
 ## Data sources
 
@@ -263,6 +264,10 @@ PEcAn parameter sensitivity and uncertainty analysis [@lebauer_2013_facilitating
 Other PEcAn references: [@dietze_2013_improving].
 
 {TODO: Conceptual diagram of workflow}
+
+## Analysis of results
+
+Photosynthesis / respiration ratio (i.e. C balance) in light and shade can be used as an indication of succession -- expect early successional species to have higher ratio in light and late successional species to have higher ratio in shade [@bazzaz_1979_physiological].
 
 # Results
 

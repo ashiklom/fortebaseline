@@ -15,7 +15,13 @@ Imports:
     bookdown,
     pecanapi,
     purrr,
-    ncdf4
+    ncdf4,
+    stringr,
+    dplyr,
+    fs,
+    tidyr,
+    xml2,
+    readr
 Remotes:
   pecanproject/pecan/api@develop
 Suggests: 

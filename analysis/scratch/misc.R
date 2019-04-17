@@ -581,3 +581,117 @@ result %>%
 ##   group_by(workflow_id, pft, runs) %>%
 ##   summarize_all(mean) %>%
 ##   gather(variable, value, )
+
+##################################################
+# MonetDB
+library(purrr)
+library(magrittr)
+month_file <- "analysis/data/model_output/workflows/PEcAn_99000000112/out/99000000072/analysis-E-1902-06-00-000000-g01.h5"
+mnc <- ncdf4::nc_open(month_file)
+mnc_vardims <- map(mnc[["var"]], "dim") %>% map(~map_chr(.x, "name"))
+mnc_vardims_p <- map_chr(mnc_vardims, paste, collapse = " ") %>%
+  discard(., grepl("phony_dim", names(.))) %>%
+  map_chr(~gsub("phony_dim_", "", .))
+
+writeLines(sprintf("\"%s\",", names(which(mnc_vardims_p == "0"))))
+
+cohorts <- ncdf4::ncvar_get(mnc, "NCOHORTS_GLOBAL")
+slz <- ncdf4::ncvar_get(mnc, "SLZ")
+
+i2f <- function(i, l) {
+  structure(as.integer(i), levels = levels, class = "factor")
+}
+
+setpft <- function(i) {
+  stopifnot(all(i %in% c(6, 9, 10, 11)))
+  pfts <- c(
+    rep(NA_character_, 5),
+    "Pine", NA_character_, NA_character_,
+    "Early hardwood", "Mid hardwood", "Late hardwood"
+  )
+  ipfts <- pfts[i]
+  factor(ipfts, pfts[c(9:11, 6)])
+}
+
+cohort_vars <- tibble::tribble(
+  ~hdf_varname, ~variable, ~unit,
+  "AGB_CO", "Aboveground biomass", "kgC ~ plant^{-1}",
+  "BALIVE", "Live tissue biomass", "kgC ~ plant^{-1}",
+  "BA_CO", "Basal area", "cm^2",
+  "BDEAD", "Stuctural wood biomass", "kgC ~ plant^{-1}",
+  "BLEAF", "Leaf biomass", "kgC ~ plant^{-1}",
+  "BROOT", "Root biomass", "kgC ~ plant^{-1}",
+  "BSAPWOODA", "Aboveground sapwood biomass", "kgC ~ plant^{-1}",
+  "BSAPWOODB", "Belowground sapwood biomass", "kgC ~ plant^{-1}",
+  "BSEEDS_CO", "Seed biomass", "kgC ~ plant^{-1}",
+  "BSTORAGE", "C storage biomass", "kgC ~ plant^{-1}",
+  "CBR_BAR", "Relative carbon balance", NA_character_,
+  ## "CENSUS_STATUS", "Census recruit status", NA_character_, function(i) i2f(i, c("< 10cm", "new", "established")),
+  "CENSUS_STATUS", "Census recruit status", NA_character_,
+  "CROWN_AREA_CO", "Crown area", NA_character_,
+  "DAGB_DT", "d(AGB)/dt", "kgC ~ plant^{-1} ~ year^{-1}",
+  "DBA_DT", "d(Basal area)/dt", "kgC ~ plant^{-1} ~ year^{-1}",
+  "DBH", "DBH", "cm",
+  "DDBH_DT", "d(DBH)/dt", "cm year^{-1}",
+  "DLNAGB_DT", "d(ln(AGB))/dt", "year^{-1}",
+  "DLNBA_DT", "d(ln(Basal area))/dt", "year^{-1}",
+  "DLNDBH_DT", "d(ln(DBH))/dt", "year^{-1}",
+  "ELONGF", "Leaf drought elongation", "0 - 1",
+  "HITE", "Plant height", "m",
+  "KRDEPTH", "Deepest soil layer for water access", "m",# function(i) slz[i],
+  "LAI_CO", "LAI", NA_character_,
+  "NPLANT", "Stem density", "plants ~ m^{-2}",
+  "PAW_AVG", "Plant available water", "0 - 1",
+  "PFT", "PFT", NA_character_,# setpft,
+  "RECRUIT_DBH", "Monthly recruit status", NA_character_,# function(i) i2f(i, c("<10cm", "new", "established")),
+  "WAI_CO", "Wood area index", NA_character_
+)
+
+x <- tibble::tibble(
+  date = 
+)
+
+  map_dfc(cohort_vars[["hdf_varname"]], ncdf4::ncvar_get, nc = mnc) %>%
+names(x)[[12]]
+for (i in seq_along(x)) {
+  print(i)
+  print(x[[i]])
+}
+
+# Month files dimensions:
+# 0 - Cohort
+# 1 - Site (patch?)
+# 2 - DBH class
+# 3 - PFT
+# 4 - Last 12 months, plus current month 
+# 5 - Disturbance type
+# 6 - Soil layer?
+# 7 - Height class?
+
+# Month files vartypes:
+# Assigned
+# global(slz): 6 -- Soil depth definition (SLZ)
+#
+# Ignored:
+# 5,5,1 -- Disturbance matrix
+# 7 - Height class definition
+#
+# Unassigned:
+# 0 -- Cohort only ---
+# 1 -- Site means ---
+# 3,1 -- PFT scalars ---
+# 3,2,1 -- PFT x DBH class ---
+# 4,0 -- Cohort averages over last 12 months
+# 4,1 -- Site averages over last 12 months
+# 6,1 -- Site averages for soil
+
+t_file <- "analysis/data/model_output/workflows/PEcAn_99000000112/out/99000000072/analysis-T-1902-00-00-000000-g01.h5"
+tnc <- ncdf4::nc_open(t_file)
+
+# T file dimensions:
+# 0 - Time
+# 1 - Site
+# 2 - Soil layer?
+# 3 - DBH class
+# 4 - PFT
+
