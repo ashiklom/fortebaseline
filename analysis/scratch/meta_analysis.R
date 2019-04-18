@@ -1,5 +1,6 @@
 library(tidyverse)
 library(RPostgres)
+library(fortebaseline)
 
 con <- dbConnect(
   Postgres(),
@@ -16,15 +17,20 @@ pfts <- paste0("umbs.", c(
   "northern_pine"
 ))
 
-np_results <- map(pfts, pecan_ma_pft, con = con)
-names(np_results) <- pfts
+PEcAn.logger::logger.setLevel("WARN")
+outfile <- here::here("analysis", "data", "raw-data", "meta-analysis.rds")
+if (!file.exists(outfile)) {
+  ma_results <- map(pfts, pecan_ma_pft, con = con) %>% setNames(pfts)
+  saveRDS(ma_results, outfile)
+} else {
+  ma_results <- readRDS(outfile)
+}
 
-np_summaries <- map_dfr(np_results, summarize_ma, .id = "pft") %>%
-  mutate(pft = fct_relabel(pft, ~gsub("umbs.", "", .x)))
+posterior <- tidy_posterior(ma_results)
 
-ggplot(np_summaries) +
-  ## aes(x = pft, y = beta.o, ymin = beta.o - sd.y, ymax = beta.o + sd.y) +
-  aes(x = pft, y = beta.o) +
-  ## geom_pointrange() +
-  geom_point() +
-  facet_wrap(vars(trait), scales = "free")
+trait_draws %>%
+  mutate(pft = factor(pft, pfts) %>% fct_relabel(~gsub("umbs.", "", .x))) %>%
+  ggplot() +
+  aes(x = pft, y = Mean, ymin = lo, ymax = hi) +
+  geom_pointrange() +
+  facet_wrap(vars(trait), scales = "free_y")

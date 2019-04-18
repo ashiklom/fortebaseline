@@ -26,3 +26,9 @@ ggplot(params_long) +
   geom_violin(color = "black", alpha = 0.5) +
   geom_jitter() +
   facet_wrap(vars(param), scales = "free_y")
+
+##################################################
+trait.mcmc <- ma_result
+trait <- names(trait.mcmc)[[1]]
+
+??fitdistr
