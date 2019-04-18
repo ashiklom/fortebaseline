@@ -218,6 +218,11 @@ Constraining these parameters should be a high priority...
 - Heavily logged in late 1800s and early 1900s, disturbed by fire until 1923
 - Present day composition typical of upper Great Lakes region
 - Previously, the site of the FASET experiment [@gough_2013_sustained; @gough_2008_multi]
+- UMBS is 87% upland and 13% wetland [@bergen_2007_observing]. We focus on the upland ecosystem, which has the following characteristics (from @bergen_2007_observing):
+    - 20.4% moraine, 37.8% high outwash plain, 31.3% low outwash plain, 5.7% lake-margin terrace, 3.6% ice-contact, 1.2% lowland glacial lake
+    - 60.9% aspen-dominated, 16.6% northern hardwood (/Acer saccharum/, /Acer rubrum/, /Fagus grandifolia/, /Tilia americana/ (basswood), /Betula alleghaniensis/ (yellow birch), /Fraxinus americana/ (white ash), /Tsuga canadensis/), 13.3% upland conifer (/Pinus strobus/, /Pinus resinosa/)
+    - 1.6% northern red oak (/Quercus rubra/)
+    - 60.9% transitioning from aspen to next succession, of which: 55.8% to northern hardwood, 34.7% to upland conifer, 3.8% to northern red oak, 2.6% to northern red oak-red maple, 3.1% to upland conifer-northern hardwood
 
 ## Model description: ED2
 
