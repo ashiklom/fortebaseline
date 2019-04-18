@@ -1,18 +1,8 @@
 library(tidyverse)
-library(fortebaseline)
+library(fst)
 
-requireNamespace("fst", quietly = TRUE)
-
-runs <- workflow_run_matrix(type = "run")
-
-path <- runs$path[[1]]
-
-configs <- runs %>%
-  mutate(config = map(path, possibly(read_configxml, NULL))) %>%
-  filter(map_lgl(config, negate(is.null))) %>%
-  unnest()
-
-fst::write_fst(configs, "analysis/data/derived-data/ed-ensemble-params.fst")
+configs <- read_fst(here::here("analysis/data/derived-data/ed-ensemble-params.fst")) %>%
+  as_tibble()
 
 meta_vars <- configs %>%
   select(-workflow_id, -path) %>%
@@ -22,6 +12,8 @@ meta_vars <- configs %>%
   filter(count > 1) %>%
   distinct(variable) %>%
   pull()
+
+meta_vars
 
 params <- configs %>%
   select(workflow_id, run_id, pft, !!!meta_vars)
