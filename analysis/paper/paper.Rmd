@@ -268,6 +268,27 @@ Other data from FoRTE? FIA? Remote sensing?
 PEcAn parameter sensitivity and uncertainty analysis [@lebauer_2013_facilitating].
 Other PEcAn references: [@dietze_2013_improving].
 
+Plant functional type definitions:
+- Early successional hardwood
+    - _Betula papyrifera_ (white/paper birch)
+    - _Populus grandidentata_ (bigtooth aspen)
+    - ?? _Populus tremuloides_ (trembling aspen)
+    - ?? _Prunus pensylvatica_ (fire cherry)
+- Mid successional hardwood
+    - _Quercus rubra_ (red oak)
+    - _Acer rubrum_ (red maple)
+    - ?? _Betula alleghaniensis_ (yellow birch)
+    - ?? _Tilia americana_ (basswood)
+    - ?? _Fraxinus americana_ (white ash)
+- Late successional hardwood
+    - _Acer saccharum_ (sugar maple)
+    - _Fagus grandifolia_ (American beech)
+    - ?? _Ostyra virginiana_ (hop-hornbeam)
+    - ?? _Acer pensylvaticum_ (striped maple)
+- Pine
+    - _Pinus strobus_ (white pine)
+    - ?? _Pinus resinosa_
+
 {TODO: Conceptual diagram of workflow}
 
 ## Analysis of results
