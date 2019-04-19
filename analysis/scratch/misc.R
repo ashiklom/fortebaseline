@@ -507,7 +507,7 @@ wf %>%
 
 x$pecan$model$ed2in_tags
 
-result <- read_csv("analysis/data/derived-data/lai_10_ensemble.csv") %>%
+result <- read_csv("analysis/data/derived-data/") %>%
   mutate(
     workflow_id = as.numeric(gsub("PEcAn_", "", workflows))
   )
@@ -548,39 +548,64 @@ result %>%
 result %>%
   select(workflow_id, date, pft, value = crown_area_co) %>%
   mutate(pft = factor(pft)) %>%
-  group_by(workflow_id, date, pft) %>%
+  group_by(workflow_id, crown, rtm, traits, date, pft) %>%
   summarize(mean = mean(value),
             lo = quantile(value, 0.25),
             hi = quantile(value, 0.75)) %>%
-  left_join(wf) %>%
   ggplot() +
   aes(x = date, y = mean, ymin = lo, ymax = hi) +
   geom_ribbon(aes(fill = pft), alpha = 0.5) +
   facet_grid(vars(traits), vars(crown, rtm), labeller = label_both)
 
 result %>%
-  select(workflow_id, date, pft, runs, value = cbr_bar) %>%
+  select(workflow_id, crown, rtm, traits,
+         date, pft, runs, value = cb) %>%
   mutate(pft = factor(pft)) %>%
-  filter(date < "1904-01-01", pft != 6) %>%
-  ## group_by(workflow_id, pft, runs, date = lubridate::floor_date(date, "years")) %>%
-  ## summarize(value = max(value)) %>%
-  left_join(wf) %>%
+  filter(date < "1903-01-01", pft != "Pine") %>%
   ggplot() +
   aes(x = date, y = value) +
   geom_line(aes(color = pft, group = interaction(runs, pft))) +
+  geom_hline(yintercept = 0, color = "black", linetype = "dashed") +
   facet_grid(vars(traits), vars(crown, rtm), labeller = label_both)
 
-# cbr_bar (relative carbon balance) explains death of early hardwood
-# at the beginning of year 2
+# Weird results for combination of finite canopy radius + two-stream RTM
 
-## Aggregate LAI
-## result %>%
-##   filter(date >= "1909-12-31",
-##          lubridate::month(date) %in% 6:8) %>%
-##   select(workflow_id, runs, pft:wai_co) %>%
-##   group_by(workflow_id, pft, runs) %>%
-##   summarize_all(mean) %>%
-##   gather(variable, value, )
+# cbr_bar (relative carbon balance) explains death of early hardwood
+# at the beginning of year 2.
+
+# root_maintenance_py is very low in year 2 in that combination
+# compared to others. Also because no root growth (mmean_broot_py).
+
+# But also very little leaf biomass (mmean_bleaf_py).
+
+# Also, declining nplant for all mid and some early hardwood.
+
+# ALL of this seems to be because all mid (and some early) hardwoods
+# start with NEGATIVE carbon balance in year 1.
+
+##################################################
+vget <- function(crown, var) {
+  workflow_run_matrix("out") %>%
+    left_join(workflow_structures()) %>%
+    filter(crown == !!crown, rtm == "two-stream", traits == "static") %>%
+    head(1) %>%
+    pull(path) %>%
+    fs::dir_ls(regexp = "analysis-T-1902") %>%
+    ncdf4::nc_open() %>%
+    ncdf4::ncvar_get(toupper(paste0("fmean_", var, "_py")))
+}
+mt <- function(x) if (length(dim(x)) > 1) t(x) else x
+x <- purrr::map(c("closed", "finite"), vget, var = "leaf_") %>%
+  setNames(c("closed", "finite")) %>%
+  map(mt) %>%
+  map(head, 4000)
+xf <- map(x, stats::filter, filter = rep(1/48, 48), sides = 1)
+xm <- do.call(cbind, x)
+xmf <- do.call(cbind, xf)
+matplot(xm, type = 'l', lty = "dashed")
+matplot(xmf, type = 'l', lty = "solid", add = TRUE)
+legend("topright", c("closed", "finite"), col = 1:2, lty = 1)
+names(tnc$var) %>% tolower() %>% gsub("fmean_", "", .) %>% gsub("_py", "", .)
 
 ##################################################
 # MonetDB

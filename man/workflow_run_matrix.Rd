@@ -5,21 +5,20 @@
 \title{Create a `data.frame` of workflow and run IDs and directories.
 Useful as an object over which to iterate.}
 \usage{
-workflow_run_matrix(path = fs::path("analysis", "data", "model_output",
-  "workflows"), since = "1970-01-01", upto = "2050-01-01",
-  type = c("out", "run"))
+workflow_run_matrix(type = c("out", "run"), ...)
 }
 \arguments{
-\item{path}{Path to local workflows. Default is
-`analysis/data/model_output/workflows`.}
-
-\item{since}{Date of earliest workflow to use. Default =
-`1970-01-01`.}
-
-\item{upto}{Date of latest workflow to use. Default = `2050-01-01`.}
-
 \item{type}{Type of output for paths. Either `out` for output or
 `run` for run configuration.}
+
+\item{...}{Arguments passed on to \code{workflow_matrix}
+\describe{
+  \item{path}{Path to local workflows. Default is
+`analysis/data/model_output/workflows`.}
+  \item{since}{Date of earliest workflow to use. Default =
+`1970-01-01`.}
+  \item{upto}{Date of latest workflow to use. Default = `2050-01-01`.}
+}}
 }
 \value{
 `data.frame` of workflow and run IDs and directory paths
