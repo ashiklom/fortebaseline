@@ -133,10 +133,10 @@ Journal ideas:
         - Competition for nutrients? (ED's N model isn't very good. Alternatives are being developed, but not in ED mainline yet.)
 - Brief review of community/ecosystem ecology of the Upper Midwest
     - UMBS is a useful site for testing these theories because of its natural history.
-    - Around 1900, mature forest dominated by white (*Pinus strobus*) and red pine (*P. resinosa*), hemlock (*Tsuga canadensis*), and sugar maple (*Acer saccharum*).
-    - But, repeat harvest and burning between 1880 and 1920 [@kilburn_1960_effects] led to replacement by early successional aspen (*Populus grandidentata* and *P. tremuloides*), birch (*Betula papyrifera*), and cherry (*Prunus pensylvatica*) [@gates_1930_aspen; @barnes_1981_michigan; @friedman_2005_regional_legacies_logging; @bergen_2007_observing].
+    - Around 1900, mature forest dominated by white (_Pinus strobus_) and red pine (_Pinus resinosa_), hemlock (_Tsuga canadensis_), and sugar maple (_Acer saccharum_).
+    - But, repeat harvest and burning between 1880 and 1920 [@kilburn_1960_effects] led to replacement by early successional aspen (_Populus grandidentata_ and _Populus tremuloides_), birch (_Betula papyrifera_), and cherry (_Prunus pensylvatica_) [@gates_1930_aspen; @barnes_1981_michigan; @friedman_2005_regional_legacies_logging; @bergen_2007_observing].
     - Such aspen-dominated secondary forests are sustained by background levels of disturbance, particularly fire [@gates_1930_aspen]
-    - However, due to aggressive fire suppression in the US, these forests are now undergoing succession, primarily to mid/late-successional hardwood (typified by sugar maple and American beech, *Fagus grandifolia*) or upland conifer (typified by red and white pine) [@bergen_2007_observing].
+    - However, due to aggressive fire suppression in the US, these forests are now undergoing succession, primarily to mid/late-successional hardwood (typified by sugar maple and American beech, _Fagus grandifolia_) or upland conifer (typified by red and white pine) [@bergen_2007_observing].
     - The combination of stand-replacing disturbance ~100 years ago and suppressed disturbance since then makes this an ideal site for testing a vegetation model run from bare ground without having to prescribe disturbance.
 - Guiding questions:
     - Which of these processes do we need to be able to accurately model what happens ("community succession and C cycle dynamics") to Midwestern forests?
@@ -152,14 +152,14 @@ Journal ideas:
 
 - Secondary successional forest -- bigtooth aspen (_Populus grandidentata_), northern red oak (_Quercus rubra_), red maple (/Acer rubrum/), paper birch (_Betula papyrifera_), eastern white pine (_Pinus strobus_)
 - Average age -- 95 years (2013)
-- NEP in UMBS tower is 1.58 MG C ha-1 yr-1 (0.80-1.98) (1999-2006), but with landscape variation (REF?)
-- Heavily logged in late 1800s and early 1900s, disturbed by fire until 1923
+- NEP in UMBS tower is 1.58 MG C ha^-1^ yr^-1^ (0.80-1.98) (1999-2006), but with landscape variation (REF?)
+- Heavily logged in late 1800s and early 1900s, disturbed by fire until 1923 (REF)
 - Present day composition typical of upper Great Lakes region
 - Previously, the site of the FASET experiment [@gough_2013_sustained; @gough_2008_multi]
 - UMBS is 87% upland and 13% wetland [@bergen_2007_observing]. We focus on the upland ecosystem, which has the following characteristics (from @bergen_2007_observing):
     - 20.4% moraine, 37.8% high outwash plain, 31.3% low outwash plain, 5.7% lake-margin terrace, 3.6% ice-contact, 1.2% lowland glacial lake
-    - 60.9% aspen-dominated, 16.6% northern hardwood (/Acer saccharum/, /Acer rubrum/, /Fagus grandifolia/, /Tilia americana/ (basswood), /Betula alleghaniensis/ (yellow birch), /Fraxinus americana/ (white ash), /Tsuga canadensis/), 13.3% upland conifer (/Pinus strobus/, /Pinus resinosa/)
-    - 1.6% northern red oak (/Quercus rubra/)
+    - 60.9% aspen-dominated, 16.6% northern hardwood (_Acer saccharum_, _Acer rubrum_, _Fagus grandifolia_, _Tilia americana_ (basswood), _Betula alleghaniensis_ (yellow birch), _Fraxinus americana_ (white ash), _Tsuga canadensis_), 13.3% upland conifer (_Pinus strobus_, _Pinus resinosa_)
+    - 1.6% northern red oak (_Quercus rubra_)
     - 60.9% transitioning from aspen to next succession, of which: 55.8% to northern hardwood, 34.7% to upland conifer, 3.8% to northern red oak, 2.6% to northern red oak-red maple, 3.1% to upland conifer-northern hardwood
 
 ## Model description: ED2
