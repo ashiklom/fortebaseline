@@ -46,35 +46,6 @@ mdcap <- function(text) {
 # Outline
 
 - **Introduction**
-    - Why we need models?
-        - Forests are important, for C sequestration, other ecosystem services
-        - Policy decisions related to forests depend on future projections
-        - We need models to make future projections
-    - What kinds of models are out there?
-        - Traditional: "Big leaf" models
-            - Needed to be simple to run on old computers
-            - Don't need as much data
-            - ...but they fail to capture important processes, which matter not only for accurate predictions about C cycle, but also because they are processes we care about (habitat, forestry, tourism, etc.)!
-        - Individual-based models
-            - Much more detailed, but harder to run, and need much more data.
-            - Trade-off between complexity and accuracy.
-        - Cohort-based models like ED2 as a middle ground?
-    - How much complexity do we need to accurately model ecological succession?
-        - Lots of existing work on parameteric uncertainty (e.g. Dietze, Raczka, others).
-        - Less on structural uncertainty -- i.e. not just what coefficients do we use, but what _equations_, and more generally, what _processes_ do we even consider?
-    - What are the processes that drive succession of ecological communities?
-        - Competition for light
-        - Competition for nutrients
-        - Competition for water?
-        - Others?
-        - Brief review of community/ecosystem ecology of the Upper Midwest
-    - Guiding questions:
-        - Which of these processes do we need to be able to accurately model what happens ("community succession and C cycle dynamics") to Midwestern forests?
-        - What is the cost of considering these processes, in terms of additional parameteric uncertainty?
-        - What are the relative contributions of parameteric uncertainty (data limitation) vs. structural uncertainty (theoretical limitation?)?
-    - Study overview:
-        - ED with factorial combination of submodels
-        - Ensemble analysis to look at parameter uncertainty
 - **Methods**
     - Site description
     - ED2 model description
@@ -129,84 +100,51 @@ Journal ideas:
 
 # Introduction
 
-Earth's climate is changing, and its terrestrial ecosystems are likely to be affected (REF: IPCC).
-Many of these ecosystems will be affected through persistent changes in their environment, for instance through elevated atmospheric CO~2~ concentrations and temperature, changing precipitation regimes (REF).
-At the same time, climate change is likely change the frequency and severity of disturbances [@dale_2001_climate], and the impacts of these changes may be more acute.
-
-<!-- Add something positive about each of these? Then, the section about models is more compelling. -->
-In trying to anticipate future changes to terrestrial ecosystems, ecologists have four general techniques.
-One approach is to look to the past to see how ecosystems responded to similar changes (REFs -- e.g. PALEON?).
-This is challenging for two reasons:
-For one, we often have to look very far back to find similar climate changes, and the techniques we have for determining the state of ecosystems in the distant past have limited detail (REF).
-More importantly, there are few (if any) times where the climate has changed as rapidly as it is now, and it is unclear whether slower changes in the past will trigger responses similar to the faster changes happening now (REF).
-A second approach is space-for-time substitution, whereby we use existing climatic gradients through space (e.g. with latitude or elevation) to infer the corresponding changes through time (REF).
-However, many processes that drive spatial variation in ecosystems play out over hundreds or thousands of years (e.g. evolution), far longer than policy-relevant timescales of years to decades and far slower than the current pace of climate change (REF).
-A third approach is to conduct experimental manipulations, where individuals are subjected to controlled changes in environmental conditions [@medlyn_2015_using].
-Because they are able to isolate specific changes by controlling for most other factors, experiments are very useful for testing mechanisms.
-Unfortunately, resource constraints limit the spatial and temporal extent of experiments, and emerging evidence from (the relatively few) long-term experiments suggests that short-term results cannot always be extrapolated from longer-term results [@reich_2018_unexpected].
-
-The fourth approach is to use computer models based on existing understanding of ecosystem function.
-Models unconstrained by data are little more than thought experiments with limited value to decision-making.
-However, models provide a useful tool for confronting hypotheses with observations from a variety of sources, including the three described above [@dietze_2013_improving].
-
-Model design involves an invariable trade-off between complexity and predictive uncertainty.
-The more processes are represented in a model (and the more parameters are used to represent those processes), the higher the uncertainty in the "true" value of each parameter, and the higher the uncertainty in model predictions (especially out of sample) (REF -- information theory, e.g. AIC?).
-On the other hand, simplistic models often fail to match important properties of the observations.
-A key challenge in model development is to find the balance between these two extremes.
-
-Big leaf models (e.g. CLM) fail to capture vegetation dynamics (REF).
-This is due to their inability to represent demographic processes, which are important (REF).
-An emerging class of models can simulate vegetation demographic processes, including competition for resources within a patch, recruitment, and mortality [@fisher_2017_vegetation].
-Individually-based models are one possibility (REFs -- Shugart, Ensheng Wang, etc.).
-However, they are complicated (REF).
-An alternative are models of intermediate complexity ("middle ground"), which use approximations.
-One such approximation is the "Ecosystem Demography" approach, whereby groups of individuals ("cohorts") of similar species, size, and structure are modeled together, and the statistical properties of these cohorts are modeled rather than the characteristics of each individual [@moorcroft_2001_method].
-
-One realization of this is the Ecosystem Demography (v2) model [@moorcroft_2001_method; @medvigy_2011_predicting; @medvigy_2009_mechanistic].
-This model has been used to simulate (examples...).
-Previous uncertainty analyses with ED:
-[@dietze_2014_quantitative]...
-More recently, [@raczka_2018_what]...
-
-[@rollinson_2017_emergent] -- ED2 paleoclimate
-[@miller_2015_alteration] -- ED2 at Duke FACE
-[@dekauwe_2013_forest] -- ED2 at Duke and Oak Ridge FACE
-
-[@longo_2019_ed1] provide a description of the most recent version of ED (2.2), and [@longo_2019_ed2] provide an evaluation.
-However, these studies only consider the default configuration of ED2.
-In fact, ED2 provides several alternative structures for some of its submodels.
-
-Light availability is a first order control on photosynthesis, and competition for light is a key process in driving competitive dynamics and community succession [@bazzaz_1979_physiological].
-How light is distributed through a canopy is therefore critically important to accurately simulating community dynamics.
-Radiative transfer models are used to simulate light proliferation through a canopy.
-Detailed, 3D representations [@widlowski_2014_abstract; @widlowski_2007_third; @malenovsky_2008_influence] have prohibitively high computational costs for use in dynamic vegetation models.
-Therefore, these models have had to rely on computationally-efficient approximations.
-One common approach is the "two-stream approximation", originally developed for atmospheric radiative transfer [@meador_1980_two] and later adapted for plant canopies [@dickinson_1983_land; @sellers_1985_canopy].
-<!-- TODO: Further discussion? -->
-Although popular, the two-stream approach has some important limitations (REFS, details...).
-An alternative approach is the "multiple scattering" model of @zhao_2005_multiple.
-Accounting for multiple scattering enhances canopy light absorption, particularly in near-infrared wavelengths [@zhao_2005_multiple], therefore reducing the amount of light that makes it into the understory (TODO confirm).
-<!-- TODO: Further discussion -->
-
-Competition is also strongly determined by canopy structure and how it is represented (REF).
-In other words, how much does canopy height matter compared to gappiness and horizontal competition?
-C.f. [@hogan_2018_fast; @dietze_2008_changing].
-
-Trait plasticity with light level also plays a role -- i.e. shaded leaves adapt to lower light levels.
-C.f. [@keenan_2016_global; @lloyd_2010_optimisation; @niinemets_2016_within].
-
-<!--
-TODO: Also discuss the other ED modules.
--->
-
-This manuscript addresses the following research questions:
-(Q1) To what extent can the ED2 model reproduce 100 years of observed succession (or observed _anything_) at UMBS starting from bare ground?
-(Q2) How does the inclusion of various processes affect the accuracy and predictive uncertainty of ED2 predictions?
-(Q3) What drives the predictive uncertainty of the ED2 model at UMBS, and what additional observations are necessary to improve predictions / constrain uncertainty?
-
-Based on previous results [@fisher_2015_taking], we predict ED2 will over-predict dominance of early-successional canopy species (and under-predict understory productivity) under its default configuration.
-Enabling dynamic N cycling and a finite canopy radius model will alleviate these issues, but will significantly increase the parameteric uncertainty due to strong sensitivity to N-cycling and canopy gap fraction parameters, respectively.
-Constraining these parameters should be a high priority...
+- Why we need models?
+    - Forests are important, for C sequestration, other ecosystem services
+    - Policy decisions related to forests depend on future projections
+    - We need models to make future projections
+- What kinds of models are out there?
+    - Traditional: "Big leaf" models
+        - Needed to be simple to run on old computers
+        - Don't need as much data
+        - ...but they fail to capture important processes, which matter not only for accurate predictions about C cycle, but also because they are processes we care about (habitat, forestry, tourism, etc.)!
+    - Individual-based models
+        - Much more detailed, but harder to run, and need much more data.
+        - Trade-off between complexity and accuracy.
+- Cohort-based models like ED2 as a middle ground?
+    - Core ED concept [@moorcroft_2001_method]
+    - ED2 developments -- [@medvigy_2009_mechanistic; @medvigy_2011_predicting]
+    - Most recent version -- [@longo_2019_ed1]
+    - Validation/applications of the ED model:
+        - [@rollinson_2017_emergent] -- ED2 paleoclimate
+        - [@miller_2015_alteration] -- ED2 at Duke FACE
+        - [@dekauwe_2013_forest] -- ED2 at Duke and Oak Ridge FACE
+        - [@longo_2019_ed2] -- Model evaluation in Tropics
+- How much complexity do we need to accurately model ecological dynamics?
+    - Lots of existing work on parameteric uncertainty
+        - [@dietze_2014_quantitative]
+        - [@raczka_2018_what]
+    - Less on structural uncertainty -- i.e. not just what coefficients do we use, but what _equations_, and more generally, what _processes_ do we even consider?
+- What are the processes that drive succession of ecological communities?
+    - Competition for light [@bazzaz_1979_physiological]
+    - Others? Leaning towards omitting because factorial combination becomes too large.
+        - Competition for water?
+        - Competition for nutrients? (ED's N model isn't very good. Alternatives are being developed, but not in ED mainline yet.)
+- Brief review of community/ecosystem ecology of the Upper Midwest
+    - UMBS is a useful site for testing these theories because of its natural history.
+    - Around 1900, mature forest dominated by white (*Pinus strobus*) and red pine (*P. resinosa*), hemlock (*Tsuga canadensis*), and sugar maple (*Acer saccharum*).
+    - But, repeat harvest and burning between 1880 and 1920 [@kilburn_1960_effects] led to replacement by early successional aspen (*Populus grandidentata* and *P. tremuloides*), birch (*Betula papyrifera*), and cherry (*Prunus pensylvatica*) [@gates_1930_aspen; @barnes_1981_michigan; @friedman_2005_regional_legacies_logging; @bergen_2007_observing].
+    - Such aspen-dominated secondary forests are sustained by background levels of disturbance, particularly fire [@gates_1930_aspen]
+    - However, due to aggressive fire suppression in the US, these forests are now undergoing succession, primarily to mid/late-successional hardwood (typified by sugar maple and American beech, *Fagus grandifolia*) or upland conifer (typified by red and white pine) [@bergen_2007_observing].
+    - The combination of stand-replacing disturbance ~100 years ago and suppressed disturbance since then makes this an ideal site for testing a vegetation model run from bare ground without having to prescribe disturbance.
+- Guiding questions:
+    - Which of these processes do we need to be able to accurately model what happens ("community succession and C cycle dynamics") to Midwestern forests?
+    - What is the cost of considering these processes, in terms of additional parameteric uncertainty?
+    - What are the relative contributions of parameteric uncertainty (data limitation) vs. structural uncertainty (theoretical limitation?)?
+- Study overview:
+    - ED with factorial combination of submodels related to radiative transfer formulation (two-stream vs. multiple scatter), horizontal competition (finite canopy radius vs. complete shading), and trait plasticity (whether or not SLA and Vcmax vary with light level) 
+    - Ensemble analysis to look at parameter uncertainty
 
 # Methods
 
