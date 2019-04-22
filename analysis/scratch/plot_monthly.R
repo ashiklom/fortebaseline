@@ -80,19 +80,29 @@ monthly_means %>%
   aes(x = date, y = carbon_st, color = traits, group = runs) +
   geom_line()
 
-monthly_means %>%
+plt <- monthly_means %>%
   select(workflow_id, runs, date,
          crown, rtm, traits,
          !!plot_vars) %>%
-  filter(lubridate::month(date) == 7) %>%
+  mutate(month = lubridate::month(date),
+         year = lubridate::year(date)) %>%
+  filter(month %in% 6:8) %>%
   anti_join(filter(monthly_means, total_lai > 20), by = "runs") %>%
+  group_by(workflow_id, runs, crown, rtm, traits, year) %>%
+  summarize_at(plot_vars, mean) %>%
   gather(variable, value, !!plot_vars) %>%
   ggplot() +
-  aes(x = factor(date), y = value,
+  aes(x = factor(year), y = value,
       fill = interaction(crown, rtm, traits),
       color = interaction(crown, rtm, traits)) +
-  geom_violin() +
-  ## geom_boxplot() +
+  ## geom_violin() +
+  geom_boxplot() +
   ## geom_line() +
   ## geom_jitter() +
-  facet_wrap(vars(variable), scales = "free_y")
+  facet_wrap(vars(variable), scales = "free_y") +
+  labs(x = "Year") +
+  theme_bw() +
+  theme(legend.position = "bottom")
+## dv <- imguR::imguR("png", width = 10, height = 8, units = "in", res = 300)
+## plt
+## imguR::imgur_off(dv)
