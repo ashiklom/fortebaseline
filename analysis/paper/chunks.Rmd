@@ -78,3 +78,7 @@ This manuscript addresses the following research questions:
 Based on previous results [@fisher_2015_taking], we predict ED2 will over-predict dominance of early-successional canopy species (and under-predict understory productivity) under its default configuration.
 Enabling dynamic N cycling and a finite canopy radius model will alleviate these issues, but will significantly increase the parameteric uncertainty due to strong sensitivity to N-cycling and canopy gap fraction parameters, respectively.
 Constraining these parameters should be a high priority...
+
+# Methods
+
+Photosynthesis / respiration ratio (i.e. C balance) in light and shade can be used as an indication of succession -- expect early successional species to have higher ratio in light and late successional species to have higher ratio in shade [@bazzaz_1979_physiological].

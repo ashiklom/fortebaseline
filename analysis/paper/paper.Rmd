@@ -45,24 +45,6 @@ mdcap <- function(text) {
 
 # Outline
 
-- **Introduction**
-- **Methods**
-    - Site description
-    - ED2 model description
-        - Common features
-        - Submodel descriptions (in brief; more details in appendices)
-            - Two-stream RTM
-            - Multiple-scatter RTM
-            - Finite canopy radius model
-            - Trait plasticity scheme
-            - N limitation (?)
-    - Data sources
-        - TRY data
-        - Other data? FIA? Remote sensing?
-    - Modeling workflow (PEcAn, etc.)
-    - Data analysis
-        - Structural vs. parametric uncertainty
-        - Comparison against "reality"
 - **Results**
     - Summary:
         - LAI time series with uncertainties, faceted by model structure
@@ -162,16 +144,10 @@ Journal ideas:
     - 1.6% northern red oak (_Quercus rubra_)
     - 60.9% transitioning from aspen to next succession, of which: 55.8% to northern hardwood, 34.7% to upland conifer, 3.8% to northern red oak, 2.6% to northern red oak-red maple, 3.1% to upland conifer-northern hardwood
 
-## Model description: ED2
+## ED2 model description
 
 The Ecosystem Demography Model, version 2.2 (ED2).
 Default configuration is described in [@longo_2019_ed1].
-A brief summary of common features is as follows:
-
-- Cohort-based scaling approach
-- Photosynthesis / stomatal conductance
-    - I think I need to cite @katul_2003_relationship somewhere in here
-- Allometries
 
 In this study, we run a factorial experiment of ED2 with the following features enabled or disabled:
 
@@ -197,9 +173,11 @@ In this study, we run a factorial experiment of ED2 with the following features 
 
 ## Data sources
 
+BETYdb [@lebauer_2013_facilitating].
+
 TRY data [@kattge_2011_try].
 
-Other data from FoRTE? FIA? Remote sensing?
+Other FoRTE data?
 
 ## Modeling workflow
 
@@ -227,11 +205,13 @@ Plant functional type definitions:
     - _Pinus strobus_ (white pine)
     - ?? _Pinus resinosa_
 
-{TODO: Conceptual diagram of workflow}
-
+For each combination of ED submodels, we ran 10 ED ensemble simulations.
+    
 ## Analysis of results
 
-Photosynthesis / respiration ratio (i.e. C balance) in light and shade can be used as an indication of succession -- expect early successional species to have higher ratio in light and late successional species to have higher ratio in shade [@bazzaz_1979_physiological].
+- Structural vs. parameteric uncertainty
+- Comparison against observations
+- Others...
 
 # Results
 
