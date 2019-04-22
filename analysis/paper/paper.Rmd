@@ -185,26 +185,37 @@ PEcAn parameter sensitivity and uncertainty analysis [@lebauer_2013_facilitating
 Other PEcAn references: [@dietze_2013_improving].
 
 Plant functional type definitions:
-- Early successional hardwood
+
+- **Early successional hardwood**
     - _Betula papyrifera_ (white/paper birch)
     - _Populus grandidentata_ (bigtooth aspen)
     - ?? _Populus tremuloides_ (trembling aspen)
     - ?? _Prunus pensylvatica_ (fire cherry)
-- Mid successional hardwood
+- **Mid successional hardwood**
     - _Quercus rubra_ (red oak)
     - _Acer rubrum_ (red maple)
     - ?? _Betula alleghaniensis_ (yellow birch)
     - ?? _Tilia americana_ (basswood)
     - ?? _Fraxinus americana_ (white ash)
-- Late successional hardwood
+- **Late successional hardwood**
     - _Acer saccharum_ (sugar maple)
     - _Fagus grandifolia_ (American beech)
     - ?? _Ostyra virginiana_ (hop-hornbeam)
     - ?? _Acer pensylvaticum_ (striped maple)
-- Pine
+- **Pine**
     - _Pinus strobus_ (white pine)
     - ?? _Pinus resinosa_
-
+    
+```{r methods_captions}
+param_dist_cap <- paste(
+  "Input parameter distributions."
+)
+```
+    
+```{r param_dist, fig.cap = param_dist_cap, fig.dim = c(13, 10)}
+readd(param_dist_gg)
+```
+ 
 For each combination of ED submodels, we ran 10 ED ensemble simulations.
     
 ## Analysis of results
@@ -266,7 +277,7 @@ annual_lai_workflows_cap <- paste(
 {TODO: PEcAn variance decomposition analysis, by configuration.}
 
 ```{r annual_means, fig.cap = annual_means_cap, fig.dim = c(5, 7)}
-readd(old_ensemble_plot)
+## readd(old_ensemble_plot)
 ```
 
 `r mdcap(annual_means_cap)`
