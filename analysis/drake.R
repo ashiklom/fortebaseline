@@ -10,7 +10,7 @@ import::from("dplyr", "tbl", "filter", "select", "collect", "mutate",
              "pull", "case_when", "rename", "ungroup", "group_by", "left_join",
              "if_else", "group_by_at", "bind_rows", "summarize_all", "summarize",
              "arrange", "distinct", "one_of", "everything", "summarize_at",
-             "starts_with", .into = "")
+             "starts_with", "row_number", "transmute", .into = "")
 import::from("tidyr", "unnest", "spread", .into = "")
 import::from("tibble", "as_tibble", "tribble", .into = "")
 import::from("here", "here", .into = "")
@@ -132,6 +132,33 @@ plan <- drake_plan(
     scale_fill_brewer(palette = "Paired") +
     theme_cowplot() +
     theme(axis.title.y = element_blank()),
+  bigfacet_plot = monthly_means %>%
+    ungroup() %>%
+    select(crown, rtm, traits, date, pft, runs,
+           mmean_lai_py) %>%
+    filter(month(date) == 7) %>%
+    left_join(
+      # Order runs in order of increasing max Pine LAI
+      monthly_means %>%
+        ungroup() %>%
+        select(workflow_id, runs, pft, mmean_lai_py) %>%
+        filter(pft == "Pine") %>%
+        group_by(workflow_id, runs) %>%
+        summarize(pine_lai = max(mmean_lai_py)) %>%
+        mutate(run_i = rank(pine_lai)),
+      by = "runs") %>%
+    mutate(model = interaction(crown, rtm, traits, sep = "\n")) %>%
+    ggplot() +
+    aes(x = date, y = mmean_lai_py, color = pft) +
+    geom_line() +
+    facet_grid(vars(run_i), vars(model), drop = TRUE) +
+    labs(y = "Leaf area index", color = "PFT") +
+    scale_color_manual(values = pfts("color")) +
+    scale_x_date(date_breaks = "2 years", date_labels = "%Y") +
+    theme_cowplot() +
+    theme(strip.text.y = element_blank(),
+          axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
+          axis.title.x = element_blank()),
   #####################
   ## Old drake stuff ##
   #####################

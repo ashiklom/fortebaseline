@@ -720,3 +720,36 @@ tnc <- ncdf4::nc_open(t_file)
 # 3 - DBH class
 # 4 - PFT
 
+monthly_means %>%
+  ungroup() %>%
+  select(workflow_id, runs, pft, mmean_lai_py) %>%
+  filter(pft == "Pine") %>%
+  group_by(workflow_id, runs) %>%
+  summarize(pine_lai = max(mmean_lai_py)) %>%
+  mutate(run_i = rank(pine_lai)) %>%
+  arrange(workflow_id, pine_lai) %>%
+  print(n = 30)
+
+##################################################
+## bigfacet_plot = 
+monthly_means %>%
+  ungroup() %>%
+  select(crown, rtm, traits, date, pft, runs,
+         mmean_lai_py) %>%
+  filter(month(date) == 7) %>%
+  group_by(crown, rtm, traits, date, pft) %>%
+  mutate(run_i = row_number()) %>%
+  select(-runs) %>%
+  ungroup() %>%
+  mutate(model = interaction(crown, rtm, traits)) %>%
+  ggplot() +
+  aes(x = date, y = mmean_lai_py, color = pft) +
+  geom_line() +
+  facet_grid(vars(run_i), vars(model)) +
+  labs(y = "Leaf area index", color = "PFT") +
+  scale_color_manual(values = pfts("color")) +
+  theme_cowplot() +
+  theme(axis.title.y = element_blank(),
+        strip.text.y = element_blank())
+  
+  

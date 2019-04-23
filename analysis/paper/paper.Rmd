@@ -191,16 +191,28 @@ For each combination of ED submodels, we ran 10 ED ensemble simulations.
 
 ## Summary
 
-- Time series of aggregate variables (GPP, NPP, AGB, Total LAI), with error bars by structure
+Time series of aggregate variables (GPP, NPP, AGB, Total LAI), with error bars by structure
 
 ```{r summary-captions}
 summary_ts_cap <- paste(
   "ED2 plot-level predictions by model configuration."
 )
+
+bigfacet_cap <- paste(
+  "ED2 PFT-level predictions of leaf area index (LAI) by model configuration and parameterization."
+)
 ```
 
 ```{r summary-ts-plot, fig.cap = summary_ts_cap, fig.dim = c(10, 7)}
 readd(summary_ts_plot)
+```
+
+`r mdcap(summary_ts_cap)`
+
+Big facet plot (exploratory) of LAI by PFT for all model combinations
+
+```{r bigfacet-plot, fig.cap = bigfacet_cap, fig.dim = c(12, 12)}
+readd(bigfacet_plot)
 ```
     
     
