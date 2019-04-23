@@ -91,6 +91,11 @@ plan <- drake_plan(
     select(workflow_id, everything()) %>%
     select(-workflows) %>%
     left_join(workflow_structures(), by = "workflow_id"),
+  hardiman = tribble(
+    ~variable, ~low, ~mean, ~hi,
+    "LAI", 1.8, 4.14, 6.56,
+    "NPP", 1.68, 3.11, 7.26
+  ) %>% mutate(variable = factor(variable, c("GPP", "NPP", "LAI", "AGB"))),
   monthly_means = raw_monthly_output %>%
     group_by(workflow_id, crown, rtm, traits, date, runs, pft) %>%
     select(starts_with("mmean"), agb_py) %>%
@@ -103,6 +108,8 @@ plan <- drake_plan(
       LAI_pft = mmean_lai_py,
       AGB_pft = agb_py
     ) %>%
+    group_by(crown, rtm, traits, date, runs) %>%
+    # Aggregate PFTs
     summarize(
       GPP = mean(GPP),
       NPP = mean(NPP),
@@ -116,22 +123,34 @@ plan <- drake_plan(
     filter(month %in% 7:9) %>%
     tidyr::gather(variable, value, GPP:AGB) %>%
     mutate(variable = fct_inorder(variable)) %>%
-    group_by(variable, year, add = TRUE) %>%
+    # Aggregate runs
+    group_by(crown, rtm, traits, variable, year) %>%
     summarize(
       mean = mean(value),
       lo = quantile(value, 0.2),
       hi = quantile(value, 0.8)
     ) %>%
     filter(!is.na(variable)) %>%
-    mutate(model = interaction(crown, rtm, traits)) %>%
+    mutate(model = interaction(crown, rtm, traits, sep = "\n")) %>%
     ggplot() +
-    aes(x = year, y = mean, ymin = lo, ymax = hi, fill = model, color = model) +
-    geom_ribbon(alpha = 0.5) +
-    facet_wrap(vars(variable), scales = "free_y") +
+    aes(x = year, y = mean, ymin = lo, ymax = hi) +
+    geom_line() +
+    geom_ribbon(alpha = 0.35) +
+    geom_hline(aes(yintercept = mean), data = hardiman, linetype = "dashed", color = "red") +
+    geom_hline(aes(yintercept = low), data = hardiman, linetype = "dotted", color = "red") +
+    geom_hline(aes(yintercept = hi), data = hardiman, linetype = "dotted", color = "red") +
+    facet_grid(vars(variable), vars(model), scales = "free_y", switch = "y") +
     scale_color_brewer(palette = "Paired") +
     scale_fill_brewer(palette = "Paired") +
     theme_cowplot() +
-    theme(axis.title.y = element_blank()),
+    theme(axis.title.y = element_blank(),
+          axis.title.x = element_blank(),
+          axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
+          strip.placement = "outside",
+          strip.background.y = element_blank()),
+  ##############################
+  ## Figure 3: Big facet plot ##
+  ##############################
   bigfacet_plot = monthly_means %>%
     ungroup() %>%
     select(crown, rtm, traits, date, pft, runs,
