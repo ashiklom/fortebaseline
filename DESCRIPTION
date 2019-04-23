@@ -21,7 +21,8 @@ Imports:
     fs,
     tidyr,
     xml2,
-    readr
+    readr,
+    ggsci
 Remotes:
   pecanproject/pecan/api@develop
 Suggests: 

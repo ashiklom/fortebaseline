@@ -171,14 +171,14 @@ Plant functional type definitions:
     
 ```{r methods_captions}
 param_dist_cap <- paste(
-  "Input parameter distributions."
+  "Input parameter distributions from PEcAn trait meta-analysis."
 )
 ```
-    
+
 ```{r param_dist, fig.cap = param_dist_cap, fig.dim = c(13, 10)}
 readd(param_dist_gg)
 ```
- 
+
 For each combination of ED submodels, we ran 10 ED ensemble simulations.
     
 ## Analysis of results
@@ -190,7 +190,7 @@ For each combination of ED submodels, we ran 10 ED ensemble simulations.
 # Results
 
 - Summary:
-    - LAI time series with uncertainties, faceted by model structure
+    - Time series of aggregate variables (GPP, NPP, AGB, Total LAI), with error bars by structure
 - Structural uncertainty details
     - Understory light environment and how it affects species matters
     - The multiple-scatter

@@ -1,3 +1,30 @@
+#' PFT information
+#'
+#' @param col Column to return. If `NULL` (default), return `data.frame`
+#' @return If `is.null(col)`, `data.frame` containing PEcAn PFT name
+#'   (`bety_name`), formatted name (`pft`), short name (`shortname`),
+#'   ED PFT number (`num`), and color (`color`).
+#' @author Alexey Shiklomanov
+#' @return
+#' @export
+pfts <- function(col = NULL) {
+  pfts <- data.frame(
+    bety_name = paste0("umbs.", c(
+      "early_hardwood",
+      "mid_hardwood",
+      "late_hardwood",
+      "northern_pine"
+    )),
+    pft = c("Early hardwood", "Mid hardwood", "Late hardwood", "Pine"),
+    shortname = c("Early", "Mid", "Late", "Pine"),
+    num = c(6, 9, 10, 11),
+    color = ggsci::pal_startrek()(4),
+    stringsAsFactors = FALSE
+  )
+  if (is.null(col)) return(pfts)
+  pfts[[col]]
+}
+
 #' Set PFT from ED integer number
 #'
 #' @param i Vector of PFT integer numbers
@@ -12,5 +39,5 @@ set_pft <- function(i) {
     "Early hardwood", "Mid hardwood", "Late hardwood"
   )
   ipfts <- pfts[i]
-  factor(ipfts, pfts[c(9:11, 6)])
+  factor(ipfts, pfts("pft"))
 }

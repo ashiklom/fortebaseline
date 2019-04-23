@@ -1,7 +1,6 @@
 #!/usr/bin/env Rscript
 library(drake)
 library(ggplot2)
-
 ## library(fortebaseline)
 devtools::load_all(here::here(), attach_testthat = FALSE)
 expose_imports("fortebaseline")
@@ -59,6 +58,41 @@ workflows_years <- tryCatch(
 )
 
 plan <- drake_plan(
+  ##############
+  ## Figure 1: Parameter distributions ##
+  ##############
+  ma_posterior = readRDS(file_in(
+    !!here::here("analysis", "data", "derived-data", "meta-analysis.rds")
+  )) %>% tidy_posterior(),
+  param_dist_gg = ma_posterior %>%
+    mutate(pft = factor(pft, pfts("pft"))) %>%
+    unnest(draws) %>%
+    ggplot() +
+    aes(x = pft, y = draws, fill = pft) +
+    geom_violin() +
+    facet_wrap(vars(trait), scales = "free_y") +
+    scale_fill_manual(values = pfts("color")) +
+    labs(x = "PFT", fill = "PFT") +
+    theme_cowplot() +
+    theme(axis.title.y = element_blank(),
+          axis.text.x = element_blank()),
+  ##############
+  ## Figure 2 ##
+  ##############
+  #####################
+  ## Old drake stuff ##
+  #####################
+  run_params = read_fst(file_in(
+    !!here("analysis", "data", "derived-data", "ed-ensemble-params.fst")
+  )) %>% as_tibble(),
+  meta_vars = run_params %>%
+    select(-workflow_id, -path) %>%
+    group_by(pft) %>%
+    summarize_all(~length(unique(.x))) %>%
+    tidyr::gather(variable, count, -pft, -run_id) %>%
+    filter(count > 1) %>%
+    distinct(variable) %>%
+    pull(),
   workflow_df_drake = workflow_df,
   workflows_years_drake = workflows_years,
   lai_raw = target(
@@ -266,29 +300,6 @@ plan <- drake_plan(
   ##   ) +
   ##   theme_cowplot() +
   ##   theme(axis.title = element_blank()),
-  run_params = read_fst(file_in(
-    !!here("analysis", "data", "derived-data", "ed-ensemble-params.fst")
-  )) %>% as_tibble(),
-  meta_vars = run_params %>%
-    select(-workflow_id, -path) %>%
-    group_by(pft) %>%
-    summarize_all(~length(unique(.x))) %>%
-    tidyr::gather(variable, count, -pft, -run_id) %>%
-    filter(count > 1) %>%
-    distinct(variable) %>%
-    pull(),
-  param_dist_gg = run_params %>%
-    select(workflow_id, run_id, pft, one_of(meta_vars)) %>%
-    tidyr::gather(param, value, -workflow_id, -run_id, -pft) %>%
-    ggplot() +
-    aes(x = pft, y = value, fill = pft) +
-    geom_violin(color = "black", alpha = 0.5) +
-    facet_wrap(vars(param), scales = "free_y") +
-    labs(x = "PFT") +
-    theme_cowplot() +
-    theme(legend.position = "bottom",
-          axis.text.x = element_blank(),
-          axis.title.y = element_blank())
 )
 
 # Parallelism configuration. Not sure which of these is better...
