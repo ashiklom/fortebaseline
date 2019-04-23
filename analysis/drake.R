@@ -101,7 +101,7 @@ plan <- drake_plan(
     select(starts_with("mmean"), agb_py) %>%
     # Remove duplicated values -- `mmean` values should be unique by PFT.
     summarize_all(mean),
-  summary_ts_plot = monthly_means %>%
+  monthly_means_site = monthly_means %>%
     select(
       GPP = mmean_gpp_py,
       NPP = mmean_npp_py,
@@ -119,7 +119,8 @@ plan <- drake_plan(
     mutate(
       year = floor_date(date, "years") %m+% period(6, "months"),
       month = month(date)
-    ) %>%
+    ),
+  summary_ts_plot = monthly_means_site %>%
     filter(month %in% 7:9) %>%
     tidyr::gather(variable, value, GPP:AGB) %>%
     mutate(variable = fct_inorder(variable)) %>%
@@ -178,13 +179,13 @@ plan <- drake_plan(
     theme(strip.text.y = element_blank(),
           axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
           axis.title.x = element_blank()),
-  #####################
-  ## Old drake stuff ##
-  #####################
-  run_params = read_fst(file_in(
+  #####################################
+  ## Figure 4: Parameter sensitivity ##
+  #####################################
+  run_params_all = read_fst(file_in(
     !!here("analysis", "data", "derived-data", "ed-ensemble-params.fst")
   )) %>% as_tibble(),
-  meta_vars = run_params %>%
+  meta_vars = run_params_all %>%
     select(-workflow_id, -path) %>%
     group_by(pft) %>%
     summarize_all(~length(unique(.x))) %>%
@@ -192,6 +193,11 @@ plan <- drake_plan(
     filter(count > 1) %>%
     distinct(variable) %>%
     pull(),
+  run_params = run_params_all %>%
+    select(workflow_id, run_id, pft, meta_vars),
+  #####################
+  ## Old drake stuff ##
+  #####################
   workflow_df_drake = workflow_df,
   workflows_years_drake = workflows_years,
   lai_raw = target(

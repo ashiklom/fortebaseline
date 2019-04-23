@@ -720,36 +720,32 @@ tnc <- ncdf4::nc_open(t_file)
 # 3 - DBH class
 # 4 - PFT
 
-monthly_means %>%
-  ungroup() %>%
-  select(workflow_id, runs, pft, mmean_lai_py) %>%
-  filter(pft == "Pine") %>%
-  group_by(workflow_id, runs) %>%
-  summarize(pine_lai = max(mmean_lai_py)) %>%
-  mutate(run_i = rank(pine_lai)) %>%
-  arrange(workflow_id, pine_lai) %>%
-  print(n = 30)
-
 ##################################################
-## bigfacet_plot = 
-monthly_means %>%
-  ungroup() %>%
-  select(crown, rtm, traits, date, pft, runs,
-         mmean_lai_py) %>%
-  filter(month(date) == 7) %>%
-  group_by(crown, rtm, traits, date, pft) %>%
-  mutate(run_i = row_number()) %>%
-  select(-runs) %>%
-  ungroup() %>%
-  mutate(model = interaction(crown, rtm, traits)) %>%
-  ggplot() +
-  aes(x = date, y = mmean_lai_py, color = pft) +
-  geom_line() +
-  facet_grid(vars(run_i), vars(model)) +
-  labs(y = "Leaf area index", color = "PFT") +
-  scale_color_manual(values = pfts("color")) +
-  theme_cowplot() +
-  theme(axis.title.y = element_blank(),
-        strip.text.y = element_blank())
-  
-  
+library(tidyverse)
+library(ggplot2)
+devtools::load_all(here::here(), attach_testthat = FALSE)
+
+drake::loadd(run_params, monthly_means_site)
+
+run_params_wide <- run_params %>%
+  mutate(pft = lvls_revalue(pft, pfts("shortname"))) %>%
+  gather(param, value, -workflow_id, -run_id, -pft) %>%
+  unite(pft_param, pft, param, sep = "..") %>%
+  spread(pft_param, value)
+
+sensitivity_inputs <- monthly_means_site %>%
+  filter(date > "1910-01-01", month %in% 7:9) %>%
+  group_by(crown, rtm, traits, run_id = as.numeric(runs)) %>%
+  summarize_at(vars(GPP:AGB), mean) %>%
+  left_join(run_params_wide, by = "run_id")
+
+# NOTE: Fitting all at once results in too few degrees of freedom.
+# Need to fit one at a time.
+sensitivity_analysis <- function(y, x) {
+  stopifnot(is.numeric(y), is.data.frame(x))
+  dat <- cbind(x, y = y)
+  rhs <- sprintf("s(%s)", names(x)) %>% paste(collapse = " + ")
+  form <- sprintf("y ~ %s", rhs)
+  fit <- mgcv::gam(as.formula(form), data = dat)
+  head(dat)
+}
