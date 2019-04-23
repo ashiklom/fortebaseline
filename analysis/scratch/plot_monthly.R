@@ -1,14 +1,59 @@
-library(fortebaseline)
+## library(fortebaseline)
 library(tidyverse)
+library(lubridate)
+devtools::load_all(here::here(), attach_testthat = FALSE)
 stopifnot(requireNamespace("fst", quietly = TRUE))
 
+raw_monthly_output %>%
+  select(dplyr::matches("agb"))
+
+raw_monthly_output %>%
+  filter(date == tail(date, 1), runs == unique(runs)[[3]]) %>%
+  select(-(workflow_id:date))
+
+  select(pft, nplant, nplant_py, mmean_lai_py, lai_co) %>%
+  mutate(lai = lai_co * nplant,
+         lai_sum = cumsum(lai))
+
 f <- "analysis/data/derived-data/monthly-ensemble-output.fst"
+
+raw_monthly_output %>%
+  as_tibble() %>%
+  mutate(workflow_id = as.numeric(gsub("PEcAn_", "", workflows))) %>%
+  select(workflow_id, everything()) %>%
+  left_join(workflow_structures(), by = "workflow_id")
 
 result <- fst::read_fst(f) %>%
   as_tibble() %>%
   mutate(workflow_id = as.numeric(gsub("PEcAn_", "", workflows))) %>%
   select(workflow_id, everything()) %>%
   left_join(workflow_structures(), by = "workflow_id")
+
+monthly_subset %>%
+  mutate(
+    year = floor_date(date, "years") %m+% lubridate::period(6, "months"),
+    month = month(date)
+  ) %>%
+  filter(month %in% 7:9) %>%
+  gather(variable, value, GPP:AGB) %>%
+  mutate(variable = fct_inorder(variable)) %>%
+  group_by(variable, year, add = TRUE) %>%
+  summarize(
+    mean = mean(value),
+    lo = quantile(value, 0.2),
+    hi = quantile(value, 0.8)
+  ) %>%
+  filter(!is.na(variable)) %>%
+  mutate(model = interaction(crown, rtm, traits)) %>%
+  ggplot() +
+  aes(x = year, y = mean, ymin = lo, ymax = hi, fill = model, color = model) +
+  geom_ribbon(alpha = 0.5) +
+  facet_wrap(vars(variable), scales = "free_y") +
+  scale_color_brewer(palette = "Paired") +
+  scale_fill_brewer(palette = "Paired") +
+  theme_cowplot() +
+  theme(axis.title.y = element_blank())
+  
 
 # LAI by PFT
 result %>%
@@ -37,7 +82,6 @@ result %>%
   geom_line(aes(color = pft)) +
   facet_grid(vars(traits), vars(crown, rtm), labeller = label_both)
 
-
 dat <- fst::read_fst(f) %>%
   as_tibble() %>%
   mutate(workflow_id = as.numeric(gsub("PEcAn_", "", workflows))) %>%
@@ -49,14 +93,35 @@ dat %>%
   select_if(~n_distinct(.x) > 1) %>%
   glimpse()
 
-monthly_means <- dat %>%
-  group_by(workflow_id, runs, date) %>%
-  select(starts_with("mmean")) %>%
-  mutate(
-    total_lai = sum(mmean_lai_py),
-    leaf_n = sum(mmean_bleaf_n_py), leaf_c = sum(mmean_bleaf_py),
-    root_n = sum(mmean_broot_n_py), root_c = sum(mmean_broot_py),
-    storage_n = sum(mmean_bstorage_n_py), storage_c = sum(mmean_bstorage_py)
+monthly_means <- raw_monthly_output %>%
+  group_by(workflow_id, crown, rtm, traits, date, runs, pft) %>%
+  select(starts_with("mmean"), agb_py) %>%
+  summarize_all(mean)
+
+monthly_means %>%
+  select(
+    GPP = mmean_gpp_py,
+    NPP = mmean_npp_py,
+    LAI_pft = mmean_lai_py,
+    AGB_pft = agb_py
+  ) %>%
+  summarize(
+    GPP = mean(GPP),
+    NPP = mean(NPP),
+    LAI = sum(LAI_pft),
+    AGB = sum(AGB_pft)
+  )
+
+monthly_means %>%
+  filter(date > "1910-07-01", runs == unique(runs)[[1]]) %>%
+  select(pft, dplyr::matches("lai"))
+
+
+  summarize(
+    total_lai = unique(mmean_lai_py),
+    leaf_n = unique(mmean_bleaf_n_py), leaf_c = unique(mmean_bleaf_py),
+    root_n = unique(mmean_broot_n_py), root_c = unique(mmean_broot_py),
+    storage_n = unique(mmean_bstorage_n_py), storage_c = unique(mmean_bstorage_py)
   ) %>%
   select(-mmean_lai_py, -dplyr::matches("bleaf|broot|bstorage")) %>%
   summarize_all(mean) %>%

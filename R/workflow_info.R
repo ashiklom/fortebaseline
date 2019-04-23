@@ -17,7 +17,7 @@ workflow_structures <- function(...) {
     ) %>%
     dplyr::select(workflow_id, notes) %>%
     tidyr::unnest(notes) %>%
-    transmute(
+    dplyr::transmute(
       workflow_id = workflow_id,
       crown = fct_inorder(if_else(crown_model, "finite", "closed")),
       rtm = fct_inorder(if_else(multiple_scatter, "multi-scatter", "two-stream")),

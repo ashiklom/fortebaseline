@@ -9,7 +9,8 @@ expose_imports("fortebaseline")
 import::from("dplyr", "tbl", "filter", "select", "collect", "mutate",
              "pull", "case_when", "rename", "ungroup", "group_by", "left_join",
              "if_else", "group_by_at", "bind_rows", "summarize_all", "summarize",
-             "arrange", "distinct", "one_of", .into = "")
+             "arrange", "distinct", "one_of", "everything", "summarize_at",
+             "starts_with", .into = "")
 import::from("tidyr", "unnest", "spread", .into = "")
 import::from("tibble", "as_tibble", "tribble", .into = "")
 import::from("here", "here", .into = "")
@@ -24,7 +25,8 @@ import::from("purrr", "map", "possibly", "discard", "safely",
              "negate", "map_dfr", .into = "")
 import::from("future.callr", "callr", .into = "")
 import::from("future", "plan", "availableCores", .into = "")
-import::from("lubridate", "floor_date", .into = "")
+import::from("lubridate", "floor_date", "month", "%m+%", "period", 
+    .into = "")
 # end imports
 
 created_since <- "2019-03-20"
@@ -58,15 +60,17 @@ workflows_years <- tryCatch(
 )
 
 plan <- drake_plan(
-  ##############
+  #######################################
   ## Figure 1: Parameter distributions ##
-  ##############
+  #######################################
   ma_posterior = readRDS(file_in(
     !!here::here("analysis", "data", "derived-data", "meta-analysis.rds")
   )) %>% tidy_posterior(),
   param_dist_gg = ma_posterior %>%
     mutate(pft = factor(pft, pfts("pft"))) %>%
     unnest(draws) %>%
+    filter(draws < quantile(draws, 0.975),
+           draws > quantile(draws, 0.025)) %>%
     ggplot() +
     aes(x = pft, y = draws, fill = pft) +
     geom_violin() +
@@ -76,9 +80,58 @@ plan <- drake_plan(
     theme_cowplot() +
     theme(axis.title.y = element_blank(),
           axis.text.x = element_blank()),
-  ##############
-  ## Figure 2 ##
-  ##############
+  ########################################
+  ## Figure 2: Aggregate variables plot ##
+  ########################################
+  raw_monthly_output = read_fst(file_in(
+    !!here::here("analysis", "data", "derived-data", "monthly-ensemble-output.fst")
+  )) %>%
+    as_tibble() %>%
+    mutate(workflow_id = as.numeric(gsub("PEcAn_", "", workflows))) %>%
+    select(workflow_id, everything()) %>%
+    select(-workflows) %>%
+    left_join(workflow_structures(), by = "workflow_id"),
+  monthly_means = raw_monthly_output %>%
+    group_by(workflow_id, crown, rtm, traits, date, runs, pft) %>%
+    select(starts_with("mmean"), agb_py) %>%
+    # Remove duplicated values -- `mmean` values should be unique by PFT.
+    summarize_all(mean),
+  summary_ts_plot = monthly_means %>%
+    select(
+      GPP = mmean_gpp_py,
+      NPP = mmean_npp_py,
+      LAI_pft = mmean_lai_py,
+      AGB_pft = agb_py
+    ) %>%
+    summarize(
+      GPP = mean(GPP),
+      NPP = mean(NPP),
+      LAI = sum(LAI_pft),
+      AGB = sum(AGB_pft)
+    ) %>%
+    mutate(
+      year = floor_date(date, "years") %m+% period(6, "months"),
+      month = month(date)
+    ) %>%
+    filter(month %in% 7:9) %>%
+    tidyr::gather(variable, value, GPP:AGB) %>%
+    mutate(variable = fct_inorder(variable)) %>%
+    group_by(variable, year, add = TRUE) %>%
+    summarize(
+      mean = mean(value),
+      lo = quantile(value, 0.2),
+      hi = quantile(value, 0.8)
+    ) %>%
+    filter(!is.na(variable)) %>%
+    mutate(model = interaction(crown, rtm, traits)) %>%
+    ggplot() +
+    aes(x = year, y = mean, ymin = lo, ymax = hi, fill = model, color = model) +
+    geom_ribbon(alpha = 0.5) +
+    facet_wrap(vars(variable), scales = "free_y") +
+    scale_color_brewer(palette = "Paired") +
+    scale_fill_brewer(palette = "Paired") +
+    theme_cowplot() +
+    theme(axis.title.y = element_blank()),
   #####################
   ## Old drake stuff ##
   #####################

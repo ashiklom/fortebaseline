@@ -189,17 +189,33 @@ For each combination of ED submodels, we ran 10 ED ensemble simulations.
 
 # Results
 
-- Summary:
-    - Time series of aggregate variables (GPP, NPP, AGB, Total LAI), with error bars by structure
-- Structural uncertainty details
-    - Understory light environment and how it affects species matters
-    - The multiple-scatter
-        - Fig: RTM comparison (Radiation profile)
-        - Fig: Crown model comparison
-        - Fig: Trait plasticity?
-- Uncertainty analysis
-    - Which parameters contribute the most uncertainty?
-    - Structural vs. parameteric uncertainty
+## Summary
+
+- Time series of aggregate variables (GPP, NPP, AGB, Total LAI), with error bars by structure
+
+```{r summary-captions}
+summary_ts_cap <- paste(
+  "ED2 plot-level predictions by model configuration."
+)
+```
+
+```{r summary-ts-plot, fig.cap = summary_ts_cap, fig.dim = c(10, 7)}
+readd(summary_ts_plot)
+```
+    
+    
+## Structural uncertainty details
+
+- Understory light environment and how it affects species matters
+- The multiple-scatter
+    - Fig: RTM comparison (Radiation profile)
+    - Fig: Crown model comparison
+    - Fig: Trait plasticity?
+
+## Uncertainty analysis
+
+- Which parameters contribute the most uncertainty?
+- Structural vs. parameteric uncertainty
 
 ```{r captions}
 lai_10yr_cap <- paste(
