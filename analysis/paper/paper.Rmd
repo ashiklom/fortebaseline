@@ -43,43 +43,6 @@ mdcap <- function(text) {
 }
 ```
 
-# Outline
-
-- **Results**
-    - Summary:
-        - LAI time series with uncertainties, faceted by model structure
-    - Structural uncertainty details
-        - Understory light environment and how it affects species matters
-        - The multiple-scatter
-            - Fig: RTM comparison (Radiation profile)
-            - Fig: Crown model comparison
-            - Fig: Trait plasticity?
-    - Uncertainty analysis
-        - Which parameters contribute the most uncertainty?
-        - Structural vs. parameteric uncertainty
-- **Discussion**
-    - Ecological implications of structural uncertainty
-        - Predictions about ecological succession are very sensitive to the understory light environment.
-            - Need a good representation of canopy structure (finite canopy radius)
-            - How you model canopy radiative transfer matters! Small differences in the model can give significant results.
-        - But, trait plasticity can provide an alternative mechanism for success in the understory.
-            - Important modeling implication for all the emerging research on intra-specific trait variability.
-            - This combination of discrete functional types with plastic traits is closer to reality than purely trait-based ("eco-evolutionary?") models or completely discretized models with static traits on the other.
-            - Important caveat: Current implementation is based entirely on tropical data, which has more extreme canopy shading than temperate forests (REF), so tropical species may have evolved stronger trait plasticity than temperate species (REF).
-    - Implications of uncertainty analysis for future data collection and model development
-        - Parameter uncertainty is still a _huge_ source of overall model predictive uncertainty. Different parameters can give _qualitatively_ different ecological outcomes.
-        - Looking beyond aggregate variables (e.g. net primary productivity, total LAI) is essential to model evaluation and calibration. It's possible to generate a relatively?
-        - (Expected) Subsurface parameters (e.g. leaf-root ratios) have high sensitivity, but are poorly constrained.
-        - Trait covariance may alleviate some data limitation (Shiklomanov et al. 2018 [preprint])
-    - Future directions: Predicting disturbance response
-        - FoRTE project -- Forecasting a disturbance.
-            - Compare ecological resilience/memory between model and reality
-    
-Journal ideas:
-
-- _Global Change Biology_ -- 8000 word limit may be OK, especially if many methodological details are punted to the appendices.
-- _Ecological Monographs_ -- To do this topic justice may require a lot of words and figures. It may be hard to squeeze all of this information into a regular research paper.
-
 # Introduction
 
 - Why we need models?
@@ -226,6 +189,18 @@ For each combination of ED submodels, we ran 10 ED ensemble simulations.
 
 # Results
 
+- Summary:
+    - LAI time series with uncertainties, faceted by model structure
+- Structural uncertainty details
+    - Understory light environment and how it affects species matters
+    - The multiple-scatter
+        - Fig: RTM comparison (Radiation profile)
+        - Fig: Crown model comparison
+        - Fig: Trait plasticity?
+- Uncertainty analysis
+    - Which parameters contribute the most uncertainty?
+    - Structural vs. parameteric uncertainty
+
 ```{r captions}
 lai_10yr_cap <- paste(
   "ED2 leaf area index (LAI) predictions by plant functional type."
@@ -292,20 +267,33 @@ Different parameter combinations produce qualitatively different successional ou
 
 # Discussion
 
-## Comparison against other studies
+- Ecological implications of structural uncertainty
+    - Predictions about ecological succession are very sensitive to the understory light environment.
+        - Need a good representation of canopy structure (finite canopy radius)
+        - How you model canopy radiative transfer matters! Small differences in the model can give significant results.
+    - But, trait plasticity can provide an alternative mechanism for success in the understory.
+        - Important modeling implication for all the emerging research on intra-specific trait variability.
+        - This combination of discrete functional types with plastic traits is closer to reality than purely trait-based ("eco-evolutionary?") models or completely discretized models with static traits on the other.
+        - Important caveat: Current implementation is based entirely on tropical data, which has more extreme canopy shading than temperate forests (REF), so tropical species may have evolved stronger trait plasticity than temperate species (REF).
+- Implications of uncertainty analysis for future data collection and model development
+    - Parameter uncertainty is still a _huge_ source of overall model predictive uncertainty. Different parameters can give _qualitatively_ different ecological outcomes.
+    - Looking beyond aggregate variables (e.g. net primary productivity, total LAI) is essential to model evaluation and calibration. It's possible to generate a relatively?
+    - (Expected) Subsurface parameters (e.g. leaf-root ratios) have high sensitivity, but are poorly constrained.
+    - Trait covariance may alleviate some data limitation (Shiklomanov et al. 2018 [preprint])
+- Future directions: Predicting disturbance response
+    - FoRTE project -- Forecasting a disturbance.
+        - Compare ecological resilience/memory between model and reality
 
-In two tropical sites, ED2 did a good job simulating observed top-of-canopy outgoing shortwave radiation, as well as radiation profiles [@longo_2019_ed2].
-Completely closed canopy (i.e. no finite canopy radius) did not lead to an excessively dark understory; in fact, understory was slightly brighter than observed.
+# Conclusions
 
-## Future directions: Disturbance response modeling
-
-Net ecosystem productivity (NEP) declines immediately after disturbance, but recovers in 10-20 years [@amiro_2010_ecosystem].
-Extent of recovery depends on balance of gross (aboveground?) primary productivity (GPP) and respiration; GPP increase during recovery, while respiration may stay constant [@amiro_2010_ecosystem].
-
-
-# Conclusion
+<!-- TODO -->
 
 # Acknowledgements
+
+This project funded by NSF grant.
+Cyberinfrastructure provided by Pacific Northwest National Laboratory (PNNL).
+Data from University of Michigan Biological Station (UMBS).
+Data from TRY (TODO: Specific TRY statement).
 
 <!-- The following line inserts a page break when the output is MS Word. For page breaks in PDF, use \newpage on its own line.  -->
 ##### pagebreak

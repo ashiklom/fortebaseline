@@ -1,3 +1,8 @@
+**Journal ideas**
+
+- _Global Change Biology_ -- 8000 word limit may be OK, especially if many methodological details are punted to the appendices.
+- _Ecological Monographs_ -- To do this topic justice may require a lot of words and figures. It may be hard to squeeze all of this information into a regular research paper.
+
 # Introduction
 
 Earth's climate is changing, and its terrestrial ecosystems are likely to be affected (REF: IPCC).
@@ -82,3 +87,15 @@ Constraining these parameters should be a high priority...
 # Methods
 
 Photosynthesis / respiration ratio (i.e. C balance) in light and shade can be used as an indication of succession -- expect early successional species to have higher ratio in light and late successional species to have higher ratio in shade [@bazzaz_1979_physiological].
+
+# Discussion
+
+## Comparison against other studies
+
+In two tropical sites, ED2 did a good job simulating observed top-of-canopy outgoing shortwave radiation, as well as radiation profiles [@longo_2019_ed2].
+Completely closed canopy (i.e. no finite canopy radius) did not lead to an excessively dark understory; in fact, understory was slightly brighter than observed.
+
+## Future directions: Disturbance response modeling
+
+Net ecosystem productivity (NEP) declines immediately after disturbance, but recovers in 10-20 years [@amiro_2010_ecosystem].
+Extent of recovery depends on balance of gross (aboveground?) primary productivity (GPP) and respiration; GPP increase during recovery, while respiration may stay constant [@amiro_2010_ecosystem].
