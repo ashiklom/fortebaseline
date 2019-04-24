@@ -232,10 +232,10 @@ plan <- drake_plan(
       labs(x = "PFT", y = "Trait") +
       theme_cowplot() +
       theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
-            axis.text.y = element_text(size = rel(0.5))),
-    transform = map(YYY = c(cv, elasticity, pvar),
-                    SCALE = c(scale_fill_gradient(low = "white", high = "red"),
-                              scale_fill_gradient2(),
+            axis.text.y = element_text(size = rel(0.6)),
+            legend.position = "bottom"),
+    transform = map(YYY = c(elasticity, pvar),
+                    SCALE = c(scale_fill_gradient2(),
                               scale_fill_continuous(low = "white", high = "blue")))
   ),
   sensitivity_plot = target(

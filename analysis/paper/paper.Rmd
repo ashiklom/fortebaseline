@@ -228,19 +228,22 @@ Take-away: Different parameter combinations produce not just quantitatively diff
 
 ## Uncertainty analysis
 
-- Which parameters contribute the most uncertainty?
-- Structural vs. parameteric uncertainty
-
-Different model configurations produce significantly different ecological trajectories.
-
-```{r uncertainty-analysis, fig.cap = uncertainty_analysis_cap, fig.dim = c(20, 15)}
+```{r uncertainty-analysis, fig.cap = uncertainty_analysis_cap, fig.dim = c(15, 15)}
 uncertainty_analysis_cap <- paste(
-  "PEcAn-liked parameter sensitivity and uncertainty analysis, by model type."
+  "PEcAn-liked parameter sensitivity and uncertainty analysis, by model type.",
+  "Elasticity (a) is the normalized sensitivity of the model to a fixed change in the parameter.",
+  "pvar (b) is the partial variance, which describes the overall contribution of the parameter to model predictive uncertainty based on the combination of parameter uncertainty and model sensitivity.",
+  "Input parameter distributions are shown in Figure XXX."
 )
 readd(sensitivity_plot)
 ```
 
 `r mdcap(uncertainty_analysis_cap)`
+
+Take-away: Model parameter uncertainty is sensitive to model configuration.
+For example, turning on the finite canopy radius with the two-stream canopy RTM increases sensitivity across many parameters.
+
+**TODO**: Structural vs. parameteric uncertainty
 
 ## Structural uncertainty
 
