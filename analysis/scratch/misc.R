@@ -727,25 +727,37 @@ devtools::load_all(here::here(), attach_testthat = FALSE)
 
 drake::loadd(run_params, monthly_means_site)
 
-run_params_wide <- run_params %>%
-  mutate(pft = lvls_revalue(pft, pfts("shortname"))) %>%
-  gather(param, value, -workflow_id, -run_id, -pft) %>%
-  unite(pft_param, pft, param, sep = "..") %>%
-  spread(pft_param, value)
+d <- sensitivity_inputs %>%
+  ungroup() %>%
+  filter(crown == crown[[1]], rtm == rtm[[1]], traits == traits[[1]])
 
-sensitivity_inputs <- monthly_means_site %>%
-  filter(date > "1910-01-01", month %in% 7:9) %>%
-  group_by(crown, rtm, traits, run_id = as.numeric(runs)) %>%
-  summarize_at(vars(GPP:AGB), mean) %>%
-  left_join(run_params_wide, by = "run_id")
+y <- pull(d, GPP)
+x <- pull(d, Early..SLA)
 
-# NOTE: Fitting all at once results in too few degrees of freedom.
-# Need to fit one at a time.
-sensitivity_analysis <- function(y, x) {
-  stopifnot(is.numeric(y), is.data.frame(x))
-  dat <- cbind(x, y = y)
-  rhs <- sprintf("s(%s)", names(x)) %>% paste(collapse = " + ")
-  form <- sprintf("y ~ %s", rhs)
-  fit <- mgcv::gam(as.formula(form), data = dat)
-  head(dat)
-}
+ssout %>%
+  mutate(model = interaction(crown, rtm, traits, sep = "\n"),
+         elasticity = pmax(elasticity, -200)) %>%
+  separate(xvar, c("pft", "trait"), sep = "\\.\\.") %>%
+  ggplot() +
+  aes(x = pft, y = trait, fill = elasticity) +
+  geom_tile() +
+  facet_grid(vars(yvar), vars(model)) +
+  scale_fill_gradient2() +
+  labs(x = "PFT", y = "Trait") +
+  cowplot::theme_cowplot() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
+        axis.text.y = element_text(size = rel(0.7)))
+
+ssout %>%
+  mutate(model = interaction(crown, rtm, traits)) %>%
+  separate(xvar, c("pft", "trait"), sep = "\\.\\.") %>%
+  ggplot() +
+  aes(x = trait, y = elasticity, fill = pft) +
+  geom_col(position = position_dodge()) +
+  facet_grid(vars(yvar), vars(model)) +
+  scale_fill_manual(values = pfts("color")) +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+  
+
+

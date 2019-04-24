@@ -191,8 +191,6 @@ For each combination of ED submodels, we ran 10 ED ensemble simulations.
 
 ## Summary
 
-Time series of aggregate variables (GPP, NPP, AGB, Total LAI), with error bars by structure
-
 ```{r summary-ts-plot, fig.cap = summary_ts_cap, fig.dim = c(10, 7)}
 summary_ts_cap <- paste(
   "ED2 plot-level ensemble predictions of",
@@ -207,7 +205,7 @@ readd(summary_ts_plot)
 
 `r mdcap(summary_ts_cap)`
 
-Big facet plot (exploratory) of LAI by PFT for all model combinations
+Take-away: Parameter uncertainty is as large as, or even larger, than structural uncertainty.
 
 ```{r bigfacet-plot, fig.cap = bigfacet_cap, fig.dim = c(12, 12)}
 bigfacet_cap <- paste(
@@ -217,7 +215,8 @@ readd(bigfacet_plot)
 ```
 
 `r mdcap(bigfacet_cap)`
-    
+
+Take-away: Different parameter combinations produce not just quantitatively different bulk ecosystem properties (e.g. NPP, total LAI), but also qualitatively different successional/ecological outcomes.
     
 ## Structural uncertainty details
 
@@ -234,6 +233,15 @@ readd(bigfacet_plot)
 
 Different model configurations produce significantly different ecological trajectories.
 
+```{r uncertainty-analysis, fig.cap = uncertainty_analysis_cap, fig.dim = c(20, 15)}
+uncertainty_analysis_cap <- paste(
+  "PEcAn-liked parameter sensitivity and uncertainty analysis, by model type."
+)
+readd(sensitivity_plot)
+```
+
+`r mdcap(uncertainty_analysis_cap)`
+
 ## Structural uncertainty
 
 ```{r rad_prof, fig.cap = rad_barplot_cap, fig.dim = c(5, 7)}
@@ -248,11 +256,6 @@ readd(rad_lineplot)
 
 Compared to the default two-stream model, the multiple scatter model leads to slightly less beam (direct) radiation in the understory but slightly more diffuse radiation.
 
-## Parameter uncertainty
-
-{TODO: PEcAn variance decomposition analysis, by configuration.}
-
-Different parameter combinations produce qualitatively different successional outcomes.
 
 # Discussion
 
