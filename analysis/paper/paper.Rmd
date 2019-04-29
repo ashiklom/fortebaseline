@@ -243,7 +243,7 @@ Enabling trait plasticity increases variance in predictions of AGB.
 Enabling the finite canopy radius increases the variance in LAI predictions.
 GPP and NPP have the highest variance by far for the combination of finite canopy radius and two-stream radiative transfer.
 
-`r mdcap within_vs_across_cap`
+`r mdcap(within_vs_across_cap)`
 
 ```{r uncertainty-analysis, fig.cap = uncertainty_analysis_cap, fig.dim = c(15, 15)}
 uncertainty_analysis_cap <- paste(
