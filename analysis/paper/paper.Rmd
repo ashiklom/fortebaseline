@@ -238,6 +238,10 @@ readd(within_across_plot)
 ```
 
 Take-away: Overall, structural uncertainty (variance in ensemble means across structures) is comparable or lower than parameter uncertainty (uncertainty within ensembles for a given structure).
+Parameter uncertainty varies significantly across model structures.
+Enabling trait plasticity increases variance in predictions of AGB.
+Enabling the finite canopy radius increases the variance in LAI predictions.
+GPP and NPP have the highest variance by far for the combination of finite canopy radius and two-stream radiative transfer.
 
 `r mdcap within_vs_across_cap`
 
