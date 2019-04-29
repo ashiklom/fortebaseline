@@ -2,12 +2,14 @@
 .Rhistory
 .RData
 .DS_Store
+.history
 
 # Drake files
 .drake/
 
 # Model outputs
 analysis/data/model_output/
+analysis/data/retrieved/
 
 # Rmd output
 analysis/paper/exploratory_cache/

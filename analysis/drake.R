@@ -40,13 +40,22 @@ library(cowplot)
 devtools::load_all(here::here(), attach_testthat = FALSE)
 expose_imports("fortebaseline")
 
+# Set common directories and paths
+analysis_dir <- dir_create(here("analysis"))
+data_dir <- dir_create(path(analysis_dir, "data"))
+download_dir <- dir_create(path(data_dir, "retrieved"))
+
+monthly_output_file <- path(download_dir, "monthly-ensemble-output.fst")
+meta_analysis_file <- path(download_dir, "meta-analysis.rds")
+ensemble_params_file <- path(download_dir, "ed-ensemble-params.fst")
+
 plan <- drake_plan(
+  # Common elements
   paper = target(
     rmarkdown::render(
-      knitr_in(!!(here("analysis", "paper", "paper.Rmd"))),
+      knitr_in(!!(path(analysis_dir, "paper", "paper.Rmd"))),
       "github_document"
     )),
-  # Common elements
   model_scale = c(RColorBrewer::brewer.pal(
     n = nrow(both_uncertainty) - 1,
     name = "Paired"
@@ -54,9 +63,14 @@ plan <- drake_plan(
   #######################################
   ## Figure 1: Parameter distributions ##
   #######################################
-  ma_posterior = readRDS(file_in(
-    !!here("analysis", "data", "derived-data", "meta-analysis.rds")
-  )) %>% tidy_posterior(),
+  meta_analysis_dl = target(
+    download.file("https://osf.io/download/pcrav",
+                  file_out(!!meta_analysis_file)),
+    trigger = trigger(condition = !file_exists(meta_analysis_file),
+                      mode = "condition")
+  ),
+  ma_posterior = readRDS(file_in(!!meta_analysis_file)) %>%
+    tidy_posterior(),
   param_dist_gg = ma_posterior %>%
     mutate(pft = factor(pft, pfts("pft"))) %>%
     unnest(draws) %>%
@@ -74,9 +88,13 @@ plan <- drake_plan(
   ########################################
   ## Figure 2: Aggregate variables plot ##
   ########################################
-  raw_monthly_output = read_fst(file_in(
-    !!here("analysis", "data", "derived-data", "monthly-ensemble-output.fst")
-  )) %>%
+  monthly_output_dl = target( 
+    download.file("https://osf.io/download/3twxa",
+                  file_out(!!monthly_output_file)),
+    trigger = trigger(condition = !file_exists(monthly_output_file),
+                      mode = "condition")
+  ),
+  raw_monthly_output = read_fst(file_in(!!monthly_output_file)) %>%
     as_tibble() %>%
     mutate(workflow_id = as.numeric(gsub("PEcAn_", "", workflows))) %>%
     select(workflow_id, everything()) %>%
@@ -174,9 +192,14 @@ plan <- drake_plan(
   #####################################
   ## Figure 4: Parameter sensitivity ##
   #####################################
-  run_params_all = read_fst(file_in(
-    !!here("analysis", "data", "derived-data", "ed-ensemble-params.fst")
-  )) %>% as_tibble(),
+  run_params_dl = target( 
+    download.file("https://osf.io/download/f5vpd",
+                  file_out(!!ensemble_params_file)),
+    trigger = trigger(condition = !file_exists(ensemble_params_file),
+                      mode = "condition")
+  ),
+  run_params_all = read_fst(file_in(!!ensemble_params_file)) %>%
+    as_tibble(),
   meta_vars = run_params_all %>%
     select(-workflow_id, -path) %>%
     group_by(pft) %>%
