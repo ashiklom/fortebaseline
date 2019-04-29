@@ -84,11 +84,12 @@ plan <- drake_plan(
   ) %>% mutate(variable = factor(variable, c("GPP", "NPP", "LAI", "AGB"))),
   monthly_means = raw_monthly_output %>%
     group_by(workflow_id, crown, rtm, traits, date, runs, pft) %>%
-    select(starts_with("mmean"), agb_py) %>%
+    select(group_cols(), starts_with("mmean"), agb_py) %>%
     # Remove duplicated values -- `mmean` values should be unique by PFT.
     summarize_all(mean),
   monthly_means_site = monthly_means %>%
     select(
+      group_cols(),
       GPP = mmean_gpp_py,
       NPP = mmean_npp_py,
       LAI_pft = mmean_lai_py,
