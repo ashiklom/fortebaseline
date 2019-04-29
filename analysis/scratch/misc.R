@@ -758,6 +758,3 @@ ssout %>%
   scale_fill_manual(values = pfts("color")) +
   theme(axis.title.x = element_blank(),
         axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
-  
-
-

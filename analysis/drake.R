@@ -46,6 +46,11 @@ plan <- drake_plan(
       knitr_in(!!(here("analysis", "paper", "paper.Rmd"))),
       "github_document"
     )),
+  # Common elements
+  model_scale = c(RColorBrewer::brewer.pal(
+    n = nrow(both_uncertainty) - 1,
+    name = "Paired"
+  ), "black") %>% setNames(both_uncertainty[["model"]]),
   #######################################
   ## Figure 1: Parameter distributions ##
   #######################################
@@ -128,8 +133,8 @@ plan <- drake_plan(
     geom_hline(aes(yintercept = low), data = hardiman, linetype = "dotted", color = "red") +
     geom_hline(aes(yintercept = hi), data = hardiman, linetype = "dotted", color = "red") +
     facet_grid(vars(variable), vars(model), scales = "free_y", switch = "y") +
-    scale_color_brewer(palette = "Paired") +
-    scale_fill_brewer(palette = "Paired") +
+    scale_color_manual(values = unname(head(model_scale, -1))) +
+    scale_fill_manual(values = unname(head(model_scale, -1))) +
     theme_cowplot() +
     theme(axis.title.y = element_blank(),
           axis.title.x = element_blank(),
@@ -187,10 +192,11 @@ plan <- drake_plan(
     tidyr::gather(param, value, -workflow_id, -run_id, -pft) %>%
     unite(pft_param, pft, param, sep = "..") %>%
     spread(pft_param, value),
-  sensitivity_inputs = monthly_means_site %>%
+  growing_season_averages = monthly_means_site %>%
     filter(date > "1910-01-01", month %in% 7:9) %>%
     group_by(crown, rtm, traits, run_id = as.numeric(runs)) %>%
-    summarize_at(vars(GPP:AGB), mean) %>%
+    summarize_at(vars(GPP:AGB), mean),
+  sensitivity_inputs = growing_season_averages %>%
     left_join(run_params_wide, by = "run_id"),
   sensitivity_results = sensitivity_inputs %>%
     ungroup() %>%
@@ -223,7 +229,34 @@ plan <- drake_plan(
   sensitivity_plot = target(
     cowplot::plot_grid(sensitivity_plot_piece),
     transform = combine(sensitivity_plot_piece)
-  )
+  ),
+  #######################################
+  ## Within vs. across model structure ##
+  #######################################
+  parameter_uncertainty = growing_season_averages %>%
+    group_by(crown, rtm, traits) %>%
+    summarize_at(vars(GPP:AGB), var) %>%
+    ungroup() %>%
+    mutate(model = as.character(interaction(crown, rtm, traits))),
+  structure_uncertainty = growing_season_averages %>%
+    group_by(crown, rtm, traits) %>%
+    summarize_at(vars(GPP:AGB), mean) %>%
+    ungroup() %>%
+    summarize_at(vars(GPP:AGB), var) %>%
+    mutate(model = "Across-structure"),
+  both_uncertainty = parameter_uncertainty %>%
+    select(model, GPP:AGB) %>%
+    bind_rows(structure_uncertainty) %>%
+    mutate(model = fct_inorder(model)),
+  within_across_plot = both_uncertainty %>%
+    gather(variable, variance, GPP:AGB) %>%
+    ggplot() +
+    aes(x = model, y = variance, fill = model) +
+    geom_col() +
+    facet_wrap(vars(variable), scales = "free_y") +
+    scale_fill_manual(values = model_scale) +
+    theme(axis.text.x = element_blank(),
+          axis.ticks.x = element_blank())
 )
 
 # Parallelism configuration. Not sure which of these is better...
