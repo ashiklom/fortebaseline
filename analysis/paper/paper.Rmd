@@ -95,7 +95,7 @@ mdcap <- function(text) {
 
 ## Site description
 
-- Secondary successional forest -- bigtooth aspen (_Populus grandidentata_), northern red oak (_Quercus rubra_), red maple (/Acer rubrum/), paper birch (_Betula papyrifera_), eastern white pine (_Pinus strobus_)
+- Secondary successional forest -- bigtooth aspen (_Populus grandidentata_), northern red oak (_Quercus rubra_), red maple (_Acer rubrum_), paper birch (_Betula papyrifera_), eastern white pine (_Pinus strobus_)
 - Average age -- 95 years (2013)
 - NEP in UMBS tower is 1.58 MG C ha^-1^ yr^-1^ (0.80-1.98) (1999-2006), but with landscape variation (REF?)
 - Heavily logged in late 1800s and early 1900s, disturbed by fire until 1923 (REF)
@@ -197,7 +197,7 @@ Plant functional type definitions:
 | `Vm_low_temp`                       | Minimum temperature for photosynthesis               | °C                            |
 | `water_conductance`                 | "Water availability factor"                          | m^-2^ a^-1^ (kg C root)^-1^   |
 
-Table: Parameter descriptions
+Table: Parameter descriptions. For additional information, see the [ED2 model wiki](https://github.com/EDmodel/ED2/wiki/PFT-parameters).
 
 
 ```{r methods_captions}
