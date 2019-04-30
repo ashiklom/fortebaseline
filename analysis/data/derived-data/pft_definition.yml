@@ -1,0 +1,28 @@
+- pft: umbs.early_hardwood
+  species:
+    - Betula papyrifera var. cordifolia
+    - Betula papyrifera
+    - Betula papyrifera var. kenaica
+    - Betula papyrifera var. papyrifera
+    - Populus grandidentata
+    - Populus tremuloides
+- pft: umbs.mid_hardwood
+  species:
+    - Acer rubrum
+    - Acer rubrum var. drummondii
+    - Acer rubrum var. rubrum
+    - Acer rubrum var. trilobum
+    - Quercus rubra
+    - Quercus rubra var. ambigua
+    - Quercus rubra var. rubra
+    - Acer pensylvanicum
+- pft: umbs.late_hardwood
+  species:
+    - Acer saccharum
+    - Acer saccharum var. saccharum
+    - Acer saccharum var. schneckii
+    - Fagus grandifolia
+    - Fagus grandfolia
+- pft: umbs.northern_pine
+  species:
+    - Pinus strobus
