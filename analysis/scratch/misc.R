@@ -758,3 +758,25 @@ ssout %>%
   scale_fill_manual(values = pfts("color")) +
   theme(axis.title.x = element_blank(),
         axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+
+##################################################
+# Look at BETY priors
+##################################################
+library(DBI)
+library(RPostgres)
+library(tidyverse)
+
+variables <- tbl(bety(), "variables")
+
+variables %>%
+  filter(description %like% "%reflect%") %>%
+  select(id, name, description)
+
+priors <- pfts_priors()
+
+priors %>%
+  group_by(variable) %>%
+  count() %>%
+  arrange(desc(n)) %>%
+  filter(n < 4) %>%
+  print(n = Inf)
