@@ -218,14 +218,6 @@ readd(bigfacet_plot)
 
 Take-away: Different parameter combinations produce not just quantitatively different bulk ecosystem properties (e.g. NPP, total LAI), but also qualitatively different successional/ecological outcomes.
     
-## Structural uncertainty details
-
-- Understory light environment and how it affects species matters
-- The multiple-scatter
-    - Fig: RTM comparison (Radiation profile)
-    - Fig: Crown model comparison
-    - Fig: Trait plasticity?
-
 ## Uncertainty analysis
 
 ```{r within-vs-across, fig.cap = within_vs_across_cap, fig.dim = c(6, 6)}
@@ -237,13 +229,13 @@ within_vs_across_cap <- paste(
 readd(within_across_plot)
 ```
 
+`r mdcap(within_vs_across_cap)`
+
 Take-away: Overall, structural uncertainty (variance in ensemble means across structures) is comparable or lower than parameter uncertainty (uncertainty within ensembles for a given structure).
 Parameter uncertainty varies significantly across model structures.
 Enabling trait plasticity increases variance in predictions of AGB.
 Enabling the finite canopy radius increases the variance in LAI predictions.
 GPP and NPP have the highest variance by far for the combination of finite canopy radius and two-stream radiative transfer.
-
-`r mdcap(within_vs_across_cap)`
 
 ```{r uncertainty-analysis, fig.cap = uncertainty_analysis_cap, fig.dim = c(15, 15)}
 uncertainty_analysis_cap <- paste(
@@ -260,19 +252,20 @@ readd(sensitivity_plot)
 Take-away: Model parameter uncertainty is sensitive to model configuration.
 For example, turning on the finite canopy radius with the two-stream canopy RTM increases sensitivity across many parameters.
 
-## Structural uncertainty
+## Details about model structures
 
 ```{r rad_prof, fig.cap = rad_barplot_cap, fig.dim = c(5, 7)}
 rad_barplot_cap <- paste(
   "Comparison of radiation profiles under two-stream and multiple scatter",
   "canopy radiative transfer models."
 )
-readd(rad_lineplot)
 ```
 
 `r mdcap(rad_barplot_cap)`
 
-Compared to the default two-stream model, the multiple scatter model leads to slightly less beam (direct) radiation in the understory but slightly more diffuse radiation.
+<!-- Compared to the default two-stream model, the multiple scatter model leads to slightly less beam (direct) radiation in the understory but slightly more diffuse radiation. -->
+
+(TODO)
 
 
 # Discussion
