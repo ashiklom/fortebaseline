@@ -6,7 +6,7 @@ author:
   - Ben Bond-Lamberty
   - Christopher M. Gough
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: 
+output:
     bookdown::html_document2:
       fig_caption: yes
       reference_docx: "../templates/template.docx" # Insert path for the DOCX file
@@ -17,7 +17,7 @@ abstract: |
 keywords: |
   keyword 1; keyword 2; keyword 3
 highlights: |
-  These are the highlights. 
+  These are the highlights.
 ---
 
 ```{r, setup, echo = FALSE}
@@ -88,7 +88,7 @@ mdcap <- function(text) {
     - What is the cost of considering these processes, in terms of additional parameteric uncertainty?
     - What are the relative contributions of parameteric uncertainty (data limitation) vs. structural uncertainty (theoretical limitation?)?
 - Study overview:
-    - ED with factorial combination of submodels related to radiative transfer formulation (two-stream vs. multiple scatter), horizontal competition (finite canopy radius vs. complete shading), and trait plasticity (whether or not SLA and Vcmax vary with light level) 
+    - ED with factorial combination of submodels related to radiative transfer formulation (two-stream vs. multiple scatter), horizontal competition (finite canopy radius vs. complete shading), and trait plasticity (whether or not SLA and Vcmax vary with light level)
     - Ensemble analysis to look at parameter uncertainty
 
 # Methods
@@ -140,6 +140,8 @@ BETYdb [@lebauer_2013_facilitating].
 
 TRY data [@kattge_2011_try].
 
+CRUNCEP met.
+
 Other FoRTE data?
 
 ## Modeling workflow
@@ -168,7 +170,31 @@ Plant functional type definitions:
 - **Pine**
     - _Pinus strobus_ (white pine)
     - ?? _Pinus resinosa_
-    
+
+| Parameter_name          | Description                                          | Unit                          |
+|-------------------------|------------------------------------------------------|-------------------------------|
+| `c2n_fineroot`          | C:N ratio in fine roots                              | unitless (mass ratio)         |
+| `c2n_leaf`              | C:N ratio in leaves                                  | unitless (mass ratio)         |
+| `f_labile`              | Fraction of litter that goes to labile (fast) C pool | unitless (0-1)                |
+| `fineroot2leaf` / `q`   | Ratio of fine root to leaf biomass                   | unitless (mass ratio)         |
+| `growth_resp_factor`    | Fraction of daily C gain lost to growth respiration  | unitless (0-1)                |
+| `leaf_width`            | Mean leaf width (for boundary layer conductance)     | m                             |
+| `mort2`                 | C balance ratio at which mortality rapidly increases | unitless (mass ratio)         |
+| `nonlocal_dispersal`    | "Proportion of dispersal that is global"             | unitless (0-1)                |
+| `quantum_efficiency`    | Farquhar model parameter (TODO)                      | mol CO~2~ (mol photons)^-1^   |
+| `r_fract`               | Fraction of C storage to seed reproduction           | unitless                      |
+| `root_respiration_rate` | Root respiration rate at reference soil temperature  | μmol CO~2~ (kg fine root)^-1^ |
+| `root_turnover_rate`    | Rate of fine rootloss                                | year^-1^                      |
+| `SLA`                   | Specific leaf area                                   | m^2^ kg^-1^ C                 |
+| `seedling_mortality`    | Proportion of seed that dies and goes to litter pool | unitless (0-1)                |
+| `stomatal_slope`        | Slope between _A_ and stomatal conductance (Leuning) | unitless                      |
+| `Vcmax`                 | Maximum rate of CO~2~ carboxylation at 15 °C         | μmol m^-2^ s^-1^              |
+| `Vm_low_temp`           | Minimum temperature for photosynthesis               | °C                            |
+| `water_conductance`     | "Water availability factor"                          | m^-2^ a^-1^ (kg C root)^-1^   |
+
+Table: Parameter descriptions
+
+
 ```{r methods_captions}
 param_dist_cap <- paste(
   "Input parameter distributions from PEcAn trait meta-analysis."
@@ -179,8 +205,10 @@ param_dist_cap <- paste(
 readd(param_dist_gg)
 ```
 
+`r mdcap(param_dist_cap)`
+
 For each combination of ED submodels, we ran 10 ED ensemble simulations.
-    
+
 ## Analysis of results
 
 - Structural vs. parameteric uncertainty
@@ -217,7 +245,7 @@ readd(bigfacet_plot)
 `r mdcap(bigfacet_cap)`
 
 Take-away: Different parameter combinations produce not just quantitatively different bulk ecosystem properties (e.g. NPP, total LAI), but also qualitatively different successional/ecological outcomes.
-    
+
 ## Uncertainty analysis
 
 ```{r within-vs-across, fig.cap = within_vs_across_cap, fig.dim = c(6, 6)}
@@ -301,7 +329,7 @@ Data from TRY (TODO: Specific TRY statement).
 <!-- The following line inserts a page break when the output is MS Word. For page breaks in PDF, use \newpage on its own line.  -->
 ##### pagebreak
 
-# References 
+# References
 <!-- The following line ensures the references appear here for the MS Word or HTML output files, rather than right at the end of the document (this will not work for PDF files):  -->
 <div id="refs"></div>
 
@@ -342,7 +370,7 @@ $$ \lambda = \frac{a_{proj}}{\mu} $$
 
 ### Colophon
 
-This report was generated on `r Sys.time()` using the following computational environment and dependencies: 
+This report was generated on `r Sys.time()` using the following computational environment and dependencies:
 
 ```{r colophon, cache = FALSE}
 # which R packages and versions?
