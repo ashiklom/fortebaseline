@@ -233,7 +233,8 @@ plan <- drake_plan(
     mutate(model = interaction(crown, rtm, traits, sep = "\n"),
            elasticity = pmax(elasticity, -200),
            cv = pmin(cv, 1000)) %>%
-    separate(xvar, c("pft", "trait"), sep = "\\.\\."),
+    separate(xvar, c("pft", "trait"), sep = "\\.\\.") %>%
+    mutate(pft = factor(pft, pfts("shortname"))),
   sensitivity_plot_piece = target(
     ggplot(sensitivity_plot_data) +
       aes(x = pft, y = trait, fill = YYY) +
