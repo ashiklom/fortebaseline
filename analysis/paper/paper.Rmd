@@ -143,6 +143,8 @@ TRY data [@kattge_2011_try].
 CRUNCEP met.
 
 Other FoRTE data?
+- LAI trends: 1997-2014
+- Aboveground NPP data: 1999-2017
 
 ## Modeling workflow
 
