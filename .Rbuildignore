@@ -4,5 +4,6 @@
 ^CONDUCT\.md$
 ^CONTRIBUTING\.md$
 ^analysis
+^.dir-locals.el$
 knit
 getcitations
