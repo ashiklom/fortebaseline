@@ -1,0 +1,17 @@
+pft,variable,parama,paramb,distn
+umbs.early_hardwood,leaf_reflect_vis,258.941328238295,4663.893452714859,beta
+umbs.late_hardwood,leaf_reflect_vis,72.39344681742034,1282.5555784184485,beta
+umbs.mid_hardwood,leaf_reflect_vis,10.096597429229833,157.51796340311563,beta
+umbs.northern_pine,leaf_reflect_vis,5.511465518876676,53.00053505520887,beta
+umbs.early_hardwood,leaf_reflect_nir,561.2004398661849,776.7089900261194,beta
+umbs.late_hardwood,leaf_reflect_nir,393.2268885817533,595.0237283879753,beta
+umbs.mid_hardwood,leaf_reflect_nir,34.83826800390294,56.00797431418,beta
+umbs.northern_pine,leaf_reflect_nir,34.97353113849009,34.58374415518268,beta
+umbs.early_hardwood,leaf_trans_vis,15.439087878556858,561.0917953751486,beta
+umbs.late_hardwood,leaf_trans_vis,8.799044777178015,189.03438383333918,beta
+umbs.mid_hardwood,leaf_trans_vis,2.0994302889408463,37.90377328264126,beta
+umbs.northern_pine,leaf_trans_vis,1.1461398130654978,73.83901866811729,beta
+umbs.early_hardwood,leaf_trans_nir,173.19771141045715,199.2200182022678,beta
+umbs.late_hardwood,leaf_trans_nir,95.56006675458096,85.64017968371525,beta
+umbs.mid_hardwood,leaf_trans_nir,16.52451548177152,17.332485613225515,beta
+umbs.northern_pine,leaf_trans_nir,5.527517086838039,13.818920007788575,beta
