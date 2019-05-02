@@ -173,32 +173,38 @@ Plant functional type definitions:
     - _Pinus strobus_ (white pine)
     - ?? _Pinus resinosa_
 
-| Parameter name (ED name)            | Description                                            | Unit                          |
-|-------------------------------------|--------------------------------------------------------|-------------------------------|
-| `c2n_fineroot`                      | C:N ratio in fine roots                                | unitless (mass ratio)         |
-| `c2n_leaf`                          | C:N ratio in leaves                                    | unitless (mass ratio)         |
-| `f_labile`                          | Fraction of litter that goes to labile (fast) C pool   | unitless (0-1)                |
-| `fineroot2leaf` (`q`)               | Ratio of fine root to leaf biomass                     | unitless (mass ratio)         |
-| `growth_resp_factor`                | Fraction of daily C gain lost to growth respiration    | unitless (0-1)                |
-| `leaf_turnover_rate`                | Temperature dependent rate of leaf loss (conifer only) | year^-1^                      |
-| `Rd0`                               | Leaf dark respiration at 15 °C                         | ???                           |
-| `dark_respiration_factor` #         | Ratio of leaf respiration to Vcmax                     | ???                           |
-| `root_respiration_rate` (`_factor`) | Root respiration rate at 15 °C                         | μmol CO~2~ (kg fine root)^-1^ |
-| `root_turnover_rate`                | Temperature dependent rate of fine root loss           | year^-1^                      |
-| `leaf_width`                        | Mean leaf width (for boundary layer conductance)       | m                             |
-| `mort2`                             | C balance ratio at which mortality rapidly increases   | unitless (mass ratio)         |
-| `nonlocal_dispersal`                | "Proportion of dispersal that is global"               | unitless (0-1)                |
-| `quantum_efficiency`                | Farquhar model parameter (TODO)                        | mol CO~2~ (mol photons)^-1^   |
-| `r_fract`                           | Fraction of C storage to seed reproduction             | unitless                      |
-| `SLA`                               | Specific leaf area                                     | m^2^ kg^-1^ C                 |
-| `seedling_mortality`                | Proportion of seed that dies and goes to litter pool   | unitless (0-1)                |
-| `stomatal_slope`                    | Slope between _A_ and stomatal conductance (Leuning)   | unitless                      |
-| `Vcmax` (`Vm0`)                     | Maximum rate of CO~2~ carboxylation at 15 °C           | μmol m^-2^ s^-1^              |
-| `Vm_low_temp`                       | Minimum temperature for photosynthesis                 | °C                            |
-| `water_conductance`                 | "Water availability factor"                            | m^-2^ a^-1^ (kg C root)^-1^   |
+| Parameter name (ED name)             | Description                                            | Unit                         |
+|--------------------------------------|--------------------------------------------------------|------------------------------|
+| `c2n_fineroot` #                     | C:N ratio in fine roots                                | unitless (mass ratio)        |
+| `c2n_leaf` #                         | C:N ratio in leaves                                    | unitless (mass ratio)        |
+| `f_labile` *                         | Fraction of litter that goes to labile (fast) C pool   | unitless (0-1)               |
+| `fineroot2leaf` (`q`) *              | Ratio of fine root to leaf biomass                     | unitless (mass ratio)        |
+| `growth_resp_factor` *               | Fraction of daily C gain lost to growth respiration    | unitless (0-1)               |
+| `leaf_turnover_rate` #               | Temperature dependent rate of leaf loss (conifer only) | year^-1^                     |
+| `Rd0`  *                             | Leaf dark respiration at 15 °C                         | ???                          |
+| `dark_respiration_factor` *          | Ratio of leaf respiration to Vcmax                     | ???                          |
+| `root_respiration_rate` (`_factor`)* | Root respiration rate at 15 °C                         | μmol CO~2~ (kg fineroot)^-1^ |
+| `root_turnover_rate` *               | Temperature dependent rate of fine root loss           | year^-1^                     |
+| `leaf_width` +                       | Mean leaf width (for boundary layer conductance)       | m                            |
+| `mort2` *                            | C balance ratio at which mortality rapidly increases   | unitless (mass ratio)        |
+| `mort3` +%                           | Density-independent (background) mortality rate        | year^-1^                     |
+| `nonlocal_dispersal` #               | "Proportion of dispersal that is global"               | unitless (0-1)               |
+| `quantum_efficiency` *               | Farquhar model parameter (TODO)                        | mol CO~2~ (mol photons)^-1^  |
+| `r_fract` *                          | Fraction of C storage to seed reproduction             | unitless                     |
+| `SLA` *                              | Specific leaf area                                     | m^2^ kg^-1^ C                |
+| `seedling_mortality` #               | Proportion of seed that dies and goes to litter pool   | unitless (0-1)               |
+| `stomatal_slope` *                   | Slope between _A_ and stomatal conductance (Leuning)   | unitless                     |
+| `Vcmax` (`Vm0`) *                    | Maximum rate of CO~2~ carboxylation at 15 °C           | μmol m^-2^ s^-1^             |
+| `Vm_low_temp` #                      | Minimum temperature for photosynthesis                 | °C                           |
+| `water_conductance` *                | "Water availability factor"                            | m^-2^ a^-1^ (kg C root)^-1^  |
+| `minimum_height` +%                  | Minimum height for plant reproduction                  | m                            |
+| `leaf_reflect/trans_vis/nir` #%      | Leaf reflectance/transmittance in visible/NIR          | unitless (0-1)               |
 
 Table: Parameter descriptions. For additional information, see the [ED2 model wiki](https://github.com/EDmodel/ED2/wiki/PFT-parameters).
-
+**\*** indicates parameters common to this study and @raczka_2018_what.
+**+** indicates parameters that are in @raczka_2018_what but not this study.
+**#** indicates parameters that are in this study but not @raczka_2018_what.
+**%** indicates parameters that have not yet been included in the runs.
 
 ```{r methods_captions}
 param_dist_cap <- paste(
