@@ -1,5 +1,5 @@
 library(pecanapi)
-import::from(magrittr, "%>%")
+library(magrittr, include.only = "%>%")
 source(file.path("analysis", "scratch", "helpers.R"))
 
 model_id <- 99000000006                 # ED develop
@@ -40,7 +40,8 @@ settings <- list() %>%
       prerun = "ulimit -s unlimited",
       barebones_ed2in = "true",
       ed2in_tags = list(
-        IOOUTPUT = 0,
+        IOOUTPUT = 3,
+        OBSTIME_DB = '/data/dbfiles/forte_obstime.time', 
         PLANT_HYDRO_SCHEME = 0,
         ISTOMATA_SCHEME = 0,
         ISTRUCT_GROWTH_SCHEME = 0,
