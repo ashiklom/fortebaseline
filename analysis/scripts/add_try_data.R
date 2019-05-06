@@ -1,12 +1,12 @@
-library(data.table)
-
-# begin imports
-import::from("magrittr", "%>%", .into = "")
-import::from("DBI", "dbConnect", "dbBind", "dbClearResult", "dbSendStatement", .into = "")
-import::from("RPostgres", "Postgres", .into = "")
-import::from("fst", "read_fst", .into = "")
-import::from("dplyr", "tbl", "filter", "select", "collect", "inner_join", .into = "")
-# end imports
+library(data.table, exclude = c("between", "first", "last"))
+library(magrittr, include.only = "%>%")
+library(RPostgres)
+library(fst)
+library(dplyr, mask.ok = c("filter", "lag", "intersect",
+                           "setdiff", "setequal", "union"))
+library(tidyr)
+library(stringr)
+library(fortebaseline)
 
 con <- dbConnect(
   Postgres(),
@@ -28,8 +28,8 @@ if (!file.exists(fst_file)) {
 }
 
 # Subset to selected species 
-species <- readLines(file.path("analysis", "data",
-                               "derived-data", "species_list.txt"))
+species_df <- pfts_species()
+species <- species_df %>% pull(scientificname)
 
 setkey(trydata, "AccSpeciesName")
 
@@ -70,29 +70,33 @@ if (FALSE) {
     facet_wrap(vars(bety_name), scales = "free_y")
 }
 
-bety_species <- con %>%
-  tbl("species") %>%
-  filter(scientificname %in% !!species) %>%
-  select(AccSpeciesName = scientificname,
-                specie_id = id) %>%
-  collect()
+bety_species <- species_df %>%
+  select(AccSpeciesName = scientificname, specie_id)
 
 setDT(bety_species)
 species_data_final <- bety_species[species_data_sub, on = "AccSpeciesName"]
 species_data_final[, notes := paste0("TRY.ObservationID = ", ObservationID, "|",
                                      "TRY.DataID = ", DataID)]
 
-stmt <- dbSendStatement(con, paste(
+# Exclude TRY data already in BETY
+bety_try_data <- tbl(con, "traits") %>%
+  filter(notes %like% "TRY%") %>%
+  collect() %>%
+  separate(notes, c("ObservationID", "DataID"), sep = "\\|") %>%
+  mutate_at(vars(ObservationID, DataID), ~as.numeric(str_extract(., "[[:digit:]]+"))) %>%
+  select(ends_with("ID"))
+
+setDT(bety_try_data)
+# data.table equivalent of `anti_join(species_data_final, bety_try_data)`
+species_data_insert <- species_data_final[!bety_try_data,
+                                          on = c("ObservationID", "DataID")]
+
+ninsert <- dbExecute(con, paste(
   "INSERT INTO traits (variable_id, specie_id, mean, n, notes)",
   "VALUES ($1, $2, $3, 1, $4)"
-))
-qry <- dbBind(stmt, list(
-  species_data_final[["id"]],
-  species_data_final[["specie_id"]],
-  species_data_final[["StdValue"]],
-  species_data_final[["notes"]]
-))
-dbClearResult(qry)
+), with(species_data_insert, list(id, specie_id, StdValue, notes)))
+
+message("Inserted ", ninsert, " trait records.")
 
 ## con %>%
 ##   dplyr::tbl("traits") %>%
