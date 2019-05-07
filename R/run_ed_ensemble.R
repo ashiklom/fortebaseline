@@ -84,6 +84,44 @@ run_ed_ensemble <- function(start_date, end_date,
                                             end_date = end_date,
                                             notes = notes)
 
+  soil_data <- read.csv(here::here(
+    "analysis",
+    "data",
+    "derived-data",
+    "soil-moisture.csv"
+  ), header = TRUE, stringsAsFactors = FALSE)
+
+  ed2in_tags <- list(
+    # No tower output -- this makes runs 10-20x faster
+    ITOUTPUT = 0,
+    # Monthly output instead
+    IMOUTPUT = 3,
+    # By default, disable "observed" fast output 
+    IOOUTPUT = 0,
+    # Include monthly history files
+    ISOUTPUT = 3,
+    FRQSTATE = 1,
+    UNITSTATE = 2,
+    PLANT_HYDRO_SCHEME = 0,
+    ISTOMATA_SCHEME = 0,
+    ISTRUCT_GROWTH_SCHEME = 0,
+    TRAIT_PLASTICITY_SCHEME = as.integer(trait_plasticity),
+    ICANRAD = ifelse(multiple_scatter, 1, 2),
+    CROWN_MOD = as.integer(crown_model),
+    N_PLANT_LIM = as.integer(n_limit_ps),
+    N_DECOMP_LIM = as.integer(n_limit_soil),
+    INCLUDE_THESE_PFT = "6,9,10,11",
+    ISOILFLG = 2, # Set soil characteristics in ED2IN
+    # UMBS soil characteristics (from Gough et al. 2010 FEM)
+    NSLCON = 1, # Sand
+    SLXCLAY = 0.01,
+    SLXSAND = 0.92,
+    # Soil moisture data from Ameriflux
+    # See analysis/scripts/soil-moisture.R
+    SLZ = soil_data[["depth"]],
+    SLMSTR = soil_data[["slmstr"]]
+  )
+
   settings <- list() %>%
     pecanapi::add_workflow(workflow) %>%
     pecanapi::add_database() %>%
@@ -108,22 +146,7 @@ run_ed_ensemble <- function(start_date, end_date,
         edin = "ED2IN.rgit",
         prerun = "ulimit -s unlimited",
         barebones_ed2in = "true",
-        ed2in_tags = list(
-          IMOUTPUT = 3,  # Monthly analysis files
-          ISOUTPUT = 3,  # History files...
-          FRQSTATE = 1,  # ...every 1
-          UNITSTATE = 2, # ...month
-          IOOUTPUT = 0,
-          PLANT_HYDRO_SCHEME = 0,
-          ISTOMATA_SCHEME = 0,
-          ISTRUCT_GROWTH_SCHEME = 0,
-          TRAIT_PLASTICITY_SCHEME = as.integer(trait_plasticity),
-          ICANRAD = ifelse(multiple_scatter, 1, 2),
-          CROWN_MOD = as.integer(crown_model),
-          N_PLANT_LIM = as.integer(n_limit_ps),
-          N_DECOMP_LIM = as.integer(n_limit_soil),
-          INCLUDE_THESE_PFT = "6,9,10,11"
-        )
+        ed2in_tags = ed2in_tags
       ),
       workflow = list(nowait = isTRUE(nowait))
     )) %>%

@@ -8,9 +8,10 @@ library(tidyr)
 library(ggplot2)
 library(here)
 
-ameriflux_path <- "~/Projects/forte_project/umbs-data/ameriflux/"
+ameriflux_dir <- "~/Projects/forte_project/umbs-data/ameriflux/"
+stopifnot(dir_exists(ameriflux_dir))
 
-umbs_dist_flux_file <- path(ameriflux_path, "AMF_US-UMd_BASE_HH_7-5.csv")
+umbs_dist_flux_file <- path(ameriflux_dir, "AMF_US-UMd_BASE_HH_7-5.csv")
 
 amf_cols <- cols(
   TIMESTAMP_START = col_datetime("%Y%m%d%H%M"),
@@ -32,30 +33,29 @@ umbs_dist_sm <- umbs_dist_flux %>%
   select(-variable, -h, -r) %>%
   mutate(depth = umbs_dist_soil_depths[as.integer(v)])
 
+# Need to calculate ED2 "soil moisture index", which is a linear scale
+# between wilting point (0), field capacity (1), and saturation (2)
+soil_params <- PEcAn.data.land::soil_params(sand = 0.92, clay = 0.01)
+wp <- soil_params[["volume_fraction_of_condensed_water_in_soil_at_wilting_point"]]
+fc <- soil_params[["volume_fraction_of_water_in_soil_at_field_capacity"]]
+
 umbs_dist_sm_summary <- umbs_dist_sm %>%
   filter(lubridate::month(tstart) %in% 6:9,
          depth > 0) %>% # Remove depth 0 
   group_by(depth) %>%
-  summarize(SWC = mean(SWC, na.rm = TRUE))
+  summarize(SWC = mean(SWC, na.rm = TRUE)) %>%
+  mutate(slmstr = (SWC/100 - wp) / (fc - wp))
 
 write_csv(umbs_dist_sm_summary,
           here("analysis", "data", "derived-data", "soil-moisture.csv"))
 
 if (interactive()) {
   ggplot(umbs_dist_sm_summary) +
-    aes(x = depth, y = SWC) +
+    aes(x = depth, y = slmstr) +
     geom_line() +
-    ylab(expression("Soil water content (fraction)")) +
+    ylab(expression("Soil moisture index (0-1)")) +
     xlab(expression("Soil depth (m)")) +
     scale_x_reverse() +
     coord_flip() +
     theme_bw()
 }
-
-## umbs_dist_bif_file <- path(ameriflux_path, "AMF_US-UMd_BIF_LATEST.xlsx")
-## umbs_other_bif_file <- path(ameriflux_path, "AMF_US-UMB_BIF_LATEST.xlsx")
-
-## umbs_dist_bif <- read_xlsx(umbs_dist_bif_file)
-## umbs_dist_bif %>%
-##   filter(grepl("SOIL", VARIABLE)) %>%
-##   pull(DATAVALUE)
