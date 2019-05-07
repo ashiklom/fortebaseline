@@ -3,6 +3,7 @@
 .RData
 .DS_Store
 .history
+.Rprofile
 
 # Drake files
 .drake/
