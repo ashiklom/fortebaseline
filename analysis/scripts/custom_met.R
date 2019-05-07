@@ -82,8 +82,8 @@ co2_wrote <- co2_record_nested %>%
 # Write out the revised ED met header
 emh <- PEcAn.ED2::read_ed_metheader(path(local_out_dir, "ED_MET_DRIVER_HEADER"),
                                     check = FALSE, check_files = FALSE)
+emh[[1]][["path_prefix"]] <- "/data/dbfiles/CUSTOM_ED2_site_1-33/"
 emh[[1]][["variables"]] <- emh[[1]][["variables"]] %>%
   filter(variable != "co2") %>%
   add_row(variable = "co2", flag = 1, update_frequency = 21600)
-
 PEcAn.ED2::write_ed_metheader(emh, path(local_out_dir, "ED_MET_DRIVER_HEADER"))

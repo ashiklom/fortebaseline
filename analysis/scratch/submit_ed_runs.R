@@ -46,7 +46,9 @@ settings <- list() %>%
         ISTOMATA_SCHEME = 0,
         ISTRUCT_GROWTH_SCHEME = 0,
         TRAIT_PLASTICITY_SCHEME = 0,
-        INCLUDE_THESE_PFT = "6,9,10,11"
+        INCLUDE_THESE_PFT = "6,9,10,11",
+        # Custom Met
+        ED_MET_DRIVER_DB = "/data/dbfiles/CUSTOM_ED2_site_1-33/ED_MET_DRIVER_HEADER"
       )
     )
   ))
