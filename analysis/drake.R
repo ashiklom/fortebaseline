@@ -280,7 +280,45 @@ plan <- drake_plan(
     facet_wrap(vars(variable), scales = "free_y") +
     scale_fill_manual(values = model_scale) +
     theme(axis.text.x = element_blank(),
-          axis.ticks.x = element_blank())
+          axis.ticks.x = element_blank()),
+  ################
+  ## EFI poster ##
+  ################
+  poster_mainfig_gg = monthly_means_site %>%
+    filter(month %in% 7:9) %>%
+    tidyr::gather(variable, value, NPP, LAI, AGB) %>%
+    mutate(variable = fct_inorder(variable)) %>%
+    # Aggregate runs
+    group_by(crown, rtm, traits, variable, year) %>%
+    summarize(
+      mean = mean(value),
+      lo = quantile(value, 0.1),
+      hi = quantile(value, 0.9)
+    ) %>%
+    filter(!is.na(variable)) %>%
+    ungroup() %>%
+    mutate(model = interaction(crown, rtm, traits, sep = "\n")) %>%
+           ## variable = fct_recode(
+           ##   variable,
+           ##   "NPP~(kg~C~m^-2~year^-1)" = "NPP",
+           ##   "AGB~(kg~C~m^-2)" = "AGB"
+           ## )) %>%
+    ggplot() +
+    aes(x = year, y = mean, ymin = lo, ymax = hi) +
+    geom_line() +
+    geom_ribbon(alpha = 0.35) +
+    facet_grid(vars(variable), vars(model),
+               scales = "free_y", switch = "y") +
+               ## labeller = label_parsed) +
+    theme_cowplot() +
+    theme(axis.title.y = element_blank(),
+          axis.title.x = element_blank(),
+          axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
+          strip.placement = "outside",
+          strip.background.y = element_blank()),
+  poster_mainfig = ggsave(plot = poster_mainfig_gg,
+                          filename = file_out("analysis/figures/poster_mainfig.png"),
+                          width = 9.75, height = 5.6)
 )
 
 # Parallelism configuration. Not sure which of these is better...
@@ -291,7 +329,6 @@ dconf <- drake_config(
   plan,
   parallelism = "future",
   jobs = availableCores(),
-  ## jobs = 1,
   prework = paste0("devtools::load_all(",
                    "here::here(), ",
                    "quiet = TRUE, ",
