@@ -1,5 +1,4 @@
 library(fortebaseline)
-devtools::load_all(".")
 
 # begin imports
 import::from("dplyr", "tbl", "filter", "mutate", "everything", "select", "slice", "pull", "rename", "bind_rows", .into = "")
@@ -12,7 +11,7 @@ import::from("purrr", "map", "reduce", .into = "")
 con <- default_connection()
 
 start_date <- "1902-06-01"
-end_date <- "1912-12-31"
+end_date <- "2000-12-31"
 
 # Get status of current workflows
 bety_workflows <- tbl(con, "workflows") %>%
