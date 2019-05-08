@@ -23,6 +23,7 @@ library(tidyr)
 library(forcats)
 library(purrr)
 library(lubridate)
+library(readr)
 # Parallel execution
 library(future)
 library(future.callr)
@@ -60,6 +61,8 @@ plan <- drake_plan(
     n = nrow(both_uncertainty) - 1,
     name = "Paired"
   ), "black") %>% setNames(both_uncertainty[["model"]]),
+  param_table = file_in(!!(path(data_dir, "derived-data", "parameter-table.csv"))) %>%
+    read_csv(),
   #######################################
   ## Figure 1: Parameter distributions ##
   #######################################
