@@ -325,8 +325,8 @@ plan <- drake_plan(
 )
 
 # Parallelism configuration. Not sure which of these is better...
-## future::plan(future.callr::callr) # <-- Currently throws error
-future::plan(future::multiprocess)
+future::plan(future.callr::callr) # <-- Currently throws error
+## future::plan(future::multiprocess)
 
 dconf <- drake_config(
   plan,

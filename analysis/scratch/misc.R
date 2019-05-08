@@ -765,8 +765,17 @@ ssout %>%
 library(DBI)
 library(RPostgres)
 library(tidyverse)
+library(fortebaseline)
 
 variables <- tbl(bety(), "variables")
+
+variables %>%
+  filter(description %like% "%mort%") %>%
+  select(id, name, description)
+
+variables %>%
+  filter(name %like% "%mort%") %>%
+  select(id, name, description)
 
 variables %>%
   filter(description %like% "%reflect%") %>%
@@ -780,3 +789,11 @@ priors %>%
   arrange(desc(n)) %>%
   filter(n < 4) %>%
   print(n = Inf)
+##################################################
+library(tidyverse)
+library(fortebaseline)
+
+f <- here::here("analysis", "data", "derived-data", "parameter-table.csv")
+dat <- read_csv(f)
+
+subset(param_table, select = -unit_parsed)
