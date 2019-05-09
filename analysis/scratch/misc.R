@@ -797,3 +797,47 @@ f <- here::here("analysis", "data", "derived-data", "parameter-table.csv")
 dat <- read_csv(f)
 
 subset(param_table, select = -unit_parsed)
+
+##################################################
+# Get trait data using PEcAn
+##################################################
+library(tidyverse)
+library(fs)
+library(fortebaseline)
+
+con <- bety()
+DBI::dbListTables(con) %>%
+  sort()
+
+tbl(con, "modeltypes_formats") %>%
+  inner_join(tbl(con, "modeltypes"), by = c("modeltype_id" = "id")) %>%
+  inner_join(tbl(con, "formats"), by = c("format_id" = "id")) %>%
+  glimpse()
+
+td <- PEcAn.utils::trait.dictionary %>% as_tibble()
+
+v <- tbl(con, "variables") %>%
+  filter(name %in% !!as.character(td$id)) %>%
+  collect()
+
+pfts_priors("temperate.Early_Hardwood")
+pfts_priors("temperate.Early_Hardwood")
+pfts_priors()
+
+tbl(con, "priors")
+tbl(con, "traits")
+
+dat <- PEcAn.DB::get.trait.data(
+  pfts = list(
+    
+  )
+  pfts = c("umbs.early_hardwood", "umbs.mid_hardwood", "umbs.late_hardwood",
+           "umbs.northern_pine"),
+  modeltype = "ED2",
+  dbfiles = here::here("analysis", "retrieved", "pecan", "dbfiles") %>%
+    dir_create(),
+  database = list(drv = Rpostgres::Postgres(), user = "bety", password = "bety",
+                  host = "localhost", port = 7990)
+)
+
+
