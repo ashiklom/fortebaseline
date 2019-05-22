@@ -52,8 +52,23 @@ pecan_ma_pft <- function(con, pft) {
 tidy_posterior <- function(ma_results, ndraws = 5000) {
   posteriors <- ma_results %>%
     purrr::map_dfr("posterior", .id = "pft")
+  draw_traits(posteriors, ndraws = ndraws)
+}
 
-  trait_draws <- posteriors %>%
+#' Draw traits from data frame describing prior or posterior
+#'
+#' @param data `data.frame` describing distributions, with columns
+#'   `distn` (name of distribution function), `parama` and `paramb`
+#'   (distribution parameters)
+#' @inherit tidy_posterior params return
+#' @export
+draw_traits <- function(data, ndraws = 5000) {
+  assertthat::assert_that(
+    assertthat::has_name(data, "distn"),
+    assertthat::has_name(data, "parama"),
+    assertthat::has_name(data, "paramb")
+  )
+  data %>%
     dplyr::mutate(
       rfun = paste0("r", distn),
       draws = purrr::pmap(list(rfun, parama, paramb),
@@ -64,6 +79,4 @@ tidy_posterior <- function(ma_results, ndraws = 5000) {
       lo = purrr::map_dbl(draws, quantile, 0.025),
       hi = purrr::map_dbl(draws, quantile, 0.975)
     )
-
-  trait_draws
 }

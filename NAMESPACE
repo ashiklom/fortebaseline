@@ -3,6 +3,7 @@
 export(bety)
 export(default_connection)
 export(download_history_file)
+export(draw_traits)
 export(follow_workflow)
 export(get_ids)
 export(get_monthly_lai)
