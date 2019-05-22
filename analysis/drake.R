@@ -36,6 +36,8 @@ library(here)
 library(ggplot2)
 library(cowplot)
 
+cmdargs <- commandArgs(trailingOnly = TRUE)
+
 ## library(fortebaseline)
 
 devtools::load_all(here::here(), attach_testthat = FALSE)
@@ -91,7 +93,7 @@ plan <- drake_plan(
   ########################################
   ## Figure 2: Aggregate variables plot ##
   ########################################
-  monthly_output_dl = target( 
+  monthly_output_dl = target(
     download.file("https://osf.io/download/3twxa",
                   file_out(!!monthly_output_file)),
     trigger = trigger(condition = !file_exists(monthly_output_file),
@@ -286,7 +288,7 @@ plan <- drake_plan(
           axis.ticks.x = element_blank()),
 )
 
-source("analysis/drake_poster.R")
+if ("--poster" %in% cmdargs) source("analysis/drake_poster.R")
 
 # Parallelism configuration. Not sure which of these is better...
 future::plan(future.callr::callr) # <-- Currently throws error
