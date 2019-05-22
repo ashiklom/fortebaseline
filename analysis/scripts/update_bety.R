@@ -255,5 +255,5 @@ PEcAn.logger::logger.setLevel("WARN")
 pfts <- pfts()
 ma_results <- map(pfts[["bety_name"]], pecan_ma_pft, con = bety()) %>%
   setNames(pfts[["pft"]])
-ma_outfile <- here("analysis", "data", "derived-data", "meta-analysis.rds")
+ma_outfile <- here("analysis", "data", "retrieved", "meta-analysis.rds")
 saveRDS(ma_results, ma_outfile)
