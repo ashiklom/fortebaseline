@@ -14,7 +14,7 @@ pfts_species(pft_names = pfts("bety_name"), con = bety(),
 }
 \arguments{
 \item{pft_names}{Character vector of PFT names. Defaults to
-`bety_name` column of [pfts()].}
+`bety_name` column of [pfts()]. If `NULL`, don't filter by PFT name.}
 
 \item{con}{Database connection. Defaults to [bety()].}
 

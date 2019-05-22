@@ -23,7 +23,7 @@ bety <- function(user = "bety", password = "bety", host = "localhost", port = 79
 #' - `pfts_priors` -- Prior distributions by PFT
 #' - `pfts_species` -- PFT-species mapping
 #' @param pft_names Character vector of PFT names. Defaults to
-#'   `bety_name` column of [pfts()].
+#'   `bety_name` column of [pfts()]. If `NULL`, don't filter by PFT name.
 #' @param con Database connection. Defaults to [bety()].
 #' @param collect Whether or not to call [dplyr::collect()] on the
 #'   output. Default = `TRUE`.
@@ -32,8 +32,11 @@ bety <- function(user = "bety", password = "bety", host = "localhost", port = 79
 pfts_priors <- function(pft_names = pfts("bety_name"), con = bety(),
                         collect = TRUE) {
   pfts <- dplyr::tbl(con, "pfts") %>%
-    dplyr::rename(pft_id = id, pft = name) %>%
-    dplyr::filter(pft %in% pft_names)
+    dplyr::rename(pft_id = id, pft = name)
+  if (!is.null(pft_names)) {
+    pfts <- pfts %>%
+      dplyr::filter(pft %in% pft_names)
+  }
   if (dplyr::pull(dplyr::count(pfts)) == 0) {
     stop("No PFTs with given names found.")
   }
