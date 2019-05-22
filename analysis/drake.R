@@ -74,9 +74,21 @@ plan <- drake_plan(
     trigger = trigger(condition = !file_exists(meta_analysis_file),
                       mode = "condition")
   ),
-  ma_posterior = readRDS(file_in(!!meta_analysis_file)) %>%
-    tidy_posterior(),
-  param_dist_gg = ma_posterior %>%
+  ma_posterior = file_in(!!meta_analysis_file) %>%
+    readRDS() %>%
+    tidy_posterior() %>%
+    mutate(is_posterior = TRUE),
+  ma_prior = file_in(!!path(data_dir, "derived-data", "pft-priors.csv")) %>%
+    read_csv() %>%
+    select(bety_name = pft, one_of(colnames(ma_posterior))) %>%
+    left_join(pfts(), by = "bety_name"),
+  missing_posteriors = ma_prior %>%
+    anti_join(ma_posterior, by = c("pft", "trait")) %>%
+    draw_traits() %>%
+    mutate(is_posterior = FALSE),
+  trait_distribution = ma_posterior %>%
+    bind_rows(missing_posteriors),
+  param_dist_gg = trait_distribution %>%
     mutate(pft = factor(pft, pfts("pft"))) %>%
     unnest(draws) %>%
     filter(draws < quantile(draws, 0.975),
