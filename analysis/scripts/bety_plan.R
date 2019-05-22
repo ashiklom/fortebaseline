@@ -20,6 +20,7 @@ library(yaml)
 library(purrr)
 library(readr)
 library(assertthat)
+library(readr)
 devtools::load_all(here())
 
 cache_path <- dir_create(here(".drake_bety"))
@@ -158,6 +159,66 @@ set_prior <- function(variable, distn, parama, paramb, pft,
   pfts_priors(pft)
 }
 
+delete_prior <- function(variable, pft = pfts(bety_name), con = bety()) {
+  priors <- pfts_priors(pft) %>%
+    dplyr::filter(variable %in% !!variable)
+  DBI::dbExecute(con, paste0(
+    "DELETE FROM pfts_PRIORS WHERE ",
+    "pft_id = $1 AND prior_id = $2"
+  ), param = list(priors[["pft_id"]], priors[["prior_id"]]))
+}
+
+add_variable_if_missing <- function(variable, con = bety()) {
+  existing <- dplyr::tbl(con, "variables") %>%
+    dplyr::filter(name %in% !!variable) %>%
+    dplyr::distinct(name) %>%
+    dplyr::pull()
+  new <- setdiff(variable, existing)
+  if (length(new) > 0) {
+    message("Adding the following new variable records:",
+            paste(shQuote(new), collapse = ", "))
+    insert <- DBI::dbExecute(con, paste0(
+      "INSERT INTO variables (name) VALUES $1"
+    ), params = list(new))
+  }
+  invisible(new)
+}
+
+structure_priors <- tribble(
+  ~variable, ~distn, ~parama, ~paramb,
+  # Clumping:
+  # - 0 = black hole, 1 = perfectly even
+  # - Prior based on my own expert judgment
+  "clumping_factor", "beta", 3, 1.5,
+  # Orientation factor:
+  # - -1 = vertical, 1 = horizontal, 0 = random
+  # - Prior based on Viskari et al. 2019 PLoS ONE
+  "orient_factor", "unif", -0.5, 0.5
+) %>%
+  tidyr::crossing(pft = pfts("bety_name"))
+
+other_priors <- tribble(
+  ~pft, ~variable, ~distn, ~parama, ~paramb,
+  # Carbon balance mortality
+  # Based loosely on Raczka tuning values; middle 50% of mortality is
+  # 3 to 25 year-1.
+  "umbs.early_hardwood", "mort1", "gamma", 1, 0.05,
+  "umbs.mid_hardwood", "mort1", "gamma", 1, 0.05,
+  "umbs.late_hardwood", "mort1", "gamma", 1, 0.05,
+  "umbs.northern_pine", "mort1", "gamma", 1, 0.05,
+  # Same as Raczka late hardwood posterior. Assume same value for all
+  # PFTs because Raczka list all PFTs having the same median.
+  "umbs.early_hardwood", "mort3", "unif", 0, 0.02,
+  "umbs.mid_hardwood", "mort3", "unif", 0, 0.02,
+  "umbs.late_hardwood", "mort3", "unif", 0, 0.02,
+  "umbs.northern_pine", "mort3", "unif", 0, 0.02,
+  # Raczka late hardwood posterior, as above.
+  "umbs.early_hardwood", "minimum_height", "gamma", 1.5, 0.2,
+  "umbs.mid_hardwood", "minimum_height", "gamma", 1.5, 0.2,
+  "umbs.late_hardwood", "minimum_height", "gamma", 1.5, 0.2,
+  "umbs.northern_pine", "minimum_height", "gamma", 1.5, 0.2
+)
+
 plan <- drake_plan(
   pft_definition = read_yaml(
     file_in(!!here("analysis", "data", "derived-data", "pft_definition.yml"))
@@ -168,7 +229,18 @@ plan <- drake_plan(
   p_pfts_species = set_pft_species(pft_definition),
   spec_priors_data = read_csv(file_in(!!here("analysis", "data",
                                              "derived-data", "priors_spectra.csv"))),
-  set_spec_priors = lift_dl(set_prior)(spec_priors_data)
+  set_prior_l = lift_dl(set_prior, overwrite = TRUE),
+  set_spec_priors = set_prior_l(spec_priors_data),
+  set_structure_priors = set_prior_l(structure_priors),
+  set_other_priors = set_prior_l(other_priors),
+  remove_priors = delete_prior(c(
+    "c2n_fineroot",
+    "c2n_leaf",
+    "cuticular_cond",
+    "leaf_turnover_rate",
+    "leaf_width",
+    "Vm_low_temp"
+  ))
 )
 
 dconf <- drake_config(
@@ -186,3 +258,8 @@ if (interactive()) {
 } else {
   make(config = dconf)
 }
+
+write_csv(
+  pfts_priors(),
+  path("analysis", "data", "derived-data", "pft-priors.csv")
+)
