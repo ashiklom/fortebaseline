@@ -822,7 +822,8 @@ v <- tbl(con, "variables") %>%
 
 pfts_priors("temperate.Early_Hardwood")
 pfts_priors("temperate.Early_Hardwood")
-pfts_priors()
+px <- pfts_priors()
+
 
 tbl(con, "priors")
 tbl(con, "traits")
@@ -840,4 +841,67 @@ dat <- PEcAn.DB::get.trait.data(
                   host = "localhost", port = 7990)
 )
 
+#########################################
+pfts_priors() %>%
+  count(variable) %>%
+  print(n = Inf)
 
+con <- bety()
+variable <- c("c2n_fineroot", "c2n_leaf")
+pft <- pfts("bety_name")
+
+trait_distribution %>%
+  count(trait) %>%
+  print(n = Inf)
+
+#########################################
+## a <- 1.5
+## b <- 0.06
+a <- 0.7
+b <- 0.04
+
+a <- 1.5
+b <- 0.2
+curve(dgamma(x, a, b), 0, 30)
+summary(rgamma(5000, a, b))
+
+#########################################
+tbl(bety(), "variables") %>%
+  filter(name %in% !!other_priors[["variable"]])
+
+#########################################
+library(data.table, mask.ok = TRUE)
+library(ggplot2)
+fst_file <- "~/Projects/try-raw-data/4143.fst"
+dat <- fst::fst(fst_file)
+
+try_spp <- grep("Pinus", dat$AccSpeciesName)
+resp <- grep("respiration", dat$DataName)
+i <- intersect(try_spp, resp)
+pine_dat <- dat[i,]
+setDT(pine_dat)
+
+pine_resp <- pine_dat[
+  TraitID == 54][
+    !is.na(StdValue)][
+      ValueKindName == "Single"]
+
+pine_resp[, .N, .(DataName, DataID)]
+
+ggplot(pine_resp) +
+  aes(x = AccSpeciesName, y = StdValue) +
+  geom_violin() +
+  geom_jitter()
+
+pine_dat[, .N, .(TraitName, TraitID)][order(N, decreasing = TRUE)]
+
+pp <- pfts_priors(NULL, collect = FALSE)
+pp %>%
+  filter(pft %like% "%pine%",
+         variable %like% "%leaf_respiration%") %>%
+  collect() %>%
+  glimpse()
+priors <- tbl(bety())
+
+#########################################
+species_data_sub[, .N, .(AccSpeciesName, TraitName)][order(TraitName)]

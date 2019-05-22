@@ -45,11 +45,12 @@ species_data <- trydata[
 bety2try <- tibble::tribble(
   ~bety_name, ~DataID,
   "SLA", 6582,
-  "c2n_leaf", 455,
-  "c2n_fineroot", 489,
+  ## "c2n_leaf", 455,
+  ## "c2n_fineroot", 489,
+  ## "leaf_width", 447,
   "Vcmax", 550,
   "fineroot2leaf", 5383,
-  "leaf_width", 447,
+  "leaf_respiration_rate_m2", 69,
   "root_respiration_rate", 1189
 ) %>%
   inner_join(

@@ -2,7 +2,6 @@
 if (getRversion() >= "3.6") {
   options(conflicts.policy = "strict")
   conflictRules("testthat", exclude = c("matches", "is_null"))
-  conflictRules("drake", exclude = c("gather", "expand", "plan"))
   conflictRules("dplyr",
                 mask.ok = c("filter", "lag", "intersect",
                             "setdiff", "setequal", "union"))
@@ -12,7 +11,6 @@ if (getRversion() >= "3.6") {
           immediate. = TRUE)
 }
 
-library(drake)
 library(dplyr)
 library(here)
 library(fs)
@@ -22,10 +20,6 @@ library(readr)
 library(assertthat)
 library(readr)
 devtools::load_all(here())
-
-cache_path <- dir_create(here(".drake_bety"))
-cache <- new_cache(path = cache_path)
-stopifnot(cache$driver$path == cache_path)
 
 # Make sure we can connect to bety
 invisible(bety())
@@ -110,6 +104,7 @@ set_pft_species <- function(species_df, con = bety(), dryrun = FALSE) {
 set_prior <- function(variable, distn, parama, paramb, pft,
                       con = bety(), overwrite = TRUE, dryrun = FALSE) {
   # Get variable IDs
+  add_variable_if_missing(variable, con = con)
   variable_id <- get_variable_ids(variable, con)
   pft_id <- get_pft_ids(pft, con)
   # Add any missing variables
@@ -159,7 +154,7 @@ set_prior <- function(variable, distn, parama, paramb, pft,
   pfts_priors(pft)
 }
 
-delete_prior <- function(variable, pft = pfts(bety_name), con = bety()) {
+delete_prior <- function(variable, pft = pfts("bety_name"), con = bety()) {
   priors <- pfts_priors(pft) %>%
     dplyr::filter(variable %in% !!variable)
   DBI::dbExecute(con, paste0(
@@ -178,7 +173,8 @@ add_variable_if_missing <- function(variable, con = bety()) {
     message("Adding the following new variable records:",
             paste(shQuote(new), collapse = ", "))
     insert <- DBI::dbExecute(con, paste0(
-      "INSERT INTO variables (name) VALUES $1"
+      "INSERT INTO variables (name, description) ",
+      "VALUES ($1, 'FORTEBASELINE: Added automatically.')"
     ), params = list(new))
   }
   invisible(new)
@@ -216,50 +212,48 @@ other_priors <- tribble(
   "umbs.early_hardwood", "minimum_height", "gamma", 1.5, 0.2,
   "umbs.mid_hardwood", "minimum_height", "gamma", 1.5, 0.2,
   "umbs.late_hardwood", "minimum_height", "gamma", 1.5, 0.2,
-  "umbs.northern_pine", "minimum_height", "gamma", 1.5, 0.2
+  "umbs.northern_pine", "minimum_height", "gamma", 1.5, 0.2,
+  # Pine leaf respiration prior was missing. This is an uninformative
+  # prior for pine barrens
+  "umbs.northern_pine", "leaf_respiration_rate_m2", "weibull", 2, 6
 )
 
-plan <- drake_plan(
-  pft_definition = read_yaml(
-    file_in(!!here("analysis", "data", "derived-data", "pft_definition.yml"))
-  ) %>%
-    map_dfr(data.frame, stringsAsFactors = FALSE) %>%
-    as_tibble(),
-  p_pfts = define_pfts(unique(pft_definition[["pft"]])),
-  p_pfts_species = set_pft_species(pft_definition),
-  spec_priors_data = read_csv(file_in(!!here("analysis", "data",
-                                             "derived-data", "priors_spectra.csv"))),
-  set_prior_l = lift_dl(set_prior, overwrite = TRUE),
-  set_spec_priors = set_prior_l(spec_priors_data),
-  set_structure_priors = set_prior_l(structure_priors),
-  set_other_priors = set_prior_l(other_priors),
-  remove_priors = delete_prior(c(
-    "c2n_fineroot",
-    "c2n_leaf",
-    "cuticular_cond",
-    "leaf_turnover_rate",
-    "leaf_width",
-    "Vm_low_temp"
-  ))
-)
+pft_definition <- here("analysis", "data", "derived-data", "pft_definition.yml") %>%
+  read_yaml() %>%
+  map_dfr(data.frame, stringsAsFactors = FALSE) %>%
+  as_tibble()
 
-dconf <- drake_config(
-  plan,
-  cache = cache,
-  prework = paste0("devtools::load_all(",
-                   "here::here(), ",
-                   "quiet = TRUE)")
-)
+p_pfts <- define_pfts(unique(pft_definition[["pft"]]))
+p_pfts_species <- set_pft_species(pft_definition)
+spec_priors_data <- read_csv(here("analysis", "data",
+                                 "derived-data", "priors_spectra.csv"))
 
-if (interactive()) {
-  self <- here("analysis", "scripts", "bety_plan.R")
-  callr::rscript(self)
-  loadd(cache = cache)
-} else {
-  make(config = dconf)
-}
+set_prior_l <- lift_dl(set_prior, overwrite = TRUE)
+set_spec_priors <- set_prior_l(spec_priors_data)
+set_structure_priors <- set_prior_l(structure_priors)
+set_other_priors <- set_prior_l(other_priors)
+remove_priors <- delete_prior(c(
+  "c2n_fineroot",
+  "c2n_leaf",
+  "cuticular_cond",
+  "leaf_turnover_rate",
+  "leaf_width",
+  "Vm_low_temp"
+))
 
-write_csv(
-  pfts_priors(),
-  path("analysis", "data", "derived-data", "pft-priors.csv")
-)
+priors <- pfts_priors() %>%
+  select(pft, trait = variable, distn, parama, paramb,
+         pft_id, prior_id) %>%
+  mutate(is_posterior = FALSE)
+
+write_csv(priors, path(
+  "analysis", "data", "derived-data", "pft-priors.csv"
+))
+
+# Run PEcAn meta-analysis
+PEcAn.logger::logger.setLevel("WARN")
+pfts <- pfts()
+ma_results <- map(pfts[["bety_name"]], pecan_ma_pft, con = bety()) %>%
+  setNames(pfts[["pft"]])
+ma_outfile <- here("analysis", "data", "derived-data", "meta-analysis.rds")
+saveRDS(ma_results, ma_outfile)
