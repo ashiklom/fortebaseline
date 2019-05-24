@@ -7,7 +7,7 @@
 run_ed_ensemble(start_date, end_date, ensemble_size = 1,
   pft_type = "umbs", con = NULL, nowait = TRUE,
   crown_model = FALSE, n_limit_ps = FALSE, n_limit_soil = FALSE,
-  multiple_scatter = FALSE, trait_plasticity = FALSE, ...)
+  multiple_scatter = FALSE, trait_plasticity = FALSE)
 }
 \arguments{
 \item{start_date}{First day of run}
@@ -40,9 +40,6 @@ two-stream RTM.}
 
 \item{trait_plasticity}{Whether or not to enable the trait
 plasticity scheme (default = `FALSE`)}
-
-\item{...}{Additional modifications to the settings, passed to
-[utils::modifyList()]}
 }
 \value{
 List containing the workflow ID (`workflow_id`) and the

@@ -22,7 +22,7 @@ local_out_dir <- path(local_dir, "met-custom") %>% dir_create()
 
 # Read all the met files in as a tidy data.frame
 met_ts <- tibble(
-  full_path = dir_ls(local_in_dir, glob = "*.h5"),
+  full_path = dir_ls(local_out_dir, glob = "*.h5"),
   fname = path_file(full_path),
   date = str_remove(fname, "\\.h5$") %>% parse_date_time("ym")
 ) %>% arrange(date)

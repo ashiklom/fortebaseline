@@ -1,12 +1,8 @@
 library(fortebaseline)
-
-# begin imports
-import::from("dplyr", "tbl", "filter", "mutate", "everything", "select", "slice", "pull", "rename", "bind_rows", .into = "")
-import::from("tibble", "tibble", "as_tibble", .into = "")
-import::from("tidyr", "expand", .into = "")
-import::from("rlang", "syms", .into = "")
-import::from("purrr", "map", "reduce", .into = "")
-# end imports
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(rlang, include.only = "syms")
 
 con <- default_connection()
 
@@ -28,13 +24,18 @@ run_matrix <- tibble(
   expand(., !!!(syms(colnames(.))))
 
 if (!isTRUE(start_workflows)) {
+  message("Performing a test run instead.")
+  test_run <- run_ed_ensemble(start_date = start_date,
+                              end_date = "1902-08-31",
+                              nowait = FALSE,
+                              ensemble_size = 2)
   stop("Set `start_workflows` to `TRUE` interactively to actually run.")
 }
 runs <- purrr::pmap(run_matrix, run_ed_ensemble,
                     start_date = start_date,
                     end_date = end_date,
                     nowait = TRUE,
-                    ensemble_size = 10)
+                    ensemble_size = 100)
 
 workflows <- run_matrix %>%
   mutate(workflow_id = map(runs, "workflow_id") %>% reduce(c),

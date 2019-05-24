@@ -20,8 +20,6 @@
 #'   two-stream RTM.
 #' @param trait_plasticity Whether or not to enable the trait
 #'   plasticity scheme (default = `FALSE`)
-#' @param ... Additional modifications to the settings, passed to
-#'   [utils::modifyList()]
 #' @return List containing the workflow ID (`workflow_id`) and the
 #'   full settings list object (`settings`)
 #' @author Alexey Shiklomanov
@@ -35,8 +33,7 @@ run_ed_ensemble <- function(start_date, end_date,
                             n_limit_ps = FALSE,
                             n_limit_soil = FALSE,
                             multiple_scatter = FALSE,
-                            trait_plasticity = FALSE,
-                            ...) {
+                            trait_plasticity = FALSE) {
 
   note_string <- paste(
     "==FoRTE run==",
@@ -89,19 +86,34 @@ run_ed_ensemble <- function(start_date, end_date,
     "data",
     "derived-data",
     "soil-moisture.csv"
-  ), header = TRUE, stringsAsFactors = FALSE)
+  ), header = TRUE, stringsAsFactors = FALSE) %>%
+    # Make depth negative
+    dplyr::mutate(depth = -depth) %>%
+    # Start with deepest layer
+    dplyr::arrange(depth)
 
   ed2in_tags <- list(
+    # Custom met
+    ED_MET_DRIVER_DB = "/data/dbfiles/CUSTOM_ED2_site_1-33/ED_MET_DRIVER_HEADER",
     # No tower output -- this makes runs 10-20x faster
     ITOUTPUT = 0,
     # Monthly output instead
     IMOUTPUT = 3,
-    # By default, disable "observed" fast output 
-    IOOUTPUT = 0,
+    # Enable "observed" fast output at specified interval
+    IOOUTPUT = 3,
+    OBSTIME_DB = "/data/dbfiles/forte_obstime.time",
+    OUTFAST = 0,
     # Include monthly history files
     ISOUTPUT = 3,
     FRQSTATE = 1,
     UNITSTATE = 2,
+    # Other outputs
+    IFOUTPUT = 0,
+    IDOUTPUT = 0,
+    IQOUTPUT = 0,
+    IYOUTPUT = 0,
+    # Enable cohort-level output
+    IADD_COHORT_MEANS = 1,
     PLANT_HYDRO_SCHEME = 0,
     ISTOMATA_SCHEME = 0,
     ISTRUCT_GROWTH_SCHEME = 0,
@@ -118,8 +130,9 @@ run_ed_ensemble <- function(start_date, end_date,
     SLXSAND = 0.92,
     # Soil moisture data from Ameriflux
     # See analysis/scripts/soil-moisture.R
-    SLZ = soil_data[["depth"]],
-    SLMSTR = soil_data[["slmstr"]]
+    NZG = nrow(soil_data),
+    SLZ = paste(soil_data[["depth"]], collapse = ","),
+    SLMSTR = paste(soil_data[["slmstr"]], collapse = ",")
   )
 
   settings <- list() %>%
@@ -149,8 +162,7 @@ run_ed_ensemble <- function(start_date, end_date,
         ed2in_tags = ed2in_tags
       ),
       workflow = list(nowait = isTRUE(nowait))
-    )) %>%
-    modifyList(list(...))
+    ))
 
   pecanapi::submit_workflow(settings)
 

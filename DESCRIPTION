@@ -22,7 +22,8 @@ Imports:
     tidyr,
     xml2,
     readr,
-    ggsci
+    ggsci,
+    rlang
 Remotes:
   pecanproject/pecan/api@develop
 Suggests: 
