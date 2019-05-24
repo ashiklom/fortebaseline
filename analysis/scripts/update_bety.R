@@ -117,19 +117,22 @@ set_prior <- function(variable, distn, parama, paramb, pft,
     message("Found ", nrow(existing_priors), " existing priors.")
     if (overwrite && !dryrun) {
       # Delete it
-      qry <- DBI::dbSendStatement(con, paste0(
+      ndelete <- DBI::dbExecute(con, paste0(
         "DELETE FROM pfts_priors WHERE ",
         "pft_id = $1 AND prior_id = $2"
-      ))
-      stmt <- DBI::dbBind(qry, list(
+      ), param = list(
         existing_priors[["pft_id"]],
         existing_priors[["prior_id"]]
       ))
-      DBI::dbClearResult(qry)
+      message("Because overwrite = TRUE, deleted ", ndelete, " existing priors.")
     }
   }
-  new_priors <- input %>%
-    anti_join(current_priors, by = c("variable", "variable_id", "pft", "pft_id"))
+  if (overwrite) {
+    new_priors <- input
+  } else {
+    new_priors <- input %>%
+      anti_join(current_priors, by = c("variable", "variable_id", "pft", "pft_id"))
+  }
   if (nrow(new_priors) > 0) {
     message("Inserting ", nrow(new_priors), " new priors.")
     if (!dryrun) {
