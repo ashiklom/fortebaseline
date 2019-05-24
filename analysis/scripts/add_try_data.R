@@ -99,6 +99,44 @@ ninsert <- dbExecute(con, paste(
 
 message("Inserted ", ninsert, " trait records.")
 
+# Retrieve leaf temperature from TRY
+## tempdat <- trydata[species, ][grepl("temperature", DataName)][grepl("leaf", DataName, ignore.case = TRUE)]
+tempdat <- trydata[
+  species, ][
+    DataID == 1666][
+    , .(DatasetID,
+        AccSpeciesID,
+        AccSpeciesName,
+        ObservationID,
+        leaf_temperature = as.numeric(OrigValueStr))]
+
+bety_try_data_raw <- tbl(con, "traits") %>%
+  filter(notes %like% "%TRY.ObservationID%") %>%
+  collect()
+
+bety_try_data <- bety_try_data_raw %>%
+  mutate(
+    ObservationID = str_match(notes, "TRY.ObservationID = ([[:digit:]]+)")[, 2] %>%
+      as.numeric(),
+    DataID = str_match(notes, "TRY.DataID = ([[:digit:]]+)")[, 2] %>%
+      as.numeric()
+  )
+
+temp_insert <- bety_try_data %>%
+  distinct(trait_id = id, ObservationID) %>%
+  inner_join(tempdat, by = "ObservationID") %>%
+  mutate(variable_id = bit64::as.integer64(81)) %>% # leaf temperature
+  select(trait_id, variable_id, stat = leaf_temperature)
+
+temp_in_bety <- tbl(con, "covariates") %>%
+  filter(variable_id == 81,
+         trait_id %in% !!temp_insert[["trait_id"]]) %>%
+  collect()
+
+ninsert <- anti_join(temp_insert, temp_in_bety, by = c("trait_id", "variable_id")) %>%
+  dbAppendTable(conn = con, name = "covariates")
+message("Inserted ", ninsert, " new covariate records.")
+
 ## con %>%
 ##   dplyr::tbl("traits") %>%
 ##   dplyr::filter(notes %like% "__TRY-DB__") %>%
