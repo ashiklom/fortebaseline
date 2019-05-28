@@ -2,6 +2,7 @@ library(fortebaseline)
 library(dplyr)
 library(tidyr)
 library(purrr)
+library(readr)
 library(rlang, include.only = "syms")
 
 con <- default_connection()
@@ -42,11 +43,17 @@ workflows <- run_matrix %>%
          short_id = as.numeric(workflow_id - 99000000000)) %>%
   select(workflow_id, short_id, everything())
 
-bety_workflows <- tbl(con, "workflows") %>%
-  rename(workflow_id = id) %>%
-  filter(workflow_id %in% workflows[["workflow_id"]])
+write_csv(
+  workflows,
+  file.path("analysis", "data", "derived-data", "current-workflows.csv")
+)
 
 if (FALSE) {
+
+  bety_workflows <- tbl(con, "workflows") %>%
+    rename(workflow_id = id) %>%
+    filter(workflow_id %in% workflows[["workflow_id"]])
+
   workflows %>%
     slice(20) %>%
     pull(workflow_id) %>%
@@ -65,5 +72,4 @@ if (FALSE) {
   )
   out <- PEcAn.DB::db.query("SELECT * FROM workflows WHERE id = 99000000054", con2)
   out[["started_at"]]
-
 }
