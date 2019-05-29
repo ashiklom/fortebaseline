@@ -1,5 +1,5 @@
 # Read CRUNCEP wind inputs. Is the same wind time series looped
-# from 1902 to 1948? 
+# from 1902 to 1948?
 winds <- list()
 files <- glue::glue("http://localhost:7999/thredds/dodsC/dbfiles/CRUNCEP_site_1-33/CRUNCEP.{1903:1910}.nc")
 for (yr in 1903:1951) {
@@ -29,7 +29,7 @@ ggplot(wind_df) +
 # Yes, yes it is.
 ############################################################
 # Is read.output actually loading everything it can from the ED output?
-# No! 
+# No!
 
 filename <- "http://localhost:7999/thredds/dodsC/outputs/PEcAn_99000000032/out/99000000030/analysis-T-1932-00-00-000000-g01.h5"
 hf <- ncdf4::nc_open(filename)
@@ -98,7 +98,7 @@ submit_workflow(settings)
 watch_workflow(workflow_id)
 
 ##################################################
-# Related to reading ED 
+# Related to reading ED
 ##################################################
 ed_summary %>%
   filter(variable == "nee") %>%
@@ -114,7 +114,7 @@ lai <- ncdf4::ncvar_get(nc, "LAI")
 ## nc <- ncdf4::nc_open(run_dap(workflow_id, "1902.nc", run1))
 
 ## catalog_url <- pecanapi:::thredds_fs_url()
-## raw_catalog <- 
+## raw_catalog <-
 
 ## con <- DBI::dbConnect(
 ##   RPostgres::Postgres(),
@@ -673,7 +673,7 @@ cohort_vars <- tibble::tribble(
 )
 
 x <- tibble::tibble(
-  date = 
+  date =
 )
 
   map_dfc(cohort_vars[["hdf_varname"]], ncdf4::ncvar_get, nc = mnc) %>%
@@ -688,7 +688,7 @@ for (i in seq_along(x)) {
 # 1 - Site (patch?)
 # 2 - DBH class
 # 3 - PFT
-# 4 - Last 12 months, plus current month 
+# 4 - Last 12 months, plus current month
 # 5 - Disturbance type
 # 6 - Soil layer?
 # 7 - Height class?
@@ -830,7 +830,7 @@ tbl(con, "traits")
 
 dat <- PEcAn.DB::get.trait.data(
   pfts = list(
-    
+
   )
   pfts = c("umbs.early_hardwood", "umbs.mid_hardwood", "umbs.late_hardwood",
            "umbs.northern_pine"),
@@ -903,5 +903,43 @@ pp %>%
   glimpse()
 priors <- tbl(bety())
 
-#########################################
 species_data_sub[, .N, .(AccSpeciesName, TraitName)][order(TraitName)]
+
+#########################################
+
+# Look at other PEcAn-related outputs
+library(fortebaseline)
+library(tidyverse)
+
+wf_dir <- "analysis/data/model_output/workflows/PEcAn_99000000112"
+pft_dir <- file.path(wf_dir, "pft", "umbs.early_hardwood")
+
+prior_dists <- file.path(pft_dir, "prior.distns.Rdata")
+priors <- load_local(prior_dists)[["prior.distns"]] %>%
+  as_tibble(rownames = "trait")
+
+post_dists <- file.path(pft_dir, "post.distns.MA.Rdata")
+posterior <- load_local(post_dists)[[1]] %>%
+  as_tibble(rownames = "trait")
+
+samples_file <- file.path(wf_dir, "samples.Rdata")
+samples <- load_local(samples_file)
+samples$trait.names
+samples$ensemble.samples
+str(samples, max = 1)
+
+## priors_file <- 
+
+## dbcon <- bety()
+library(PEcAn.DB)
+f <- PEcAn.DB::dbfile.check()
+pftid <- tbl(dbcon, "pfts") %>% filter(name == "temperate.Early_Hardwood") %>% pull(id)
+pft <- list()
+
+dbcon <- bety()
+
+tbl(dbcon, "dbfiles") %>%
+  filter(container_type == "Posterior",
+         file_name %like% "prior.distns.Rdata") %>%
+  arrange(desc(created_at)) %>%
+  select(file_name, created_at)

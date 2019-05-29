@@ -70,6 +70,7 @@ mdcap <- function(text) {
     - Lots of existing work on parameteric uncertainty
         - [@dietze_2014_quantitative]
         - [@raczka_2018_what]
+        - [@pandit_2018_optimizing]
     - Less on structural uncertainty -- i.e. not just what coefficients do we use, but what _equations_, and more generally, what _processes_ do we even consider?
 - What are the processes that drive succession of ecological communities?
     - Competition for light [@bazzaz_1979_physiological]
@@ -292,6 +293,9 @@ rad_barplot_cap <- paste(
 
 # Discussion
 
+- Comparisons against other studies
+    - Parameter sensitivity
+        - [@pandit_2018_optimizing] -- Most important parameters for shrubs were SLA, Vcmax, stomatal slope, root:leaf ratio, and root turonver rate (slightly less important: leaf turnover rate, growth respiration, cuticular conductance; much less important: water conductance; basically irrelevant: storage turnover, leaf width)
 - Ecological implications of structural uncertainty
     - Predictions about ecological succession are very sensitive to the understory light environment.
         - Need a good representation of canopy structure (finite canopy radius)
