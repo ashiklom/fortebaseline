@@ -62,6 +62,14 @@ Because these models can explicitly represent inter-specific differences in plan
 Moreover, these models' predictions of species composition and ecosystem structure are relevant outside of carbon cycle science, particularly for forest management and wildlife conservation. <!-- TODO refs -->
 However, these benefits of individual-based models come at the cost of much higher data and computational requirements, which effectively restrict their application to individual, well-studied sites. <!-- TODO refs. Also, is this actually true? -->
 
+A key challenge of vegetation modeling research over the last several decades has been the development of approaches that capture the emergent biogeochemical and ecological outcomes of interactions between individual plants without the need for explicitly simulating each individual [@purves_2008_predictive].
+One such approach is the "ecosystem demography" approach, which uses a system of partial differential equations to simulate the emergent mean behavior of "cohorts" of individuals of similar composition, size, and age [@moorcroft_2001_method]. <!-- TODO Run this description by Mike? -->
+The original "Ecosystem Demography" (ED) model [@moorcroft_2001_method] was enhanced by @medvigy_2009_mechanistic (as ED2) with fully-coupled leaf physiology, canopy radiative transfer, and micrometeorology, and each of these components have been further refined over the last decade [culminating in ED2.2; @longo_2019_ed1].
+Various versions of the ED model have been validated in boreal [@medvigy_2011_predicting], temperate [@medvigy_2009_mechanistic; @dietze_2014_quantitative; @raczka_2018_what], and tropical biomes [@moorcroft_2001_method; @longo_2019_ed2], and have been applied in:
+- paleoecological studies [@rollinson_2017_emergent];
+- free-air CO~2~ enrichment studies [@dekauwe_2013_forest; @miller_2015_alteration];
+- estimation of potential carbon stocks [@hurtt_2004_beyond_potential_vegetation]
+
 - Why we need models?
     - Forests are important, for C sequestration, other ecosystem services
     - Policy decisions related to forests depend on future projections
