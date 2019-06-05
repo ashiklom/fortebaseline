@@ -50,6 +50,7 @@ Temperate forests in the Upper Midwest are important.
 {Other ecosystem services}.
 However, the fate of these forests is highly uncertain.
 The natural ecological succession of these forests has been significantly altered by the interactions of a significantly different and rapidly changing climate, and novel disturbance regimes under which some natural disturbances (e.g. fire) are suppressed while others (e.g. harvest; pests and pathogens) may be becoming more frequent. <!-- TODO refs -->
+{UMBS ecological background/natural history?} 
 Therefore, predictions about the future of these forests based on past analogs may not be reliable.
 
 Instead, more reliable predictions can be obtained by using dynamic vegetation models that explicitly represent process involved in forest growth and mortality.
@@ -69,6 +70,15 @@ Various versions of the ED model have been validated in boreal [@medvigy_2011_pr
 - paleoecological studies [@rollinson_2017_emergent];
 - free-air CO~2~ enrichment studies [@dekauwe_2013_forest; @miller_2015_alteration];
 - estimation of potential carbon stocks [@hurtt_2004_beyond_potential_vegetation]
+- vegetation-climate feedbacks {Swann, etc} <!-- TODO -->
+
+Vegetation model projections are inherently uncertain, and this uncertainty stems from several sources.
+_Driver_ uncertainty refers to uncertainty in data about processes that are essential to the system in question but are not represented by the model (e.g. weather and climate for vegetation models).
+_Initial condition_ uncertainty arises from the fact that models have to start somewhere, and the exact conditions at the place and time simulations begin are uncertain.
+_Process_ or _structural_ uncertainty arises because vegetation models necessarily only represent a subset of all processes involved in plant biology, and that the process that are included can usually be represented in multiple different ways.
+Finally, _parameter_ uncertainty arises because of natural variability and imperfect calibration of the above process representations.
+The focus of this study is on the interaction between parametric and structural uncertainty; driver uncertainty is outside the scope of this study, and initial condition uncertainty is minimized by our experimental design, which is conditioned on a specific initial condition (near bare ground).
+<!-- TODO This whole paragraph is awkward -->
 
 - Why we need models?
     - Forests are important, for C sequestration, other ecosystem services
