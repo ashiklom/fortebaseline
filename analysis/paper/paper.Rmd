@@ -97,6 +97,14 @@ In this study, we evaluate structural uncertainty more precisely/directly by sel
 
 The focus of this study is on the interaction between parametric and structural uncertainty in the ED2 model.
 Driver uncertainty is outside the scope of this study, and initial condition uncertainty is minimized by our experimental design, which is conditioned on a specific initial condition (near bare ground).
+Our study is organized around the following guiding questions:
+(1) Which processes related to light utilization are most important to accurately modeling community succession and C cycle dynamics in temperate forests of the Upper Midwest?
+(2) What is the cost of considering these processes, in terms of additional parameteric uncertainty?
+(3) What are the relative contributions of parameteric uncertainty (data limitation) vs. structural uncertainty (theoretical limitation?)?
+To answer these questions, we ran ED2 ensemble simulationes with a factorial combination of submodels related to radiative transfer formulation (two-stream vs. multiple scatter), horizontal competition (finite canopy radius vs. complete shading), and trait plasticity (whether or not SLA and Vcmax vary with light level)
+We then used a sensitivity and variance decomposition analysis to evaluate the contribution of parameter uncertainty for each model configuration.
+
+## Old introduction outline
 
 - Why we need models?
     - Forests are important, for C sequestration, other ecosystem services
