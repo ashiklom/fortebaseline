@@ -75,10 +75,28 @@ Various versions of the ED model have been validated in boreal [@medvigy_2011_pr
 Vegetation model projections are inherently uncertain, and this uncertainty stems from several sources.
 _Driver_ uncertainty refers to uncertainty in data about processes that are essential to the system in question but are not represented by the model (e.g. weather and climate for vegetation models).
 _Initial condition_ uncertainty arises from the fact that models have to start somewhere, and the exact conditions at the place and time simulations begin are uncertain.
-_Process_ or _structural_ uncertainty arises because vegetation models necessarily only represent a subset of all processes involved in plant biology, and that the process that are included can usually be represented in multiple different ways.
+_Process_ or _structural_ uncertainty arises because vegetation models necessarily only represent a subset of all processes involved in plant biology, and that the process that are included can usually be represented in multiple different ways (i.e. which processes are included, and how they are represented).
 Finally, _parameter_ uncertainty arises because of natural variability and imperfect calibration of the above process representations.
-The focus of this study is on the interaction between parametric and structural uncertainty; driver uncertainty is outside the scope of this study, and initial condition uncertainty is minimized by our experimental design, which is conditioned on a specific initial condition (near bare ground).
 <!-- TODO This whole paragraph is awkward -->
+
+Several recent studies have looked at parameter uncertainty in ED2.
+@dietze_2014_quantitative evaluated which ED2 parameters contributed the most to uncertainties in ED2 simulations of productivity across multiple biomes in North America at 1, 5, and 10 year time scales.
+They found that the parameters contributing the most to model uncertainty across all biomes were those related to growth respiration, mortality, stomatal conductance, and water uptake.
+However, they also found that despite some common patterns, parameter uncertainty varied with biome.
+More recently, a similar analysis evaluated parameter uncertainty over 100 year time scale at the Willow Creek Ameriflux site, and found that the most important parameters to model uncertainty were quantum efficiency of photosynthesis, leaf respiration, and soil-plant water transfer [@raczka_2018_what].
+Another recent study assessed parameter uncertainty in ED2 as part of its overall goal of parameterizing the model for sagebrush [@pandit_2018_optimizing].
+They found that the most important parameters were specific leaf area, the maximum rate of carbon fixation (V~cmax~), slope of stomatal conductance, the fine-root to leaf carbon ratio, and the fine root turnover rate.
+Another study looked specifically at contributions to uncertainty from parameters related to canopy radiative transfer, and found that parameters related to both canopy structure and leaf optical properties had a large (>20%) impact on predictions of net primary productivity [@viskari_2019_influence].
+The variability in results across these studies demonstrates that parameter contributions to ED2 uncertainty are highly variable, and that additional parameter uncertainty studies are needed.
+
+While parameter uncertainty ED2 has been previously evaluated, less work has been done on structural uncertainty.
+Numerous vegetation model intercomparison studies have demonstrated that different models produce significantly different projections of overall land carbon sequestration [@friedlingstein_2006_climate; @friedlingstein_2014_uncertainties], response to CO~2~ fertilization (REF - Medlyn?), high-latitude warming (Rogers and Serbin?), {others...}. <!-- TODO -->
+These differences have been attributed to differences in model representations of key processes, including canopy radiative transfer [@fisher_2017_vegetation] and photosynthesis [@rogers_2016_roadmap]. <!-- TODO More here? -->
+However, the extent to which specific processes contribute to model uncertainty is difficult to evaluate from model intercomparisons because different models are different from each other in too many different ways.
+In this study, we evaluate structural uncertainty more precisely/directly by selectively toggling and switching individual processes/model components in ED2 while keeping everything else constant.
+
+The focus of this study is on the interaction between parametric and structural uncertainty in the ED2 model.
+Driver uncertainty is outside the scope of this study, and initial condition uncertainty is minimized by our experimental design, which is conditioned on a specific initial condition (near bare ground).
 
 - Why we need models?
     - Forests are important, for C sequestration, other ecosystem services
