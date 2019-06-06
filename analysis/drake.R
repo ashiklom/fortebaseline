@@ -57,8 +57,9 @@ plan <- drake_plan(
   paper = target(
     rmarkdown::render(
       knitr_in(!!(path(analysis_dir, "paper", "paper.Rmd"))),
-      "github_document"
-    )),
+      .format
+    ),
+    transform = map(.format = c("html_document"))),
   model_scale = c(RColorBrewer::brewer.pal(
     n = nrow(both_uncertainty) - 1,
     name = "Paired"
