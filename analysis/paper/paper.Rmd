@@ -45,26 +45,26 @@ mdcap <- function(text) {
 
 # Introduction
 
-Temperate forests in the Upper Midwest are important.
+**Temperate forests in the Upper Midwest are important.**
 {C sequestration}.
 {Other ecosystem services}.
 However, the fate of these forests is highly uncertain.
 The natural ecological succession of these forests has been significantly altered by the interactions of a significantly different and rapidly changing climate, and novel disturbance regimes under which some natural disturbances (e.g. fire) are suppressed while others (e.g. harvest; pests and pathogens) may be becoming more frequent. <!-- TODO refs -->
 {UMBS ecological background/natural history?} 
-Therefore, predictions about the future of these forests based on past analogs may not be reliable.
+**Therefore, predictions about the future of these forests based on past analogs may not be reliable.**
 
-Instead, more reliable predictions can be obtained by using dynamic vegetation models that explicitly represent process involved in forest growth and mortality.
+**Instead, more reliable predictions can be obtained by using dynamic vegetation models that explicitly represent processes involved in forest growth and mortality.**
 Vegetation models fall broadly along the following spectrum of complexity.
-On one side are relatively simple "Big leaf" models---such as PNET, SiBCASA, and Biome-BGC <!-- TODO refs; more examples? -->---in which the vegetation at a particular location consists essentially of a single large "plant" whose characteristics are the (weighted) average of all the vegetation at that site. <!-- TODO refs -->
+On one side are relatively simple **"Big leaf" models**---such as PNET, SiBCASA, and Biome-BGC <!-- TODO refs; more examples? -->---in which the vegetation at a particular location consists essentially of a single large "plant" whose characteristics are the (weighted) average of all the vegetation at that site. <!-- TODO refs -->
 These models were designed originally to simulate the land surface boundary condition for atmospheric general circulation models, though similar models continue to be applied successfully to simulate biogeochemical processes in many ecosystem science contexts. <!-- TODO refs -->
-On the other end of the spectrum are "individual-based" models (a.k.a. "gap models"), which explicitly simulate multiple indivduals competing for resources at a single site [@shugart_2015_computer]. <!-- TODO other refs? -->
+On the other end of the spectrum are **"individual-based" models** (a.k.a. "gap models"), which explicitly simulate multiple indivduals competing for resources at a single site [@shugart_2015_computer]. <!-- TODO other refs? -->
 Examples of such models are LANDIS <!-- TODO ref !--> and UVAFME. <!-- TODO ref --> <!-- TODO Other examples? -->
 Because these models can explicitly represent inter-specific differences in plant productivity, resource allocation, and stress tolerance (among others), as well as the competition that emerges out of these differences, they may be better able to represent changes in ecosystem-scale processes, especially in no-analog conditions [@purves_2008_predictive].
-Moreover, these models' predictions of species composition and ecosystem structure are relevant outside of carbon cycle science, particularly for forest management and wildlife conservation. <!-- TODO refs -->
-However, these benefits of individual-based models come at the cost of much higher data and computational requirements, which effectively restrict their application to individual, well-studied sites. <!-- TODO refs. Also, is this actually true? -->
+Moreover, these models' **predictions of species composition and ecosystem structure are relevant outside of carbon cycle science**, particularly for forest management and wildlife conservation. <!-- TODO refs -->
+However, these **benefits of individual-based models come at the cost of much higher data and computational requirements**, which effectively restrict their application to individual, well-studied sites. <!-- TODO refs. Also, is this actually true? -->
 
-A key challenge of vegetation modeling research over the last several decades has been the development of approaches that capture the emergent biogeochemical and ecological outcomes of interactions between individual plants without the need for explicitly simulating each individual [@purves_2008_predictive].
-One such approach is the "ecosystem demography" approach, which uses a system of partial differential equations to simulate the emergent mean behavior of "cohorts" of individuals of similar composition, size, and age [@moorcroft_2001_method]. <!-- TODO Run this description by Mike? -->
+A key challenge of vegetation modeling research over the last several decades has been the **development of approaches that capture the emergent biogeochemical and ecological outcomes of interactions between individual plants without the need for explicitly simulating each individual** [@purves_2008_predictive].
+One such approach is the **"ecosystem demography" approach**, which uses a system of partial differential equations to simulate the emergent mean behavior of "cohorts" of individuals of similar composition, size, and age [@moorcroft_2001_method]. <!-- TODO Run this description by Mike? -->
 The original "Ecosystem Demography" (ED) model [@moorcroft_2001_method] was enhanced by @medvigy_2009_mechanistic (as ED2) with fully-coupled leaf physiology, canopy radiative transfer, and micrometeorology, and each of these components have been further refined over the last decade [culminating in ED2.2; @longo_2019_ed1].
 Various versions of the ED model have been validated in boreal [@medvigy_2011_predicting], temperate [@medvigy_2009_mechanistic; @dietze_2014_quantitative; @raczka_2018_what], and tropical biomes [@moorcroft_2001_method; @longo_2019_ed2], and have been applied in:
 
@@ -73,14 +73,14 @@ Various versions of the ED model have been validated in boreal [@medvigy_2011_pr
 - estimation of potential carbon stocks [@hurtt_2004_beyond_potential_vegetation]
 - vegetation-climate feedbacks {Swann, etc} <!-- TODO -->
 
-Vegetation model projections are inherently uncertain, and this uncertainty stems from several sources.
+**Vegetation model projections are inherently uncertain, and this uncertainty stems from several sources.**
 _Driver_ uncertainty refers to uncertainty in data about processes that are essential to the system in question but are not represented by the model (e.g. weather and climate for vegetation models).
 _Initial condition_ uncertainty arises from the fact that models have to start somewhere, and the exact conditions at the place and time simulations begin are uncertain.
 _Process_ or _structural_ uncertainty arises because vegetation models necessarily only represent a subset of all processes involved in plant biology, and that the process that are included can usually be represented in multiple different ways (i.e. which processes are included, and how they are represented).
 Finally, _parameter_ uncertainty arises because of natural variability and imperfect calibration of the above process representations.
 <!-- TODO This whole paragraph is awkward -->
 
-Several recent studies have looked at parameter uncertainty in ED2.
+**Several recent studies have looked at parameter uncertainty in ED2.**
 @dietze_2014_quantitative evaluated which ED2 parameters contributed the most to uncertainties in ED2 simulations of productivity across multiple biomes in North America at 1, 5, and 10 year time scales.
 They found that the parameters contributing the most to model uncertainty across all biomes were those related to growth respiration, mortality, stomatal conductance, and water uptake.
 However, they also found that despite some common patterns, parameter uncertainty varied with biome.
@@ -90,13 +90,13 @@ They found that the most important parameters were specific leaf area, the maxim
 Another study looked specifically at contributions to uncertainty from parameters related to canopy radiative transfer, and found that parameters related to both canopy structure and leaf optical properties had a large (>20%) impact on predictions of net primary productivity [@viskari_2019_influence].
 The variability in results across these studies demonstrates that parameter contributions to ED2 uncertainty are highly variable, and that additional parameter uncertainty studies are needed.
 
-While parameter uncertainty ED2 has been previously evaluated, less work has been done on structural uncertainty.
+**While parameter uncertainty ED2 has been previously evaluated, less work has been done on structural uncertainty**.
 Numerous vegetation model intercomparison studies have demonstrated that different models produce significantly different projections of overall land carbon sequestration [@friedlingstein_2006_climate; @friedlingstein_2014_uncertainties], response to CO~2~ fertilization (REF - Medlyn?), high-latitude warming (Rogers and Serbin?), {others...}. <!-- TODO -->
 These differences have been attributed to differences in model representations of key processes, including canopy radiative transfer [@fisher_2017_vegetation] and photosynthesis [@rogers_2016_roadmap]. <!-- TODO More here? -->
-However, the extent to which specific processes contribute to model uncertainty is difficult to evaluate from model intercomparisons because different models are different from each other in too many different ways.
+**However, the extent to which specific processes contribute to model uncertainty is difficult to evaluate from model intercomparisons because different models are different from each other in too many different ways.**
 In this study, we evaluate structural uncertainty more precisely/directly by selectively toggling and switching individual processes/model components in ED2 while keeping everything else constant.
 
-The focus of this study is on the interaction between parametric and structural uncertainty in the ED2 model.
+**The focus of this study is on the interaction between parametric and structural uncertainty in the ED2 model.**
 Driver uncertainty is outside the scope of this study, and initial condition uncertainty is minimized by our experimental design, which is conditioned on a specific initial condition (near bare ground).
 Our study is organized around the following guiding questions:
 (1) Which processes related to light utilization are most important to accurately modeling community succession and C cycle dynamics in temperate forests of the Upper Midwest?
