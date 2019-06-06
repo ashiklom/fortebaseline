@@ -23,7 +23,9 @@ Imports:
     xml2,
     readr,
     ggsci,
-    rlang
+    rlang,
+    tibble,
+    lubridate
 Remotes:
   pecanproject/pecan/api@develop
 Suggests: 
