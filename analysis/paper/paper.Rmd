@@ -109,19 +109,17 @@ We then used a sensitivity and variance decomposition analysis to evaluate the c
 
 ## Site description
 
-- Secondary successional forest -- bigtooth aspen (_Populus grandidentata_), northern red oak (_Quercus rubra_), red maple (_Acer rubrum_), paper birch (_Betula papyrifera_), eastern white pine (_Pinus strobus_)
-- Average age -- 95 years (2013)
-- NEP in UMBS tower is 1.58 MG C ha^-1^ yr^-1^ (0.80-1.98) (1999-2006), but with landscape variation (REF?)
-- Heavily logged in late 1800s and early 1900s, disturbed by fire until 1923 (REF)
-- Present day composition typical of upper Great Lakes region
-- Previously, the site of the FASET experiment [@gough_2013_sustained; @gough_2008_multi]
-- UMBS is 87% upland and 13% wetland [@bergen_2007_observing]. We focus on the upland ecosystem, which has the following characteristics (from @bergen_2007_observing):
-    - 20.4% moraine, 37.8% high outwash plain, 31.3% low outwash plain, 5.7% lake-margin terrace, 3.6% ice-contact, 1.2% lowland glacial lake
-    - 60.9% aspen-dominated, 16.6% northern hardwood (_Acer saccharum_, _Acer rubrum_, _Fagus grandifolia_, _Tilia americana_ (basswood), _Betula alleghaniensis_ (yellow birch), _Fraxinus americana_ (white ash), _Tsuga canadensis_), 13.3% upland conifer (_Pinus strobus_, _Pinus resinosa_)
-    - 1.6% northern red oak (_Quercus rubra_)
-    - 60.9% transitioning from aspen to next succession, of which: 55.8% to northern hardwood, 34.7% to upland conifer, 3.8% to northern red oak, 2.6% to northern red oak-red maple, 3.1% to upland conifer-northern hardwood
+We performed this study at the University of Michigan Biological Station (Ameriflux site, "UMBS-dist") ({coords}), <!-- TODO --> located in Northern Lower Michigan, USA.
+The area surrounding the research station is 87% well-drained upland forest and 13% wetland [@bergen_2007_observing]; the focus of this study is on the former.
+The landscape geography of the UMBS upland forest is 20.4% moraine, 37.8% high outwash plain, 31.3% low outwash plain, 5.7% lake-margin terrace, 3.6% ice-contact, and 1.2% lowland glacial lake [@bergen_2007_observing].
+Most of the UMBS upland forest canopy is dominated by temperate deciduous early-successional species, most importantly _Populus grandidentata_ (bigtooth aspen) and, to a lesser extent, _Betula papyrifera_ (paper birch), with _Acer saccharum_ (sugar maple), _Acer rubrum_ (red maple), _Fagus grandifolia_ (American beech), _Tilia americana_ (basswood), _Betula alleghaniensis_ (yellow birch), _Fraxinus americana_ (white ash), _Tsuga canadensis_ (eastern hemlock), _Quercus rubra_ (northern red oak), _Pinus strobus_ (white pine), and _Pinus resinosa_ (red pine) existing in various fractions in the understory (and, in patches, in the canopy).
+This composition is a legacy of the site's disturbance history:
+The site was intensively logged in the late 1800s and early 1900s, and experienced regularly recurring fires until the mid-1920s, at which point a regime of active fire suppression started that has persisted to the present day. <!-- TODO ref -->
+As a result, the average stand age in 2013 was 95 years. <!-- TODO ref -->
+The majority of the forest that is aspen-dominated is undergoing succession to "northern hardwood" (maple, beech, basswood, birch, ash, hemlock), "upland conifer" (red and white pine), or "northern red-oak" ecotypes [@bergen_2007_observing].
 
-## ED2 model description
+
+## Ecosystem Demography Model (version 2.2)
 
 The Ecosystem Demography Model, version 2.2 (ED2).
 Default configuration is described in [@longo_2019_ed1].
@@ -426,6 +424,22 @@ $$ a_{proj} = \phi_1 + \phi_2 \mu $$
     - Ensemble analysis to look at parameter uncertainty
 
 $$ \lambda = \frac{a_{proj}}{\mu} $$
+
+## Methods
+
+### Site description
+
+- Secondary successional forest -- bigtooth aspen (_Populus grandidentata_), northern red oak (_Quercus rubra_), red maple (_Acer rubrum_), paper birch (_Betula papyrifera_), eastern white pine (_Pinus strobus_)
+- Average age -- 95 years (2013)
+- NEP in UMBS tower is 1.58 MG C ha^-1^ yr^-1^ (0.80-1.98) (1999-2006), but with landscape variation (REF?)
+- Heavily logged in late 1800s and early 1900s, disturbed by fire until 1923 (REF)
+- Present day composition typical of upper Great Lakes region
+- Previously, the site of the FASET experiment [@gough_2013_sustained; @gough_2008_multi]
+- UMBS is 87% upland and 13% wetland [@bergen_2007_observing]. We focus on the upland ecosystem, which has the following characteristics (from @bergen_2007_observing):
+    - 20.4% moraine, 37.8% high outwash plain, 31.3% low outwash plain, 5.7% lake-margin terrace, 3.6% ice-contact, 1.2% lowland glacial lake
+    - 60.9% aspen-dominated, 16.6% northern hardwood (_Acer saccharum_, _Acer rubrum_, _Fagus grandifolia_, _Tilia americana_ (basswood), _Betula alleghaniensis_ (yellow birch), _Fraxinus americana_ (white ash), _Tsuga canadensis_), 13.3% upland conifer (_Pinus strobus_, _Pinus resinosa_)
+    - 1.6% northern red oak (_Quercus rubra_)
+    - 60.9% transitioning from aspen to next succession, of which: 55.8% to northern hardwood, 34.7% to upland conifer, 3.8% to northern red oak, 2.6% to northern red oak-red maple, 3.1% to upland conifer-northern hardwood
 
 
 ##### pagebreak
