@@ -121,8 +121,31 @@ The majority of the forest that is aspen-dominated is undergoing succession to "
 
 ## Ecosystem Demography Model (version 2.2)
 
-The Ecosystem Demography Model, version 2.2 (ED2).
-Default configuration is described in [@longo_2019_ed1].
+For this study, we used the Ecosystem Demography Model, version 2.2 (ED2).
+Below, we provide only a high-level description of key model features and focus in detail only on submodels and configurations specific to this study.
+A full description of the default configuration of the model is provided by @longo_2019_ed1.
+
+ED2 represents both spatial and temporal variability hierarchically.
+The largest spatial unit is the "polygon", within which all elements share the same meteorological forcings.
+Polygons are divided into multiple "sites", each site with its own set of abiotic characteristics such as soil texture and topography.
+Sites are divided into discrete "patches" according to time since last disturbance.
+Finally, each patch is composed of an arbitrary (and dynamic) number of "cohorts", representing the mean behavior of groups of plant individuals of similar size and composition.
+Temporal variability in ED2 is similarly hierarchical.
+Thermodynamics, including energy, water, and eddy (e.g. CO~2~) fluxes, are resolved on the order of seconds.
+Biophysics, including photosynthesis, respiration, and radiative transfer, and the evaluation of energy, water, and CO2 budgets, are resolved on the order of minutes.
+Phenology and plant carbon balance are evaluated daily.
+Cohort dynamics, including structural growth, mortality, and reproduction, are evaluated monthly.
+Finally, patch dynamics (e.g. annual disturbances) are evaluated annually.
+In this study, we consider only a single patch (and, therefore, a single site and polygon) starting from a "near bare ground" condition.
+
+<!-- TODO -->
+{Brief summary of thermodynamics?}
+{Brief summary of water cycle?}
+
+ED2 represents the carbon flux for each cohort as the net sum of contributions from turbulent mixing, leaf photosynthesis and respiration, (fine) root respiration, growth and maintenance respiration, and heterotrophic respiration.
+In addition, each cohort also has a virtual carbon balance that links fast processes like photosynthesis and respiration to slow processes like allocation (to growth, storage, and reproduction) and mortality.
+
+The official ED2 source code is available at https://github.com/EDmodel/ED2, and the exact version used in this study (which includes minor revisions to accommodate the requirements of this study) can be obtained  https://github.com/ashiklom/ED2/tree/b048950971e91699b78fc566df133caf977fda32.
 
 In this study, we run a factorial experiment of ED2 with the following features enabled or disabled:
 
