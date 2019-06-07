@@ -109,7 +109,7 @@ We then used a sensitivity and variance decomposition analysis to evaluate the c
 
 ## Site description
 
-We performed this study at the University of Michigan Biological Station (Ameriflux site, "UMBS-dist") ({coords}), <!-- TODO --> located in Northern Lower Michigan, USA.
+We performed this study at the University of Michigan Biological Station (Ameriflux site US-UMd, 45.5625$^{\circ}$, -84.6975$^{\circ}$), located in Northern Lower Michigan, USA.
 The area surrounding the research station is 87% well-drained upland forest and 13% wetland [@bergen_2007_observing]; the focus of this study is on the former.
 The landscape geography of the UMBS upland forest is 20.4% moraine, 37.8% high outwash plain, 31.3% low outwash plain, 5.7% lake-margin terrace, 3.6% ice-contact, and 1.2% lowland glacial lake [@bergen_2007_observing].
 Most of the UMBS upland forest canopy is dominated by temperate deciduous early-successional species, most importantly _Populus grandidentata_ (bigtooth aspen) and, to a lesser extent, _Betula papyrifera_ (paper birch), with _Acer saccharum_ (sugar maple), _Acer rubrum_ (red maple), _Fagus grandifolia_ (American beech), _Tilia americana_ (basswood), _Betula alleghaniensis_ (yellow birch), _Fraxinus americana_ (white ash), _Tsuga canadensis_ (eastern hemlock), _Quercus rubra_ (northern red oak), _Pinus strobus_ (white pine), and _Pinus resinosa_ (red pine) existing in various fractions in the understory (and, in patches, in the canopy).
@@ -202,62 +202,30 @@ Three other parameters:
 - Minimum plant height for reproduction (`minimum_height`)
 - Soil-plant water conductance, or "water availability factor" (`water_conductance`)
 
-## Data sources
+By default, ED2 supports 17 different plant functional types, which divide plant species according to photosynthetic pathway (C3 vs. C4), growth form (grass vs. tree), leaf phenology habit (deciduous vs. evergreen), biome (e.g. temperate vs. tropical), and successional status (e.g. early, mid, late).
+However, we limited our simulations to the four plant functional types that have any appreciable presence at UMBS: Early, mid, and late temperate deciduous trees and pines.
+The species comprising these plant functional types are shown in Table X.
 
-BETYdb [@lebauer_2013_facilitating].
+Table: Plant functional type-species mappings
 
-TRY data [@kattge_2011_try].
+| Plant functional type | Species                 |
+|-----------------------|-------------------------|
+| Early hardwood        | _Betula papyrifera_     |
+|                       | _Populus grandidentata_ |
+|                       | _Populus tremuloides_   |
+| Mid hardwood          | _Quercus rubra_         |
+|                       | _Acer rubrum_           |
+|                       | _Acer pensylvaticum_    |
+| Late hardwood         | _Acer saccharum_        |
+|                       | _Fagus grandifolia_     |
+| Pine                  | _Pinus strobus_         |
 
-CRUNCEP met.
-
-Other FoRTE data?
-- LAI trends: 1997-2014
-- Aboveground NPP data: 1999-2017
-
-Priors on leaf optical properties from Shiklomanov dissertation (chapter 3).
-
-## Modeling workflow
-
-PEcAn parameter sensitivity and uncertainty analysis [@lebauer_2013_facilitating].
-Other PEcAn references: [@dietze_2013_improving].
-
-Plant functional type definitions:
-
-- **Early successional hardwood**
-    - _Betula papyrifera_ (white/paper birch)
-    - _Populus grandidentata_ (bigtooth aspen)
-    - _Populus tremuloides_ (trembling aspen)
-- **Mid successional hardwood**
-    - _Quercus rubra_ (red oak)
-    - _Acer rubrum_ (red maple)
-    - _Acer pensylvaticum_ (striped maple)
-- **Late successional hardwood**
-    - _Acer saccharum_ (sugar maple)
-    - _Fagus grandifolia_ (American beech)
-- **Pine**
-    - _Pinus strobus_ (white pine)
-- _Omitted candidates_
-    - Early hardwood
-        - _Prunus pensylvatica_ (fire cherry)
-    - Mid hardwood
-        - _Betula alleghaniensis_ (yellow birch)
-        - _Tilia americana_ (basswood)
-        - _Fraxinus americana_ (white ash)
-    - Late hardwood
-        - _Ostyra virginiana_ (hop-hornbeam)
-    - Pine
-        - _Pinus resinosa_ (red pine)
-    
-```{r param-table}
-tbl <- readd(param_table)
-tbl <- subset(tbl, select = -unit_parsed)
-tbl[["ED Name"]] <- sprintf("`%s`", tbl[["ED Name"]])
-knitr::kable(tbl, escape = FALSE, caption = paste0(
-  "**Table**: Parameter descriptions. ",
-  "For additional information, see the ",
-  "[ED2 model wiki](https://github.com/EDmodel/ED2/wiki/PFT-parameters)."
-))
-```
+For each plant functional type, we generated a distribution of parameter values via a trait-meta analysis [@lebauer_2013_facilitating; see also @dietze_2014_quantitative; @raczka_2018_what].
+Prior distributions for this meta-analysis were the same as those used in @dietze_2014_quantitative, @raczka_2018_what, and @viskari_2019_influence.
+Species trait data for this meta-analysis came from existing records in the BETY database [www.betydb.org, @lebauer_2017_betydb], as well as from publicly available records in the TRY database [www.try-db.org, @kattge_2011_try] and, specifically for leaf optical properties, from Shiklomanov (2019 {dissertation, chapter 3}).
+The resulting parameter distributions are shown in Figure X.
+<!-- TODO more on this? -->
+All parameters not described in this section were set to their ED2 PFT-specific defaults.
 
 ```{r methods_captions}
 param_dist_cap <- paste(
@@ -271,13 +239,27 @@ readd(param_dist_gg)
 
 `r mdcap(param_dist_cap)`
 
-For each combination of ED submodels, we ran 10 ED ensemble simulations.
+
+## Modeling workflow
+
+For each factorial combination of model configurations/submodels (described above), we ran 100 ensemble members from 1901 to 2000.
+Each ensemble member was initialized from ED2's "near-bare ground" condition: An equal number of seedlings of each plant functional type (see previous section) at the minimum resolvable size.
+Driving meteorological data was 6-hourly CRU-NCEP <!-- TODO ref. More here? --> combined with an annual atmospheric CO~2~ record from Law-Dome ice core [@etheridge_1998_historical] and Mauna Loa observatory [@thoning_1989_atmospheric].
+Soil texture was set to 92% sand, 7% silt, and 1% clay, per site-level observations in [@gough_2010_wood].
+The initial soil moisture profile was set to the average soil moisture profile reported in the UMBS Ameriflux ancillary data (https://ameriflux.lbl.gov/sites/siteinfo/US-UMd).
+The entire model execution workflow was conducted using the Predictive Ecosystem Analyzer (PEcAn, www.pecanproject.org).
 
 ## Analysis of results
 
-- Structural vs. parameteric uncertainty
-- Comparison against observations
-- Others...
+- Overall summary:
+    - Overall parameter uncertainty -- Time-series plots of total annual GPP and NPP, and maximum LAI and AGB, averaged across ensemble members
+    - Impact of parameter uncertainty on ecological trajectories -- plot of max annual LAI by PFT
+    - Both compared against observations of recently observed LAI and NPP at UMBS (e.g. FASET, FoRTE)
+- Uncertainty analysis:
+    - Parameter vs. structural uncertainty -- Variance in mean annual GPP from 19XX to 19YY across ensembles within model structure, and compare against 
+    - Breakdown of parameter uncertainty -- PEcAn sensitivity and uncertainty analysis [@lebauer_2013_facilitating; @dietze_2014_quantitative]
+- Details of structural uncertainty:
+    - Vertical profiles of radiation, traits?
 
 # Results
 
@@ -499,6 +481,43 @@ $$ \lambda = \frac{a_{proj}}{\mu} $$
     - 1.6% northern red oak (_Quercus rubra_)
     - 60.9% transitioning from aspen to next succession, of which: 55.8% to northern hardwood, 34.7% to upland conifer, 3.8% to northern red oak, 2.6% to northern red oak-red maple, 3.1% to upland conifer-northern hardwood
 
+### PFT definitions
+
+- **Early successional hardwood**
+    - _Betula papyrifera_ (white/paper birch)
+    - _Populus grandidentata_ (bigtooth aspen)
+    - _Populus tremuloides_ (trembling aspen)
+- **Mid successional hardwood**
+    - _Quercus rubra_ (red oak)
+    - _Acer rubrum_ (red maple)
+    - _Acer pensylvaticum_ (striped maple)
+- **Late successional hardwood**
+    - _Acer saccharum_ (sugar maple)
+    - _Fagus grandifolia_ (American beech)
+- **Pine**
+    - _Pinus strobus_ (white pine)
+- _Omitted candidates_
+    - Early hardwood
+        - _Prunus pensylvatica_ (fire cherry)
+    - Mid hardwood
+        - _Betula alleghaniensis_ (yellow birch)
+        - _Tilia americana_ (basswood)
+        - _Fraxinus americana_ (white ash)
+    - Late hardwood
+        - _Ostyra virginiana_ (hop-hornbeam)
+    - Pine
+        - _Pinus resinosa_ (red pine)
+
+```{r param-table}
+tbl <- readd(param_table)
+tbl <- subset(tbl, select = -unit_parsed)
+tbl[["ED Name"]] <- sprintf("`%s`", tbl[["ED Name"]])
+knitr::kable(tbl, escape = FALSE, caption = paste0(
+  "**Table**: Parameter descriptions. ",
+  "For additional information, see the ",
+  "[ED2 model wiki](https://github.com/EDmodel/ED2/wiki/PFT-parameters)."
+))
+```
 
 ##### pagebreak
 
