@@ -392,7 +392,7 @@ $(document).ready(function () {
 <h4 class="author">Jeff Atkins</h4>
 <h4 class="author">Ben Bond-Lamberty</h4>
 <h4 class="author">Christopher M. Gough</h4>
-<h4 class="date">06 June, 2019</h4>
+<h4 class="date">07 June, 2019</h4>
 <div class="abstract">
 <p class="abstract">Abstract</p>
 <p>Text of abstract</p>
@@ -416,110 +416,26 @@ $(document).ready(function () {
 <p><strong>Several recent studies have looked at parameter uncertainty in ED2.</strong> <span class="citation">Dietze et al. (2014)</span> evaluated which ED2 parameters contributed the most to uncertainties in ED2 simulations of productivity across multiple biomes in North America at 1, 5, and 10 year time scales. They found that the parameters contributing the most to model uncertainty across all biomes were those related to growth respiration, mortality, stomatal conductance, and water uptake. However, they also found that despite some common patterns, parameter uncertainty varied with biome. More recently, a similar analysis evaluated parameter uncertainty over 100 year time scale at the Willow Creek Ameriflux site, and found that the most important parameters to model uncertainty were quantum efficiency of photosynthesis, leaf respiration, and soil-plant water transfer <span class="citation">(Raczka et al. 2018)</span>. Another recent study assessed parameter uncertainty in ED2 as part of its overall goal of parameterizing the model for sagebrush <span class="citation">(Pandit et al. 2018)</span>. They found that the most important parameters were specific leaf area, the maximum rate of carbon fixation (V<sub>cmax</sub>), slope of stomatal conductance, the fine-root to leaf carbon ratio, and the fine root turnover rate. Another study looked specifically at contributions to uncertainty from parameters related to canopy radiative transfer, and found that parameters related to both canopy structure and leaf optical properties had a large (&gt;20%) impact on predictions of net primary productivity <span class="citation">(Viskari et al. 2019)</span>. The variability in results across these studies demonstrates that parameter contributions to ED2 uncertainty are highly variable, and that additional parameter uncertainty studies are needed.</p>
 <p><strong>While parameter uncertainty ED2 has been previously evaluated, less work has been done on structural uncertainty</strong>. Numerous vegetation model intercomparison studies have demonstrated that different models produce significantly different projections of overall land carbon sequestration <span class="citation">(Friedlingstein et al. 2006, 2014)</span>, response to CO<sub>2</sub> fertilization (REF - Medlyn?), high-latitude warming (Rogers and Serbin?), {others…}. <!-- TODO --> These differences have been attributed to differences in model representations of key processes, including canopy radiative transfer <span class="citation">(Fisher et al. 2017)</span> and photosynthesis <span class="citation">(Rogers et al. 2016)</span>. <!-- TODO More here? --> <strong>However, the extent to which specific processes contribute to model uncertainty is difficult to evaluate from model intercomparisons because different models are different from each other in too many different ways.</strong> In this study, we evaluate structural uncertainty more precisely/directly by selectively toggling and switching individual processes/model components in ED2 while keeping everything else constant.</p>
 <p><strong>The focus of this study is on the interaction between parametric and structural uncertainty in the ED2 model.</strong> Driver uncertainty is outside the scope of this study, and initial condition uncertainty is minimized by our experimental design, which is conditioned on a specific initial condition (near bare ground). Our study is organized around the following guiding questions: (1) Which processes related to light utilization are most important to accurately modeling community succession and C cycle dynamics in temperate forests of the Upper Midwest? (2) What is the cost of considering these processes, in terms of additional parameteric uncertainty? (3) What are the relative contributions of parameteric uncertainty (data limitation) vs. structural uncertainty (theoretical limitation?)? To answer these questions, we ran ED2 ensemble simulationes with a factorial combination of submodels related to radiative transfer formulation (two-stream vs. multiple scatter), horizontal competition (finite canopy radius vs. complete shading), and trait plasticity (whether or not SLA and Vcmax vary with light level) We then used a sensitivity and variance decomposition analysis to evaluate the contribution of parameter uncertainty for each model configuration.</p>
-<div id="old-introduction-outline" class="section level2">
-<h2>Old introduction outline</h2>
-<ul>
-<li>Why we need models?
-<ul>
-<li>Forests are important, for C sequestration, other ecosystem services</li>
-<li>Policy decisions related to forests depend on future projections</li>
-<li>We need models to make future projections</li>
-</ul></li>
-<li>What kinds of models are out there?
-<ul>
-<li>Traditional: “Big leaf” models
-<ul>
-<li>Needed to be simple to run on old computers</li>
-<li>Don’t need as much data</li>
-<li>…but they fail to capture important processes, which matter not only for accurate predictions about C cycle, but also because they are processes we care about (habitat, forestry, tourism, etc.)!</li>
-</ul></li>
-<li>Individual-based models
-<ul>
-<li>Much more detailed, but harder to run, and need much more data.</li>
-<li>Trade-off between complexity and accuracy.</li>
-</ul></li>
-</ul></li>
-<li>Cohort-based models like ED2 as a middle ground?
-<ul>
-<li>Core ED concept <span class="citation">(Moorcroft et al. 2001)</span></li>
-<li>ED2 developments – <span class="citation">(Medvigy et al. 2009, Medvigy and Moorcroft 2011)</span></li>
-<li>Most recent version – <span class="citation">(Longo et al. 2019b)</span></li>
-<li>Validation/applications of the ED model:
-<ul>
-<li><span class="citation">(Rollinson et al. 2017)</span> – ED2 paleoclimate</li>
-<li><span class="citation">(Miller et al. 2015)</span> – ED2 at Duke FACE</li>
-<li><span class="citation">(De Kauwe et al. 2013)</span> – ED2 at Duke and Oak Ridge FACE</li>
-<li><span class="citation">(Longo et al. 2019a)</span> – Model evaluation in Tropics</li>
-</ul></li>
-</ul></li>
-<li>How much complexity do we need to accurately model ecological dynamics?
-<ul>
-<li>Lots of existing work on parameteric uncertainty
-<ul>
-<li><span class="citation">(Dietze et al. 2014)</span></li>
-<li><span class="citation">(Raczka et al. 2018)</span></li>
-<li><span class="citation">(Pandit et al. 2018)</span></li>
-</ul></li>
-<li>Less on structural uncertainty – i.e. not just what coefficients do we use, but what <em>equations</em>, and more generally, what <em>processes</em> do we even consider?</li>
-</ul></li>
-<li>What are the processes that drive succession of ecological communities?
-<ul>
-<li>Competition for light <span class="citation">(Bazzaz 1979)</span></li>
-<li>Others? Leaning towards omitting because factorial combination becomes too large.
-<ul>
-<li>Competition for water?</li>
-<li>Competition for nutrients? (ED’s N model isn’t very good. Alternatives are being developed, but not in ED mainline yet.)</li>
-</ul></li>
-</ul></li>
-<li>Brief review of community/ecosystem ecology of the Upper Midwest
-<ul>
-<li>UMBS is a useful site for testing these theories because of its natural history.</li>
-<li>Around 1900, mature forest dominated by white (<em>Pinus strobus</em>) and red pine (<em>Pinus resinosa</em>), hemlock (<em>Tsuga canadensis</em>), and sugar maple (<em>Acer saccharum</em>).</li>
-<li>But, repeat harvest and burning between 1880 and 1920 <span class="citation">(Kilburn 1960)</span> led to replacement by early successional aspen (<em>Populus grandidentata</em> and <em>Populus tremuloides</em>), birch (<em>Betula papyrifera</em>), and cherry (<em>Prunus pensylvatica</em>) <span class="citation">(<span class="citeproc-not-found" data-reference-id="barnes_1981_michigan"><strong>???</strong></span>, Gates 1930, Friedman and Reich 2005, Bergen and Dronova 2007)</span>.</li>
-<li>Such aspen-dominated secondary forests are sustained by background levels of disturbance, particularly fire <span class="citation">(Gates 1930)</span></li>
-<li>However, due to aggressive fire suppression in the US, these forests are now undergoing succession, primarily to mid/late-successional hardwood (typified by sugar maple and American beech, <em>Fagus grandifolia</em>) or upland conifer (typified by red and white pine) <span class="citation">(Bergen and Dronova 2007)</span>.</li>
-<li>The combination of stand-replacing disturbance ~100 years ago and suppressed disturbance since then makes this an ideal site for testing a vegetation model run from bare ground without having to prescribe disturbance.</li>
-</ul></li>
-<li>Guiding questions:
-<ul>
-<li>Which of these processes do we need to be able to accurately model what happens (“community succession and C cycle dynamics”) to Midwestern forests?</li>
-<li>What is the cost of considering these processes, in terms of additional parameteric uncertainty?</li>
-<li>What are the relative contributions of parameteric uncertainty (data limitation) vs. structural uncertainty (theoretical limitation?)?</li>
-</ul></li>
-<li>Study overview:
-<ul>
-<li>ED with factorial combination of submodels related to radiative transfer formulation (two-stream vs. multiple scatter), horizontal competition (finite canopy radius vs. complete shading), and trait plasticity (whether or not SLA and Vcmax vary with light level)</li>
-<li>Ensemble analysis to look at parameter uncertainty</li>
-</ul></li>
-</ul>
-</div>
 </div>
 <div id="methods" class="section level1">
 <h1>Methods</h1>
 <div id="site-description" class="section level2">
 <h2>Site description</h2>
-<ul>
-<li>Secondary successional forest – bigtooth aspen (<em>Populus grandidentata</em>), northern red oak (<em>Quercus rubra</em>), red maple (<em>Acer rubrum</em>), paper birch (<em>Betula papyrifera</em>), eastern white pine (<em>Pinus strobus</em>)</li>
-<li>Average age – 95 years (2013)</li>
-<li>NEP in UMBS tower is 1.58 MG C ha<sup>-1</sup> yr<sup>-1</sup> (0.80-1.98) (1999-2006), but with landscape variation (REF?)</li>
-<li>Heavily logged in late 1800s and early 1900s, disturbed by fire until 1923 (REF)</li>
-<li>Present day composition typical of upper Great Lakes region</li>
-<li>Previously, the site of the FASET experiment <span class="citation">(Gough et al. 2008, 2013)</span></li>
-<li>UMBS is 87% upland and 13% wetland <span class="citation">(Bergen and Dronova 2007)</span>. We focus on the upland ecosystem, which has the following characteristics (from <span class="citation">Bergen and Dronova (2007)</span>):
-<ul>
-<li>20.4% moraine, 37.8% high outwash plain, 31.3% low outwash plain, 5.7% lake-margin terrace, 3.6% ice-contact, 1.2% lowland glacial lake</li>
-<li>60.9% aspen-dominated, 16.6% northern hardwood (<em>Acer saccharum</em>, <em>Acer rubrum</em>, <em>Fagus grandifolia</em>, <em>Tilia americana</em> (basswood), <em>Betula alleghaniensis</em> (yellow birch), <em>Fraxinus americana</em> (white ash), <em>Tsuga canadensis</em>), 13.3% upland conifer (<em>Pinus strobus</em>, <em>Pinus resinosa</em>)</li>
-<li>1.6% northern red oak (<em>Quercus rubra</em>)</li>
-<li>60.9% transitioning from aspen to next succession, of which: 55.8% to northern hardwood, 34.7% to upland conifer, 3.8% to northern red oak, 2.6% to northern red oak-red maple, 3.1% to upland conifer-northern hardwood</li>
-</ul></li>
-</ul>
+<p>We performed this study at the University of Michigan Biological Station (Ameriflux site, “UMBS-dist”) ({coords}), <!-- TODO --> located in Northern Lower Michigan, USA. The area surrounding the research station is 87% well-drained upland forest and 13% wetland <span class="citation">(Bergen and Dronova 2007)</span>; the focus of this study is on the former. The landscape geography of the UMBS upland forest is 20.4% moraine, 37.8% high outwash plain, 31.3% low outwash plain, 5.7% lake-margin terrace, 3.6% ice-contact, and 1.2% lowland glacial lake <span class="citation">(Bergen and Dronova 2007)</span>. Most of the UMBS upland forest canopy is dominated by temperate deciduous early-successional species, most importantly <em>Populus grandidentata</em> (bigtooth aspen) and, to a lesser extent, <em>Betula papyrifera</em> (paper birch), with <em>Acer saccharum</em> (sugar maple), <em>Acer rubrum</em> (red maple), <em>Fagus grandifolia</em> (American beech), <em>Tilia americana</em> (basswood), <em>Betula alleghaniensis</em> (yellow birch), <em>Fraxinus americana</em> (white ash), <em>Tsuga canadensis</em> (eastern hemlock), <em>Quercus rubra</em> (northern red oak), <em>Pinus strobus</em> (white pine), and <em>Pinus resinosa</em> (red pine) existing in various fractions in the understory (and, in patches, in the canopy). This composition is a legacy of the site’s disturbance history: The site was intensively logged in the late 1800s and early 1900s, and experienced regularly recurring fires until the mid-1920s, at which point a regime of active fire suppression started that has persisted to the present day. <!-- TODO ref --> As a result, the average stand age in 2013 was 95 years. <!-- TODO ref --> The majority of the forest that is aspen-dominated is undergoing succession to “northern hardwood” (maple, beech, basswood, birch, ash, hemlock), “upland conifer” (red and white pine), or “northern red-oak” ecotypes <span class="citation">(Bergen and Dronova 2007)</span>.</p>
 </div>
-<div id="ed2-model-description" class="section level2">
-<h2>ED2 model description</h2>
-<p>The Ecosystem Demography Model, version 2.2 (ED2). Default configuration is described in <span class="citation">(Longo et al. 2019b)</span>.</p>
-<p>In this study, we run a factorial experiment of ED2 with the following features enabled or disabled:</p>
-<ul>
-<li>Radiative transfer
+<div id="ecosystem-demography-model-version-2.2" class="section level2">
+<h2>Ecosystem Demography Model (version 2.2)</h2>
+<p>For this study, we used the Ecosystem Demography Model, version 2.2 (ED2). Below, we provide only a high-level description of key model features and focus in detail only on submodels and configurations specific to this study. A full description of the default configuration of the model is provided by <span class="citation">Longo et al. (2019b)</span>.</p>
+<p>ED2 represents both spatial and temporal variability hierarchically. The largest spatial unit is the “polygon”, within which all elements share the same meteorological forcings. Polygons are divided into multiple “sites”, each site with its own set of abiotic characteristics such as soil texture and topography. Sites are divided into discrete “patches” according to time since last disturbance. Finally, each patch is composed of an arbitrary (and dynamic) number of “cohorts”, representing the mean behavior of groups of plant individuals of similar size and composition. Temporal variability in ED2 is similarly hierarchical. Thermodynamics, including energy, water, and eddy (e.g. CO<sub>2</sub>) fluxes, are resolved on the order of seconds. Biophysics, including photosynthesis, respiration, and radiative transfer, and the evaluation of energy, water, and CO2 budgets, are resolved on the order of minutes. Phenology and plant carbon balance are evaluated daily. Cohort dynamics, including structural growth, mortality, and reproduction, are evaluated monthly. Finally, patch dynamics (e.g. annual disturbances) are evaluated annually. In this study, we consider only a single patch (and, therefore, a single site and polygon) starting from a “near bare ground” condition.</p>
+<!-- TODO -->
+<p>{Brief summary of thermodynamics?} {Brief summary of water cycle?}</p>
+<p>ED2 represents the carbon flux for each cohort as the net sum of contributions from turbulent mixing, leaf photosynthesis and respiration, (fine) root respiration, growth and maintenance respiration, and heterotrophic respiration. In addition, each cohort also has a virtual carbon balance that links fast processes like photosynthesis and respiration to slow processes like allocation (to growth, storage, and reproduction) and mortality.</p>
+<p>The official ED2 source code is available at <a href="https://github.com/EDmodel/ED2" class="uri">https://github.com/EDmodel/ED2</a>, and the exact version used in this study (which includes minor revisions to accommodate the requirements of this study) can be obtained <a href="https://github.com/ashiklom/ED2/tree/b048950971e91699b78fc566df133caf977fda32" class="uri">https://github.com/ashiklom/ED2/tree/b048950971e91699b78fc566df133caf977fda32</a>.</p>
+</div>
+<div id="ed2-submodels" class="section level2">
+<h2>ED2 submodels</h2>
+<p>In this study, we ran a factorial combination of the following ED2 configurations: (1) two-stream vs. multiple-scatter canopy radiative transfer models; (2) infinite vs. finite crown area (a.k.a. complete vs. partial shading); and (3) static vs. light-plastic traits.</p>
+<p>Both canopy radiative transfer models in ED2 resolve the full vertical radiation profile within a patch as a function of canopy structure (leaf and wood area indices, crown area, leaf angle distribution) and incident solar radiation. The two models differ in the mathematical approximations of the underlying differential radiative transfer equations.</p>
 <ul>
 <li>Two-stream model (ED default)
 <ul>
@@ -532,28 +448,18 @@ $(document).ready(function () {
 <ul>
 <li>Based on <span class="citation">Zhao and Qualls (2005)</span></li>
 </ul></li>
-</ul></li>
-<li>Crown model
+</ul>
+<p>The crown area submodel in ED2 determines the nature of competition for light between cohorts. In the default configuration (“infinite crown area”, or “complete shading”), the leaf area of a cohort is distributed across the entire horizontal area of a patch. This means that taller cohorts always receive more incoming radiation than shorter cohorts, even when the height difference is small. Put another way, this means that there is no horizontal competition, only vertical. This has been shown to excessively suppress competition from sub-dominant individuals and result in unrealistically homogeneous canopies <span class="citation">(Fisher et al. 2015)</span>. In the alternate configuration (“finite crown area”, or “partial shading”), canopies take up only a fraction of the available horizontal area, meaning that multiple cohorts of similar height can receive the same level of light. The horizontal area of crowns is determined by allometric equations from <span class="citation">Dietze and Clark (2008)</span>.</p>
+<p>The third submodel we evaluated was trait plasticity. In the default configuration, all cohorts of a given plant functional type will have the same parameters, regardless of environmental conditions. This ignores the globally-documented intraspecific trait variability as a function of light level <span class="citation">(Niinemets 2010, Keenan and Niinemets 2016)</span>. <!-- TODO Also, classical ecological succession theory bazzaz_1979_physiological? --> In the alternate configuration, as light level decreases (trees become more shaded), specific leaf area increases and V<sub>cmax</sub> decreases, following empirical relationships from the tropics <span class="citation">(Lloyd et al. 2010)</span>.</p>
+</div>
+<div id="ed2-parameters" class="section level2">
+<h2>ED2 parameters</h2>
+<p>The full list of parameters in ED2 is large, with over 100 parameters per plant functional type. A full sensitivity and uncertainty analysis across all of these parameters is outside the scope of this study. Instead, we selected a subset of parameters that were identified as important by previous ED2 sensitivity studies <span class="citation">(Dietze et al. 2014, Raczka et al. 2018, Viskari et al. 2019)</span>.</p>
+<p>Three parameters are related to leaf-level physiology: Following the enzyme-kinetic model of <span class="citation">Farquhar et al. (1980)</span>, the rate of photosynthesis is the minimum of light-limited and enzyme-limited reactions. The former are controlled by the <em>quantum efficiency</em> parameter—maximum efficiency with which absorbed photosynthetically active radiation is converted to CO<sub>2</sub>. The latter are controlled by <em>V<sub>cmax</sub></em>, the maximum rate of carbon fixation by Rubisco. The water demand of photosynthesis is controlled by the <em>stomatal slope</em>, the sensitivity of stomatal conductance of CO<sub>2</sub> as a function of CO<sub>2</sub> concentration and humidity at the leaf surface <span class="citation">(Ball et al. 1987, Leuning 1995)</span>. Three more parameters correspond to the respiration rates of leaves, roots, and “growth maintenance”. Two more parameters control carbon allocation: One is the ratio of fine root to leaf biomass (<code>fineroot2leaf</code>, or <code>q</code>), and another is the ratio of “storage” carbon allocated to reproduction (<code>r_fract</code>). Three parameters control various aspects of adult tree mortality, namely the density-independent mortality rate (<code>mort3</code>), and the time scale (<code>mort1</code>) and critical carbon balance (<code>mort2</code>) of mortality from carbon starvation. An additional parameter controls seedling mortality. <em>Specific leaf area</em> (<code>SLA</code>) is used to convert leaf biomass to leaf area index, which in turn is used in a variety of calculations related to canopy radiative transfer and micrometeorology. Two additional parameters describe canopy structure in ways critical to the canopy radiative transfer: Canopy <em>clumping factor</em> describes how evenly leaf area is distributed in horizontal space (1 being perfectly evenly; 0 being a “black hole” where all leaves are concentrated in a single point); and leaf <em>orientation factor</em> describes the average distribution of leaf angles (-1 being perfectly vertical, 1 being perfectly horizontal, and 0 being random). Four parameters control leaf optical properties, namely the fractions of light reflected or transmitted in visible and near-infrared wavelengths (<code>leaf_(reflect|trans)_(vis|nir)</code>). Three other parameters:</p>
 <ul>
-<li>Infinite (ED2 default)
-<ul>
-<li>Marginally taller cohorts completely shade out shorter ones</li>
-</ul></li>
-<li>Finite
-<ul>
-<li>Cohorts have a finite crown area, so multiple cohorts have access to the same light level</li>
-<li>Based on crown area allometries from <span class="citation">Dietze and Clark (2008)</span></li>
-</ul></li>
-</ul></li>
-<li>Trait plasticity
-<ul>
-<li>None (ED default) – Trait values are the same at all canopy heights and light levels</li>
-<li>Plastic
-<ul>
-<li>V<sub>cmax</sub>(0) decreases with shading, and SLA increases with shading, based on <span class="citation">Lloyd et al. (2010)</span></li>
-<li>V<sub>cmax</sub>(0) decline with shade tolerance is supported by classic ecological theory on succession <span class="citation">(Bazzaz 1979)</span></li>
-</ul></li>
-</ul></li>
+<li>Fraction of litter carbon that enters the labile (fast) soil carbon pool (<code>f_labile</code>)</li>
+<li>Minimum plant height for reproduction (<code>minimum_height</code>)</li>
+<li>Soil-plant water conductance, or “water availability factor” (<code>water_conductance</code>)</li>
 </ul>
 </div>
 <div id="data-sources" class="section level2">
@@ -562,6 +468,7 @@ $(document).ready(function () {
 <p>TRY data <span class="citation">(Kattge et al. 2011)</span>.</p>
 <p>CRUNCEP met.</p>
 <p>Other FoRTE data? - LAI trends: 1997-2014 - Aboveground NPP data: 1999-2017</p>
+<p>Priors on leaf optical properties from Shiklomanov dissertation (chapter 3).</p>
 </div>
 <div id="modeling-workflow" class="section level2">
 <h2>Modeling workflow</h2>
@@ -965,6 +872,9 @@ PEcAn-liked parameter sensitivity and uncertainty analysis, by model type. Elast
 <h1>References</h1>
 <!-- The following line ensures the references appear here for the MS Word or HTML output files, rather than right at the end of the document (this will not work for PDF files):  -->
 <div id="refs">
+<div id="ref-ball_1987_model">
+<p>Ball, J. T., I. E. Woodrow, and J. A. Berry. 1987. A model predicting stomatal conductance and its contribution to the control of photosynthesis under different environmental conditions. Progress in Photosynthesis Research:221–224.</p>
+</div>
 <div id="ref-bazzaz_1979_physiological">
 <p>Bazzaz, F. A. 1979. The physiological ecology of plant succession. Annual Review of Ecology and Systematics 10:351–371.</p>
 </div>
@@ -986,8 +896,14 @@ PEcAn-liked parameter sensitivity and uncertainty analysis, by model type. Elast
 <div id="ref-dietze_2014_quantitative">
 <p>Dietze, M. C., S. P. Serbin, C. Davidson, A. R. Desai, X. Feng, R. Kelly, R. Kooper, D. LeBauer, J. Mantooth, K. McHenry, and et al. 2014. A quantitative assessment of a terrestrial biosphere model’s data needs across North American biomes. Journal of Geophysical Research: Biogeosciences 119:286–300.</p>
 </div>
+<div id="ref-farquhar_1980_biochemical">
+<p>Farquhar, G. D., S. von Caemmerer, and J. A. Berry. 1980. A biochemical model of photosynthetic CO2 assimilation in leaves of C3 species. Planta 149:78–90.</p>
+</div>
 <div id="ref-fisher_2017_vegetation">
 <p>Fisher, R. A., C. D. Koven, W. R. L. Anderegg, B. O. Christoffersen, M. C. Dietze, C. E. Farrior, J. A. Holm, G. C. Hurtt, R. G. Knox, P. J. Lawrence, J. W. Lichstein, M. Longo, A. M. Matheny, D. Medvigy, H. C. Muller-Landau, T. L. Powell, S. P. Serbin, H. Sato, J. K. Shuman, B. Smith, A. T. Trugman, T. Viskari, H. Verbeeck, E. Weng, C. Xu, X. Xu, T. Zhang, and P. R. Moorcroft. 2017. Vegetation demographics in earth system models: A review of progress and priorities. Global Change Biology 24:35–54.</p>
+</div>
+<div id="ref-fisher_2015_taking">
+<p>Fisher, R. A., S. Muszala, M. Verteinstein, P. Lawrence, C. Xu, N. G. McDowell, R. G. Knox, C. Koven, J. Holm, B. M. Rogers, and et al. 2015. Taking off the training wheels: The properties of a dynamic vegetation model without climate envelopes, CLM4.5(ED). Geoscientific Model Development 8:3593–3619.</p>
 </div>
 <div id="ref-friedlingstein_2006_climate">
 <p>Friedlingstein, P., P. Cox, R. Betts, L. Bopp, W. von Bloh, V. Brovkin, P. Cadule, S. Doney, M. Eby, I. Fung, and et al. 2006. Climate-carbon cycle feedback analysis: Results from the C4MIP model intercomparison. Journal of Climate 19:3337–3353.</p>
@@ -1013,11 +929,17 @@ PEcAn-liked parameter sensitivity and uncertainty analysis, by model type. Elast
 <div id="ref-kattge_2011_try">
 <p>Kattge, J., S. Díaz, S. Lavorel, I. C. Prentice, P. Leadley, G. Bönisch, E. Garnier, M. Westoby, P. B. Reich, I. J. Wright, J. H. C. Cornelissen, C. Violle, S. P. Harrison, P. M. Van Bodegom, M. Reichstein, B. J. Enquist, N. A. Soudzilovskaia, D. D. Ackerly, M. Anand, O. Atkin, M. Bahn, T. R. Baker, D. Baldocchi, R. Bekker, C. C. Blanco, B. Blonder, W. J. Bond, R. Bradstock, D. E. Bunker, F. Casanoves, J. Cavender-Bares, J. Q. Chambers, F. S. Chapin III, J. Chave, D. Coomes, W. K. Cornwell, J. M. Craine, B. H. Dobrin, L. Duarte, W. Durka, J. Elser, G. Esser, M. Estiarte, W. F. Fagan, J. Fang, F. Fernández-Méndez, A. Fidelis, B. Finegan, O. Flores, H. Ford, D. Frank, G. T. Freschet, N. M. Fyllas, R. V. Gallagher, W. A. Green, A. G. Gutierrez, T. Hickler, S. I. Higgins, J. G. Hodgson, A. Jalili, S. Jansen, C. A. Joly, A. J. Kerkhoff, D. Kirkup, K. Kitajima, M. Kleyer, S. Klotz, J. M. H. Knops, K. Kramer, I. Kühn, H. Kurokawa, D. Laughlin, T. D. Lee, M. Leishman, F. Lens, T. Lenz, S. L. Lewis, J. Lloyd, J. Llusià, F. Louault, S. Ma, M. D. Mahecha, P. Manning, T. Massad, B. E. Medlyn, J. Messier, A. T. Moles, S. C. Müller, K. Nadrowski, S. Naeem, Ü. Niinemets, S. Nöllert, A. Nüske, R. Ogaya, J. Oleksyn, V. G. Onipchenko, Y. Onoda, J. Ordoñez, G. Overbeck, W. A. Ozinga, S. Patiño, S. Paula, J. G. Pausas, J. Peñuelas, O. L. Phillips, V. Pillar, H. Poorter, L. Poorter, P. Poschlod, A. Prinzing, R. Proulx, A. Rammig, S. Reinsch, B. Reu, L. Sack, B. Salgado-Negret, J. Sardans, S. Shiodera, B. Shipley, A. Siefert, E. Sosinski, J.-F. Soussana, E. Swaine, N. Swenson, K. Thompson, P. Thornton, M. Waldram, E. Weiher, M. White, S. White, S. J. Wright, B. Yguel, S. Zaehle, A. E. Zanne, and C. Wirth. 2011. TRY – a global database of plant traits. Global Change Biology 17:2905–2935.</p>
 </div>
+<div id="ref-keenan_2016_global">
+<p>Keenan, T. F., and Ü. Niinemets. 2016. Global leaf trait estimates biased due to plasticity in the shade. Nature Plants 3.</p>
+</div>
 <div id="ref-kilburn_1960_effects">
 <p>Kilburn, P. D. 1960. Effects of logging and fire on xerophytic forests in northern Michigan. Bulletin of the Torrey Botanical Club 87:402.</p>
 </div>
 <div id="ref-lebauer_2013_facilitating">
 <p>LeBauer, D. S., D. Wang, K. T. Richter, C. C. Davidson, and M. C. Dietze. 2013. Facilitating feedbacks between field measurements and ecosystem models. Ecological Monographs 83:133–154.</p>
+</div>
+<div id="ref-leuning_1995_critical">
+<p>Leuning, R. 1995. A critical appraisal of a combined stomatal-photosynthesis model for C3 plants. Plant, Cell and Environment 18:339–355.</p>
 </div>
 <div id="ref-lloyd_2010_optimisation">
 <p>Lloyd, J., S. Patiño, R. Q. Paiva, G. B. Nardoto, C. A. Quesada, A. J. B. Santos, T. R. Baker, W. A. Brand, I. Hilke, H. Gielmann, and et al. 2010. Optimisation of photosynthetic carbon gain and within-canopy gradients of associated foliar traits for Amazon forest trees. Biogeosciences 7:1833–1859.</p>
@@ -1045,6 +967,9 @@ PEcAn-liked parameter sensitivity and uncertainty analysis, by model type. Elast
 </div>
 <div id="ref-naudts_2015_vertically">
 <p>Naudts, K., J. Ryder, M. J. McGrath, J. Otto, Y. Chen, A. Valade, V. Bellasen, G. Berhongaray, G. Bönisch, M. Campioli, and et al. 2015. A vertically discretised canopy description for ORCHIDEE (SVN r2290) and the modifications to the energy, water and carbon fluxes. Geoscientific Model Development 8:2035–2065.</p>
+</div>
+<div id="ref-niinemets_2010_review">
+<p>Niinemets, Ü. 2010. A review of light interception in plant stands from leaf to canopy in different plant functional types and in species with varying shade tolerance. Ecological Research 25:693–714.</p>
 </div>
 <div id="ref-clm45_note">
 <p>Oleson, K. W., D. M. Lawrence, G. B. Bonan, B. Drewniak, M. Huang, C. D. Koven, S. Levis, F. Li, W. J. Riley, Z. M. Subin, S. C. Swenson, P. Thornton, A. Bozbiyik, R. Fisher, C. L. Heald, E. Kluzek, J.-F. Lamarque, P. J. Lawrence, R. Leung, W. Lipscom, S. Muszala, D. M. Ricciuto, W. Sacks, Y. Sun, J. Tang, and Y. Zong-Liang. 2013. Technical description of version 4.5 of the Community Land Model (CLM). NCAR Earth System Laboratory Climate; Global Dynamics Division.</p>
@@ -1099,13 +1024,114 @@ PEcAn-liked parameter sensitivity and uncertainty analysis, by model type. Elast
 <p><span class="math display">\[ w_l = \frac{LAI_e}{TAI_e} \]</span> <span class="math display">\[ w_w = 1 - w_l \]</span></p>
 <p>Projected area, based on coefficients <span class="math inline">\(\phi_1\)</span> and <span class="math inline">\(\phi_2\)</span>.</p>
 <p><span class="math display">\[ a_{proj} = \phi_1 + \phi_2 \mu \]</span></p>
+</div>
+</div>
+<div id="old-outline" class="section level1">
+<h1>Old outline</h1>
+<div id="introduction-1" class="section level2">
+<h2>Introduction</h2>
+<ul>
+<li>Why we need models?
+<ul>
+<li>Forests are important, for C sequestration, other ecosystem services</li>
+<li>Policy decisions related to forests depend on future projections</li>
+<li>We need models to make future projections</li>
+</ul></li>
+<li>What kinds of models are out there?
+<ul>
+<li>Traditional: “Big leaf” models
+<ul>
+<li>Needed to be simple to run on old computers</li>
+<li>Don’t need as much data</li>
+<li>…but they fail to capture important processes, which matter not only for accurate predictions about C cycle, but also because they are processes we care about (habitat, forestry, tourism, etc.)!</li>
+</ul></li>
+<li>Individual-based models
+<ul>
+<li>Much more detailed, but harder to run, and need much more data.</li>
+<li>Trade-off between complexity and accuracy.</li>
+</ul></li>
+</ul></li>
+<li>Cohort-based models like ED2 as a middle ground?
+<ul>
+<li>Core ED concept <span class="citation">(Moorcroft et al. 2001)</span></li>
+<li>ED2 developments – <span class="citation">(Medvigy et al. 2009, Medvigy and Moorcroft 2011)</span></li>
+<li>Most recent version – <span class="citation">(Longo et al. 2019b)</span></li>
+<li>Validation/applications of the ED model:
+<ul>
+<li><span class="citation">(Rollinson et al. 2017)</span> – ED2 paleoclimate</li>
+<li><span class="citation">(Miller et al. 2015)</span> – ED2 at Duke FACE</li>
+<li><span class="citation">(De Kauwe et al. 2013)</span> – ED2 at Duke and Oak Ridge FACE</li>
+<li><span class="citation">(Longo et al. 2019a)</span> – Model evaluation in Tropics</li>
+</ul></li>
+</ul></li>
+<li>How much complexity do we need to accurately model ecological dynamics?
+<ul>
+<li>Lots of existing work on parameteric uncertainty
+<ul>
+<li><span class="citation">(Dietze et al. 2014)</span></li>
+<li><span class="citation">(Raczka et al. 2018)</span></li>
+<li><span class="citation">(Pandit et al. 2018)</span></li>
+</ul></li>
+<li>Less on structural uncertainty – i.e. not just what coefficients do we use, but what <em>equations</em>, and more generally, what <em>processes</em> do we even consider?</li>
+</ul></li>
+<li>What are the processes that drive succession of ecological communities?
+<ul>
+<li>Competition for light <span class="citation">(Bazzaz 1979)</span></li>
+<li>Others? Leaning towards omitting because factorial combination becomes too large.
+<ul>
+<li>Competition for water?</li>
+<li>Competition for nutrients? (ED’s N model isn’t very good. Alternatives are being developed, but not in ED mainline yet.)</li>
+</ul></li>
+</ul></li>
+<li>Brief review of community/ecosystem ecology of the Upper Midwest
+<ul>
+<li>UMBS is a useful site for testing these theories because of its natural history.</li>
+<li>Around 1900, mature forest dominated by white (<em>Pinus strobus</em>) and red pine (<em>Pinus resinosa</em>), hemlock (<em>Tsuga canadensis</em>), and sugar maple (<em>Acer saccharum</em>).</li>
+<li>But, repeat harvest and burning between 1880 and 1920 <span class="citation">(Kilburn 1960)</span> led to replacement by early successional aspen (<em>Populus grandidentata</em> and <em>Populus tremuloides</em>), birch (<em>Betula papyrifera</em>), and cherry (<em>Prunus pensylvatica</em>) <span class="citation">(<span class="citeproc-not-found" data-reference-id="barnes_1981_michigan"><strong>???</strong></span>, Gates 1930, Friedman and Reich 2005, Bergen and Dronova 2007)</span>.</li>
+<li>Such aspen-dominated secondary forests are sustained by background levels of disturbance, particularly fire <span class="citation">(Gates 1930)</span></li>
+<li>However, due to aggressive fire suppression in the US, these forests are now undergoing succession, primarily to mid/late-successional hardwood (typified by sugar maple and American beech, <em>Fagus grandifolia</em>) or upland conifer (typified by red and white pine) <span class="citation">(Bergen and Dronova 2007)</span>.</li>
+<li>The combination of stand-replacing disturbance ~100 years ago and suppressed disturbance since then makes this an ideal site for testing a vegetation model run from bare ground without having to prescribe disturbance.</li>
+</ul></li>
+<li>Guiding questions:
+<ul>
+<li>Which of these processes do we need to be able to accurately model what happens (“community succession and C cycle dynamics”) to Midwestern forests?</li>
+<li>What is the cost of considering these processes, in terms of additional parameteric uncertainty?</li>
+<li>What are the relative contributions of parameteric uncertainty (data limitation) vs. structural uncertainty (theoretical limitation?)?</li>
+</ul></li>
+<li>Study overview:
+<ul>
+<li>ED with factorial combination of submodels related to radiative transfer formulation (two-stream vs. multiple scatter), horizontal competition (finite canopy radius vs. complete shading), and trait plasticity (whether or not SLA and Vcmax vary with light level)</li>
+<li>Ensemble analysis to look at parameter uncertainty</li>
+</ul></li>
+</ul>
 <p><span class="math display">\[ \lambda = \frac{a_{proj}}{\mu} \]</span></p>
+</div>
+<div id="methods-1" class="section level2">
+<h2>Methods</h2>
+<div id="site-description-1" class="section level3">
+<h3>Site description</h3>
+<ul>
+<li>Secondary successional forest – bigtooth aspen (<em>Populus grandidentata</em>), northern red oak (<em>Quercus rubra</em>), red maple (<em>Acer rubrum</em>), paper birch (<em>Betula papyrifera</em>), eastern white pine (<em>Pinus strobus</em>)</li>
+<li>Average age – 95 years (2013)</li>
+<li>NEP in UMBS tower is 1.58 MG C ha<sup>-1</sup> yr<sup>-1</sup> (0.80-1.98) (1999-2006), but with landscape variation (REF?)</li>
+<li>Heavily logged in late 1800s and early 1900s, disturbed by fire until 1923 (REF)</li>
+<li>Present day composition typical of upper Great Lakes region</li>
+<li>Previously, the site of the FASET experiment <span class="citation">(Gough et al. 2008, 2013)</span></li>
+<li>UMBS is 87% upland and 13% wetland <span class="citation">(Bergen and Dronova 2007)</span>. We focus on the upland ecosystem, which has the following characteristics (from <span class="citation">Bergen and Dronova (2007)</span>):
+<ul>
+<li>20.4% moraine, 37.8% high outwash plain, 31.3% low outwash plain, 5.7% lake-margin terrace, 3.6% ice-contact, 1.2% lowland glacial lake</li>
+<li>60.9% aspen-dominated, 16.6% northern hardwood (<em>Acer saccharum</em>, <em>Acer rubrum</em>, <em>Fagus grandifolia</em>, <em>Tilia americana</em> (basswood), <em>Betula alleghaniensis</em> (yellow birch), <em>Fraxinus americana</em> (white ash), <em>Tsuga canadensis</em>), 13.3% upland conifer (<em>Pinus strobus</em>, <em>Pinus resinosa</em>)</li>
+<li>1.6% northern red oak (<em>Quercus rubra</em>)</li>
+<li>60.9% transitioning from aspen to next succession, of which: 55.8% to northern hardwood, 34.7% to upland conifer, 3.8% to northern red oak, 2.6% to northern red oak-red maple, 3.1% to upland conifer-northern hardwood</li>
+</ul></li>
+</ul>
 <div id="pagebreak-1" class="section level5">
 <h5>pagebreak</h5>
 </div>
+</div>
 <div id="colophon" class="section level3">
 <h3>Colophon</h3>
-<p>This report was generated on 2019-06-06 11:11:47 using the following computational environment and dependencies:</p>
+<p>This report was generated on 2019-06-07 14:05:48 using the following computational environment and dependencies:</p>
 <pre><code>#&gt; ─ Session info ──────────────────────────────────────────────────────────
 #&gt;  setting  value                       
 #&gt;  version  R version 3.6.0 (2019-04-26)
@@ -1116,14 +1142,14 @@ PEcAn-liked parameter sensitivity and uncertainty analysis, by model type. Elast
 #&gt;  collate  en_US.UTF-8                 
 #&gt;  ctype    en_US.UTF-8                 
 #&gt;  tz       America/New_York            
-#&gt;  date     2019-06-06                  
+#&gt;  date     2019-06-07                  
 #&gt; 
 #&gt; ─ Packages ──────────────────────────────────────────────────────────────
 #&gt;  ! package       * version    date       lib source        
 #&gt;    assertthat      0.2.1      2019-03-21 [1] CRAN (R 3.6.0)
 #&gt;    backports       1.1.4      2019-04-10 [1] CRAN (R 3.6.0)
 #&gt;    base64url       1.4        2018-05-14 [1] CRAN (R 3.6.0)
-#&gt;    bookdown        0.10       2019-05-10 [1] CRAN (R 3.6.0)
+#&gt;    bookdown        0.11       2019-05-28 [1] CRAN (R 3.6.0)
 #&gt;    callr           3.2.0      2019-03-15 [1] CRAN (R 3.6.0)
 #&gt;    cli             1.1.0      2019-03-19 [1] CRAN (R 3.6.0)
 #&gt;    codetools       0.2-16     2018-12-24 [3] CRAN (R 3.6.0)
@@ -1137,7 +1163,7 @@ PEcAn-liked parameter sensitivity and uncertainty analysis, by model type. Elast
 #&gt;    drake         * 7.3.0      2019-05-19 [1] CRAN (R 3.6.0)
 #&gt;    evaluate        0.14       2019-05-28 [1] CRAN (R 3.6.0)
 #&gt;    forcats       * 0.4.0      2019-02-17 [1] CRAN (R 3.6.0)
-#&gt;  P fortebaseline * 0.0.0.9000 2019-05-24 [?] local         
+#&gt;  P fortebaseline * 0.0.0.9000 2019-06-06 [?] local         
 #&gt;    fs            * 1.3.1      2019-05-06 [1] CRAN (R 3.6.0)
 #&gt;    fst           * 0.9.0      2019-04-09 [1] CRAN (R 3.6.0)
 #&gt;    furrr         * 0.1.0      2018-05-16 [1] CRAN (R 3.6.0)
@@ -1187,7 +1213,7 @@ PEcAn-liked parameter sensitivity and uncertainty analysis, by model type. Elast
 #&gt;    stringi         1.4.3      2019-03-12 [1] CRAN (R 3.6.0)
 #&gt;    stringr         1.4.0      2019-02-10 [1] CRAN (R 3.6.0)
 #&gt;    testthat        2.1.1      2019-04-23 [1] CRAN (R 3.6.0)
-#&gt;    tibble          2.1.1      2019-03-16 [1] CRAN (R 3.6.0)
+#&gt;    tibble          2.1.3      2019-06-06 [1] CRAN (R 3.6.0)
 #&gt;    tidyr         * 0.8.3      2019-03-01 [1] CRAN (R 3.6.0)
 #&gt;    tidyselect      0.2.5      2018-10-11 [1] CRAN (R 3.6.0)
 #&gt;    usethis         1.5.0      2019-04-07 [1] CRAN (R 3.6.0)
@@ -1204,7 +1230,7 @@ PEcAn-liked parameter sensitivity and uncertainty analysis, by model type. Elast
 <p>The current Git commit details are:</p>
 <pre><code>#&gt; Local:    master /Users/shik544/Box Sync/Projects/forte_project/fortebaseline
 #&gt; Remote:   master @ origin (git@github.com:ashiklom/fortebaseline.git)
-#&gt; Head:     [900ff99] 2019-06-06: Highlight key ideas in introduction</code></pre>
+#&gt; Head:     [a17b363] 2019-06-07: Add very rough first pass at descriptions of parameters</code></pre>
 </div>
 </div>
 </div>
