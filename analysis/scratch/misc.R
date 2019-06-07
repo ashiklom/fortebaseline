@@ -943,3 +943,14 @@ tbl(dbcon, "dbfiles") %>%
          file_name %like% "prior.distns.Rdata") %>%
   arrange(desc(created_at)) %>%
   select(file_name, created_at)
+
+#########################################
+
+workflows <- workflows %>%
+  add_row(
+    workflow_id = 99000000144,
+    short_id = 144,
+    crown_model = FALSE,
+    multiple_scatter = FALSE,
+    trait_plasticity = TRUE
+  )

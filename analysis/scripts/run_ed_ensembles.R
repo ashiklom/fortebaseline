@@ -36,7 +36,7 @@ runs <- purrr::pmap(run_matrix, run_ed_ensemble,
                     start_date = start_date,
                     end_date = end_date,
                     nowait = TRUE,
-                    ensemble_size = 100)
+                    ensemble_size = 20)
 
 workflows <- run_matrix %>%
   mutate(workflow_id = map(runs, "workflow_id") %>% reduce(c),
