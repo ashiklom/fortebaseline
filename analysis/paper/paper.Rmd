@@ -147,8 +147,9 @@ In addition, each cohort also has a virtual carbon balance that links fast proce
 
 The official ED2 source code is available at https://github.com/EDmodel/ED2, and the exact version used in this study (which includes minor revisions to accommodate the requirements of this study) can be obtained  https://github.com/ashiklom/ED2/tree/b048950971e91699b78fc566df133caf977fda32.
 
-In this study, we run a factorial experiment of ED2 with the following features enabled or disabled:
+## ED2 submodels
 
+In this study, we run a factorial experiment of ED2 with the following features enabled or disabled:
 - Radiative transfer
   - Two-stream model (ED default)
     - Same general approach as in CLM 4.5 [@clm45_note], but rather than solving for just two layers (sunlit and shaded), solve for each canopy layer.
@@ -168,6 +169,33 @@ In this study, we run a factorial experiment of ED2 with the following features 
   - Plastic
     - V~cmax~(0) decreases with shading, and SLA increases with shading, based on @lloyd_2010_optimisation
     - V~cmax~(0) decline with shade tolerance is supported by classic ecological theory on succession [@bazzaz_1979_physiological]
+    
+## ED2 parameters
+
+The full list of parameters in ED2 is large, with over 100 parameters per plant functional type.
+A full sensitivity and uncertainty analysis across all of these parameters is outside the scope of this study.
+Instead, we selected a subset of parameters that were identified as important by previous ED2 sensitivity studies [@dietze_2014_quantitative; @raczka_2018_what; @viskari_2019_influence].
+
+Three parameters are related to leaf-level physiology:
+Following the enzyme-kinetic model of @farquhar_1980_biochemical, the rate of photosynthesis is the minimum of light-limited and enzyme-limited reactions.
+The former are controlled by the _quantum efficiency_ parameter---maximum efficiency with which absorbed photosynthetically active radiation is converted to CO~2~.
+The latter are controlled by _V~cmax~_, the maximum rate of carbon fixation by Rubisco.
+The water demand of photosynthesis is controlled by the _stomatal slope_, the sensitivity of stomatal conductance of CO~2~ as a function of CO~2~ concentration and humidity at the leaf surface [@leuning_1995_critical; @ball_1987_model].
+Three more parameters correspond to the respiration rates of leaves, roots, and "growth maintenance".
+Two more parameters control carbon allocation:
+One is the ratio of fine root to leaf biomass (`fineroot2leaf`, or `q`), and another is the ratio of "storage" carbon allocated to reproduction (`r_fract`).
+Three parameters control various aspects of adult tree mortality, namely the density-independent mortality rate (`mort3`), and the time scale (`mort1`) and critical carbon balance (`mort2`) of mortality from carbon starvation.
+An additional parameter controls seedling mortality.
+_Specific leaf area_ (`SLA`) is used to convert leaf biomass to leaf area index, which in turn is used in a variety of calculations related to canopy radiative transfer and micrometeorology.
+Two additional parameters describe canopy structure in ways critical to the canopy radiative transfer:
+Canopy _clumping factor_ describes how evenly leaf area is distributed in horizontal space (1 being perfectly evenly; 0 being a "black hole" where all leaves are concentrated in a single point); and
+leaf _orientation factor_ describes the average distribution of leaf angles (-1 being perfectly vertical, 1 being perfectly horizontal, and 0 being random).
+Four parameters control leaf optical properties, namely the fractions of light reflected or transmitted in visible and near-infrared wavelengths (`leaf_(reflect|trans)_(vis|nir)`).
+Three other parameters:
+
+- Fraction of litter carbon that enters the labile (fast) soil carbon pool (`f_labile`)
+- Minimum plant height for reproduction (`minimum_height`)
+- Soil-plant water conductance, or "water availability factor" (`water_conductance`)
 
 ## Data sources
 
@@ -180,6 +208,8 @@ CRUNCEP met.
 Other FoRTE data?
 - LAI trends: 1997-2014
 - Aboveground NPP data: 1999-2017
+
+Priors on leaf optical properties from Shiklomanov dissertation (chapter 3).
 
 ## Modeling workflow
 
