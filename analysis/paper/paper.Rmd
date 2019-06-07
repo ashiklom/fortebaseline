@@ -105,55 +105,6 @@ Our study is organized around the following guiding questions:
 To answer these questions, we ran ED2 ensemble simulationes with a factorial combination of submodels related to radiative transfer formulation (two-stream vs. multiple scatter), horizontal competition (finite canopy radius vs. complete shading), and trait plasticity (whether or not SLA and Vcmax vary with light level)
 We then used a sensitivity and variance decomposition analysis to evaluate the contribution of parameter uncertainty for each model configuration.
 
-## Old introduction outline
-
-- Why we need models?
-    - Forests are important, for C sequestration, other ecosystem services
-    - Policy decisions related to forests depend on future projections
-    - We need models to make future projections
-- What kinds of models are out there?
-    - Traditional: "Big leaf" models
-        - Needed to be simple to run on old computers
-        - Don't need as much data
-        - ...but they fail to capture important processes, which matter not only for accurate predictions about C cycle, but also because they are processes we care about (habitat, forestry, tourism, etc.)!
-    - Individual-based models
-        - Much more detailed, but harder to run, and need much more data.
-        - Trade-off between complexity and accuracy.
-- Cohort-based models like ED2 as a middle ground?
-    - Core ED concept [@moorcroft_2001_method]
-    - ED2 developments -- [@medvigy_2009_mechanistic; @medvigy_2011_predicting]
-    - Most recent version -- [@longo_2019_ed1]
-    - Validation/applications of the ED model:
-        - [@rollinson_2017_emergent] -- ED2 paleoclimate
-        - [@miller_2015_alteration] -- ED2 at Duke FACE
-        - [@dekauwe_2013_forest] -- ED2 at Duke and Oak Ridge FACE
-        - [@longo_2019_ed2] -- Model evaluation in Tropics
-- How much complexity do we need to accurately model ecological dynamics?
-    - Lots of existing work on parameteric uncertainty
-        - [@dietze_2014_quantitative]
-        - [@raczka_2018_what]
-        - [@pandit_2018_optimizing]
-    - Less on structural uncertainty -- i.e. not just what coefficients do we use, but what _equations_, and more generally, what _processes_ do we even consider?
-- What are the processes that drive succession of ecological communities?
-    - Competition for light [@bazzaz_1979_physiological]
-    - Others? Leaning towards omitting because factorial combination becomes too large.
-        - Competition for water?
-        - Competition for nutrients? (ED's N model isn't very good. Alternatives are being developed, but not in ED mainline yet.)
-- Brief review of community/ecosystem ecology of the Upper Midwest
-    - UMBS is a useful site for testing these theories because of its natural history.
-    - Around 1900, mature forest dominated by white (_Pinus strobus_) and red pine (_Pinus resinosa_), hemlock (_Tsuga canadensis_), and sugar maple (_Acer saccharum_).
-    - But, repeat harvest and burning between 1880 and 1920 [@kilburn_1960_effects] led to replacement by early successional aspen (_Populus grandidentata_ and _Populus tremuloides_), birch (_Betula papyrifera_), and cherry (_Prunus pensylvatica_) [@gates_1930_aspen; @barnes_1981_michigan; @friedman_2005_regional_legacies_logging; @bergen_2007_observing].
-    - Such aspen-dominated secondary forests are sustained by background levels of disturbance, particularly fire [@gates_1930_aspen]
-    - However, due to aggressive fire suppression in the US, these forests are now undergoing succession, primarily to mid/late-successional hardwood (typified by sugar maple and American beech, _Fagus grandifolia_) or upland conifer (typified by red and white pine) [@bergen_2007_observing].
-    - The combination of stand-replacing disturbance ~100 years ago and suppressed disturbance since then makes this an ideal site for testing a vegetation model run from bare ground without having to prescribe disturbance.
-- Guiding questions:
-    - Which of these processes do we need to be able to accurately model what happens ("community succession and C cycle dynamics") to Midwestern forests?
-    - What is the cost of considering these processes, in terms of additional parameteric uncertainty?
-    - What are the relative contributions of parameteric uncertainty (data limitation) vs. structural uncertainty (theoretical limitation?)?
-- Study overview:
-    - ED with factorial combination of submodels related to radiative transfer formulation (two-stream vs. multiple scatter), horizontal competition (finite canopy radius vs. complete shading), and trait plasticity (whether or not SLA and Vcmax vary with light level)
-    - Ensemble analysis to look at parameter uncertainty
-
 # Methods
 
 ## Site description
@@ -422,6 +373,57 @@ $$ w_w = 1 - w_l $$
 Projected area, based on coefficients $\phi_1$ and $\phi_2$.
 
 $$ a_{proj} = \phi_1 + \phi_2 \mu $$
+
+# Old outline
+
+## Introduction
+
+- Why we need models?
+    - Forests are important, for C sequestration, other ecosystem services
+    - Policy decisions related to forests depend on future projections
+    - We need models to make future projections
+- What kinds of models are out there?
+    - Traditional: "Big leaf" models
+        - Needed to be simple to run on old computers
+        - Don't need as much data
+        - ...but they fail to capture important processes, which matter not only for accurate predictions about C cycle, but also because they are processes we care about (habitat, forestry, tourism, etc.)!
+    - Individual-based models
+        - Much more detailed, but harder to run, and need much more data.
+        - Trade-off between complexity and accuracy.
+- Cohort-based models like ED2 as a middle ground?
+    - Core ED concept [@moorcroft_2001_method]
+    - ED2 developments -- [@medvigy_2009_mechanistic; @medvigy_2011_predicting]
+    - Most recent version -- [@longo_2019_ed1]
+    - Validation/applications of the ED model:
+        - [@rollinson_2017_emergent] -- ED2 paleoclimate
+        - [@miller_2015_alteration] -- ED2 at Duke FACE
+        - [@dekauwe_2013_forest] -- ED2 at Duke and Oak Ridge FACE
+        - [@longo_2019_ed2] -- Model evaluation in Tropics
+- How much complexity do we need to accurately model ecological dynamics?
+    - Lots of existing work on parameteric uncertainty
+        - [@dietze_2014_quantitative]
+        - [@raczka_2018_what]
+        - [@pandit_2018_optimizing]
+    - Less on structural uncertainty -- i.e. not just what coefficients do we use, but what _equations_, and more generally, what _processes_ do we even consider?
+- What are the processes that drive succession of ecological communities?
+    - Competition for light [@bazzaz_1979_physiological]
+    - Others? Leaning towards omitting because factorial combination becomes too large.
+        - Competition for water?
+        - Competition for nutrients? (ED's N model isn't very good. Alternatives are being developed, but not in ED mainline yet.)
+- Brief review of community/ecosystem ecology of the Upper Midwest
+    - UMBS is a useful site for testing these theories because of its natural history.
+    - Around 1900, mature forest dominated by white (_Pinus strobus_) and red pine (_Pinus resinosa_), hemlock (_Tsuga canadensis_), and sugar maple (_Acer saccharum_).
+    - But, repeat harvest and burning between 1880 and 1920 [@kilburn_1960_effects] led to replacement by early successional aspen (_Populus grandidentata_ and _Populus tremuloides_), birch (_Betula papyrifera_), and cherry (_Prunus pensylvatica_) [@gates_1930_aspen; @barnes_1981_michigan; @friedman_2005_regional_legacies_logging; @bergen_2007_observing].
+    - Such aspen-dominated secondary forests are sustained by background levels of disturbance, particularly fire [@gates_1930_aspen]
+    - However, due to aggressive fire suppression in the US, these forests are now undergoing succession, primarily to mid/late-successional hardwood (typified by sugar maple and American beech, _Fagus grandifolia_) or upland conifer (typified by red and white pine) [@bergen_2007_observing].
+    - The combination of stand-replacing disturbance ~100 years ago and suppressed disturbance since then makes this an ideal site for testing a vegetation model run from bare ground without having to prescribe disturbance.
+- Guiding questions:
+    - Which of these processes do we need to be able to accurately model what happens ("community succession and C cycle dynamics") to Midwestern forests?
+    - What is the cost of considering these processes, in terms of additional parameteric uncertainty?
+    - What are the relative contributions of parameteric uncertainty (data limitation) vs. structural uncertainty (theoretical limitation?)?
+- Study overview:
+    - ED with factorial combination of submodels related to radiative transfer formulation (two-stream vs. multiple scatter), horizontal competition (finite canopy radius vs. complete shading), and trait plasticity (whether or not SLA and Vcmax vary with light level)
+    - Ensemble analysis to look at parameter uncertainty
 
 $$ \lambda = \frac{a_{proj}}{\mu} $$
 
