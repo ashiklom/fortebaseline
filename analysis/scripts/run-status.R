@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 library(tidyverse)
 wf <- system2("ssh", c("pecan", "find",
                         "/public/shared-docker-volumes/pecan_data/workflows/PEcAn_99000000{144..151}",
