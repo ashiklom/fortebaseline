@@ -26,33 +26,30 @@ message("Done!")
 outfile <- here("analysis", "data", "model_output", "cohort_output.fst")
 if (file.exists(outfile)) {
   # Read file
-  existing_data <- read_fst(outfile)
-  anti_df <- existing_data %>% ...
+  existing_data <- read_fst(outfile) %>%
+    as_tibble()
   # Build the paths for comparison with `all_files`
+  anti_df <- existing_data %>%
+    transmute(
+      o_file = file.path("analysis", "data", "model_output", "workflows",
+                         paste0("PEcAn_", format(workflow_id, scientific = FALSE)),
+                         "out",
+                         format(run_id, scientific = FALSE),
+                         strftime(datetime, "analysis-I-%Y-%m-%d-%H%M%S-g01.h5", tz = "UTC"))
+    )
   # anti_join to create read_files
+  read_files <- anti_join(all_files, anti_df, by = "o_file")
 } else {
   read_files <- all_files
   existing_data <- NULL
 }
 
-o_data_list <- future_map(read_files[["o_file"]], read_i_cohort, .progress = TRUE)
-o_data_df <- bind_rows(o_data_list)
-write_fst(o_data_df, outfile)
-
-rd <- function(f, pb) {
-  pb$tick()
-  read_i_cohort(f)
+if (nrow(read_files) > 0) {
+  o_data_list <- future_map(read_files[["o_file"]], read_i_cohort, .progress = TRUE)
+  save(o_data_list, file = "o_data_list.RData")
+  o_data_df <- bind_rows(existing_data, o_data_list)
+  write_fst(o_data_df, outfile)
+  file.remove("o_data_list.RData")
+} else {
+  message("No new files to read.")
 }
-n <- 100
-pb <- progress::progress_bar$new(total = n)
-profvis::profvis(
-o_data_list <- map(read_files[["o_file"]][seq_len(n)], rd, pb = pb)
-)
-
-result <- fast_read_hdf5(ff)
-
-ff <- read_files[["o_file"]]
-files <- ff
-rxp <- paste0(fs::path_dir(ff)[[1]], "/analysis-I-*.h5") 
-## ttest <- system2("h5dump", c("-d FMEAN_RAD_PROFILE_CO", ff), stdout = TRUE)
-ttest <- system2("h5dump", c("-d FMEAN_RAD_PROFILE_CO", rxp))
