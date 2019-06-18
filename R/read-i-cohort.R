@@ -29,13 +29,12 @@ read_i_cohort <- function(fname) {
 
   vars <- cohort_vars()
   hf <- hdf5r::H5File$new(fname)
-  ## nc <- ncdf4::nc_open(fname)
-  ## cohort_data <- purrr::map(vars, ncdf4::ncvar_get, nc = nc) %>%
+  on.exit(hf$close_all(), add = TRUE)
   cohort_data <- purrr::map(vars, hf_var_get, hf = hf) %>%
-    setNames(tolower(vars))
+    setNames(tolower(vars)) %>%
+    purrr::discard(is.null)
 
   # Radiation profile gets special treatment
-  ## rad_profile <- ncdf4::ncvar_get(nc, "FMEAN_RAD_PROFILE_CO") %>%
   rad_profile <- hf_var_get(hf, "FMEAN_RAD_PROFILE_CO") %>%
     t() %>%
     `colnames<-`(c("par_beam_down", "par_beam_up",
@@ -62,4 +61,13 @@ get_same_dims_as <- function(nc, var) {
 }
 
 
-hf_var_get <- function(hf, var) hf[[var]]$read()
+hf_var_get <- function(hf, var) {
+  tryCatch(
+    hf[[var]]$read(),
+    error = function(e) {
+      warning("Failed to read variable `", var, "` with error: ",
+              conditionMessage(e))
+      return(NULL)
+    }
+  )
+}
