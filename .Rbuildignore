@@ -5,5 +5,6 @@
 ^CONTRIBUTING\.md$
 ^analysis
 ^.dir-locals.el$
-knit
-getcitations
+^knit$
+^getcitations$
+^data-raw
