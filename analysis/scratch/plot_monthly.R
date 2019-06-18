@@ -171,3 +171,197 @@ plt <- monthly_means %>%
 ## dv <- imguR::imguR("png", width = 10, height = 8, units = "in", res = 300)
 ## plt
 ## imguR::imgur_off(dv)
+
+#########################################
+library(tidyverse)
+library(fortebaseline)
+library(lubridate, exclude = "here")
+library(here)
+library(fst)
+
+outfile <- here("analysis", "data", "model_output", "cohort_output.fst")
+raw_cohort <- fst(outfile)
+
+lai <- raw_cohort[, c("workflow_id", "run_id", "datetime", "pft", "lai_co")] %>%
+  as_tibble()
+
+m_lai <- lai %>%
+  filter(lubridate::month(datetime) %in% 6:8) %>%
+  mutate(year = floor_date(datetime, "years")) %>%
+  group_by(workflow_id, run_id, pft, year) %>%
+  summarize(lai = mean(lai_co)) %>%
+  ungroup() %>%
+  mutate(pft = set_pft(pft))
+
+gen_run_cluster <- function(dat, ...) {
+  x <- dat %>%
+    spread(run_id, lai, fill = 0)
+  xm <- x %>%
+    select(-pft, -year) %>%
+    as.matrix() %>%
+    t()
+  kxm <- kmeans(xm, 4)
+  tibble::enframe(kxm$cluster, "run_id", "group") %>%
+    dplyr::mutate(run_id = as.numeric(run_id))
+}
+
+run_groups <- m_lai %>%
+  group_by(workflow_id) %>%
+  group_modify(gen_run_cluster)
+
+use_runs <- run_groups %>%
+  group_by(workflow_id, group) %>%
+  slice(1)
+
+m_lai %>%
+  inner_join(use_runs, by = c("workflow_id", "run_id")) %>%
+  ggplot() +
+  aes(x = year, y = lai, color = pft) +
+  geom_line() +
+  facet_grid(vars(group), vars(workflow_id)) +
+  labs(y = "Leaf area index", color = "PFT") +
+  scale_color_manual(values = pfts("color")) +
+  cowplot::theme_cowplot() +
+  theme(strip.text.y = element_blank(),
+        axis.title.x = element_blank())
+
+#########################################
+
+## lai %>%
+##   group_by(workflow_id) %>%
+##   summarize(
+##     n = n_distinct(run_id),
+##     datetime = max(datetime)
+##   ) %>%
+##   print(n = Inf)
+
+## wide_lai <- m_lai %>%
+##   spread(pft, lai, fill = 0)
+
+## wide_lai_smry <- wide_lai %>%
+##   filter(year > "1915-01-01") %>%
+##   group_by(workflow_id, run_id) %>%
+##   summarize_at(vars(-year), mean)
+
+## classify_lai <- function(dat, ...) {
+##   kxm <- kmeans(dat, 4)
+##   dplyr::mutate(dat, group = kxm$cluster)
+## }
+
+## classify_lai <- function(dat, ...) {
+##   pca <- princomp(dat)
+##   scores <- pca[["scores"]]
+##   dd <- dist(scores)
+##   clust <- hclust(dd)
+##   groups <- cutree(clust, k = 4)
+##   dat %>%
+##     dplyr::mutate(groups = groups)
+## }
+
+x <- m_lai %>%
+  filter(workflow_id == 99000000144) %>%
+  select(-workflow_id) %>%
+  spread(run_id, lai, fill = 0)
+clust <- kxm$cluster
+
+## x <- as.matrix(iris[, -5])
+## head(x)
+## dim(x)
+## dx <- dist(iris[, -5])
+## hcl <- hclust(dx)
+## plot(hcl)
+## cutree(hcl, h = 4)
+## km <- kmeans(x, 4)
+
+
+## xmd <- as.matrix(dist(xm))
+## lt <- lower.tri(xmd)
+## xmd_long <- cbind(
+##   which(lt, arr.ind = TRUE),
+##   value = xmd[lt]
+## ) %>%
+##   as_tibble() %>%
+##   arrange(desc(value))
+## which(lower.tri(xmd), arr.ind = TRUE)
+## xmd_long <- xmd[lower.tri(xmd)] %>%
+##   reshape2::melt() %>%
+##   as_tibble() %>%
+##   arrange(desc(value))
+## top2 <- rownames(which(xmd == max(xmd), arr.ind = TRUE))
+## xmd2 <- xmd[-top2[1], -top2[1]]
+## xmd[which.max(xmd)]
+## which.max(xmd)
+
+dat2 <- wide_lai %>%
+  filter(workflow_id == 99000000144)
+
+dat <- wide_lai_smry %>%
+  group_by(workflow_id) %>%
+  group_split() %>%
+  .[[1]] %>%
+  select(-workflow_id, -run_id)
+
+run_groups <- wide_lai_smry %>%
+  group_modify(classify_lai)
+
+use_runs <- run_groups %>%
+  group_by(workflow_id, groups) %>%
+  slice(1) %>%
+  select(workflow_id, run_id, groups)
+
+
+dd <- dist(pca$scores)
+clust <- hclust(dd)
+groups <- cutree(clust, k = 5)
+run_groups <- wide_lai_smry %>%
+  select(workflow_id, run_id) %>%
+  mutate(group = groups)
+
+run_pca <- wide_lai_smry %>%
+  bind_cols(as_tibble(pca$scores))
+
+wide_lai2 <- wide_lai %>%
+  bind_cols(as_tibble(pca$scores))
+
+m_lai %>%
+  group_by(workflow_id, year, run_id) %>%
+  summarize(lai = sum(lai)) %>%
+  summarize(mean = mean(lai),
+            sd = sd(lai),
+            lo = quantile(lai, 0.1),
+            hi = quantile(lai, 0.9)) %>%
+  ggplot() +
+  aes(x = year, y = mean, ymin = lo, ymax = hi) +
+  geom_ribbon(fill = "blue", alpha = 0.5) +
+  geom_line() +
+  facet_grid(cols = vars(workflow_id))
+
+m_lai_extreme <- m_lai %>%
+  filter(pft == "Pine") %>%
+  group_by(workflow_id, run_id) %>%
+  summarize(lai = max(lai)) %>%
+  mutate(rank = rank(lai))
+
+closest_to <- function(x, to) x[which.min(abs(x - to))]
+
+m_lai_extreme %>%
+  filter(rank %in% c(max(rank), min(rank), quantile(rank, 0.25), median(rank), quantile(rank, 0.75)))
+
+  filter(lai %in% c(max(lai), min(lai), quantile(lai, 0.25), median(lai), quantile(lai, 0.75))) %>%
+  mutate(lai_rank = rank(lai)) %>%
+  select(-lai)
+
+m_lai %>%
+  inner_join(m_lai_extreme, by = c("workflow_id", "run_id")) %>%
+  ggplot() +
+  aes(x = year, y = lai, color = pft) +
+  geom_line() +
+  facet_grid(vars(lai_rank), vars(workflow_id))
+
+m_lai %>%
+  group_by(workflow_id, year, pft) %>%
+  sample_n(10)
+
+ggplot() +
+  aes(x = year, y = lai, color = pft) +
+  geom_line()
