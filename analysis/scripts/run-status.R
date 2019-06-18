@@ -1,9 +1,15 @@
 #!/usr/bin/env Rscript
 library(tidyverse)
+
+wf_ids <- current_workflows %>%
+  pull(workflow_id) %>%
+  paste(collapse = ",") %>%
+  paste0("{", ., "}")
+
 wf <- system2("ssh", c("pecan", "find",
-                        "/public/shared-docker-volumes/pecan_data/workflows/PEcAn_99000000{144..151}",
-                        "-name", "analysis-I-*"),
-               stdout = TRUE)
+                       paste0("/public/shared-docker-volumes/pecan_data/workflows/PEcAn_", wf_ids),
+                       "-name", "analysis-I-*"),
+              stdout = TRUE)
 
 wf_data <- wf %>%
   str_match("PEcAn_([[:digit:]]+)/out/([[:digit:]]+)/analysis-I-([[:digit:]-]+)") %>%
