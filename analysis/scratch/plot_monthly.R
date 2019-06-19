@@ -171,3 +171,70 @@ plt <- monthly_means %>%
 ## dv <- imguR::imguR("png", width = 10, height = 8, units = "in", res = 300)
 ## plt
 ## imguR::imgur_off(dv)
+
+#########################################
+library(fortebaseline)
+library(tidyverse)
+library(here)
+library(fst)
+library(lubridate, exclude = "here")
+
+cohort_file <- here("analysis", "data", "retrieved", "cohort_output.fst") %>%
+  fst()
+
+use_cols <- c("workflow_id", "run_id", "datetime", "pft", "nplant",
+              "bleaf", "bsapwooda", "bstorage",
+              "mean_gpp_co", "fmean_npp_co", "lai_co")
+
+raw_data <- as_tibble(cohort_file[, use_cols]) %>%
+  semi_join(current_workflows, by = "workflow_id")
+
+instant <- raw_data %>%
+  group_by(workflow_id, run_id, datetime) %>%
+  summarize(
+    agb = sum((bleaf + bsapwooda + bstorage) * nplant),
+    gpp = sum(fmean_gpp_co), npp = sum(fmean_npp_co),
+    lai = sum(lai_co)
+  ) %>%
+  ungroup()
+
+annual_jja <- instant %>%
+  filter(lubridate::month(datetime) %in% 6:8) %>%
+  group_by(workflow_id, run_id, year = year(datetime)) %>%
+  summarize_at(vars(-datetime), mean) %>%
+  ungroup()
+
+annual_jja_long <- annual_jja %>%
+  inner_join(current_workflows, by = "workflow_id") %>%
+  gather(variable, value, agb:lai) %>%
+  mutate(variable = factor(variable, c("gpp", "npp", "agb", "lai")))
+
+annual_jja_smry <- annual_jja_long %>%
+  group_by(model_split, color, variable, year) %>%
+  summarize(lo = quantile(value, 0.1),
+            hi = quantile(value, 0.9))
+
+my_labeller <- labeller(
+  variable = as_labeller(c(
+    "gpp" = "GPP ~ (kgC ~ year^{-1})",
+    "npp" = "NPP ~ (kgC ~ year^{-1})",
+    "agb" = "AGB ~ (kgC)",
+    "lai" = "LAI"
+  ), default = label_parsed),
+  .default = label_value
+)
+
+ggplot(annual_jja_long) +
+  aes(x = year, y = value, group = run_id) +
+  geom_line(color = "grey50", alpha = 0.5) +
+  geom_ribbon(aes(ymin = lo, ymax = hi, y = NULL, group = NULL,
+                  fill = color),
+              data = annual_jja_smry, alpha = 0.7) +
+  scale_fill_identity() +
+  facet_grid(vars(variable), vars(model_split), scales = "free_y",
+             switch = "y", labeller = my_labeller) +
+  cowplot::theme_cowplot() +
+  theme(axis.title = element_blank(),
+        axis.text.x = element_text(angle = 90, vjust = 0.5),
+        strip.placement = "outside",
+        strip.background = element_blank())
