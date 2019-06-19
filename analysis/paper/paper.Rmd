@@ -285,7 +285,7 @@ Take-away: Parameter uncertainty is as large as, or even larger, than structural
 bigfacet_cap <- paste(
   "ED2 PFT-level predictions of leaf area index (LAI) by model configuration and parameterization."
 )
-readd(bigfacet_plot)
+readd(lai_pft_plot)
 ```
 
 `r mdcap(bigfacet_cap)`

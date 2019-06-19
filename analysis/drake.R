@@ -16,32 +16,32 @@ if (getRversion() >= "3.6") {
           immediate. = TRUE)
 }
 
-library(drake)
-# Data processing
-library(dplyr)
-library(tidyr)
-library(forcats)
-library(purrr)
-library(lubridate)
-library(readr)
-# Parallel execution
-library(future)
-library(future.callr)
-library(furrr)
-# Files and file paths
-library(fs)
-library(fst)
-library(here)
-# Plotting
-library(ggplot2)
-library(cowplot)
+suppressPackageStartupMessages({
+  library(drake)
+  # Data processing
+  library(dplyr)
+  library(tidyr)
+  library(forcats)
+  library(purrr)
+  library(lubridate)
+  library(readr)
+  # Parallel execution
+  library(future)
+  library(future.callr)
+  library(furrr)
+  # Files and file paths
+  library(fs)
+  library(fst)
+  library(here)
+  # Plotting
+  library(ggplot2)
+  library(cowplot)
+
+  devtools::load_all(here::here(), attach_testthat = FALSE)
+  expose_imports("fortebaseline")
+})
 
 cmdargs <- commandArgs(trailingOnly = TRUE)
-
-## library(fortebaseline)
-
-devtools::load_all(here::here(), attach_testthat = FALSE)
-expose_imports("fortebaseline")
 
 # Set common directories and paths
 analysis_dir <- dir_create(here("analysis"))
@@ -51,24 +51,88 @@ download_dir <- dir_create(path(data_dir, "retrieved"))
 monthly_output_file <- path(download_dir, "monthly-ensemble-output.fst")
 meta_analysis_file <- path(download_dir, "meta-analysis.rds")
 ensemble_params_file <- path(download_dir, "ed-ensemble-params.fst")
+cohort_file <- path(download_dir, "cohort_output.fst")
 
 plan <- drake_plan(
+  #########################################
   # Common elements
+  #########################################
   paper = target(
     rmarkdown::render(
       knitr_in(!!(path(analysis_dir, "paper", "paper.Rmd"))),
       .format
     ),
     transform = map(.format = c("html_document"))),
-  model_scale = c(RColorBrewer::brewer.pal(
-    n = nrow(both_uncertainty) - 1,
-    name = "Paired"
-  ), "black") %>% setNames(both_uncertainty[["model"]]),
   param_table = file_in(!!(path(data_dir, "derived-data", "parameter-table.csv"))) %>%
     read_csv(),
-  #######################################
-  ## Figure 1: Parameter distributions ##
-  #######################################
+  #########################################
+  # Summary time series
+  #########################################
+  variable_cols = c("workflow_id", "run_id", "datetime", "pft", "nplant",
+                    "bleaf", "bsapwooda", "bstorage",
+                    "fmean_gpp_co", "fmean_npp_co", "lai_co"),
+  plot_means = fst(file_in(!!cohort_file)) %>%
+    .[, variable_cols] %>%
+    as_tibble() %>%
+    semi_join(current_workflows, by = "workflow_id") %>%
+    group_by(workflow_id, run_id, datetime) %>%
+    summarize(
+      agb = sum((bleaf + bsapwooda + bstorage) * nplant),
+      gpp = sum(fmean_gpp_co * nplant),
+      npp = sum(fmean_npp_co * nplant),
+      lai = sum(lai_co)
+    ) %>%
+    ungroup(),
+  jja_means = plot_means %>%
+    filter(month(datetime) %in% 6:8) %>%
+    group_by(workflow_id, run_id, year = year(datetime)) %>%
+    summarize_at(vars(-datetime), mean) %>%
+    ungroup() %>%
+    inner_join(current_workflows, by = "workflow_id"),
+  jja_long = jja_means %>%
+    gather(variable, value, agb:lai) %>%
+    mutate(variable = factor(variable, c("gpp", "npp", "agb", "lai"))),
+  jja_summary = jja_long %>%
+    group_by(model_split, color, variable, year) %>%
+    summarize(lo = quantile(value, 0.1),
+              hi = quantile(value, 0.9)),
+  my_labeller = labeller(
+    variable = as_labeller(c(
+      "gpp" = "GPP ~ (kgC ~ year^{-1})",
+      "npp" = "NPP ~ (kgC ~ year^{-1})",
+      "agb" = "AGB ~ (kgC)",
+      "lai" = "LAI"
+    ), default = label_parsed),
+    .default = label_value
+  ),
+  hardiman = tribble(
+    ~variable, ~low, ~mean, ~hi,
+    "lai", 1.8, 4.14, 6.56,
+    "npp", 1.68, 3.11, 7.26
+  ) %>% mutate(variable = factor(variable, c("gpp", "npp", "lai", "agb"))),
+  summary_ts_plot = ggplot(jja_long) +
+    aes(x = year, y = value, group = run_id) +
+    geom_line(color = "grey50", alpha = 0.5) +
+    geom_ribbon(aes(ymin = lo, ymax = hi, y = NULL, group = NULL,
+                    fill = color),
+                data = jja_summary, alpha = 0.7) +
+    geom_hline(aes(yintercept = mean), color = "black", linetype = "solid",
+               data = hardiman) +
+    geom_hline(aes(yintercept = low), color = "black", linetype = "dashed",
+               data = hardiman) +
+    geom_hline(aes(yintercept = hi), color = "black", linetype = "dashed",
+               data = hardiman) +
+    scale_fill_identity() +
+    facet_grid(vars(variable), vars(model_split), scales = "free_y",
+               switch = "y", labeller = my_labeller) +
+    theme_cowplot() +
+    theme(axis.title = element_blank(),
+          axis.text.x = element_text(angle = 90, vjust = 0.5),
+          strip.placement = "outside",
+          strip.background = element_blank()),
+  #########################################
+  # Parameter distributions
+  #########################################
   meta_analysis_dl = target(
     download.file("https://osf.io/download/pcrav",
                   file_out(!!meta_analysis_file)),
@@ -103,110 +167,91 @@ plan <- drake_plan(
     theme_cowplot() +
     theme(axis.title.y = element_blank(),
           axis.text.x = element_blank()),
-  ########################################
-  ## Figure 2: Aggregate variables plot ##
-  ########################################
-  monthly_output_dl = target(
-    download.file("https://osf.io/download/3twxa",
-                  file_out(!!monthly_output_file)),
-    trigger = trigger(condition = !file_exists(monthly_output_file),
-                      mode = "condition")
-  ),
-  raw_monthly_output = read_fst(file_in(!!monthly_output_file)) %>%
+  #########################################
+  # LAI by PFT plot
+  #########################################
+  cohort_lai = fst(file_in(!!cohort_file)) %>%
+    .[, c("workflow_id", "run_id", "datetime", "pft", "lai_co")] %>%
     as_tibble() %>%
-    mutate(workflow_id = as.numeric(gsub("PEcAn_", "", workflows))) %>%
-    select(workflow_id, everything()) %>%
-    select(-workflows) %>%
-    left_join(workflow_structures(), by = "workflow_id"),
-  hardiman = tribble(
-    ~variable, ~low, ~mean, ~hi,
-    "LAI", 1.8, 4.14, 6.56,
-    "NPP", 1.68, 3.11, 7.26
-  ) %>% mutate(variable = factor(variable, c("GPP", "NPP", "LAI", "AGB"))),
-  monthly_means = raw_monthly_output %>%
-    group_by(workflow_id, crown, rtm, traits, date, runs, pft) %>%
-    select(group_cols(), starts_with("mmean"), agb_py) %>%
-    # Remove duplicated values -- `mmean` values should be unique by PFT.
-    summarize_all(mean),
-  monthly_means_site = monthly_means %>%
-    select(
-      group_cols(),
-      GPP = mmean_gpp_py,
-      NPP = mmean_npp_py,
-      LAI_pft = mmean_lai_py,
-      AGB_pft = agb_py
-    ) %>%
-    group_by(crown, rtm, traits, date, runs) %>%
-    # Aggregate PFTs
-    summarize(
-      GPP = mean(GPP),
-      NPP = mean(NPP),
-      LAI = sum(LAI_pft),
-      AGB = sum(AGB_pft)
-    ) %>%
-    mutate(
-      year = floor_date(date, "years") %m+% period(6, "months"),
-      month = month(date)
-    ),
-  summary_ts_plot = monthly_means_site %>%
-    filter(month %in% 7:9) %>%
-    tidyr::gather(variable, value, GPP:AGB) %>%
-    mutate(variable = fct_inorder(variable)) %>%
-    # Aggregate runs
-    group_by(crown, rtm, traits, variable, year) %>%
-    summarize(
-      mean = mean(value),
-      lo = quantile(value, 0.2),
-      hi = quantile(value, 0.8)
-    ) %>%
-    filter(!is.na(variable)) %>%
-    mutate(model = interaction(crown, rtm, traits, sep = "\n")) %>%
-    ggplot() +
-    aes(x = year, y = mean, ymin = lo, ymax = hi) +
-    geom_line() +
-    geom_ribbon(alpha = 0.35) +
-    geom_hline(aes(yintercept = mean), data = hardiman, linetype = "dashed", color = "red") +
-    geom_hline(aes(yintercept = low), data = hardiman, linetype = "dotted", color = "red") +
-    geom_hline(aes(yintercept = hi), data = hardiman, linetype = "dotted", color = "red") +
-    facet_grid(vars(variable), vars(model), scales = "free_y", switch = "y") +
-    scale_color_manual(values = unname(head(model_scale, -1))) +
-    scale_fill_manual(values = unname(head(model_scale, -1))) +
-    theme_cowplot() +
-    theme(axis.title.y = element_blank(),
-          axis.title.x = element_blank(),
-          axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
-          strip.placement = "outside",
-          strip.background.y = element_blank()),
-  ##############################
-  ## Figure 3: Big facet plot ##
-  ##############################
-  bigfacet_plot = monthly_means %>%
+    semi_join(current_workflows, by = "workflow_id"),
+  lai_q90 = cohort_lai %>%
+    group_by(workflow_id, run_id, year = year(datetime), pft) %>%
+    summarize(lai = quantile(lai_co, 0.9)) %>%
     ungroup() %>%
-    select(crown, rtm, traits, date, pft, runs,
-           mmean_lai_py) %>%
-    filter(month(date) == 7) %>%
-    left_join(
-      # Order runs in order of increasing max Pine LAI
-      monthly_means %>%
-        ungroup() %>%
-        select(workflow_id, runs, pft, mmean_lai_py) %>%
-        filter(pft == "Pine") %>%
-        group_by(workflow_id, runs) %>%
-        summarize(pine_lai = max(mmean_lai_py)) %>%
-        mutate(run_i = rank(pine_lai)),
-      by = "runs") %>%
-    mutate(model = interaction(crown, rtm, traits, sep = "\n")) %>%
+    rename(num = pft) %>%
+    left_join(pfts(), by = "num"),
+  run_groups = lai_q90 %>%
+    select(workflow_id, run_id, year, pft, lai) %>%
+    group_by(workflow_id) %>%
+    group_modify(create_run_groups),
+  use_runs = run_groups %>%
+    group_by(workflow_id, cluster) %>%
+    slice(1),
+  lai_pft_plot = lai_q90 %>%
+    inner_join(use_runs, by = c("workflow_id", "run_id")) %>%
+    inner_join(current_workflows, by = "workflow_id") %>%
     ggplot() +
-    aes(x = date, y = mmean_lai_py, color = pft) +
+    aes(x = year, y = lai, color = pft) +
     geom_line() +
-    facet_grid(vars(run_i), vars(model), drop = TRUE) +
-    labs(y = "Leaf area index", color = "PFT") +
+    facet_grid(vars(cluster), vars(model_split)) +
     scale_color_manual(values = pfts("color")) +
-    scale_x_date(date_breaks = "2 years", date_labels = "%Y") +
+    labs(y = "Leaf area index", color = "PFT") +
     theme_cowplot() +
-    theme(strip.text.y = element_blank(),
-          axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
-          axis.title.x = element_blank()),
+    theme(
+      axis.title.x = element_blank(),
+      axis.text.x = element_text(angle = 90, vjust = 0.5),
+      strip.text.y = element_blank()
+    ),
+  #########################################
+  # Parameter vs. structure uncertainty 
+  #########################################
+  time_averages = jja_means %>%
+    filter(year > 1910) %>%
+    group_by(model, color, run_id) %>%
+    summarize_at(vars(gpp, npp, agb, lai), mean),
+  parameter_uncertainty = time_averages %>%
+    group_by(model, color) %>%
+    summarize_at(vars(gpp, npp, agb, lai), var) %>%
+    ungroup() %>%
+    arrange(model),
+  structure_uncertainty = time_averages %>%
+    group_by(model) %>%
+    summarize_at(vars(gpp, npp, agb, lai), mean) %>%
+    ungroup() %>%
+    summarize_at(vars(-model), var) %>%
+    mutate(model = "Across-structure",
+           color = "black"),
+  both_uncertainty = parameter_uncertainty %>%
+    mutate(model = as.character(model)) %>%
+    bind_rows(structure_uncertainty) %>%
+    mutate(model = fct_inorder(model)),
+  within_across_plot = both_uncertainty %>%
+    gather(variable, variance, -model, -color) %>%
+    mutate(variable = factor(variable, c("gpp", "npp", "lai", "agb")) %>%
+             fct_recode("GPP" = "gpp",
+                        "NPP" = "npp",
+                        "LAI" = "lai",
+                        "AGB" = "agb")) %>%
+    ggplot() +
+    aes(x = model, y = variance, fill = model) +
+    geom_col() +
+    facet_wrap(vars(variable), scales = "free_y") +
+    labs(x = "Model structure", y = "Variance") +
+    scale_fill_manual(
+      values = tibble::deframe(both_uncertainty[, c("model", "color")])
+    ) +
+    theme(axis.text.x = element_blank(),
+          axis.ticks.x = element_blank())
+  #########################################
+  # Sensitivity analysis
+  #########################################
+  ## run_params = ...
+  ## run_params_wide = ...,
+  ## sensitivity_inputs = time_averages %>%
+  ##   left_join()
+)
+
+old_plan <- drake_plan(
   #####################################
   ## Figure 4: Parameter sensitivity ##
   #####################################
@@ -271,34 +316,7 @@ plan <- drake_plan(
   sensitivity_plot = target(
     cowplot::plot_grid(sensitivity_plot_piece),
     transform = combine(sensitivity_plot_piece)
-  ),
-  #######################################
-  ## Within vs. across model structure ##
-  #######################################
-  parameter_uncertainty = growing_season_averages %>%
-    group_by(crown, rtm, traits) %>%
-    summarize_at(vars(GPP:AGB), var) %>%
-    ungroup() %>%
-    mutate(model = as.character(interaction(crown, rtm, traits))),
-  structure_uncertainty = growing_season_averages %>%
-    group_by(crown, rtm, traits) %>%
-    summarize_at(vars(GPP:AGB), mean) %>%
-    ungroup() %>%
-    summarize_at(vars(GPP:AGB), var) %>%
-    mutate(model = "Across-structure"),
-  both_uncertainty = parameter_uncertainty %>%
-    select(model, GPP:AGB) %>%
-    bind_rows(structure_uncertainty) %>%
-    mutate(model = fct_inorder(model)),
-  within_across_plot = both_uncertainty %>%
-    gather(variable, variance, GPP:AGB) %>%
-    ggplot() +
-    aes(x = model, y = variance, fill = model) +
-    geom_col() +
-    facet_wrap(vars(variable), scales = "free_y") +
-    scale_fill_manual(values = model_scale) +
-    theme(axis.text.x = element_blank(),
-          axis.ticks.x = element_blank()),
+  )
 )
 
 if ("--poster" %in% cmdargs) source("analysis/drake_poster.R")
@@ -311,10 +329,13 @@ dconf <- drake_config(
   plan,
   parallelism = "future",
   jobs = availableCores(),
-  prework = paste0("devtools::load_all(",
-                   "here::here(), ",
-                   "quiet = TRUE, ",
-                   "attach_testthat = FALSE)")
+  prework = quote({
+    suppressPackageStartupMessages(devtools::load_all(
+      here::here(),
+      quiet = TRUE,
+      attach_testthat = FALSE
+    ))
+  })
 )
 
 if (interactive()) {
