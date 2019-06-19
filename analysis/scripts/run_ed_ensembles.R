@@ -49,6 +49,26 @@ write_csv(
 )
 
 if (FALSE) {
+  # Sample code to run a subset of workflows
+  run_matrix <- tribble(
+    ~crown_model, ~multiple_scatter, ~trait_plasticity,
+    TRUE, FALSE, TRUE,
+    TRUE, TRUE, FALSE,
+    TRUE, TRUE, TRUE,
+    TRUE, FALSE, FALSE
+  )
+
+  current_workflows <- read_csv("analysis/data/derived-data/current-workflows.csv")
+  old_workflows <- current_workflows %>%
+    anti_join(run_matrix)
+  workflows <- run_matrix %>%
+    mutate(workflow_id = c(99000000167, 99000000168, 99000000169, 99000000170),
+           short_id = c(167, 168, 169, 170)) %>%
+    select(workflow_id, short_id, everything()) %>%
+    bind_rows(old_workflows)
+}
+
+if (FALSE) {
 
   bety_workflows <- tbl(con, "workflows") %>%
     rename(workflow_id = id) %>%
