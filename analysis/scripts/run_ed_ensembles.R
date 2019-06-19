@@ -45,7 +45,7 @@ workflows <- run_matrix %>%
 
 write_csv(
   workflows,
-  file.path("analysis", "data", "derived-data", "current-workflows.csv")
+  file.path("data-raw", "current-workflows.csv")
 )
 
 if (FALSE) {
