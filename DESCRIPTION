@@ -23,7 +23,8 @@ Imports:
     xml2,
     readr,
     ggsci,
-    rlang
+    rlang,
+    viridis
 Remotes:
   pecanproject/pecan/api@develop
 Suggests: 

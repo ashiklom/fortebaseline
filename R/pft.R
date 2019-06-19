@@ -15,10 +15,11 @@ pfts <- function(col = NULL) {
       "late_hardwood",
       "northern_pine"
     )),
-    pft = c("Early hardwood", "Mid hardwood", "Late hardwood", "Pine"),
-    shortname = c("Early", "Mid", "Late", "Pine"),
-    num = c(6, 9, 10, 11),
-    color = ggsci::pal_startrek()(4),
+    pft = factor(c("Early hardwood", "Mid hardwood",
+                   "Late hardwood", "Pine")),
+    shortname = factor(c("Early", "Mid", "Late", "Pine")),
+    num = c(9, 10, 11, 6),
+    color = viridis::viridis(4),
     stringsAsFactors = FALSE
   )
   if (is.null(col)) return(pfts)

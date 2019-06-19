@@ -943,3 +943,15 @@ tbl(dbcon, "dbfiles") %>%
          file_name %like% "prior.distns.Rdata") %>%
   arrange(desc(created_at)) %>%
   select(file_name, created_at)
+#########################################
+run_params_all = read_fst(ensemble_params_file) %>%
+  as_tibble()
+
+meta_vars = run_params_all %>%
+  select(-workflow_id, -path) %>%
+  group_by(pft) %>%
+  summarize_all(~length(unique(.x))) %>%
+  tidyr::gather(variable, count, -pft, -run_id) %>%
+  filter(count > 1) %>%
+  distinct(variable) %>%
+  pull(),

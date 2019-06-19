@@ -202,10 +202,10 @@ annual_jja <- instant %>%
   filter(lubridate::month(datetime) %in% 6:8) %>%
   group_by(workflow_id, run_id, year = year(datetime)) %>%
   summarize_at(vars(-datetime), mean) %>%
-  ungroup()
+  ungroup() %>%
+  inner_join(current_workflows, by = "workflow_id") %>%
 
 annual_jja_long <- annual_jja %>%
-  inner_join(current_workflows, by = "workflow_id") %>%
   gather(variable, value, agb:lai) %>%
   mutate(variable = factor(variable, c("gpp", "npp", "agb", "lai")))
 
