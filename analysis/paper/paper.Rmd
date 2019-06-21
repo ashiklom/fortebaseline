@@ -62,16 +62,8 @@ Examples of such models are LANDIS <!-- TODO ref !--> and UVAFME. <!-- TODO ref 
 Because these models can explicitly represent inter-specific differences in plant productivity, resource allocation, and stress tolerance (among others), as well as the competition that emerges out of these differences, they may be better able to represent changes in ecosystem-scale processes, especially in no-analog conditions [@purves_2008_predictive].
 Moreover, these models' **predictions of species composition and ecosystem structure are relevant outside of carbon cycle science**, particularly for forest management and wildlife conservation. <!-- TODO refs -->
 However, these **benefits of individual-based models come at the cost of much higher data and computational requirements**, which effectively restrict their application to individual, well-studied sites. <!-- TODO refs. Also, is this actually true? -->
-
-A key challenge of vegetation modeling research over the last several decades has been the **development of approaches that capture the emergent biogeochemical and ecological outcomes of interactions between individual plants without the need for explicitly simulating each individual** [@purves_2008_predictive].
-One such approach is the **"ecosystem demography" approach**, which uses a system of partial differential equations to simulate the emergent mean behavior of "cohorts" of individuals of similar composition, size, and age [@moorcroft_2001_method]. <!-- TODO Run this description by Mike? -->
-The original "Ecosystem Demography" (ED) model [@moorcroft_2001_method] was enhanced by @medvigy_2009_mechanistic (as ED2) with fully-coupled leaf physiology, canopy radiative transfer, and micrometeorology, and each of these components have been further refined over the last decade [culminating in ED2.2; @longo_2019_ed1].
-Various versions of the ED model have been validated in boreal [@medvigy_2011_predicting], temperate [@medvigy_2009_mechanistic; @dietze_2014_quantitative; @raczka_2018_what], and tropical biomes [@moorcroft_2001_method; @longo_2019_ed2], and have been applied in:
-
-- paleoecological studies [@rollinson_2017_emergent];
-- free-air CO~2~ enrichment studies [@dekauwe_2013_forest; @miller_2015_alteration];
-- estimation of potential carbon stocks [@hurtt_2004_beyond_potential_vegetation]
-- vegetation-climate feedbacks {Swann, etc} <!-- TODO -->
+Therefore, a key objective of vegetation modeling research over the last several decades has been the development of approaches that capture the emergent biogeochemical and ecological outcomes of interactions between individual plants without the need for explicitly simulating each individual [@purves_2008_predictive].
+In this study, we focus on the Ecosystem Demography model [ED2.2; @moorcroft_2001_method; @medvigy_2011_predicting; @longo_2019_ed1], which constitutes an example of such an approach.
 
 **Vegetation model projections are inherently uncertain, and this uncertainty stems from several sources.**
 _Driver_ uncertainty refers to uncertainty in data about processes that are essential to the system in question but are not represented by the model (e.g. weather and climate for vegetation models).
@@ -124,6 +116,16 @@ The majority of the forest that is aspen-dominated is undergoing succession to "
 For this study, we used the Ecosystem Demography Model, version 2.2 (ED2).
 Below, we provide only a high-level description of key model features and focus in detail only on submodels and configurations specific to this study.
 A full description of the default configuration of the model is provided by @longo_2019_ed1.
+
+The key feature of the "ecosystem demography" approach underlying the ED2 model is a system of partial differential equations that simulate the emergent mean behavior of "cohorts" of individuals of similar composition, size, and age [@moorcroft_2001_method]. <!-- TODO Run this description by Mike? -->
+The original "Ecosystem Demography" (ED) model [@moorcroft_2001_method] was enhanced by @medvigy_2009_mechanistic (as ED2) with fully-coupled leaf physiology, canopy radiative transfer, and micrometeorology, and each of these components have been further refined over the last decade [culminating in ED2.2; @longo_2019_ed1].
+Various versions of the ED model have been validated in boreal [@medvigy_2011_predicting], temperate [@medvigy_2009_mechanistic; @dietze_2014_quantitative; @raczka_2018_what], and tropical biomes [@moorcroft_2001_method; @longo_2019_ed2], and have been applied in:
+
+- paleoecological studies [@rollinson_2017_emergent];
+- free-air CO~2~ enrichment studies [@dekauwe_2013_forest; @miller_2015_alteration];
+- estimation of potential carbon stocks [@hurtt_2004_beyond_potential_vegetation]
+- vegetation-climate feedbacks {Swann, etc} <!-- TODO -->
+
 
 ED2 represents both spatial and temporal variability hierarchically.
 The largest spatial unit is the "polygon", within which all elements share the same meteorological forcings.
