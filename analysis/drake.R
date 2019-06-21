@@ -51,6 +51,14 @@ meta_analysis_file <- path(download_dir, "meta-analysis.rds")
 ensemble_params_file <- path(download_dir, "ed-ensemble-params.fst")
 cohort_file <- path(download_dir, "cohort_output.fst")
 
+cohort_osf <- "2af5g"
+params_osf <- "pcrav"
+get_timestamp <- function(osf_id) {
+  osfr::osf_retrieve_file(osf_id) %>%
+    dplyr::pull(meta) %>%
+    purrr::pluck(1, "attributes", "date_modified")
+}
+
 plan <- drake_plan(
   #########################################
   # Common elements
@@ -66,6 +74,11 @@ plan <- drake_plan(
   #########################################
   # Summary time series
   #########################################
+  cohort_file_dl = target(
+    download.file(file.path("https://osf.io/download/", cohort_osf),
+                  file_out(!!cohort_file)),
+    trigger = trigger(change = get_timestamp(cohort_osf))
+  ),
   variable_cols = c("workflow_id", "run_id", "datetime", "pft", "nplant",
                     "bleaf", "bsapwooda", "bstorage",
                     "fmean_gpp_co", "fmean_npp_co", "lai_co"),
@@ -138,10 +151,9 @@ plan <- drake_plan(
   # Parameter distributions
   #########################################
   meta_analysis_dl = target(
-    download.file("https://osf.io/download/pcrav",
+    download.file(file.path("https://osf.io/download", params_osf),
                   file_out(!!meta_analysis_file)),
-    trigger = trigger(condition = !file_exists(meta_analysis_file),
-                      mode = "condition")
+    trigger = trigger(change = get_timestamp(params_osf))
   ),
   ma_posterior = file_in(!!meta_analysis_file) %>%
     readRDS() %>%
