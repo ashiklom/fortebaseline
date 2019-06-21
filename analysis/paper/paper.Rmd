@@ -101,7 +101,7 @@ We then used a sensitivity and variance decomposition analysis to evaluate the c
 
 ## Site description
 
-We performed this study at the University of Michigan Biological Station (Ameriflux site US-UMd, 45.5625$^{\circ}$, -84.6975$^{\circ}$), located in Northern Lower Michigan, USA.
+We performed this study at the University of Michigan Biological Station (UMBS; Ameriflux site US-UMd, 45.5625$^{\circ}$, -84.6975$^{\circ}$), located in Northern Lower Michigan, USA.
 The area surrounding the research station is 87% well-drained upland forest and 13% wetland [@bergen_2007_observing]; the focus of this study is on the former.
 The landscape geography of the UMBS upland forest is 20.4% moraine, 37.8% high outwash plain, 31.3% low outwash plain, 5.7% lake-margin terrace, 3.6% ice-contact, and 1.2% lowland glacial lake [@bergen_2007_observing].
 Most of the UMBS upland forest canopy is dominated by temperate deciduous early-successional species, most importantly _Populus grandidentata_ (bigtooth aspen) and, to a lesser extent, _Betula papyrifera_ (paper birch), with _Acer saccharum_ (sugar maple), _Acer rubrum_ (red maple), _Fagus grandifolia_ (American beech), _Tilia americana_ (basswood), _Betula alleghaniensis_ (yellow birch), _Fraxinus americana_ (white ash), _Tsuga canadensis_ (eastern hemlock), _Quercus rubra_ (northern red oak), _Pinus strobus_ (white pine), and _Pinus resinosa_ (red pine) existing in various fractions in the understory (and, in patches, in the canopy).
@@ -109,6 +109,9 @@ This composition is a legacy of the site's disturbance history:
 The site was intensively logged in the late 1800s and early 1900s, and experienced regularly recurring fires until the mid-1920s, at which point a regime of active fire suppression started that has persisted to the present day. <!-- TODO ref -->
 As a result, the average stand age in 2013 was 95 years. <!-- TODO ref -->
 The majority of the forest that is aspen-dominated is undergoing succession to "northern hardwood" (maple, beech, basswood, birch, ash, hemlock), "upland conifer" (red and white pine), or "northern red-oak" ecotypes [@bergen_2007_observing].
+
+Forest stands at UMBS were previously exposed to experimental disturbance as part of the Forest Accelerated Succession Experiment (FASET). <!-- TODO ref -->
+<!-- TODO more on this -->
 
 
 ## Ecosystem Demography Model (version 2.2)
