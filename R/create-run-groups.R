@@ -1,4 +1,4 @@
-#' Sort runs into clusters based
+#' Sort runs into clusters based on most dissimilar LAI
 #'
 #' @param dat Input `data.frame`
 #' @param ... Ignored (necessary for this to work with
