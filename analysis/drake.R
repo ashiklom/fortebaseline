@@ -257,8 +257,11 @@ plan <- drake_plan(
     scale_fill_manual(
       values = tibble::deframe(both_uncertainty[, c("model", "color")])
     ) +
-    theme(axis.text.x = element_blank(),
-          axis.ticks.x = element_blank())
+    theme(
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      legend.title = element_blank()
+    )
   #########################################
   # Sensitivity analysis
   #########################################

@@ -302,7 +302,7 @@ readd(summary_ts_plot)
 
 Take-away: Parameter uncertainty is as large as, or even larger, than structural uncertainty.
 
-```{r bigfacet-plot, fig.cap = bigfacet_cap, fig.dim = c(12, 12)}
+```{r bigfacet-plot, fig.cap = bigfacet_cap, fig.dim = c(12, 8)}
 bigfacet_cap <- paste(
   "ED2 PFT-level predictions of leaf area index (LAI) by model configuration and parameterization."
 )
@@ -315,7 +315,7 @@ Take-away: Different parameter combinations produce not just quantitatively diff
 
 ## Uncertainty analysis
 
-```{r within-vs-across, fig.cap = within_vs_across_cap, fig.dim = c(6, 6)}
+```{r within-vs-across, fig.cap = within_vs_across_cap, fig.dim = c(9, 4)}
 within_vs_across_cap <- paste(
   "Comparison of parameteric uncertainty within ensembles (colored bars, colored by model type)",
   "and \"structural\" uncertainty (variance in ensemble means; black bar) by output variable.",
