@@ -65,3 +65,13 @@ if (nrow(read_files) > 0) {
 } else {
   message("No new files to read.")
 }
+
+token <- getOption("osf.token")
+if (requireNamespace("osfr", quietly = TRUE) && !is.null(token)) {
+  message("Uploading file to OSF")
+  osfr::osf_auth(token = token)
+  osfr::osf_retrieve_node("dznuf") %>%
+    osfr::osf_ls_files() %>%
+    dplyr::filter(name == "processed_model_outputs") %>%
+    osfr::osf_upload(outfile, name = "cohort_output.fst", overwrite = TRUE)
+}
