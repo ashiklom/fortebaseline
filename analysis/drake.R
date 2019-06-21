@@ -36,9 +36,7 @@ suppressPackageStartupMessages({
   # Plotting
   library(ggplot2)
   library(cowplot)
-
-  devtools::load_all(here::here(), attach_testthat = FALSE)
-  expose_imports("fortebaseline")
+  library(fortebaseline)
 })
 
 cmdargs <- commandArgs(trailingOnly = TRUE)
@@ -71,9 +69,15 @@ plan <- drake_plan(
   variable_cols = c("workflow_id", "run_id", "datetime", "pft", "nplant",
                     "bleaf", "bsapwooda", "bstorage",
                     "fmean_gpp_co", "fmean_npp_co", "lai_co"),
+  use_workflows = fst(file_in(!!cohort_file))[, c("workflow_id", "run_id")] %>%
+    unique() %>%
+    count(workflow_id) %>%
+    filter(n >= 4) %>%
+    pull(workflow_id),
   plot_means = fst(file_in(!!cohort_file)) %>%
     .[, variable_cols] %>%
     as_tibble() %>%
+    filter(workflow_id %in% use_workflows) %>%
     semi_join(current_workflows, by = "workflow_id") %>%
     group_by(workflow_id, run_id, datetime) %>%
     summarize(
@@ -173,6 +177,7 @@ plan <- drake_plan(
   cohort_lai = fst(file_in(!!cohort_file)) %>%
     .[, c("workflow_id", "run_id", "datetime", "pft", "lai_co")] %>%
     as_tibble() %>%
+    filter(workflow_id %in% use_workflows) %>%
     semi_join(current_workflows, by = "workflow_id"),
   lai_q90 = cohort_lai %>%
     group_by(workflow_id, run_id, year = year(datetime), pft) %>%
@@ -328,14 +333,7 @@ future::plan(future.callr::callr) # <-- Currently throws error
 dconf <- drake_config(
   plan,
   parallelism = "future",
-  jobs = availableCores(),
-  prework = quote({
-    suppressPackageStartupMessages(devtools::load_all(
-      here::here(),
-      quiet = TRUE,
-      attach_testthat = FALSE
-    ))
-  })
+  jobs = availableCores()
 )
 
 if (interactive()) {
