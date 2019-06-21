@@ -12,11 +12,18 @@ stopifnot(
 
 future::plan("multiprocess")
 
+workflows_dir <- file.path("/public", "shared-docker-volumes",
+                          "pecan_data", "workflows")
+if (!file.exists(workflows_dir)) {
+  message("Running locally. Using downloaded workflows.")
+  workflows_dir <- file.path("analysis", "data", "model_output", "workflows")
+}
+
 message("Loading file list...")
 all_files <- current_workflows %>%
+  mutate(workflow_dir = path(workflows_dir, paste0("PEcAn_", workflow_id))) %>%
+  filter(fs::dir_exists(workflow_dir)) %>%
   mutate(
-    workflow_dir = path("analysis", "data", "model_output", "workflows",
-                        paste0("PEcAn_", workflow_id)),
     o_file = workflow_dir %>%
       future_map(fs::dir_ls, regexp = "analysis-I", recurse = TRUE) %>%
       map(as.character)
@@ -32,7 +39,7 @@ if (file.exists(outfile)) {
   # Build the paths for comparison with `all_files`
   anti_df <- existing_data %>%
     transmute(
-      o_file = file.path("analysis", "data", "model_output", "workflows",
+      o_file = file.path(workflows_dir,
                          paste0("PEcAn_", format(workflow_id, scientific = FALSE)),
                          "out",
                          format(run_id, scientific = FALSE),
@@ -41,12 +48,12 @@ if (file.exists(outfile)) {
   # anti_join to create read_files
   read_files <- anti_join(all_files, anti_df, by = "o_file")
 } else {
+  message("Output file not found. Reading all files.")
   read_files <- all_files
   existing_data <- NULL
 }
 
 message(nrow(read_files), " total remaining files.")
-read_files <- head(read_files, 5000)
 
 if (nrow(read_files) > 0) {
   message("Reading ", nrow(read_files), " new files.")

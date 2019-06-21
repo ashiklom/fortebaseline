@@ -28,7 +28,7 @@ read_i_cohort <- function(fname) {
   )
 
   vars <- cohort_vars()
-  hf <- hdf5r::H5File$new(fname)
+  hf <- hdf5r::H5File$new(fname, "r")
   on.exit(hf$close_all(), add = TRUE)
   cohort_data <- purrr::map(vars, hf_var_get, hf = hf) %>%
     setNames(tolower(vars)) %>%
