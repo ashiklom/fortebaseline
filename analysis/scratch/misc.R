@@ -954,4 +954,62 @@ meta_vars = run_params_all %>%
   tidyr::gather(variable, count, -pft, -run_id) %>%
   filter(count > 1) %>%
   distinct(variable) %>%
-  pull(),
+  pull()
+
+workflows <- workflows %>%
+  add_row(
+    workflow_id = 99000000144,
+    short_id = 144,
+    crown_model = FALSE,
+    multiple_scatter = FALSE,
+    trait_plasticity = TRUE
+  )
+
+#########################################
+
+workflow_dir <- path("analysis", "data",
+                     "model_output", "workflows",
+                     "PEcAn_99000000144")
+run_result_dir <- path(workflow_dir, "out")
+run_results_all <- dir_ls(run_result_dir)
+output_dir <- run_results_all[[1]]
+
+o_files <- dir_ls(output_dir, regexp = "analysis-I")
+e_files <- dir_ls(output_dir, regexp = "analysis-E")
+
+future::plan("multiprocess")
+o_data_list <- future_map(o_files, read_i_cohort, .progress = TRUE)
+
+o_data_df <- bind_rows(o_data_list)
+
+o_data_df %>%
+  group_by(pft, year = lubridate::floor_date(datetime, "year"),
+           datetime) %>%
+  summarize(value = sum(fmean_npp_co)) %>%
+  filter(datetime < "1902-10-01") %>%
+  ggplot() +
+  aes(x = datetime, y = value, color = factor(pft)) +
+  geom_line()
+
+fname <- o_files[[1]]
+var <- "radiation_profile"
+var <- tolower(var)
+
+
+scalar_dim <- nc[[c("var", "AREA", "dim")]][[1]][["name"]]
+scalar_vars <- ncout %>%
+  stringr::str_match(sprintf())
+
+result %>%
+  dplyr::left_join(meta, by = "cohort") %>%
+  dplyr::select(datetime, cohort, pft, dplyr::everything())
+
+## output_files <- dir_ls(output_dir) %>%
+##   as.character() %>%
+##   str_extract("analysis-[[:alpha:]]-") %>%
+##   unique()
+
+known_vars <- tribble(
+  ~varname, ~ed_name, ~dimensions,
+  "radiation_profile", "FMEAN_RAD_PROFILE_CO", list("radiation", "cohorts")
+)

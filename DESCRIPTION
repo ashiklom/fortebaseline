@@ -24,7 +24,9 @@ Imports:
     readr,
     ggsci,
     rlang,
-    viridis
+    viridis,
+    tibble,
+    lubridate
 Remotes:
   pecanproject/pecan/api@develop
 Suggests: 
