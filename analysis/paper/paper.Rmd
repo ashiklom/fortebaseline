@@ -180,6 +180,22 @@ In the default configuration, all cohorts of a given plant functional type will 
 This ignores the globally-documented intraspecific trait variability as a function of light level [@niinemets_2010_review; @keenan_2016_global]. <!-- TODO Also, classical ecological succession theory bazzaz_1979_physiological? -->
 In the alternate configuration, as light level decreases (trees become more shaded), specific leaf area increases and V~cmax~ decreases, following empirical relationships from the tropics [@lloyd_2010_optimisation].
 
+These sub-models are summarized in Table X.
+
+| Name                         | Description                                                                          | Color                     |
+|------------------------------|--------------------------------------------------------------------------------------|---------------------------|
+| **Crown model**              |                                                                                      |                           |
+| `closed` (default)           | Cohort crowns take up entire patch area. Competition for light based only on height. | Light                     |
+| `finite`                     | Cohort crown area is proportional to DBH according to PFT-specific allometry.        | Dark                      |
+| **Radiative transfer model** |                                                                                      |                           |
+| `two-stream` (default)       | Two-stream approximation, as in CLM 4.5                                              | Primary (red, blue)       |
+| `multi-scatter`              | Multiple-scatter approximation, following [@zhao_2005_multiple]                      | Secondary (green, orange) |
+| **Trait plasticity**         |                                                                                      |                           |
+| `static` (default)           | SLA and Vcmax are constant                                                           | Cool (blue, green)        |
+| `plastic`                    | SLA increases, and Vcmax decreases, with light level                                 | Warm (red, orange)        |
+
+
+
 ## ED2 parameters
 
 The full list of parameters in ED2 is large, with over 100 parameters per plant functional type.
@@ -213,17 +229,17 @@ The species comprising these plant functional types are shown in Table X.
 
 Table: Plant functional type-species mappings
 
-| Plant functional type | Species                 |
-|-----------------------|-------------------------|
-| Early hardwood        | _Betula papyrifera_     |
-|                       | _Populus grandidentata_ |
-|                       | _Populus tremuloides_   |
-| Mid hardwood          | _Quercus rubra_         |
-|                       | _Acer rubrum_           |
-|                       | _Acer pensylvaticum_    |
-| Late hardwood         | _Acer saccharum_        |
-|                       | _Fagus grandifolia_     |
-| Pine                  | _Pinus strobus_         |
+| Plant functional type | Species                 | Color  |
+|-----------------------|-------------------------|--------|
+| Early hardwood        | _Betula papyrifera_     | Violet |
+|                       | _Populus grandidentata_ |        |
+|                       | _Populus tremuloides_   |        |
+| Mid hardwood          | _Quercus rubra_         | Blue   |
+|                       | _Acer rubrum_           |        |
+|                       | _Acer pensylvaticum_    |        |
+| Late hardwood         | _Acer saccharum_        | Green  |
+|                       | _Fagus grandifolia_     |        |
+| Pine                  | _Pinus strobus_         | Yellow |
 
 For each plant functional type, we generated a distribution of parameter values via a trait-meta analysis [@lebauer_2013_facilitating; see also @dietze_2014_quantitative; @raczka_2018_what].
 Prior distributions for this meta-analysis were the same as those used in @dietze_2014_quantitative, @raczka_2018_what, and @viskari_2019_influence.
