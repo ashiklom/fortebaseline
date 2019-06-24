@@ -8,6 +8,9 @@
 #' @return
 #' @export
 pfts <- function(col = NULL) {
+  long <- c("Early hardwood", "Mid hardwood",
+            "Late hardwood", "Pine")
+  short <- c("Early", "Mid", "Late", "Pine")
   pfts <- data.frame(
     bety_name = paste0("umbs.", c(
       "early_hardwood",
@@ -15,9 +18,8 @@ pfts <- function(col = NULL) {
       "late_hardwood",
       "northern_pine"
     )),
-    pft = factor(c("Early hardwood", "Mid hardwood",
-                   "Late hardwood", "Pine")),
-    shortname = factor(c("Early", "Mid", "Late", "Pine")),
+    pft = factor(long, long),
+    shortname = factor(short, short),
     num = c(9, 10, 11, 6),
     color = viridis::viridis(4),
     stringsAsFactors = FALSE
