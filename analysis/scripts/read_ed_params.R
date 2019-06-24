@@ -18,18 +18,20 @@ read_params <- function(workflow_id,
     purrr::map(dplyr::as_tibble) %>%
     purrr::map(~dplyr::mutate(.x, run_id = runs)) %>%
     dplyr::bind_rows(.id = "bety_name") %>%
-    dplyr::left_join(
-      dplyr::select(pfts(), bety_name, pft),
-      by = "bety_name"
-    ) %>%
-    dplyr::mutate(workflow_id = workflow_id) %>%
-    dplyr::select(workflow_id, run_id, pft, dplyr::everything()) %>%
-    dplyr::select(-bety_name)
+    dplyr::filter(bety_name != "env") %>%
+    dplyr::mutate(workflow_id = workflow_id)
+  ens_df
 }
 
 params <- current_workflows %>%
   pull(workflow_id) %>%
-  map_dfr(read_params)
+  map_dfr(read_params) %>%
+  left_join(
+    select(pfts(), bety_name, pft),
+    by = "bety_name"
+  ) %>%
+  select(workflow_id, run_id, pft, everything()) %>%
+  select(-bety_name)
 
 outdir <- here::here("analysis", "data", "retrieved")
 dir.create(outdir, showWarnings = FALSE)
