@@ -46,13 +46,15 @@ analysis_dir <- dir_create(here("analysis"))
 data_dir <- dir_create(path(analysis_dir, "data"))
 download_dir <- dir_create(path(data_dir, "retrieved"))
 
-monthly_output_file <- path(download_dir, "monthly-ensemble-output.fst")
-meta_analysis_file <- path(download_dir, "meta-analysis.rds")
-ensemble_params_file <- path(download_dir, "ed-ensemble-params.fst")
 cohort_file <- path(download_dir, "cohort_output.fst")
-
 cohort_osf <- "2af5g"
-params_osf <- "pcrav"
+
+ensemble_params_file <- path(download_dir, "ensemble-params.csv")
+params_osf <- "8e45j"
+
+meta_analysis_file <- path(download_dir, "meta-analysis.rds")
+ma_osf <- "pcrav"
+
 get_timestamp <- function(osf_id) {
   osfr::osf_retrieve_file(osf_id) %>%
     dplyr::pull(meta) %>%
@@ -151,9 +153,9 @@ plan <- drake_plan(
   # Parameter distributions
   #########################################
   meta_analysis_dl = target(
-    download.file(file.path("https://osf.io/download", params_osf),
+    download.file(file.path("https://osf.io/download", ma_osf),
                   file_out(!!meta_analysis_file)),
-    trigger = trigger(change = get_timestamp(params_osf))
+    trigger = trigger(change = get_timestamp(ma_osf))
   ),
   ma_posterior = file_in(!!meta_analysis_file) %>%
     readRDS() %>%
@@ -261,66 +263,48 @@ plan <- drake_plan(
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
       legend.title = element_blank()
-    )
+    ),
   #########################################
   # Sensitivity analysis
   #########################################
-  ## run_params = ...
-  ## run_params_wide = ...,
-  ## sensitivity_inputs = time_averages %>%
-  ##   left_join()
-)
-
-old_plan <- drake_plan(
-  #####################################
-  ## Figure 4: Parameter sensitivity ##
-  #####################################
   run_params_dl = target( 
-    download.file("https://osf.io/download/f5vpd",
+    download.file(file.path("https://osf.io/download/", params_osf),
                   file_out(!!ensemble_params_file)),
-    trigger = trigger(condition = !file_exists(ensemble_params_file),
-                      mode = "condition")
+    trigger = trigger(change = get_timestamp(params_osf))
   ),
-  run_params_all = read_fst(file_in(!!ensemble_params_file)) %>%
-    as_tibble(),
-  meta_vars = run_params_all %>%
-    select(-workflow_id, -path) %>%
-    group_by(pft) %>%
-    summarize_all(~length(unique(.x))) %>%
-    tidyr::gather(variable, count, -pft, -run_id) %>%
-    filter(count > 1) %>%
-    distinct(variable) %>%
-    pull(),
-  run_params = run_params_all %>%
-    select(workflow_id, run_id, pft, meta_vars),
-  run_params_wide = run_params %>%
-    mutate(pft = lvls_revalue(pft, pfts("shortname"))) %>%
-    tidyr::gather(param, value, -workflow_id, -run_id, -pft) %>%
-    unite(pft_param, pft, param, sep = "..") %>%
-    spread(pft_param, value),
-  growing_season_averages = monthly_means_site %>%
-    filter(date > "1910-01-01", month %in% 7:9) %>%
-    group_by(crown, rtm, traits, run_id = as.numeric(runs)) %>%
-    summarize_at(vars(GPP:AGB), mean),
-  sensitivity_inputs = growing_season_averages %>%
-    left_join(run_params_wide, by = "run_id"),
+  run_params = file_in(!!ensemble_params_file) %>%
+    read_csv(col_types = cols(.default = col_double(),
+                              pft = col_factor(pfts("pft")))),
+  sensitivity_inputs = run_params %>%
+    inner_join(time_averages, by = "run_id") %>%
+    gather(yvar, yvalue, gpp, npp, agb, lai) %>%
+    select(-workflow_id) %>%
+    gather(xvar, xvalue,
+           -run_id, -pft,
+           -model, -color, -yvar, -yvalue),
   sensitivity_results = sensitivity_inputs %>%
-    ungroup() %>%
-    tidyr::gather(yvar, yvalue, GPP:AGB) %>%
-    tidyr::gather(xvar, xvalue, -(crown:workflow_id), -yvar, -yvalue) %>%
-    group_by_at(vars(workflow_id, crown:traits, xvar, yvar)) %>%
+    group_by_at(vars(model, color, pft, xvar, yvar)) %>%
+    ## filter(n_distinct(run_id) > 10) %>%
     summarize(raw_sa = list(possibly(sensitivity_analysis, NULL)(yvalue, xvalue))) %>%
     filter(map_lgl(raw_sa, negate(is.null))) %>%
-    unnest(raw_sa),
+    unnest(raw_sa) %>%
+    ungroup(),
   sensitivity_plot_data = sensitivity_results %>%
-    mutate(model = interaction(crown, rtm, traits, sep = "\n"),
-           elasticity = pmax(elasticity, -200),
-           cv = pmin(cv, 1000)) %>%
-    separate(xvar, c("pft", "trait"), sep = "\\.\\.") %>%
-    mutate(pft = factor(pft, pfts("shortname"))),
+    left_join(select(pfts(), pft, shortname), by = "pft") %>%
+    mutate(elasticity = if_else(abs(elasticity) > 150, NA_real_, elasticity)) %>%
+    group_by(yvar, xvar) %>%
+    mutate(fpvar = pvar / sum(pvar)) %>%
+    group_by(xvar) %>%
+    mutate(total_pvar = sum(pvar)) %>%
+    ungroup() %>%
+    mutate(
+      trait_alpha = factor(xvar) %>% fct_rev(),
+      trait_pvar = fct_reorder(factor(xvar), total_pvar),
+      model = fct_relabel(model, gsub, pattern = " ", replacement = "\n")
+    ),
   sensitivity_plot_piece = target(
     ggplot(sensitivity_plot_data) +
-      aes(x = pft, y = trait, fill = YYY) +
+      aes(x = pft, y = trait_alpha, fill = YYY) +
       geom_tile() +
       facet_grid(vars(yvar), vars(model)) +
       SCALE +
@@ -329,7 +313,7 @@ old_plan <- drake_plan(
       theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
             axis.text.y = element_text(size = rel(0.6)),
             legend.position = "bottom"),
-    transform = map(YYY = c(elasticity, pvar),
+    transform = map(YYY = c(elasticity, fpvar),
                     SCALE = c(scale_fill_gradient2(),
                               scale_fill_continuous(low = "white", high = "blue")))
   ),
@@ -342,8 +326,7 @@ old_plan <- drake_plan(
 if ("--poster" %in% cmdargs) source("analysis/drake_poster.R")
 
 # Parallelism configuration. Not sure which of these is better...
-future::plan(future.callr::callr) # <-- Currently throws error
-## future::plan(future::multiprocess)
+future::plan(future.callr::callr)
 
 dconf <- drake_config(
   plan,
