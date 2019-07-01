@@ -128,19 +128,16 @@ plan <- drake_plan(
     ~variable, ~low, ~mean, ~hi,
     "lai", 1.8, 4.14, 6.56,
     "npp", 1.68, 3.11, 7.26
-  ) %>% mutate(variable = factor(variable, c("gpp", "npp", "lai", "agb"))),
+  ) %>% mutate(variable = factor(variable, c("gpp", "npp", "lai", "agb")),
+               year = max(jja_summary$year)),
   summary_ts_plot = ggplot(jja_long) +
-    aes(x = year, y = value, group = run_id) +
-    geom_line(color = "grey50", alpha = 0.5) +
-    geom_ribbon(aes(ymin = lo, ymax = hi, y = NULL, group = NULL,
-                    fill = color),
+    aes(x = year) +
+    geom_line(aes(y = value, group = run_id), color = "grey50", alpha = 0.5) +
+    geom_ribbon(aes(ymin = lo, ymax = hi, fill = color),
                 data = jja_summary, alpha = 0.7) +
-    geom_hline(aes(yintercept = mean), color = "black", linetype = "solid",
-               data = hardiman) +
-    geom_hline(aes(yintercept = low), color = "black", linetype = "dashed",
-               data = hardiman) +
-    geom_hline(aes(yintercept = hi), color = "black", linetype = "dashed",
-               data = hardiman) +
+    geom_smooth(aes(y = value), color = "black", size = 1) +
+    geom_pointrange(aes(y = mean, ymin = low, ymax = hi), color = "black",
+                    data = hardiman) +
     scale_fill_identity() +
     facet_grid(vars(variable), vars(model_split), scales = "free_y",
                switch = "y", labeller = my_labeller) +
