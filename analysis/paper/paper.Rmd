@@ -41,6 +41,16 @@ mdcap <- function(text) {
     invisible(NULL)
   }
 }
+m <- 0
+htmlfig <- function() {
+  m <<- m + 1
+  out <- paste0("**Figure ", m, "**:")
+  if (grepl("html", knitr::opts_knit$get("rmarkdown.pandoc.to"), ignore.case = TRUE)) {
+    out
+  } else {
+    invisible(NULL)
+  }
+}
 ```
 
 # Introduction
@@ -250,6 +260,7 @@ All parameters not described in this section were set to their ED2 PFT-specific 
 
 ```{r methods_captions}
 param_dist_cap <- paste(
+  htmlfig(),
   "Input parameter distributions from PEcAn trait meta-analysis."
 )
 ```
@@ -288,12 +299,13 @@ The entire model execution workflow was conducted using the Predictive Ecosystem
 
 ```{r summary-ts-plot, fig.cap = summary_ts_cap, fig.dim = c(10, 7)}
 summary_ts_cap <- paste(
+  htmlfig(),
   "ED2 plot-level ensemble predictions of",
   "gross (GPP) and net (NPP) primary productivity,",
   "total leaf area index (LAI), and aboveground biomass (AGB)",
   "by model configuration.",
   "Individual ensemble members are shown as gray lines.",
-  "The solid line is a LOESS regression (`ggplot2::stat_smooth`)."
+  "The solid line is a LOESS regression (`ggplot2::stat_smooth`).",
   "Shading represents the middle 80% (10th to 90th percentile) of predictions.",
   "Black dot with error bars is the mean and min/max value",
   "from Hardiman et al. (2013)."
@@ -303,7 +315,7 @@ readd(summary_ts_plot)
 
 `r mdcap(summary_ts_cap)`
 
-Model projections of gross and net primary productivity, aboveground biomass, and leaf area index varied substantially with both parameter value and model structure.
+Model projections of gross and net primary productivity, aboveground biomass, and leaf area index varied substantially with both parameter value and model structure (Figure 2).
 For every model structural configuration, there were multiple ensemble members that experienced total ecosystem collapse before the end of the simulation.
 However, model runs with finite canopy radius and two-stream radiative transfer had the highest failure rate, with most ensemble members collapsing almost immediately and the remaining few members showing relatively low productivity that declined to nearly zero.
 The remaining model configurations all followed a similar trend of rapid growth in the first simulation decade followed by gradual decline through the rest of the simulation (with individual ensemble members sometimes undergoing sudden collapse in specific years).
@@ -316,10 +328,9 @@ On the other hand, ensemble predictions of leaf area index were consistently low
 In fact, most ensemble members across all configurations failed to reach the observed leaf area index even at their peak.
 A subset of specific parameter combinations from model configurations that included finite canopy radius and multiple-scatter radiative transfer accurately reproduced the mean observed leaf area index.
 
-Take-away: Parameter uncertainty is as large as, or even larger, than structural uncertainty.
-
 ```{r bigfacet-plot, fig.cap = bigfacet_cap, fig.dim = c(12, 8)}
 bigfacet_cap <- paste(
+  htmlfig(),
   "ED2 PFT-level predictions of leaf area index (LAI) by model configuration and parameterization."
 )
 readd(lai_pft_plot)
@@ -327,7 +338,9 @@ readd(lai_pft_plot)
 
 `r mdcap(bigfacet_cap)`
 
-Take-away: Different parameter combinations produce not just quantitatively different bulk ecosystem properties (e.g. NPP, total LAI), but also qualitatively different successional/ecological outcomes.
+Different parameter combinations led to model outputs that had not only different bulk ecosystem properties but also qualitatively different plant communities (Figure 3).
+Most model configurations could produce either a forest that was persistently and completely dominated by early hardwood or pine, or a forest with some coexistence of multiple PFTs.
+The exceptions, again, were model configurations combining finite canopy radius and the two-stream radiative transfer; in these configurations, the only outcomes were immediate ecosystem collapse of all PFTs or survival and mono-dominance of pine.
 
 ## Uncertainty analysis
 
