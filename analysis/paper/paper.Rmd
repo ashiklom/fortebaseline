@@ -292,13 +292,29 @@ summary_ts_cap <- paste(
   "gross (GPP) and net (NPP) primary productivity,",
   "total leaf area index (LAI), and aboveground biomass (AGB)",
   "by model configuration.",
-  "Red lines are mean (dashed) and min/max (dotted) values",
+  "Individual ensemble members are shown as gray lines.",
+  "The solid line is a LOESS regression (`ggplot2::stat_smooth`)."
+  "Shading represents the middle 80% (10th to 90th percentile) of predictions.",
+  "Black dot with error bars is the mean and min/max value",
   "from Hardiman et al. (2013)."
 )
 readd(summary_ts_plot)
 ```
 
 `r mdcap(summary_ts_cap)`
+
+Model projections of gross and net primary productivity, aboveground biomass, and leaf area index varied substantially with both parameter value and model structure.
+For every model structural configuration, there were multiple ensemble members that experienced total ecosystem collapse before the end of the simulation.
+However, model runs with finite canopy radius and two-stream radiative transfer had the highest failure rate, with most ensemble members collapsing almost immediately and the remaining few members showing relatively low productivity that declined to nearly zero.
+The remaining model configurations all followed a similar trend of rapid growth in the first simulation decade followed by gradual decline through the rest of the simulation (with individual ensemble members sometimes undergoing sudden collapse in specific years).
+The ensemble means of these configurations had very similar ecosystem states at peak productivity and at the end of the simulation, as well as the pace of initial rapid growth.
+That being said, ensemble means from model configurations that included finite canopy radius and multiple-scatter radiative transfer sustained peak aboveground biomass and leaf area indices for longer than other configurations, though this was not true of gross or mean primary productivity.
+
+For most model configurations, the ensemble distribution of net primary productivity at the end of the run overlapped observations by Hardiman et al. (2013), with an ensemble mean that was slightly lower.
+(The exceptions were model configurations that included the combination of finite canopy radius and two-stream radiative transfer, which consistently underestimated productivity).
+On the other hand, ensemble predictions of leaf area index were consistently lower than observations, with only a subset of individual ensemble members across all configurations even overlapping the lower bounds of the observations.
+In fact, most ensemble members across all configurations failed to reach the observed leaf area index even at their peak.
+A subset of specific parameter combinations from model configurations that included finite canopy radius and multiple-scatter radiative transfer accurately reproduced the mean observed leaf area index.
 
 Take-away: Parameter uncertainty is as large as, or even larger, than structural uncertainty.
 
