@@ -297,7 +297,7 @@ The entire model execution workflow was conducted using the Predictive Ecosystem
 
 ## Summary
 
-```{r summary-ts-plot, fig.cap = summary_ts_cap, fig.dim = c(10, 7)}
+```{r summary-ts-plot, fig.cap = summary_ts_cap, fig.dim = c(10, 10)}
 summary_ts_cap <- paste(
   htmlfig(),
   "ED2 plot-level ensemble predictions of",

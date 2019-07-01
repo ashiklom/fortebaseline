@@ -102,15 +102,25 @@ plan <- drake_plan(
       lai = sum(lai_co)
     ) %>%
     ungroup(),
+  # Calculate diversity indices based on LAI
+  diversity = fst(file_in(!!cohort_file)) %>%
+    .[, c("workflow_id", "run_id", "datetime", "pft", "lai_co")] %>%
+    group_by(workflow_id, run_id, year = year(datetime), pft) %>%
+    summarize(lai_co = quantile(lai_co, 0.9)) %>%
+    mutate(lai_p = lai_co / sum(lai_co)) %>%
+    filter(lai_p > 0) %>%
+    summarize(shannon = -sum(lai_p * log(lai_p))),
   jja_means = plot_means %>%
     filter(month(datetime) %in% 6:8) %>%
     group_by(workflow_id, run_id, year = year(datetime)) %>%
     summarize_at(vars(-datetime), mean) %>%
     ungroup() %>%
+    left_join(diversity, by = c("workflow_id", "run_id", "year")) %>%
+    mutate(shannon = if_else(is.na(shannon), 0, shannon)) %>%
     inner_join(current_workflows, by = "workflow_id"),
   jja_long = jja_means %>%
-    gather(variable, value, agb:lai) %>%
-    mutate(variable = factor(variable, c("gpp", "npp", "agb", "lai"))),
+    gather(variable, value, agb:shannon) %>%
+    mutate(variable = factor(variable, c("gpp", "npp", "agb", "lai", "shannon"))),
   jja_summary = jja_long %>%
     group_by(model_split, color, variable, year) %>%
     summarize(lo = quantile(value, 0.1),
@@ -120,7 +130,8 @@ plan <- drake_plan(
       "gpp" = "GPP ~ (kgC ~ year^{-1})",
       "npp" = "NPP ~ (kgC ~ year^{-1})",
       "agb" = "AGB ~ (kgC)",
-      "lai" = "LAI"
+      "lai" = "LAI",
+      "shannon" = "Shannon ~ diversity"
     ), default = label_parsed),
     .default = label_value
   ),
@@ -128,7 +139,7 @@ plan <- drake_plan(
     ~variable, ~low, ~mean, ~hi,
     "lai", 1.8, 4.14, 6.56,
     "npp", 1.68, 3.11, 7.26
-  ) %>% mutate(variable = factor(variable, c("gpp", "npp", "lai", "agb")),
+  ) %>% mutate(variable = factor(variable, c("gpp", "npp", "lai", "agb", "shannon")),
                year = max(jja_summary$year)),
   summary_ts_plot = ggplot(jja_long) +
     aes(x = year) +

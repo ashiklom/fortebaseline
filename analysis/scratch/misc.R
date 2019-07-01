@@ -1013,3 +1013,37 @@ known_vars <- tribble(
   ~varname, ~ed_name, ~dimensions,
   "radiation_profile", "FMEAN_RAD_PROFILE_CO", list("radiation", "cohorts")
 )
+
+#########################################
+shannon_index <- function(lai, pft) {
+  total_lai <- sum(lai)
+  p_i <- tapply(lai, pft, function(x) x / total_lai)
+  -sum(p_i * log(p_i), na.rm = TRUE)
+}
+
+simpson_index <- function(lai, pft) {
+  total_lai <- sum(lai)
+  p_i <- tapply(lai, pft, function(x) x / total_lai)
+  sum(p_i ^ 2, na.rm = TRUE)
+}
+
+diversity <- lai_q90 %>%
+  group_by(workflow_id, run_id, year) %>%
+  mutate(total_lai = sum(lai),
+         p_i = lai / total_lai) %>%
+  summarize(
+    shannon = -sum(p_i * log(p_i)),
+    simpson = sum(p_i ^ 2),
+    inv_simpson = 1 / simpson
+  ) %>%
+  ungroup()
+
+jja_means %>%
+  filter(is.na(shannon))
+
+diversity %>%
+  gather(variable, value, shannon, simpson, inv_simpson) %>%
+  ggplot() +
+  aes(x = year, y = value) +
+  geom_line(aes(group = run_id)) +
+  facet_grid(vars(variable), vars(workflow_id))
