@@ -300,13 +300,13 @@ The entire model execution workflow was conducted using the Predictive Ecosystem
 ```{r summary-ts-plot, fig.cap = summary_ts_cap, fig.dim = c(10, 10)}
 summary_ts_cap <- paste(
   htmlfig(),
-  "ED2 plot-level ensemble predictions of",
+  "ED2 plot-level predictions of",
   "gross (GPP) and net (NPP) primary productivity,",
-  "total leaf area index (LAI), and aboveground biomass (AGB)",
+  "aboveground biomass (AGB),",
+  "total leaf area index (LAI),",
+  "and Shannon diversity index (of plant functional types)",
   "by model configuration.",
-  "Individual ensemble members are shown as gray lines.",
-  "The solid line is a LOESS regression (`ggplot2::stat_smooth`).",
-  "Shading represents the middle 80% (10th to 90th percentile) of predictions.",
+  "The solid line is the ensemble mean.",
   "Black dot with error bars is the mean and min/max value",
   "from Hardiman et al. (2013)."
 )

@@ -123,7 +123,8 @@ plan <- drake_plan(
     mutate(variable = factor(variable, c("gpp", "npp", "agb", "lai", "shannon"))),
   jja_summary = jja_long %>%
     group_by(model_split, color, variable, year) %>%
-    summarize(lo = quantile(value, 0.1),
+    summarize(avg = mean(value),
+              lo = quantile(value, 0.1),
               hi = quantile(value, 0.9)),
   my_labeller = labeller(
     variable = as_labeller(c(
@@ -143,13 +144,11 @@ plan <- drake_plan(
                year = max(jja_summary$year)),
   summary_ts_plot = ggplot(jja_long) +
     aes(x = year) +
-    geom_line(aes(y = value, group = run_id), color = "grey50", alpha = 0.5) +
-    geom_ribbon(aes(ymin = lo, ymax = hi, fill = color),
-                data = jja_summary, alpha = 0.7) +
-    geom_smooth(aes(y = value), color = "black", size = 1) +
+    geom_line(aes(y = value, group = run_id, color = color), alpha = 0.5) +
+    geom_line(aes(y = avg), color = "black", size = 1, data = jja_summary) +
     geom_pointrange(aes(y = mean, ymin = low, ymax = hi), color = "black",
                     data = hardiman) +
-    scale_fill_identity() +
+    scale_color_identity() +
     facet_grid(vars(variable), vars(model_split), scales = "free_y",
                switch = "y", labeller = my_labeller) +
     theme_cowplot() +
