@@ -355,6 +355,10 @@ readd(within_across_plot)
 
 `r mdcap(within_vs_across_cap)`
 
+The importance of structural uncertainty relative to parameter uncertainty depended on the state variable in question.
+Uncertainty in gross and net primary productivity...
+
+
 Take-away: Overall, structural uncertainty (variance in ensemble means across structures) is comparable or lower than parameter uncertainty (uncertainty within ensembles for a given structure).
 Parameter uncertainty varies significantly across model structures.
 Enabling trait plasticity increases variance in predictions of AGB.
