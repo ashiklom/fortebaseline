@@ -5,7 +5,6 @@ library(lubridate,
         exclude = "here")
 library(purrr, include.only = c("map_dfc", "exec"))
 library(here)
-library(ssh)
 
 obstime_seq <- c(
   # For the first month, every 3 hours
@@ -33,11 +32,12 @@ write.table(obstime_db, obstime_db_file,
             sep = "\t", row.names = FALSE, quote = FALSE)
 
 # Upload file to pecan
-session <- ssh_connect("shik544@172.18.65.128")
-target_file <- path("/public", "shared-docker-volumes",
-                    "pecan_data", "dbfiles", "forte_obstime.time")
-upload <- scp_upload(session, obstime_db_file, "~/forte_obstime.time")
-cmd <- sprintf("echo \"%s\" | sudo -s -S mv -f %s %s",
-               mypassword, upload, target_file)
-ssh_exec_wait(session, cmd)
-ssh_disconnect(session)
+## library(ssh)
+## session <- ssh_connect("shik544@172.18.65.128")
+## target_file <- path("/public", "shared-docker-volumes",
+##                     "pecan_data", "dbfiles", "forte_obstime.time")
+## upload <- scp_upload(session, obstime_db_file, "~/forte_obstime.time")
+## cmd <- sprintf("echo \"%s\" | sudo -s -S mv -f %s %s",
+##                mypassword, upload, target_file)
+## ssh_exec_wait(session, cmd)
+## ssh_disconnect(session)
