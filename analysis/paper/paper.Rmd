@@ -315,7 +315,17 @@ readd(summary_ts_plot)
 
 `r mdcap(summary_ts_cap)`
 
-Model projections of gross and net primary productivity, aboveground biomass, and leaf area index varied substantially with both parameter value and model structure (Figure 2).
+Model projections of gross and net primary productivity, aboveground biomass, leaf area index, and functional diversity varied with both parameter value and model structure (Figure 2).
+The ensemble means of all model configurations followed a similar trajectory of rapid growth in the first 15-20 years followed by a gradual decline throughout the rest of the simulation.
+However, the average rate of decline varied by model configuration, particularly the crown model:
+Compared to models with a "closed" canopy (i.e. complete shading; no horizontal competition), models with a "finite" canopy predicted slightly faster decline in net primary productivity.
+This decline was most severe in configurations that combined the finite canopy and two-stream radiative transfer; in these configurations, a disproportionately large number of ensembles experienced complete ecosystem collapse over the course of the simulation.
+
+In general, model configurations with the finite canopy radius model and two-stream radiative transfer were the least productive and diverse.
+
+On average, 
+
+
 For every model structural configuration, there were multiple ensemble members that experienced total ecosystem collapse before the end of the simulation.
 However, model runs with finite canopy radius and two-stream radiative transfer had the highest failure rate, with most ensemble members collapsing almost immediately and the remaining few members showing relatively low productivity that declined to nearly zero.
 The remaining model configurations all followed a similar trend of rapid growth in the first simulation decade followed by gradual decline through the rest of the simulation (with individual ensemble members sometimes undergoing sudden collapse in specific years).
