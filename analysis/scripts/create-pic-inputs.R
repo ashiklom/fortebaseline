@@ -134,6 +134,8 @@ param_draws <- params %>%
   ungroup() %>%
   select(param_id, everything())
 
+write_csv(param_draws, "analysis/data/retrieved/input-parameters.csv")
+
 param_nest <- param_draws %>%
   nest(-param_id)
 

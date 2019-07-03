@@ -8,11 +8,10 @@
 #' @export
 create_run_groups <- function(dat, ..., n = 4) {
   wide <- dat %>%
-    dplyr::select(year, pft, run_id, lai) %>%
-    tidyr::spread(run_id, lai, fill = 0) %>%
+    dplyr::select(year, pft, case, lai) %>%
+    tidyr::spread(case, lai, fill = 0) %>%
     dplyr::select(-year, -pft)
   mat <- t(as.matrix(wide))
   km <- kmeans(mat, n)
-  tibble::enframe(km$cluster, "run_id", "cluster") %>%
-    dplyr::mutate(run_id = as.numeric(run_id))
+  tibble::enframe(km$cluster, "case", "cluster")
 }

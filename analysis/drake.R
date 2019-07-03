@@ -10,6 +10,11 @@ if (getRversion() >= "3.6") {
                 mask.ok = c("as.difftime", "date"),
                 exclude = c("intersect", "setdiff", "union", "here"))
   conflictRules("ggplot2", exclude = "ggsave")
+  conflictRules("data.table", exclude = c("between", "first", "last",
+                                          "transpose", "hour", "isoweek",
+                                          "mday", "minute", "month",
+                                          "quarter", "second", "wday", "week",
+                                          "yday", "year"))
 } else {
   warning("Package conflict resolution requires R >= 3.6. ",
           "This script may not work as expected.",
@@ -19,6 +24,7 @@ if (getRversion() >= "3.6") {
 suppressPackageStartupMessages({
   library(drake)
   # Data processing
+  library(data.table)
   library(dplyr)
   library(tidyr)
   library(forcats)
@@ -46,11 +52,11 @@ analysis_dir <- dir_create(here("analysis"))
 data_dir <- dir_create(path(analysis_dir, "data"))
 download_dir <- dir_create(path(data_dir, "retrieved"))
 
-cohort_file <- path(download_dir, "cohort_output.fst")
-cohort_osf <- "2af5g"
+cohort_file <- path(download_dir, "all-cohort-output.fst")
+## cohort_osf <- "2af5g"
 
-ensemble_params_file <- path(download_dir, "ensemble-params.csv")
-params_osf <- "8e45j"
+ensemble_params_file <- path(download_dir, "input-parameters.csv")
+## params_osf <- "8e45j"
 
 meta_analysis_file <- path(download_dir, "meta-analysis.rds")
 ma_osf <- "pcrav"
@@ -76,57 +82,75 @@ plan <- drake_plan(
   #########################################
   # Summary time series
   #########################################
-  cohort_file_dl = target(
-    download.file(file.path("https://osf.io/download/", cohort_osf),
-                  file_out(!!cohort_file)),
-    trigger = trigger(change = get_timestamp(cohort_osf))
-  ),
-  variable_cols = c("workflow_id", "run_id", "datetime", "pft", "nplant",
+  ## cohort_file_dl = target(
+  ##   download.file(file.path("https://osf.io/download/", cohort_osf),
+  ##                 file_out(!!cohort_file)),
+  ##   trigger = trigger(change = get_timestamp(cohort_osf))
+  ## ),
+  variable_cols = c("case", "datetime", "pft", "nplant",
                     "bleaf", "bsapwooda", "bstorage",
                     "fmean_gpp_co", "fmean_npp_co", "lai_co"),
-  use_workflows = fst(file_in(!!cohort_file))[, c("workflow_id", "run_id")] %>%
-    unique() %>%
-    count(workflow_id) %>%
-    filter(n >= 4) %>%
-    pull(workflow_id),
-  plot_means = fst(file_in(!!cohort_file)) %>%
-    .[, variable_cols] %>%
-    as_tibble() %>%
-    filter(workflow_id %in% use_workflows) %>%
-    semi_join(current_workflows, by = "workflow_id") %>%
-    group_by(workflow_id, run_id, datetime) %>%
-    summarize(
-      agb = sum((bleaf + bsapwooda + bstorage) * nplant),
-      gpp = sum(fmean_gpp_co * nplant),
-      npp = sum(fmean_npp_co * nplant),
-      lai = sum(lai_co)
+  cases = fst(!!cohort_file)[, "case", drop = FALSE] %>%
+    distinct() %>%
+    mutate(
+      param_id = as.numeric(substring(case, 1, 3)),
+      model_id = substring(case, 4, 6),
+      crown = fct_recode(substring(model_id, 1, 1), "closed" = "C", "finite" = "F") %>%
+        fct_relevel("closed", "finite"),
+      rtm = fct_recode(substring(model_id, 2, 2), "multi-scatter" = "M", "two-stream" = "T") %>%
+        fct_relevel("two-stream", "multi-scatter"),
+      traits = fct_recode(substring(model_id, 3, 3), "static" = "S", "plastic" = "P") %>%
+        fct_relevel("static", "plastic"),
+      model = interaction(crown, rtm, traits, sep = " ")
     ) %>%
-    ungroup(),
+    as_tibble(),
+  models = distinct(cases, model_id, model, crown, rtm, traits) %>%
+    arrange(model) %>%
+    mutate(color = RColorBrewer::brewer.pal(n(), "Paired")),
+  plot_means = setDT(fst(!!cohort_file)[, variable_cols])[j = .(
+    agb = sum((bleaf + bsapwooda + bstorage) * nplant),
+    gpp = sum(fmean_gpp_co * nplant),
+    npp = sum(fmean_npp_co * nplant),
+    lai = sum(lai_co)
+  ), by = c("case", "datetime")] %>%
+    as_tibble() %>%
+    mutate(model_id = substr(case, 4, 6)),
   # Calculate diversity indices based on LAI
-  diversity = fst(file_in(!!cohort_file)) %>%
-    .[, c("workflow_id", "run_id", "datetime", "pft", "lai_co")] %>%
-    group_by(workflow_id, run_id, year = year(datetime), pft) %>%
-    summarize(lai_co = quantile(lai_co, 0.9)) %>%
-    mutate(lai_p = lai_co / sum(lai_co)) %>%
-    filter(lai_p > 0) %>%
-    summarize(shannon = -sum(lai_p * log(lai_p))),
+  diversity = setDT(fst(!!cohort_file)[, c("case", "datetime", "pft", "lai_co")])[
+    j = year := year(datetime)
+  ][
+    j = .(lai_co = quantile(lai_co, 0.9)),
+    by = c("case", "year", "pft")
+  ][
+    j = lai_p := lai_co / sum(lai_co),
+    by = c("case", "year")
+  ][
+    lai_p > 0
+  ][
+    j = .(shannon = -sum(lai_p * log(lai_p))),
+    by = c("case", "year")
+  ] %>%
+    as_tibble() %>%
+    mutate(model_id = substr(case, 4, 6)),
   jja_means = plot_means %>%
     filter(month(datetime) %in% 6:8) %>%
-    group_by(workflow_id, run_id, year = year(datetime)) %>%
+    group_by(case, model_id, year = year(datetime)) %>%
     summarize_at(vars(-datetime), mean) %>%
     ungroup() %>%
-    left_join(diversity, by = c("workflow_id", "run_id", "year")) %>%
+    left_join(diversity, by = c("case", "model_id", "year")) %>%
     mutate(shannon = if_else(is.na(shannon), 0, shannon)) %>%
-    inner_join(current_workflows, by = "workflow_id"),
+    inner_join(models, by = "model_id"),
   jja_long = jja_means %>%
     gather(variable, value, agb:shannon) %>%
-    mutate(variable = factor(variable, c("gpp", "npp", "agb", "lai", "shannon"))),
+    mutate(variable = factor(variable, c("gpp", "npp", "agb", "lai", "shannon")),
+           param_id = as.numeric(substr(case, 1, 3))),
   jja_summary = jja_long %>%
-    group_by(model_split, color, variable, year) %>%
+    group_by(model, color, variable, year) %>%
     summarize(avg = mean(value),
               lo = quantile(value, 0.1),
               hi = quantile(value, 0.9)),
   my_labeller = labeller(
+    model = function(x) gsub(" ", "\n", x),
     variable = as_labeller(c(
       "gpp" = "GPP ~ (kgC ~ year^{-1})",
       "npp" = "NPP ~ (kgC ~ year^{-1})",
@@ -144,12 +168,12 @@ plan <- drake_plan(
                year = max(jja_summary$year)),
   summary_ts_plot = ggplot(jja_long) +
     aes(x = year) +
-    geom_line(aes(y = value, group = run_id, color = color), alpha = 0.5) +
+    geom_line(aes(y = value, group = param_id, color = color), alpha = 0.5) +
     geom_line(aes(y = avg), color = "black", size = 1, data = jja_summary) +
     geom_pointrange(aes(y = mean, ymin = low, ymax = hi), color = "black",
                     data = hardiman) +
     scale_color_identity() +
-    facet_grid(vars(variable), vars(model_split), scales = "free_y",
+    facet_grid(vars(variable), vars(model), scales = "free_y",
                switch = "y", labeller = my_labeller) +
     theme_cowplot() +
     theme(axis.title = element_blank(),
@@ -196,30 +220,31 @@ plan <- drake_plan(
   # LAI by PFT plot
   #########################################
   cohort_lai = fst(file_in(!!cohort_file)) %>%
-    .[, c("workflow_id", "run_id", "datetime", "pft", "lai_co")] %>%
+    .[, c("case", "datetime", "pft", "lai_co")] %>%
+    as_tibble(),
+  lai_q90 = setDT(fst(file_in(!!cohort_file))[, j = c(
+    "case", "datetime", "pft", "lai_co")])[
+      j = model_id := substr(case, 4, 6)
+    ][j = .(
+      lai = quantile(lai_co, 0.9)
+    ), by = .(case, model_id, year = year(datetime), pft)] %>%
     as_tibble() %>%
-    filter(workflow_id %in% use_workflows) %>%
-    semi_join(current_workflows, by = "workflow_id"),
-  lai_q90 = cohort_lai %>%
-    group_by(workflow_id, run_id, year = year(datetime), pft) %>%
-    summarize(lai = quantile(lai_co, 0.9)) %>%
-    ungroup() %>%
     rename(num = pft) %>%
     left_join(pfts(), by = "num"),
   run_groups = lai_q90 %>%
-    select(workflow_id, run_id, year, pft, lai) %>%
-    group_by(workflow_id) %>%
+    select(case, model_id, year, pft, lai) %>%
+    group_by(model_id) %>%
     group_modify(create_run_groups),
   use_runs = run_groups %>%
-    group_by(workflow_id, cluster) %>%
+    group_by(model_id, cluster) %>%
     slice(1),
   lai_pft_plot = lai_q90 %>%
-    inner_join(use_runs, by = c("workflow_id", "run_id")) %>%
-    inner_join(current_workflows, by = "workflow_id") %>%
+    inner_join(models, by = "model_id") %>%
+    inner_join(use_runs, by = c("model_id", "case")) %>%
     ggplot() +
     aes(x = year, y = lai, color = pft) +
     geom_line() +
-    facet_grid(vars(cluster), vars(model_split)) +
+    facet_grid(vars(cluster), vars(model), labeller = my_labeller) +
     scale_color_manual(values = pfts("color")) +
     labs(y = "Leaf area index", color = "PFT") +
     theme_cowplot() +
@@ -233,8 +258,9 @@ plan <- drake_plan(
   #########################################
   time_averages = jja_means %>%
     filter(year > 1910) %>%
-    group_by(model, color, run_id) %>%
-    summarize_at(vars(gpp, npp, agb, lai), mean),
+    group_by(model, color, case) %>%
+    summarize_at(vars(gpp, npp, agb, lai), mean) %>%
+    mutate(param_id = as.numeric(substr(case, 1, 3))),
   parameter_uncertainty = time_averages %>%
     group_by(model, color) %>%
     summarize_at(vars(gpp, npp, agb, lai), var) %>%
@@ -274,31 +300,33 @@ plan <- drake_plan(
   #########################################
   # Sensitivity analysis
   #########################################
-  run_params_dl = target( 
-    download.file(file.path("https://osf.io/download/", params_osf),
-                  file_out(!!ensemble_params_file)),
-    trigger = trigger(change = get_timestamp(params_osf))
-  ),
+  ## run_params_dl = target( 
+  ##   download.file(file.path("https://osf.io/download/", params_osf),
+  ##                 file_out(!!ensemble_params_file)),
+  ##   trigger = trigger(change = get_timestamp(params_osf))
+  ## ),
   run_params = file_in(!!ensemble_params_file) %>%
-    read_csv(col_types = cols(.default = col_double(),
-                              pft = col_factor(pfts("pft")))),
+    read_csv(col_types = cols(name = col_character(),
+                              .default = col_double())) %>%
+    rename(bety_name = name) %>%
+    left_join(pfts() %>%
+                select(bety_name, pft, shortname),
+              by = "bety_name"),
   sensitivity_inputs = run_params %>%
-    inner_join(time_averages, by = "run_id") %>%
+    inner_join(time_averages, by = "param_id") %>%
     gather(yvar, yvalue, gpp, npp, agb, lai) %>%
-    select(-workflow_id) %>%
+    select(-color, -case, -bety_name, -pft) %>%
     gather(xvar, xvalue,
-           -run_id, -pft,
-           -model, -color, -yvar, -yvalue),
+           -param_id, -shortname,
+           -model, -yvar, -yvalue),
   sensitivity_results = sensitivity_inputs %>%
-    group_by_at(vars(model, color, pft, xvar, yvar)) %>%
-    ## filter(n_distinct(run_id) > 10) %>%
+    group_by(model, shortname, xvar, yvar) %>%
     summarize(raw_sa = list(possibly(sensitivity_analysis, NULL)(yvalue, xvalue))) %>%
     filter(map_lgl(raw_sa, negate(is.null))) %>%
     unnest(raw_sa) %>%
     ungroup(),
   sensitivity_plot_data = sensitivity_results %>%
-    left_join(select(pfts(), pft, shortname), by = "pft") %>%
-    mutate(elasticity = if_else(abs(elasticity) > 150, NA_real_, elasticity)) %>%
+    ## mutate(elasticity = if_else(abs(elasticity) > 150, NA_real_, elasticity)) %>%
     group_by(yvar, xvar) %>%
     mutate(fpvar = pvar / sum(pvar)) %>%
     group_by(xvar) %>%
@@ -311,7 +339,7 @@ plan <- drake_plan(
     ),
   sensitivity_plot_piece = target(
     ggplot(sensitivity_plot_data) +
-      aes(x = pft, y = trait_alpha, fill = YYY) +
+      aes(x = shortname, y = trait_alpha, fill = YYY) +
       geom_tile() +
       facet_grid(vars(yvar), vars(model)) +
       SCALE +
@@ -341,10 +369,9 @@ dconf <- drake_config(
   jobs = availableCores()
 )
 
-if (interactive()) {
-  callr::rscript("analysis/drake.R")
-} else {
-  # Probably called from a script 
-  message("Called from script. Running `drake::make`.")
+if ("make" %in% cmdargs) {
+  message("Running `drake::make`")
   make(config = dconf)
+} else if (!interactive()) {
+  dconf
 }
