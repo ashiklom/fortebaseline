@@ -338,8 +338,8 @@ readd(lai_pft_plot)
 `r mdcap(bigfacet_cap)`
 
 Different parameter combinations led to model outputs that had not only different bulk ecosystem properties but also qualitatively different plant communities (Figure 3).
-Most model configurations could produce either a forest that was persistently and completely dominated by early hardwood or pine, or a forest with some coexistence of multiple PFTs.
-The exceptions, again, were model configurations combining finite canopy radius and the two-stream radiative transfer; in these configurations, the only outcomes were immediate ecosystem collapse of all PFTs or survival and mono-dominance of pine.
+The most common outcome was immediate and persistent dominance by early hardwood trees, though in some cases, early hardwoods co-existed with late hardwood or pine.
+<!-- TODO Probably need to do a different analysis here. Maybe look at all the outputs, identify several different "ecological scenarios", and then analyze the fraction of runs that experienced those probabilities? -->
 
 ## Uncertainty analysis
 
