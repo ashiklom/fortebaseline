@@ -325,8 +325,10 @@ plan <- drake_plan(
     unnest(raw_sa) %>%
     ungroup(),
   sensitivity_plot_data = sensitivity_results %>%
-    ## mutate(elasticity = if_else(abs(elasticity) > 150, NA_real_, elasticity)) %>%
-    group_by(yvar, xvar) %>%
+    mutate(elasticity = if_else(abs(elasticity) > 75,
+                                75 * sign(elasticity),
+                                elasticity)) %>%
+    group_by(model, yvar) %>%
     mutate(fpvar = pvar / sum(pvar)) %>%
     group_by(xvar) %>%
     mutate(total_pvar = sum(pvar)) %>%
@@ -349,15 +351,30 @@ plan <- drake_plan(
       theme_cowplot() +
       theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
             axis.text.y = element_text(size = rel(0.6)),
-            legend.position = "bottom"),
+            legend.position = "bottom",
+            legend.key.width = unit(3, "lines")),
     transform = map(YYY = c(elasticity, fpvar),
-                    SCALE = c(scale_fill_gradient2(),
-                              scale_fill_continuous(low = "white", high = "blue")))
+                    SCALE = c(scale_fill_gradientn(colors = c("darkred", "darkorange3",
+                                                              "white",
+                                                              "deepskyblue3", "darkblue"),
+                                                   values = scales::rescale(c(
+                                                     -75, -25,
+                                                     0,
+                                                     25, 75))),
+                              scale_fill_continuous(low = "white", high = "darkblue")))
   ),
   sensitivity_plot = target(
     cowplot::plot_grid(sensitivity_plot_piece),
     transform = combine(sensitivity_plot_piece)
-  )
+  ),
+  top_params_fpvar = sensitivity_plot_data %>%
+    group_by(yvar, model) %>%
+    top_n(5, fpvar) %>%
+    arrange(desc(fpvar), .by_group = TRUE) %>%
+    ungroup() %>%
+    select(model, shortname, yvar, xvar, fpvar),
+  top_params_fpvar_count = top_params_fpvar %>%
+    count(yvar, shortname, xvar, sort = TRUE)
 )
 
 if ("--poster" %in% cmdargs) source("analysis/drake_poster.R")

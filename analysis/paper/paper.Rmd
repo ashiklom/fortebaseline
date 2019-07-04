@@ -363,19 +363,32 @@ Finally, using a multiple-scatter (secondary colors) rather than a two-stream (p
 
 ```{r uncertainty-analysis, fig.cap = uncertainty_analysis_cap, fig.dim = c(15, 15)}
 uncertainty_analysis_cap <- paste(
-  "PEcAn-liked parameter sensitivity and uncertainty analysis, by model type.",
+  htmlfig(),
+  "PEcAn-like parameter sensitivity and uncertainty analysis, by model type.",
   "Elasticity (a) is the normalized sensitivity of the model to a fixed change in the parameter.",
   "pvar (b) is the partial variance, which describes the overall contribution of the parameter to model predictive uncertainty based on the combination of parameter uncertainty and model sensitivity.",
-  "Input parameter distributions are shown in Figure XXX."
+  "Input parameter distributions are shown in Figure 1."
 )
 readd(sensitivity_plot)
 ```
 
 `r mdcap(uncertainty_analysis_cap)`
 
-Take-away: Model parameter uncertainty is sensitive to model configuration.
-For example, turning on the finite canopy radius with the two-stream canopy RTM increases sensitivity across many parameters.
+Model sensitivity to specific parameters ("elasticity") varied depending on the model configuration and the target output variable (Figure 5).
+For predicting C fluxes, biomass, and leaf area, the three most important parameters in terms of model sensitivity were specific leaf area (SLA) for early and late hardwoods, leaf C:N ratio (`c2n_leaf`) for early and mid hardwoods, and V~cmax~ for mid and late hardwoods.
+Both the magnitude and direction of sensitivity to these parameters varied by model configuration.
+For example, in the default ED2 configuration (closed canopy, two-stream radiative transfer, static traits), net primary productivity increased with early hardwood specific leaf area, but when this configuration was altered so SLA and V~cmax~ could vary with light level, net primary productivity decreased with early hardwood specific leaf area.
+Similarly, the model became much more sensitive to early- and mid-hardwood leaf C:N ratio when switching from a closed canopy to a finite canopy configuration.
 
+The parameters that contributed most to overall model predictive uncertainty ("partial variance") differed the parameters to which the model was most sensitive (Figure 5), largely driven by the fact that many of the parameters with the highest sensitivity (e.g. SLA, V~cmax~) were also well constrained by data (Figure 1).
+Patterns in partial variance were largely idiosyncratic across model configurations;
+when we considered the top-5 most important parameters for a given output variable and model configuration,
+only five combinations were present in at least half of the model configurations:
+growth respiration, C balance mortality ratio (`mort2`), and stomatal slope (all for early hardwoods).
+
+<!-- TODO Probably need a different analysis here more along the lines of that last sentence. -->
+
+<!--
 ## Details about model structures
 
 ```{r rad_prof, fig.cap = rad_barplot_cap, fig.dim = c(5, 7)}
@@ -387,16 +400,17 @@ rad_barplot_cap <- paste(
 
 `r mdcap(rad_barplot_cap)`
 
-<!-- Compared to the default two-stream model, the multiple scatter model leads to slightly less beam (direct) radiation in the understory but slightly more diffuse radiation. -->
+Compared to the default two-stream model, the multiple scatter model leads to slightly less beam (direct) radiation in the understory but slightly more diffuse radiation.
 
 (TODO)
+-->
 
 
 # Discussion
 
-- Comparisons against other studies
-    - Parameter sensitivity
-        - [@pandit_2018_optimizing] -- Most important parameters for shrubs were SLA, Vcmax, stomatal slope, root:leaf ratio, and root turonver rate (slightly less important: leaf turnover rate, growth respiration, cuticular conductance; much less important: water conductance; basically irrelevant: storage turnover, leaf width)
+- Parameter uncertainty is the dominant driver of model predictive uncertainty.
+- ...but the nature of this parameter uncertainty depends on model configuration.
+
 - Ecological implications of structural uncertainty
     - Predictions about ecological succession are very sensitive to the understory light environment.
         - Need a good representation of canopy structure (finite canopy radius)
@@ -410,6 +424,10 @@ rad_barplot_cap <- paste(
     - Looking beyond aggregate variables (e.g. net primary productivity, total LAI) is essential to model evaluation and calibration. It's possible to generate a relatively?
     - (Expected) Subsurface parameters (e.g. leaf-root ratios) have high sensitivity, but are poorly constrained.
     - Trait covariance may alleviate some data limitation (Shiklomanov et al. 2018 [preprint])
+- Comparisons against other studies
+    - Parameter sensitivity
+        - [@pandit_2018_optimizing] -- Most important parameters for shrubs were SLA, Vcmax, stomatal slope, root:leaf ratio, and root turonver rate (slightly less important: leaf turnover rate, growth respiration, cuticular conductance; much less important: water conductance; basically irrelevant: storage turnover, leaf width)
+        - Compare against @dietze_2014_quantitative and @raczka_2018_what
 - Future directions: Predicting disturbance response
     - FoRTE project -- Forecasting a disturbance.
         - Compare ecological resilience/memory between model and reality
