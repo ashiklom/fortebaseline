@@ -316,27 +316,16 @@ readd(summary_ts_plot)
 `r mdcap(summary_ts_cap)`
 
 Model projections of gross and net primary productivity, aboveground biomass, leaf area index, and functional diversity varied with both parameter value and model structure (Figure 2).
-The ensemble means of all model configurations followed a similar trajectory of rapid growth in the first 15-20 years followed by a gradual decline throughout the rest of the simulation.
+The ensemble means of all model configurations followed a similar trajectory of rapid growth in the first 15-20 years followed by a gradual decline throughout the rest of the simulation (with individual ensemble members sometimes undergoing sudden collapse in specific years).
 However, the average rate of decline varied by model configuration, particularly the crown model:
-Compared to models with a "closed" canopy (i.e. complete shading; no horizontal competition), models with a "finite" canopy predicted slightly faster decline in net primary productivity.
-This decline was most severe in configurations that combined the finite canopy and two-stream radiative transfer; in these configurations, a disproportionately large number of ensembles experienced complete ecosystem collapse over the course of the simulation.
+Compared to models with a "closed" canopy (i.e. complete shading; no horizontal competition), models with a "finite" canopy predicted slightly faster decline in net primary productivity and functional diversity.
+This decline was most severe in configurations that combined the finite canopy and two-stream radiative transfer; in these configurations, a disproportionately large number of ensembles experienced complete ecosystem collapse over the course of the simulation, and the overwhelming fraction of ensemble members predicted near-zero Shannon diversity after 30 years.
+Besides this specific configuration, which consistently under-predicted observed net primary productivity at UMBS, the remaining model configurations had ensemble mean net primary productivity values that were very close to the mean observed value from Hardiman et al. (2013).
+Moreover, the ensemble spread of net primary productivity from these configurations was very similar to the uncertainty in the observations, though the distribution was relatively balanced for model predictions but skewed positive for the observations.
 
-In general, model configurations with the finite canopy radius model and two-stream radiative transfer were the least productive and diverse.
-
-On average, 
-
-
-For every model structural configuration, there were multiple ensemble members that experienced total ecosystem collapse before the end of the simulation.
-However, model runs with finite canopy radius and two-stream radiative transfer had the highest failure rate, with most ensemble members collapsing almost immediately and the remaining few members showing relatively low productivity that declined to nearly zero.
-The remaining model configurations all followed a similar trend of rapid growth in the first simulation decade followed by gradual decline through the rest of the simulation (with individual ensemble members sometimes undergoing sudden collapse in specific years).
-The ensemble means of these configurations had very similar ecosystem states at peak productivity and at the end of the simulation, as well as the pace of initial rapid growth.
-That being said, ensemble means from model configurations that included finite canopy radius and multiple-scatter radiative transfer sustained peak aboveground biomass and leaf area indices for longer than other configurations, though this was not true of gross or mean primary productivity.
-
-For most model configurations, the ensemble distribution of net primary productivity at the end of the run overlapped observations by Hardiman et al. (2013), with an ensemble mean that was slightly lower.
-(The exceptions were model configurations that included the combination of finite canopy radius and two-stream radiative transfer, which consistently underestimated productivity).
-On the other hand, ensemble predictions of leaf area index were consistently lower than observations, with only a subset of individual ensemble members across all configurations even overlapping the lower bounds of the observations.
-In fact, most ensemble members across all configurations failed to reach the observed leaf area index even at their peak.
-A subset of specific parameter combinations from model configurations that included finite canopy radius and multiple-scatter radiative transfer accurately reproduced the mean observed leaf area index.
+Patterns in leaf area index were somewhat distinct from patterns in productivity and diversity.
+While model configurations with finite canopy and two-stream radiative transfer again predicted the lowest leaf area index on average, model configurations with finite canopy and multiple-scatter predicted the _highest_ leaf area index on average.
+The latter configurations also had the largest number of ensemble members that fell within the observed distribution of leaf area index; meanwhile, every model configuration predicted an ensemble mean leaf area index at the end of the simulation that was significantly below the observation from Hardiman et al. (2013).
 
 ```{r bigfacet-plot, fig.cap = bigfacet_cap, fig.dim = c(12, 8)}
 bigfacet_cap <- paste(
