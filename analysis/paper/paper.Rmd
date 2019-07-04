@@ -345,6 +345,7 @@ The most common outcome was immediate and persistent dominance by early hardwood
 
 ```{r within-vs-across, fig.cap = within_vs_across_cap, fig.dim = c(9, 4)}
 within_vs_across_cap <- paste(
+  htmlfig(),
   "Comparison of parameteric uncertainty within ensembles (colored bars, colored by model type)",
   "and \"structural\" uncertainty (variance in ensemble means; black bar) by output variable.",
   "Output variables are expressed as growing season averages for all years after 1910."
@@ -354,15 +355,11 @@ readd(within_across_plot)
 
 `r mdcap(within_vs_across_cap)`
 
-The importance of structural uncertainty relative to parameter uncertainty depended on the state variable in question.
-Uncertainty in gross and net primary productivity...
-
-
-Take-away: Overall, structural uncertainty (variance in ensemble means across structures) is comparable or lower than parameter uncertainty (uncertainty within ensembles for a given structure).
-Parameter uncertainty varies significantly across model structures.
-Enabling trait plasticity increases variance in predictions of AGB.
-Enabling the finite canopy radius increases the variance in LAI predictions.
-GPP and NPP have the highest variance by far for the combination of finite canopy radius and two-stream radiative transfer.
+Across all variables, parameter uncertainty (across ensembles within each model configuration) was at least as large, and usually larger, than structural uncertainty (Figure 4).
+The relative importance of parameter uncertainty varied with both model configuration and the variable in question. 
+Allowing SLA and V~cmax~ to vary with light level (warm colors, as opposed to static traits -- cool colors) led to reduced predictive uncertainty for all four variables considered, with the largest uncertainty reduction for gross and net primary productivity.
+Meanwhile, facilitating horizontal competition by enabling the finite canopy radius (dark colors; compared to closed canopy -- light colors) substantially reduced uncertainty in aboveground biomass and slightly reduced uncertainty in gross and net primary productivity.
+Finally, using a multiple-scatter (secondary colors) rather than a two-stream (primary colors) radiative transfer scheme increased uncertainty in leaf area index and aboveground biomass, but did not have a consistent effect on uncertainty in predictions of productivity.
 
 ```{r uncertainty-analysis, fig.cap = uncertainty_analysis_cap, fig.dim = c(15, 15)}
 uncertainty_analysis_cap <- paste(
