@@ -140,9 +140,11 @@ plan <- drake_plan(
     left_join(diversity, by = c("case", "model_id", "year")) %>%
     mutate(shannon = if_else(is.na(shannon), 0, shannon)) %>%
     inner_join(models, by = "model_id"),
+  use_vars = c("gpp", "npp", "agb", "lai", "shannon"),
+  use_vars_cap = c("GPP", "NPP", "AGB", "LAI", "Shannon"),
   jja_long = jja_means %>%
     gather(variable, value, agb:shannon) %>%
-    mutate(variable = factor(variable, c("gpp", "npp", "agb", "lai", "shannon")),
+    mutate(variable = factor(variable, use_vars),
            param_id = as.numeric(substr(case, 1, 3))),
   jja_summary = jja_long %>%
     group_by(model, color, variable, year) %>%
@@ -164,7 +166,7 @@ plan <- drake_plan(
     ~variable, ~low, ~mean, ~hi,
     "lai", 1.8, 4.14, 6.56,
     "npp", 1.68, 3.11, 7.26
-  ) %>% mutate(variable = factor(variable, c("gpp", "npp", "lai", "agb", "shannon")),
+  ) %>% mutate(variable = factor(variable, use_vars),
                year = max(jja_summary$year)),
   summary_ts_plot = ggplot(jja_long) +
     aes(x = year) +
@@ -259,16 +261,16 @@ plan <- drake_plan(
   time_averages = jja_means %>%
     filter(year > 1910) %>%
     group_by(model, color, case) %>%
-    summarize_at(vars(gpp, npp, agb, lai), mean) %>%
+    summarize_at(use_vars, mean) %>%
     mutate(param_id = as.numeric(substr(case, 1, 3))),
   parameter_uncertainty = time_averages %>%
     group_by(model, color) %>%
-    summarize_at(vars(gpp, npp, agb, lai), var) %>%
+    summarize_at(use_vars, var) %>%
     ungroup() %>%
     arrange(model),
   structure_uncertainty = time_averages %>%
     group_by(model) %>%
-    summarize_at(vars(gpp, npp, agb, lai), mean) %>%
+    summarize_at(use_vars, mean) %>%
     ungroup() %>%
     summarize_at(vars(-model), var) %>%
     mutate(model = "Across-structure",
@@ -279,11 +281,8 @@ plan <- drake_plan(
     mutate(model = fct_inorder(model)),
   within_across_plot = both_uncertainty %>%
     gather(variable, variance, -model, -color) %>%
-    mutate(variable = factor(variable, c("gpp", "npp", "lai", "agb")) %>%
-             fct_recode("GPP" = "gpp",
-                        "NPP" = "npp",
-                        "LAI" = "lai",
-                        "AGB" = "agb")) %>%
+    mutate(variable = factor(variable, use_vars) %>%
+             lvls_revalue(use_vars_cap)) %>%
     ggplot() +
     aes(x = model, y = variance, fill = model) +
     geom_col() +
@@ -314,7 +313,7 @@ plan <- drake_plan(
               by = "bety_name"),
   sensitivity_inputs = run_params %>%
     inner_join(time_averages, by = "param_id") %>%
-    gather(yvar, yvalue, gpp, npp, agb, lai) %>%
+    gather(yvar, yvalue, one_of(use_vars)) %>%
     select(-color, -case, -bety_name, -pft) %>%
     gather(xvar, xvalue,
            -param_id, -shortname,
@@ -335,7 +334,10 @@ plan <- drake_plan(
     mutate(
       trait_alpha = factor(xvar) %>% fct_rev(),
       trait_pvar = fct_reorder(factor(xvar), total_pvar),
-      model = fct_relabel(model, gsub, pattern = " ", replacement = "\n")
+      model = fct_relabel(model, gsub, pattern = " ", replacement = "\n"),
+      shortname = factor(shortname, pfts("shortname")),
+      yvar = factor(yvar, use_vars) %>%
+        lvls_revalue(use_vars_cap)
     ),
   sensitivity_plot_piece = target(
     ggplot(sensitivity_plot_data) +
