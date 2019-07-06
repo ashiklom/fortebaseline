@@ -55,57 +55,56 @@ htmlfig <- function() {
 
 # Introduction
 
-**Temperate forests in the Upper Midwest are important.**
+**Temperate forests in the Upper Midwest are important and changing quickly.**
 {C sequestration}.
 {Other ecosystem services}.
 However, the fate of these forests is highly uncertain.
 The natural ecological succession of these forests has been significantly altered by the interactions of a significantly different and rapidly changing climate, and novel disturbance regimes under which some natural disturbances (e.g. fire) are suppressed while others (e.g. harvest; pests and pathogens) may be becoming more frequent. <!-- TODO refs -->
 {UMBS ecological background/natural history?} 
 **Therefore, predictions about the future of these forests based on past analogs may not be reliable.**
+BBL: This paragraph obviously needs significant fleshing out, but this should be straightforward; I think we can basically take (with a bit of reworking) material from Chris's 2016 _Ecosphere_ paper: http://dx.doi.org/10.1002/ecs2.1375
 
-**Instead, more reliable predictions can be obtained by using dynamic vegetation models that explicitly represent processes involved in forest growth and mortality.**
+**More reliable predictions can in theory be obtained by using dynamic vegetation models that explicitly represent processes involved in forest growth and mortality.**
 Vegetation models fall broadly along the following spectrum of complexity.
-On one side are relatively simple **"Big leaf" models**---such as PNET, SiBCASA, and Biome-BGC <!-- TODO refs; more examples? -->---in which the vegetation at a particular location consists essentially of a single large "plant" whose characteristics are the (weighted) average of all the vegetation at that site. <!-- TODO refs -->
-These models were designed originally to simulate the land surface boundary condition for atmospheric general circulation models, though similar models continue to be applied successfully to simulate biogeochemical processes in many ecosystem science contexts. <!-- TODO refs -->
+On one side are relatively simple **"Big leaf" models**---such as PNET, SiBCASA, and Biome-BGC <!-- TODO refs; more examples? BBL: no! -->---in which the vegetation at a particular location consists essentially of a single large "plant" whose characteristics are the (weighted) average of all the vegetation at that site. <!-- TODO refs -->
+These models were designed originally to simulate the land surface boundary condition for atmospheric general circulation models (BBL: I don't think is is true; earliest models like Forest-BGC were standalone), though similar models continue to be applied successfully to simulate biogeochemical processes in many ecosystem science contexts. <!-- TODO refs -->
 On the other end of the spectrum are **"individual-based" models** (a.k.a. "gap models"), which explicitly simulate multiple indivduals competing for resources at a single site [@shugart_2015_computer]. <!-- TODO other refs? -->
 Examples of such models are LANDIS <!-- TODO ref !--> and UVAFME. <!-- TODO ref --> <!-- TODO Other examples? -->
 Because these models can explicitly represent inter-specific differences in plant productivity, resource allocation, and stress tolerance (among others), as well as the competition that emerges out of these differences, they may be better able to represent changes in ecosystem-scale processes, especially in no-analog conditions [@purves_2008_predictive].
-Moreover, these models' **predictions of species composition and ecosystem structure are relevant outside of carbon cycle science**, particularly for forest management and wildlife conservation. <!-- TODO refs -->
-However, these **benefits of individual-based models come at the cost of much higher data and computational requirements**, which effectively restrict their application to individual, well-studied sites. <!-- TODO refs. Also, is this actually true? -->
-Therefore, a key objective of vegetation modeling research over the last several decades has been the development of approaches that capture the emergent biogeochemical and ecological outcomes of interactions between individual plants without the need for explicitly simulating each individual [@purves_2008_predictive].
+In the middle are models that capture the emergent biogeochemical and ecological outcomes of interactions between individual plants without the need for explicitly simulating each individual [@purves_2008_predictive], and have less-intensive data requirements generally.
 In this study, we focus on the Ecosystem Demography model [ED2.2; @moorcroft_2001_method; @medvigy_2011_predicting; @longo_2019_ed1], which constitutes an example of such an approach.
 
-**Vegetation model projections are inherently uncertain, and this uncertainty stems from several sources.**
-_Driver_ uncertainty refers to uncertainty in data about processes that are essential to the system in question but are not represented by the model (e.g. weather and climate for vegetation models).
-_Initial condition_ uncertainty arises from the fact that models have to start somewhere, and the exact conditions at the place and time simulations begin are uncertain.
+BBL: General citations on simple/complex model tradeoffs: [Hawkes (2001)](http://dx.doi.org/10.1016/S0304-3800(00)00267-2), Mladenoff (2004), ...
+Moreover, these models' **predictions of species composition and ecosystem structure are relevant outside of carbon cycle science**, particularly for forest management and wildlife conservation. <!-- BBL: maybe move this sentence to discussion? TODO refs -->
+
+**Regardless of vegetation model complexity, their projections are inherently uncertain, however.** 
+_Driver_ uncertainty refers to uncertainty in data about processes not represented by the model (e.g. weather and climate for vegetation models).
+_Initial condition_ uncertainty arises from the fact that models have to start somewhere, and the exact conditions at the place and time simulations begin are frequently unknown.
 _Process_ or _structural_ uncertainty arises because vegetation models necessarily only represent a subset of all processes involved in plant biology, and that the process that are included can usually be represented in multiple different ways (i.e. which processes are included, and how they are represented).
 Finally, _parameter_ uncertainty arises because of natural variability and imperfect calibration of the above process representations.
-<!-- TODO This whole paragraph is awkward -->
+A key but unknown question in ecosystem modeling is which of the last two categories--structural versus parametric uncertainty--is more important (Fisher et al. 2015, https://onlinelibrary.wiley.com/doi/full/10.1111/j.1523-1739.2003.00614.x, Ricciuto et al. 2008). (BBL: trying to better link this paragraph into previous and following ones.)
 
 **Several recent studies have looked at parameter uncertainty in ED2.**
-@dietze_2014_quantitative evaluated which ED2 parameters contributed the most to uncertainties in ED2 simulations of productivity across multiple biomes in North America at 1, 5, and 10 year time scales.
-They found that the parameters contributing the most to model uncertainty across all biomes were those related to growth respiration, mortality, stomatal conductance, and water uptake.
+@dietze_2014_quantitative found that the parameters contributing the most to ED2 model uncertainty across all biomes were those related to growth respiration, mortality, stomatal conductance, and water uptake.
 However, they also found that despite some common patterns, parameter uncertainty varied with biome.
 More recently, a similar analysis evaluated parameter uncertainty over 100 year time scale at the Willow Creek Ameriflux site, and found that the most important parameters to model uncertainty were quantum efficiency of photosynthesis, leaf respiration, and soil-plant water transfer [@raczka_2018_what].
 Another recent study assessed parameter uncertainty in ED2 as part of its overall goal of parameterizing the model for sagebrush [@pandit_2018_optimizing].
 They found that the most important parameters were specific leaf area, the maximum rate of carbon fixation (V~cmax~), slope of stomatal conductance, the fine-root to leaf carbon ratio, and the fine root turnover rate.
-Another study looked specifically at contributions to uncertainty from parameters related to canopy radiative transfer, and found that parameters related to both canopy structure and leaf optical properties had a large (>20%) impact on predictions of net primary productivity [@viskari_2019_influence].
-The variability in results across these studies demonstrates that parameter contributions to ED2 uncertainty are highly variable, and that additional parameter uncertainty studies are needed.
+Another study looked specifically at contributions to uncertainty from parameters related to canopy radiative transfer, and found that parameters related to both canopy structure and leaf optical properties had a large (>20%) impact on predictions of net primary productivity [@viskari_2019_influence]. (BBL: probably too much detail?)
 
-**While parameter uncertainty ED2 has been previously evaluated, less work has been done on structural uncertainty**.
+**Much less work has been done on structural uncertainty.**.
 Numerous vegetation model intercomparison studies have demonstrated that different models produce significantly different projections of overall land carbon sequestration [@friedlingstein_2006_climate; @friedlingstein_2014_uncertainties], response to CO~2~ fertilization (REF - Medlyn?), high-latitude warming (Rogers and Serbin?), {others...}. <!-- TODO -->
 These differences have been attributed to differences in model representations of key processes, including canopy radiative transfer [@fisher_2017_vegetation] and photosynthesis [@rogers_2016_roadmap]. <!-- TODO More here? -->
-**However, the extent to which specific processes contribute to model uncertainty is difficult to evaluate from model intercomparisons because different models are different from each other in too many different ways.**
-In this study, we evaluate structural uncertainty more precisely/directly by selectively toggling and switching individual processes/model components in ED2 while keeping everything else constant.
+**However, the extent to which specific processes contribute to model uncertainty is difficult to evaluate from model intercomparisons because different models are different from each other in too many different ways, meaning that structural effects are confounded with other uncertainty sources.**
 
-**The focus of this study is on the interaction between parametric and structural uncertainty in the ED2 model.**
-Driver uncertainty is outside the scope of this study, and initial condition uncertainty is minimized by our experimental design, which is conditioned on a specific initial condition (near bare ground).
+**This study focuses on the interaction between parametric and structural uncertainty in the ED2 model.**
+Driver uncertainty is outside the scope of this study, and initial condition uncertainty is minimized by our experimental design, which is conditioned on a specific initial condition (near bare ground). (BBL: move to methods)
 Our study is organized around the following guiding questions:
 (1) Which processes related to light utilization are most important to accurately modeling community succession and C cycle dynamics in temperate forests of the Upper Midwest?
 (2) What is the cost of considering these processes, in terms of additional parameteric uncertainty?
 (3) What are the relative contributions of parameteric uncertainty (data limitation) vs. structural uncertainty (theoretical limitation?)?
 To answer these questions, we ran ED2 ensemble simulationes with a factorial combination of submodels related to radiative transfer formulation (two-stream vs. multiple scatter), horizontal competition (finite canopy radius vs. complete shading), and trait plasticity (whether or not SLA and Vcmax vary with light level)
-We then used a sensitivity and variance decomposition analysis to evaluate the contribution of parameter uncertainty for each model configuration.
+We then used sensitivity and variance decomposition analyses to evaluate the contribution of parameter uncertainty for each model configuration, exploring the ecological implications of the results.
 
 # Methods
 
@@ -120,7 +119,7 @@ The site was intensively logged in the late 1800s and early 1900s, and experienc
 As a result, the average stand age in 2013 was 95 years. <!-- TODO ref -->
 The majority of the forest that is aspen-dominated is undergoing succession to "northern hardwood" (maple, beech, basswood, birch, ash, hemlock), "upland conifer" (red and white pine), or "northern red-oak" ecotypes [@bergen_2007_observing].
 
-Forest stands at UMBS were previously exposed to experimental disturbance as part of the Forest Accelerated Succession Experiment (FASET). <!-- TODO ref -->
+Forest stands at UMBS were previously exposed to experimental disturbance as part of the Forest Accelerated Succession Experiment (FASET). <!-- TODO ref --> BBL: what's the canonical FoRTE citation? Hmm. http://dx.doi.org/10.1111/nph.15227 
 <!-- TODO more on this -->
 
 
@@ -155,7 +154,7 @@ In this study, we consider only a single patch (and, therefore, a single site an
 
 <!-- TODO -->
 {Brief summary of thermodynamics?}
-{Brief summary of water cycle?}
+{Brief summary of water cycle?} BBL: maybe in one sentence each, but otherwise no, send 'em to a citation.
 
 ED2 represents the carbon flux for each cohort as the net sum of contributions from turbulent mixing, leaf photosynthesis and respiration, (fine) root respiration, growth and maintenance respiration, and heterotrophic respiration.
 In addition, each cohort also has a virtual carbon balance that links fast processes like photosynthesis and respiration to slow processes like allocation (to growth, storage, and reproduction) and mortality.
@@ -218,11 +217,14 @@ The former are controlled by the _quantum efficiency_ parameter---maximum effici
 The latter are controlled by _V~cmax~_, the maximum rate of carbon fixation by Rubisco.
 The water demand of photosynthesis is controlled by the _stomatal slope_, the sensitivity of stomatal conductance of CO~2~ as a function of CO~2~ concentration and humidity at the leaf surface [@leuning_1995_critical; @ball_1987_model].
 Three more parameters correspond to the respiration rates of leaves, roots, and "growth maintenance".
+
 Two more parameters control carbon allocation:
 One is the ratio of fine root to leaf biomass (`fineroot2leaf`, or `q`), and another is the ratio of "storage" carbon allocated to reproduction (`r_fract`).
+
 Three parameters control various aspects of adult tree mortality, namely the density-independent mortality rate (`mort3`), and the time scale (`mort1`) and critical carbon balance (`mort2`) of mortality from carbon starvation.
 An additional parameter controls seedling mortality.
 _Specific leaf area_ (`SLA`) is used to convert leaf biomass to leaf area index, which in turn is used in a variety of calculations related to canopy radiative transfer and micrometeorology.
+
 Two additional parameters describe canopy structure in ways critical to the canopy radiative transfer:
 Canopy _clumping factor_ describes how evenly leaf area is distributed in horizontal space (1 being perfectly evenly; 0 being a "black hole" where all leaves are concentrated in a single point); and
 leaf _orientation factor_ describes the average distribution of leaf angles (-1 being perfectly vertical, 1 being perfectly horizontal, and 0 being random).
@@ -316,7 +318,7 @@ readd(summary_ts_plot)
 `r mdcap(summary_ts_cap)`
 
 Model projections of gross and net primary productivity, aboveground biomass, leaf area index, and functional diversity varied with both parameter value and model structure (Figure 2).
-The ensemble means of all model configurations followed a similar trajectory of rapid growth in the first 15-20 years followed by a gradual decline throughout the rest of the simulation (with individual ensemble members sometimes undergoing sudden collapse in specific years).
+The ensemble means of all model configurations exhibited a similar trajectory of rapid growth in the first 15-20 years followed by a gradual decline throughout the rest of the simulation (with individual ensemble members sometimes undergoing sudden collapse in specific years).
 However, the average rate of decline varied by model configuration, particularly the crown model:
 Compared to models with a "closed" canopy (i.e. complete shading; no horizontal competition), models with a "finite" canopy predicted slightly faster decline in net primary productivity and functional diversity.
 This decline was most severe in configurations that combined the finite canopy and two-stream radiative transfer; in these configurations, a disproportionately large number of ensembles experienced complete ecosystem collapse over the course of the simulation, and the overwhelming fraction of ensemble members predicted near-zero Shannon diversity after 30 years.
@@ -374,7 +376,7 @@ readd(sensitivity_plot)
 
 `r mdcap(uncertainty_analysis_cap)`
 
-Model sensitivity to specific parameters ("elasticity") varied depending on the model configuration and the target output variable (Figure 5).
+Model sensitivity to specific parameters ("elasticity" _sensu_ ...) varied depending on the model configuration and the target output variable (Figure 5).
 For predicting C fluxes, biomass, and leaf area, the three most important parameters in terms of model sensitivity were specific leaf area (SLA) for early and late hardwoods, leaf C:N ratio (`c2n_leaf`) for early and mid hardwoods, and V~cmax~ for mid and late hardwoods.
 Both the magnitude and direction of sensitivity to these parameters varied by model configuration.
 For example, in the default ED2 configuration (closed canopy, two-stream radiative transfer, static traits), net primary productivity increased with early hardwood specific leaf area, but when this configuration was altered so SLA and V~cmax~ could vary with light level, net primary productivity decreased with early hardwood specific leaf area.
@@ -419,6 +421,7 @@ Compared to the default two-stream model, the multiple scatter model leads to sl
         - Important modeling implication for all the emerging research on intra-specific trait variability.
         - This combination of discrete functional types with plastic traits is closer to reality than purely trait-based ("eco-evolutionary?") models or completely discretized models with static traits on the other.
         - Important caveat: Current implementation is based entirely on tropical data, which has more extreme canopy shading than temperate forests (REF), so tropical species may have evolved stronger trait plasticity than temperate species (REF).
+        - Perhaps note "ecological equifinality" here: there are different ways to arrive at similar outcomes in the model; this is also true in nature? 
 - Implications of uncertainty analysis for future data collection and model development
     - Parameter uncertainty is still a _huge_ source of overall model predictive uncertainty. Different parameters can give _qualitatively_ different ecological outcomes.
     - Looking beyond aggregate variables (e.g. net primary productivity, total LAI) is essential to model evaluation and calibration. It's possible to generate a relatively?
