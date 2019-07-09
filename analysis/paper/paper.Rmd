@@ -459,7 +459,7 @@ Data from TRY (TODO: Specific TRY statement).
 
 - $\omega$ -- Clumping factor
 - $LAI$ -- Leaf area index
-- TAI -- Total area index (leaf and woody area)
+- $TAI$ -- Total area index (leaf and woody area)
 - $LAI_e$ / $TAI_e$ -- "Effective" area indices (accounting for clumping)
 
 ## Two-stream RTM
@@ -468,9 +468,15 @@ Data from TRY (TODO: Specific TRY statement).
 
 ## Multiple scatter RTM
 
+Effective LAI is just true LAI x clumping.
+
 $$ LAI_e = \omega LAI $$
 
+Total area index (TAI) is leaf (LAI) + wood (WAI) area.
+
 $$ TAI_e = LAI_e + WAI $$
+
+Local exposed total area index ($TAI_l$) is the total area index divided by crown area index ($CAI$).
 
 $$ TAI_{l} = \frac{TAI_e}{CAI} $$
 
@@ -479,9 +485,27 @@ Leaf ($w_l$) and wood ($w_w$) weights:
 $$ w_l = \frac{LAI_e}{TAI_e} $$
 $$ w_w = 1 - w_l $$
 
-Projected area, based on coefficients $\phi_1$ and $\phi_2$.
+Projected area ($a_{proj}$), based on coefficients $\phi_1$ and $\phi_2$.
 
 $$ a_{proj} = \phi_1 + \phi_2 \mu $$
+
+Optical depth ($\lambda$) is projected area over optical depth ($\mu$)
+
+$$ \lambda = \frac{a_{proj}}{\mu} $$
+
+Transmittance for direct radiation of a canopy layer ($\tau_{beam}$) is:
+
+$$ \tau_{beam} = (1 - CAI) + CAI exp\left( -\lambda TAI_l \right) $$
+
+Transmittance for diffuse radiation of a canopy layer ($\tau_{diff}$):
+
+$$ ext_1 = \phi_1 \TAI_l $$
+$$ ext_2 = \phi_2 \TAI_l $$
+$$ \tau_{diff} = (1 - CAI) - CAI exp\left( -ext_1 - ext_2 \right) ext_1^2 e^{exp_1} E_i(-exp_1) + (ext_1 - 1)$$
+
+where $E_i$ is the exponential integral.
+
+Backscatter for 
 
 # Old outline
 
