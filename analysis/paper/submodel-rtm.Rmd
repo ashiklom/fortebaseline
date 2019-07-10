@@ -1,0 +1,365 @@
+---
+title: "Submodel descriptions: Radiative transfer"
+author: Alexey Shiklomanov
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+stopifnot(
+  requireNamespace("purrr", quietly = TRUE),
+  requireNamespace("gsl", quietly = TRUE)
+)
+```
+
+# Common features
+
+## Scattering and backscattering of canopy elements
+
+Following @clm45_note, forward- ($\nu$) and backscattering of leaves or stems ($\nu$) are defined as a function of reflectance ($R$) and transmittance ($T$) of the corresponding materials:
+
+$$ \nu = R + T $$
+$$ \omega = \frac{R + T + \frac{1}{4} (R-T)(1 - \chi)^2}{2 (R+T)} $$
+
+Both of these quantities are calculated independently for leaves and wood, and then averaged based on the relative area indices of leaves (LAI, $L$) and wood (WAI, $W$) within a canopy layer.
+
+$$ w_{leaf} = \frac{L}{L + W}$$ 
+$$ \nu = \nu_{leaf} w_{leaf} + \nu_{wood} (1 - w_{leaf}) $$
+$$ \omega = \omega_{leaf} w_{leaf} + \omega_{wood} (1 - w_{leaf}) $$
+
+## Directional scattering and leaf angle distribution
+
+The directional extinction coefficient ($K(\psi)_i$) can be expressed as:
+
+$$ K(\psi)_i = \frac{G(\psi)}{cos(\psi)} $$
+
+where $G(\psi)$ describes the mean projection per unit leaf area (or "relative projected leaf area") in direction $\psi$.
+
+The leaf angle distribution function used in ED2 is the same as the one used in CLM 4.5 [@clm45_note]:
+
+$$ G(\psi) = \phi_1 + \phi_2 cos(\psi) $$
+$$ \phi_1 = 0.5 - 0.633 \chi - 0.33 \chi^2 $$
+$$ \phi_2 = 0.877 (1 - 2 \phi_1) $$
+
+where $\chi$ is the _leaf orientation factor_ parameter, defined such that -1 is perfectly vertical leaves, 1 is perfectly horizontal leaves, and 0 is randomly distributed leaf angles.
+
+```{r g-function, echo = FALSE, fig.cap = gfun_cap}
+gfun_cap <- "Leaf projection as a function of leaf orientation factor."
+phi1_f <- function(orient) {
+  0.5 - 0.633 * orient - 0.33 * orient ^ 2
+}
+phi2_f <- function(orient, phi1 = phi1_f(orient)) {
+  0.877 * (1 - 2 * phi1)
+}
+gfunction <- function(theta, orient, theta_rad = theta * pi / 180) {
+  phi1 <- phi1_f(orient)
+  phi2 <- phi2_f(phi1 = phi1)
+  mu <- cos(theta_rad)
+  phi1 + phi2 * mu
+}
+max_theta <- 89
+orient <- c(-0.5, -0.25, 0, 0.25, 0.5)
+colors <- colorRampPalette(c("red", "black", "blue"))(length(orient))
+plot(c(-90, 90), c(0, 0.9), type = "n",
+     xlab = "Zenith angle (degrees)",
+     ylab = expression(G(psi)))
+legend("bottom", as.character(orient),
+       title = "Orient factor",
+       lty = "solid",
+       col = colors)
+invisible(purrr::map2(
+    orient, colors,
+    ~curve(gfunction(x, .x), -max_theta, max_theta,
+           col = .y, add = TRUE)
+))
+```
+
+```{r kfunction, echo = FALSE, fig.cap = kcap}
+kcap <- "K function"
+kfunction <- function(theta, orient, theta_rad = theta * pi / 180) {
+  gfunction(theta, orient, theta_rad) / cos(theta_rad)
+}
+plot(c(-70, 70), c(0.2, 1.8), type = "n",
+     xlab = "Zenith angle (degrees)",
+     ylab = expression(K(psi)))
+legend("top", as.character(orient),
+       title = "Orient factor",
+       lty = "solid",
+       col = colors)
+invisible(purrr::map2(
+  orient, colors,
+  ~curve(kfunction(x, .x), -70, 70,
+         col = .y, add = TRUE)
+))
+```
+
+An additional quantity is the average inverse optical depth per unit leaf/wood area ($\bar\mu$):
+
+$$
+\bar\mu = \frac{1}{\phi_2}\left( 1 - \frac{\phi_1}{\phi_2} \ln\left( 1 + \frac{\phi_2}{\phi_1}\right) \right)
+$$
+
+```{r}
+mu_bar <- function(orient) {
+  phi1 <- phi1_f(orient)
+  phi2 <- phi2_f(phi1 = phi1)
+  x <- 1 - phi1 / phi2 * log(1 + phi2 / phi1)
+  out <- x / phi2
+  out[orient == 0] <- 1
+  out
+}
+curve(mu_bar(x), -0.5, 0.5,
+      xlab = "Orient factor",
+      ylab = expression(bar(mu)))
+```
+
+## Beam backscatter
+
+The beam backscatter (or "upscatter") coefficient for direct radiation, $\beta_0$, is defined as:
+
+$$
+\beta_0 = a_s(\psi) \frac{1 + \bar\mu K(\psi)}{\bar\mu K(\psi)}
+$$
+
+where $a_s(\psi)$ is the single scattering albedo coefficient, defined as:
+
+$$
+a_s(\psi) = \frac{1}{2}
+\frac{G(\psi)}{\cos\psi \phi2 + G(\psi)}
+\left(
+1 - 
+\frac{\cos\psi \phi1}{\cos\psi + G(\psi)}
+\ln\left(
+\frac{\cos\psi \phi1 + \cos\psi \phi2 + G(\psi)}{\cos\psi \phi1}
+\right)
+\right)
+$$
+
+(Note that, for simplicity, $a_s$ here is equivalent to $\frac{a_s}{\omega}$ in @clm45_note equation 3.15, where $\omega$ is the leaf backscatter.)
+
+## Exponential decay of direct radiation
+
+In both the two-stream and multiple scatter schemes, without finite canopy radius, the transmissivity of a layer to direct radiation ($\tau(\psi)_i$) is defined as follows:
+
+$$ \tau(\psi)_i = \exp(-K(\psi)_i L_i) $$
+
+(Note that the inverse optical depth, $\mu_0$, in the two-stream calculation is just $K(\psi)^{-1}$).
+
+## Matrix solution for diffuse fluxes 
+
+Both the two-stream and multiple-scatter canopy radiative transfer schemes are set up as the solutions to the following linear matrix equation:
+
+$$ M \times X = Y $$
+
+For $n$ canopy layers, $M$ is a $(2m+2, 2m+2)$ matrix and $X$ and $Y$ $(2m+2)$ vectors.
+$X$ is the vector of fluxes (or values that can be converted to fluxes), formatted as follows:
+
+$$
+\begin{bmatrix}
+F_{up,ground} \\
+F_{down,1} \\
+F_{up, 1} \\
+... \\
+F_{down,i} \\
+F_{up,i} \\
+... \\
+F_{down,n} \\
+F_{up,n} \\
+F_{down,sky}
+\end{bmatrix}
+$$
+
+$M$ and $Y$ consist of coefficients, which are defined differently in the two models.
+Notably, in both cases $M$ is a sparse matrix, composed of zero elements everywhere except the diagonal and its immediate neighbors;
+for example, for $n = 3$, $M$ looks like this:
+
+$$
+M = \begin{bmatrix}
+1 & 0 & 0 & 0 & 0 & 0 \\
+m_{2,1} & m_{2,2} & m_{2,3} & 0 & 0 & 0 \\
+0 & m_{3,2} & m_{3,3} & m_{4,3} & 0 & 0 \\
+0 & 0 & m_{4,3} & m_{4,4} & m_{4,5} & 0 \\
+0 & 0 & 0 & m_{5,4} & m_{5,5} & m_{5,6} \\
+0 & 0 & 0 & 0 & 0 & 1 \\
+\end{bmatrix}
+$$
+
+# Multiple scatter
+
+All of this is based on @zhao_2005_multiple.
+
+The $X$ and $Y$ vectors of the matrix problem for diffuse fluxes are defined as follows:
+
+$$
+X =
+\begin{bmatrix}
+SWuO_0 \\
+SWd0_1 \\
+SWu0_1 \\
+... \\
+SWd0_i \\
+SWu0_i \\
+... \\
+SWd0_m \\
+SWu0_m \\
+SWd0_{m + 1}
+\end{bmatrix}
+$$
+
+$$
+Y = 
+\begin{bmatrix}
+S_0 a_{ground} \\
+S_1 r(\psi)_1 \left[ 1 - r_0 r_1 (1 - \alpha_0) (1 - \tau_0) (1 - \alpha_1) (1 - \tau_1) \right] (1 - \tau(\psi)_1) (1 - \alpha_1) \\
+S_1 \left[ 1 - r_1 r_2 (1 - \alpha_1) (1 - \tau_1) (1 - \alpha_2) (1 - \tau_2) \right] (1 - \tau(\psi)_1) (1 - \alpha_1) (1 - r(\psi)_1) \\
+... \\
+S_i r(\psi)_i \left[ i - r_{i-1} r_i (i - \alpha_{i-1}) (i - \tau_{i-1}) (i - \alpha_i) (i - \tau_i) \right] (i - \tau(\psi)_i) (i - \alpha_i) \\
+S_i \left[ i - r_i r_{i+1} (i - \alpha_i) (i - \tau_i) (i - \alpha_{i+1}) (i - \tau_{i+1}) \right] (i - \tau(\psi)_i) (i - \alpha_i) (i - r(\psi)_i) \\
+... \\
+S_m r(\psi)_m \left[ m - r_{m-1} r_m (m - \alpha_{m-1}) (m - \tau_{m-1}) (m - \alpha_m) (m - \tau_m) \right] (m - \tau(\psi)_m) (m - \alpha_m) \\
+S_m \left[ m - r_m r_{m+1} (m - \alpha_m) (m - \tau_m) (m - \alpha_{m+1}) (m - \tau_{m+1}) \right] (m - \tau(\psi)_m) (m - \alpha_m) (m - r(\psi)_m) \\
+SW_{sky}
+\end{bmatrix}
+$$
+
+Here, $a_{ground}$ is the albedo of the ground under the canopy and $SW_{sky}$ is the incident shortwave hemispherical flux from the sky;
+both are exogenous inputs to the model.
+$S_i$ is the direct ("beam") radiation at layer $i$, and is calculated in a loop as follows:
+
+$$ S_i = S_{i + 1} \tau(\psi)_i $$
+
+with $S_{n+1}$ as the incident direct solar flux, an exogenous input.
+
+$M$ is a sparse $(2n + 2)$ by $(2n + 2)$ matrix (where $m$ is the number of vertical canopy layers) that is zero everywhere except on the diagonal and its immediate neighbors.
+For example, for $m = 2$:
+
+For $i = 1,2,3,...n$, where $n$ is the number of canopy layers.
+
+$$ m_{1,1} = m_{2n+2,2n+2} = 1 $$
+$$ m_{2i,2i-1} = - \left[ \tau_i + (1 - \tau_i)(1 - \alpha_i)(1 - r_i) \right]$$
+$$ m_{2i,2i} = -r_{i-1} \left[ \tau_i + (1 - \tau_i)(1 - \alpha_i)(1 - r_i) \right] (1 - \alpha_{i-1})(1 - \tau_{i-1}) $$
+$$ m_{2i,2i+1} = 1 - r_{i-1} r_i (1 - \alpha_{i-1})(1 - \tau_{i-1})(1 - \alpha_i)(1 - \tau_i) $$
+$$ m_{2i+1,2i} = 1 - r_i r_{i+1} (1 - \alpha_i)(1 - \tau_i)(1 - \alpha_{i+1})(1 - \tau_{i+1}) $$
+$$ m_{2i,2i} = -r_{i+1} \left[ \tau_i + (1 - \tau_i)(1 - \alpha_i)(1 - r_i) \right] (1 - \alpha_{i+1})(1 - \tau_{i+1}) $$
+$$ m_{2i+1,2i+2} = - \left[ \tau_i + (1 - \tau_i)(1 - \alpha_i)(1 - r_i) \right]$$
+
+The layer absorption ($\alpha$) and backscatter for direct ($r(\psi)_i$) and diffuse ($r_i$) light are defined as follows:
+
+$$ \alpha_i = 1 - \nu $$
+$$ r_i = \omega $$
+$$ r(\psi)_i = \beta_0 $$
+
+The _direct_ ("beam") transmittance fraction of canopy layer $i$ at solar zenith angle direction $\psi$ ($\tau(\psi)_i$) is defined as:
+
+$$ \tau(\psi)_i = \exp\left( -K(\psi)_i L_i \right) $$
+
+```{r int-direct, fig.cap = idcap}
+
+idcap <- "Direct transmittance fraction, as a function of LAI"
+tau_direct <- function(psi, L, orient) {
+  exp(-kfunction(psi, orient) * L)
+}
+Lmax <- 5
+plot(c(0, Lmax), c(0, 1), type = "n",
+     xlab = "Leaf area index",
+     ylab = "Direct tranmittance fraction")
+legend("topright", c("-0.5", "0", "0.5"),
+       col = c("red", "black", "blue"), lty = 1,
+       title = "Orient factor")
+legend("top", c("0", "30", "60"), lty = 1:3,
+       title = "Zenith angle")
+curve(tau_direct(0, x, 0), 0, Lmax, add = TRUE)
+curve(tau_direct(0, x, -0.5), 0, Lmax, add = TRUE, col = "red")
+curve(tau_direct(0, x, 0.5), 0, Lmax, add = TRUE, col = "blue")
+curve(tau_direct(30, x, 0), 0, Lmax, add = TRUE, lty = 2)
+curve(tau_direct(30, x, -0.5), 0, Lmax, add = TRUE, lty = 2, col = "red")
+curve(tau_direct(30, x, 0.5), 0, Lmax, add = TRUE, lty = 2, col = "blue")
+curve(tau_direct(60, x, 0), 0, Lmax, add = TRUE, lty = 3)
+curve(tau_direct(60, x, -0.5), 0, Lmax, add = TRUE, lty = 3, col = "red")
+curve(tau_direct(60, x, 0.5), 0, Lmax, add = TRUE, lty = 3, col = "blue")
+
+```
+
+where $L_i$ is the layer's leaf area index (technically, total area index), and $K(\psi)_i$ is the directional extinction coefficient (see "Directional scattering and leaf angle distribution").
+
+For _diffuse_ radiation,
+the interception fraction ($\tau_i$) is defined similarly except that it must be integrated across the hemisphere.
+This is simplified by the assumption that incident diffuse radiation is isotropic.
+
+$$
+\tau_i = 2 \int_{0}^{\frac{\pi}{2}}
+\exp \left( -K(\psi)_i L_i \right) \sin \psi \cos \psi d\psi
+$$
+
+For the $K(\psi)$ defined in "Directional scattering and leaf angle distribution", this integral has the following analytical solution:
+
+$$
+\tau_i = -\exp(-L_i (\phi_1 + \phi_2))
+\left(
+\phi_1^2 L_i^2 \exp(\phi_1 L_i) * E_i(-\phi_1 L_i) +
+\phi_1 L_i - 1
+\right)
+$$
+
+where $\phi_1$ and $\phi_2$ are defined as above, and $E_i$ is the exponential integral function.
+
+```{r}
+
+tau_diffuse <- function(L, orient) {
+  phi1 <- phi1_f(orient)
+  phi2 <- phi2_f(phi1 = phi1)
+  ext_diff1 <- phi1 * L
+  ext_diff2 <- phi2 * L
+  -exp(-ext_diff1 - ext_diff2) *
+    (ext_diff1^2 * exp(ext_diff1) * gsl::expint_Ei(-ext_diff1) +
+       ext_diff1 - 1)
+}
+plot(c(0, Lmax), c(0, 1), type = "n",
+     xlab = "Leaf area index",
+     ylab = "Diffuse transmittance fraction")
+legend("topright", as.character(orient),
+       title = "Orient factor",
+       lty = "solid",
+       col = colors)
+purrr::walk2(
+  orient, colors,
+  ~curve(tau_diffuse(x, .x), 0, Lmax, add = TRUE, col = .y)
+)
+
+```
+
+## Finite canopy radius
+
+Crown area ($C_i$) is computed as a function of DBH.
+
+$$ C_i = a DBH^b $$
+
+where $a$ is 2.490154 and $b$ is 0.8068806 for all of the PFTs used in this study.
+
+```{r}
+dbh2ca <- function(dbh) {
+  # default parameters for PFTs we use
+  b1Ca <- 2.490154
+  b2Ca <- 0.8068806
+  b1Ca * dbh ^ b2Ca
+}
+curve(dbh2ca(x), 0, 50,
+      xlab = "DBH (cm)",
+      ylab = "Crown area index (unitless)")
+```
+
+The crown area index ($C_i$) affects the following terms in the following ways:
+
+$$ \tau(\psi)_i = (1 - C_i) + C_i \exp(-K(\psi)_i \frac{L_i}{C_i}) $$
+
+$$
+\tau_i = (1 - C_i) - 
+C_i \exp(-\frac{L_i}{C_i} (\phi_1 + \phi_2))
+\left(
+\frac{\phi_1^2 L_i^2}{C_i^2} \exp(\phi_1 \frac{L_i}{C_i}) * E_i(-\phi_1 \frac{L_i}{C_i}) +
+\phi_1 \frac{L_i}{C_i} - 1
+\right)
+$$
+
+# Two-stream
+
+
