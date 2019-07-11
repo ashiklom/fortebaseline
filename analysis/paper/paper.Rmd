@@ -55,50 +55,56 @@ htmlfig <- function() {
 
 # Introduction
 
-Forests are a defining feature of the US North.
+**Forests are a defining feature of the US North**.
 This region is the most heavily forested region in the US, and these forests are an essential provider of employment and recreation opportunities and other ecosystem services for the region's people, and of habitat for the region's wildlife [@shividenko_2005_forest; @shifley_2012_forests].
-In addition, the forests of the Upper Midwest in particular have been a net carbon sink for most of the past century, as fast-growing early successional species established and thrived following near-complete deforestation around the end of the 19th Century [@birdsey_2006_forest; @williams_2012_carbon].
-However, the fate of these forests is highly uncertain.
-For one, many Upper Midwest forests are undergoing a shift in community composition from early-successional to mid-successional species, and the ecological and biogeochemical consequences of this transition are not well-established [@gough_2016_disturbance].
-In addition, these forests face a multitude of direct and indirect pressures from both biotic and abiotic sources [@shifley_2016_future], including longer and more severe droughts [@gustafson_2016_implications; @swanston_2017_vulnerability; @lienard_2016_us], non-native insects and pathogens [@lovett_2016_nonnative], and more. <!-- TODO More here? -->
-Collectively, these processes have culminated in forests that are different from their pre-settlement climax counterparts [@stearns_2002_one; @wolter_2002_recent; @thompson_2013_four], and our ability to make predictions about such non-analog environments based on the past is limited.
+In addition, the **forests of the Upper Midwest** in particular have been a **net carbon sink** for most of the past century, as fast-growing early successional species established and thrived following near-complete deforestation around the end of the 19th Century [@birdsey_2006_forest; @williams_2012_carbon].
+However, the **fate of these forests is highly uncertain**.
+For one, many Upper Midwest forests are undergoing a **shift in community composition from early-successional to mid-successional** species, and the ecological and biogeochemical consequences of this transition are not well-established [@gough_2016_disturbance].
+In addition, these forests face a multitude of **direct and indirect pressures from both biotic and abiotic sources** [@shifley_2016_future], including longer and more severe droughts [@gustafson_2016_implications; @swanston_2017_vulnerability; @lienard_2016_us], non-native insects and pathogens [@lovett_2016_nonnative], and more. <!-- TODO More here? -->
+Collectively, these processes have culminated in forests that are different from their pre-settlement climax counterparts [@stearns_2002_one; @wolter_2002_recent; @thompson_2013_four], and **our ability to make predictions about such non-analog environments based on the past is limited**.
 
 **More reliable predictions can in theory be obtained by using dynamic vegetation models that explicitly represent processes involved in forest growth and mortality.**
-Vegetation models fall broadly along the following spectrum of complexity.
+Vegetation models fall broadly along the following spectrum of complexity, which is a direct consequence of trade-offs between **realism and process fidelity** on one hand and **tractability, computational demand, and data requirements** on the other [@hawkes_2000_woody]. <!-- TODO Might need a better ref here -->
 On one side are relatively simple **"big leaf" models**---such as PNET, SiBCASA, and Biome-BGC---in which the vegetation at a particular location consists essentially of a single large "plant" whose characteristics are the (weighted) average of all the vegetation at that site.
 A common application of these models was simulating the land surface boundary condition for atmospheric general circulation models, though similar models have been (and continue to be) applied successfully to simulate biogeochemical processes in many ecosystem science contexts. <!-- TODO refs -->
 On the other end of the spectrum are **"individual-based" models** (a.k.a. "gap models"), which explicitly simulate multiple indivduals competing for resources at a single site [@shugart_2015_computer]. <!-- TODO other refs? -->
-Examples of such models are LANDIS [@scheller_2007_design] and UVAFME. <!-- TODO ref --> <!-- TODO Other examples? -->
-Because these models can explicitly represent inter-specific differences in plant productivity, resource allocation, and stress tolerance (among others), as well as the competition that emerges out of these differences, they may be better able to represent changes in ecosystem-scale processes, especially in no-analog conditions [@purves_2008_predictive]
+Examples of such models are LANDIS [@mladenoff_2004_landis; @scheller_2007_design] and UVAFME. <!-- TODO ref --> <!-- TODO Other examples? -->
+Because these models can explicitly represent inter-specific differences in plant productivity, resource allocation, and stress tolerance (among others), as well as the competition that emerges out of these differences, they may be better able to represent changes in ecosystem-scale processes, especially in no-analog conditions [@purves_2008_predictive].
+Between these two extremes are models that use approximations attempt to capture the emergent biogeochemical and ecological outcomes of interactions between individual plants without the need for explicitly simulating each individual [@purves_2008_predictive].
+One specific example of this approach is the **Ecosystem Demography model** [ED2; @moorcroft_2001_method; @medvigy_2011_predicting; @longo_2019_ed1], which is the focus of this study.
 
-In the middle are models that capture the emergent biogeochemical and ecological outcomes of interactions between individual plants without the need for explicitly simulating each individual [@purves_2008_predictive], and have less-intensive data requirements generally.
-In this study, we focus on the Ecosystem Demography model [ED2.2; @moorcroft_2001_method; @medvigy_2011_predicting; @longo_2019_ed1], which constitutes an example of such an approach.
-
-BBL: General citations on simple/complex model tradeoffs: [Hawkes (2001)](http://dx.doi.org/10.1016/S0304-3800(00)00267-2), Mladenoff (2004), ...
-Moreover, these models' **predictions of species composition and ecosystem structure are relevant outside of carbon cycle science**, particularly for forest management and wildlife conservation. <!-- BBL: maybe move this sentence to discussion? TODO refs -->
-
-**Regardless of vegetation model complexity, their projections are inherently uncertain, however.** 
+**Regardless of vegetation model complexity, their projections are inherently uncertain.** 
+This uncertainty comes from many different sources, which can broadly be classified into the following categories:
 _Driver_ uncertainty refers to uncertainty in data about processes not represented by the model (e.g. weather and climate for vegetation models).
 _Initial condition_ uncertainty arises from the fact that models have to start somewhere, and the exact conditions at the place and time simulations begin are frequently unknown.
 _Process_ or _structural_ uncertainty arises because vegetation models necessarily only represent a subset of all processes involved in plant biology, and that the process that are included can usually be represented in multiple different ways (i.e. which processes are included, and how they are represented).
 Finally, _parameter_ uncertainty arises because of natural variability and imperfect calibration of the above process representations.
-A key but unknown question in ecosystem modeling is which of the last two categories--structural versus parametric uncertainty--is more important (Fisher et al. 2015, https://onlinelibrary.wiley.com/doi/full/10.1111/j.1523-1739.2003.00614.x, Ricciuto et al. 2008). (BBL: trying to better link this paragraph into previous and following ones.)
+**The relative importance of these sources of uncertainty in ecological forecasts is a key question because it is directly related to future research priorities**.
+For example, in the atmospheric science community, the insight that meteorological forecasts were most sensitive to initial condition uncertainty (Lorenz REF<!-- TODO others? -->) led to a multi-decadal research agenda aimed at constraining the initial state with improved observations, which has directly contributed to a steady and persistent improvement in meteorological forecasts over the last several decades. <!-- TODO Holy run-on sentences, Batman! --> <!-- TODO REFS! -->
 
-**Several recent studies have looked at parameter uncertainty in ED2.**
-@dietze_2014_quantitative found that the parameters contributing the most to ED2 model uncertainty across all biomes were those related to growth respiration, mortality, stomatal conductance, and water uptake.
-However, they also found that despite some common patterns, parameter uncertainty varied with biome.
-More recently, a similar analysis evaluated parameter uncertainty over 100 year time scale at the Willow Creek Ameriflux site, and found that the most important parameters to model uncertainty were quantum efficiency of photosynthesis, leaf respiration, and soil-plant water transfer [@raczka_2018_what].
+**Many ecosystem modeling studies have looked at these categories of uncertainty independently.**
+Perhaps the most work has been done on **parameter uncertainty** in ecosystem models.
+<!-- TODO Consider cutting 50-75% of these next few sentences. Probably way too much detail. -->
+@dietze_2014_quantitative investigated which parameters were most important to ED2 predictions of C sequestration across a diverse range of sites in North America.
+The found that the parameters contributing the most to overall predictive uncertainty were those related to growth respiration, mortality, stomatal conductance, and water uptake, and that parameter uncertainty varied with biome.
+More recently, @raczka_2018_what evaluated parameter uncertainty over 100 year time scale at the Willow Creek Ameriflux site, and found that the most important parameters to model uncertainty were quantum efficiency of photosynthesis, leaf respiration, and soil-plant water transfer.
 Another recent study assessed parameter uncertainty in ED2 as part of its overall goal of parameterizing the model for sagebrush [@pandit_2018_optimizing].
 They found that the most important parameters were specific leaf area, the maximum rate of carbon fixation (V~cmax~), slope of stomatal conductance, the fine-root to leaf carbon ratio, and the fine root turnover rate.
-Another study looked specifically at contributions to uncertainty from parameters related to canopy radiative transfer, and found that parameters related to both canopy structure and leaf optical properties had a large (>20%) impact on predictions of net primary productivity [@viskari_2019_influence]. (BBL: probably too much detail?)
-
-**Much less work has been done on structural uncertainty.**.
-Numerous vegetation model intercomparison studies have demonstrated that different models produce significantly different projections of overall land carbon sequestration [@friedlingstein_2006_climate; @friedlingstein_2014_uncertainties], response to CO~2~ fertilization (REF - Medlyn?), high-latitude warming (Rogers and Serbin?), {others...}. <!-- TODO -->
-These differences have been attributed to differences in model representations of key processes, including canopy radiative transfer [@fisher_2017_vegetation] and photosynthesis [@rogers_2016_roadmap]. <!-- TODO More here? -->
+Another study looked specifically at contributions to uncertainty from parameters related to canopy radiative transfer, and found that parameters related to both canopy structure and leaf optical properties had a large impact on predictions of net primary productivity [@viskari_2019_influence].
+{**Driver uncertainty** -- a few examples?}
+**Other studies have investigated structural uncertainty.**.
+Numerous vegetation model intercomparison studies have demonstrated that different models produce significantly different projections of overall land carbon sequestration [@friedlingstein_2006_climate; @friedlingstein_2014_uncertainties], response to CO~2~ fertilization [@zaehle_2014_evaluation; @medlyn_2015_using; @walker_2015_predicting], and soil C sequestration [@sulman_2018_multiple], among others.
+In particular, @lovenduski_2017_reducing found that model structural uncertainty was the primary source of uncertainty in Earth system model projections of the land C sink.
+This structural uncertainty has been attributed to differences in model representations of key processes, including canopy radiative transfer [@fisher_2017_vegetation], soil biogeochemistry [@wieder_2017_carbon; @sulman_2018_multiple], stomatal conductance [@franks_2018_comparing], and photosynthesis [@rogers_2016_roadmap].
 **However, the extent to which specific processes contribute to model uncertainty is difficult to evaluate from model intercomparisons because different models are different from each other in too many different ways, meaning that structural effects are confounded with other uncertainty sources.**
+**Moreover, comparative analysis of contributions of different types of uncertainty to model projections are rare in the ecosystem modeling literature**.
+<!-- 
+TODO Do we have any examples? Or are these studies entirely non-existent?
+
+Ben's notes:which of the last two categories--structural versus parametric uncertainty--is more important (Fisher et al. 2015, https://onlinelibrary.wiley.com/doi/full/10.1111/j.1523-1739.2003.00614.x, Ricciuto et al. 2008).
+-->
 
 **This study focuses on the interaction between parametric and structural uncertainty in the ED2 model.**
-Driver uncertainty is outside the scope of this study, and initial condition uncertainty is minimized by our experimental design, which is conditioned on a specific initial condition (near bare ground). (BBL: move to methods)
 Our study is organized around the following guiding questions:
 (1) Which processes related to light utilization are most important to accurately modeling community succession and C cycle dynamics in temperate forests of the Upper Midwest?
 (2) What is the cost of considering these processes, in terms of additional parameteric uncertainty?
@@ -283,6 +289,9 @@ Soil texture was set to 92% sand, 7% silt, and 1% clay, per site-level observati
 The initial soil moisture profile was set to the average soil moisture profile reported in the UMBS Ameriflux ancillary data (https://ameriflux.lbl.gov/sites/siteinfo/US-UMd).
 The entire model execution workflow was conducted using the Predictive Ecosystem Analyzer (PEcAn, www.pecanproject.org).
 
+<!-- TODO This would probably fit better somewhere else.  -->
+Driver uncertainty is outside the scope of this study, and initial condition uncertainty is minimized by our experimental design, which is conditioned on a specific initial condition (near bare ground).
+
 ## Analysis of results
 
 - Overall summary:
@@ -434,6 +443,8 @@ Compared to the default two-stream model, the multiple scatter model leads to sl
 - Future directions: Predicting disturbance response
     - FoRTE project -- Forecasting a disturbance.
         - Compare ecological resilience/memory between model and reality
+
+Moreover, these models' **predictions of species composition and ecosystem structure are relevant outside of carbon cycle science**, particularly for forest management and wildlife conservation. <!-- BBL: maybe move this sentence to discussion? TODO refs -->
 
 # Conclusions
 
