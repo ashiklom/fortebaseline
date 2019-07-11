@@ -653,5 +653,5 @@ git2r::repository("../..")
 ```
 
 View this project on GitHub in repository [ashiklom/fortebaseline](https://github.com/ashiklom/fortebaseline)
-(This manuscript file is in [`analysis/paper/paper.Rmd`](https://github.com/ashiklom/fortebaseline/blob/master/analysis/paper/paper.Rmd)).
+(this manuscript file is in [`analysis/paper/paper.Rmd`](https://github.com/ashiklom/fortebaseline/blob/master/analysis/paper/paper.Rmd))
 and in Open Science Framework (OSF) at https://osf.io/dznuf/ .
