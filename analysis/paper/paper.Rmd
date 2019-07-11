@@ -499,13 +499,21 @@ $$ \tau_{beam} = (1 - CAI) + CAI exp\left( -\lambda TAI_l \right) $$
 
 Transmittance for diffuse radiation of a canopy layer ($\tau_{diff}$):
 
-$$ ext_1 = \phi_1 \TAI_l $$
-$$ ext_2 = \phi_2 \TAI_l $$
+$$ ext_1 = \phi_1 TAI_l $$
+$$ ext_2 = \phi_2 TAI_l $$
 $$ \tau_{diff} = (1 - CAI) - CAI exp\left( -ext_1 - ext_2 \right) ext_1^2 e^{exp_1} E_i(-exp_1) + (ext_1 - 1)$$
 
 where $E_i$ is the exponential integral.
 
-Backscatter for 
+Single-scattering albedo ($w_0$):
+
+$$ w_0 = \frac{1}{2} \frac{a_{proj}}{\phi_2 \mu + a_{proj}} \frac{1 - \phi_1 \mu}{\phi_2 \mu a_{proj}}
+  \log \left( 1 + \frac{\phi_2 \mu + a_{proj}}{\phi_1 \mu} \right) $$
+  
+Beam backscatter ($\gamma$):
+  
+$$ \gamma = w_0 \frac{1 + \bar{\mu} \lambda}{\bar{\mu} \lambda} $$
+
 
 # Old outline
 
