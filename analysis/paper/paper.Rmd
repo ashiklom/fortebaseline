@@ -352,6 +352,15 @@ Different parameter combinations led to model outputs that had not only differen
 The most common outcome was immediate and persistent dominance by early hardwood trees, though in some cases, early hardwoods co-existed with late hardwood or pine.
 <!-- TODO Probably need to do a different analysis here. Maybe look at all the outputs, identify several different "ecological scenarios", and then analyze the fraction of runs that experienced those probabilities? -->
 
+```{r pairs-time, fig.cap = pairs_time_cap, fig.dim = c(6, 6)}
+pairs_time_cap <- paste(
+  htmlfig(),
+  "Time-averaged NPP vs. LAI, with observation (in black)",
+  "and linear regression, by model type."
+)
+readd(pairs_time_averaged)
+```
+
 ## Uncertainty analysis
 
 ```{r within-vs-across, fig.cap = within_vs_across_cap, fig.dim = c(9, 4)}

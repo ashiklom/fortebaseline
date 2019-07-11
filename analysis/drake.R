@@ -107,6 +107,7 @@ plan <- drake_plan(
   models = distinct(cases, model_id, model, crown, rtm, traits) %>%
     arrange(model) %>%
     mutate(color = RColorBrewer::brewer.pal(n(), "Paired")),
+  model_colors = tibble::deframe(models[, c("model", "color")]),
   plot_means = setDT(fst(!!cohort_file)[, variable_cols])[j = .(
     agb = sum((bleaf + bsapwooda + bstorage) * nplant),
     gpp = sum(fmean_gpp_co * nplant),
@@ -168,6 +169,11 @@ plan <- drake_plan(
     "npp", 1.68, 3.11, 7.26
   ) %>% mutate(variable = factor(variable, use_vars),
                year = max(jja_summary$year)),
+  hardiman_wide = hardiman %>%
+    select(-year) %>%
+    gather(stat, value, low, mean, hi) %>%
+    unite("variable", variable, stat) %>%
+    spread(variable, value),
   summary_ts_plot = ggplot(jja_long) +
     aes(x = year) +
     geom_line(aes(y = value, group = param_id, color = color), alpha = 0.5) +
@@ -374,7 +380,33 @@ plan <- drake_plan(
     ungroup() %>%
     select(model, shortname, yvar, xvar, fpvar),
   top_params_fpvar_count = top_params_fpvar %>%
-    count(yvar, shortname, xvar, sort = TRUE)
+    count(yvar, shortname, xvar, sort = TRUE),
+  #########################################
+  # Pairs plot of time-averaged values
+  #########################################
+  pairs_time_averaged = time_averages %>%
+    ungroup() %>%
+    ggplot() +
+    aes(x = lai, y = npp, color = model) +
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE) +
+    geom_point(aes(x = lai_mean, y = npp_mean),
+               size = 3,
+               shape = 17,
+               color = "black",
+               inherit.aes = FALSE,
+               data = hardiman_wide) +
+    geom_rect(aes(xmin = lai_low, xmax = lai_hi, ymin = npp_low, ymax = npp_hi),
+              fill = NA,
+              linetype = "dashed",
+              color = "black",
+              inherit.aes = FALSE,
+              data = hardiman_wide) +
+    scale_color_manual(values = model_colors) +
+    coord_cartesian(xlim = c(0, 9), ylim = c(0, 11)) +
+    labs(x = "LAI", y = expression(NPP ~ (kgC ~ year ^ -1))) +
+    guides(color = guide_legend(nrow = 4)) +
+    theme(legend.position = "bottom")
 )
 
 if ("--poster" %in% cmdargs) source("analysis/drake_poster.R")
