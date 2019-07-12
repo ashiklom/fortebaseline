@@ -1047,3 +1047,154 @@ diversity %>%
   aes(x = year, y = value) +
   geom_line(aes(group = run_id)) +
   facet_grid(vars(variable), vars(workflow_id))
+
+#########################################
+# Why are runs dying?
+#########################################
+tsplot <- function(dat) {
+  ggplot(dat) +
+  aes(x = year, y = value, group = param_id, color = color) +
+  geom_line(alpha = 0.3) +
+  scale_color_identity() +
+  facet_grid(vars(variable), vars(model), scales= "free_y")
+}
+
+# Which runs are dying?
+death <- jja_means %>%
+  filter(year == 1915, npp < 0.5) %>%
+  distinct(case, model_id)
+death %>%
+  count(model_id, sort = TRUE)
+
+jja_long %>%
+  semi_join(death) %>%
+  filter(rtm == "two-stream", crown == "finite") %>%
+  tsplot()
+
+# How do runs look at the very beginning?
+jja_long %>%
+  filter(year < 1910) %>%
+  tsplot()
+
+# How do runs look in 1910?
+jja_long %>%
+  filter(year == 1910) %>%
+  ggplot() +
+  aes(x = model_id, y = value, fill = color) +
+  geom_violin() +
+  geom_jitter() +
+  facet_wrap(vars(variable), scales = "free_y") +
+  scale_fill_identity()
+
+# These are cases that are _really_ unproductive
+# But, they don't actually die suddenly.
+# What's the issue?
+death <- jja_means %>%
+  group_by(case) %>%
+  filter(max(agb) < 0.1) %>%
+  ungroup() %>%
+  filter(year == 1910, agb < 0.02) %>%
+  distinct(case, model_id) %>%
+  mutate(param_id = as.numeric(substring(case, 0, 3)),
+         low_prod = TRUE)
+jja_long %>%
+  semi_join(death) %>%
+  filter(rtm == "two-stream", crown == "finite") %>%
+  tsplot()
+
+# What do their parameters look like?
+params_long <- run_params %>%
+  select(-bety_name, -pft) %>%
+  gather(trait, value, -param_id, -shortname)
+low_long <- params_long %>%
+  left_join(select(death, param_id, low_prod)) %>%
+  mutate(low_prod = if_else(is.na(low_prod), FALSE, TRUE)) %>%
+  filter(!is.na(value))
+ggplot(low_long) +
+  aes(x = shortname, y = value, color = low_prod, fill = low_prod) +
+  geom_violin(color = "black") +
+  facet_wrap(vars(trait), scales = "free_y")
+# No significant differences in univariate space.
+
+params_wide <- params_long %>%
+  unite(variable, shortname, trait) %>%
+  spread(variable, value)
+low_params <- params_wide %>%
+  left_join(death) %>%
+  mutate(low_prod = if_else(is.na(low_prod), FALSE, TRUE))
+
+
+# Changes in variables by year
+lags <- jja_means %>%
+  group_by_at(vars(case, model_id, shannon:color)) %>%
+  mutate_at(vars(agb:shannon), list(d = ~.x - lag(.x))) %>%
+  ungroup()
+lags %>%
+  filter(year < 1920) %>%
+  ggplot() +
+  aes(x = year, y = lai_d, color = color, group = case) +
+  geom_line(alpha = 0.3) +
+  facet_grid(cols = vars(model))
+
+death2 <- lags %>%
+  filter(year < 1920, lai_d < -2) %>%
+  distinct(case, model_id)
+count(death2, model_id, sort = TRUE)
+jja_long %>%
+  semi_join(death2) %>%
+  tsplot()
+
+
+f <- fst(cohort_file)
+ddeath <- f[f$case %in% death$case & f$datetime < "1911-01-01",]
+setDT(ddeath)
+
+names(f)
+
+dat <- f[f$datetime < "1904-01-01", ] %>%
+  setDT() %>%
+  .[, lp := case %in% death$case] %>%
+  .[, casefile := NULL] %>%
+  ## .[, pft := NULL] %>%
+  ## .[, lapply(.SD, mean), .(case, datetime, lp)] %>%
+  .[, case := forcats::fct_reorder(case, lp)] %>%
+  .[, model_id := substring(case, 4, 6)]
+
+# Interesting variables:
+# fmean_a_net_co -- Actual assimilation
+# fmean_a_light_co -- Light-limited assimilation.
+# lai_co -- Leaf area
+ggplot(dat[datetime < "1902-06-05",]) +
+  aes(x = datetime, y = bleaf,
+      color = lp, alpha = lp,
+      group = interaction(case, pft)) +
+  geom_line() +
+  facet_grid(vars(pft), vars(model_id)) +
+  scale_color_manual(values = c("TRUE" = "dark red", "FALSE" = "grey80")) +
+  scale_alpha_manual(values = c("TRUE" = 1, "FALSE" = 0.2))
+
+ddeath %>%
+  .[datetime < "1904-01-01"] %>%
+  .[, .(case, datetime, nplant)] %>%
+  .[, .(nplant = sum(nplant)), .(case, datetime)] %>%
+  ggplot() +
+  aes(x = datetime, y = nplant) +
+  geom_line() +
+  facet_wrap(vars(case))
+
+ggplot(ddeath) +
+  aes(x = datetime, y = dbh, group)
+
+#########################################
+hff <- "analysis/data/model_output/workflows/PEcAn_99000000144/out/99000000171/analysis-I-1902-06-03-000000-g01.h5"
+hf <- hdf5r::H5File$new(hff, "r")
+names(hf)[7*10 + 1:10]
+hf[[names(hf)[34]]][]
+hf[["LEAF_DROP_PY"]][,,]
+hf$close_all()
+
+nc <- tidync::tidync(hff)
+nc$grid
+
+v <- grep("_PY$", names(hf), value = TRUE)
+for (i in v) print(hf[[i]])
