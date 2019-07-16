@@ -125,47 +125,24 @@ The site was intensively logged in the late 1800s and early 1900s, and experienc
 As a result, the average stand age in 2013 was 95 years. <!-- TODO ref -->
 The majority of the forest that is aspen-dominated is undergoing succession to "northern hardwood" (maple, beech, basswood, birch, ash, hemlock), "upland conifer" (red and white pine), or "northern red-oak" ecotypes [@bergen_2007_observing].
 
-Forest stands at UMBS were previously exposed to experimental disturbance as part of the Forest Accelerated Succession Experiment (FASET). <!-- TODO ref --> BBL: what's the canonical FoRTE citation? Hmm. http://dx.doi.org/10.1111/nph.15227 
+Forest stands at UMBS were previously exposed to experimental disturbance as part of the Forest Accelerated Succession Experiment (FASET). <!-- TODO ref -->
+{Canonical FoRTE citation [@curtis_2018_forest]}
 <!-- TODO more on this -->
 
 
 ## Ecosystem Demography Model (version 2.2)
 
-For this study, we used the Ecosystem Demography Model, version 2.2 (ED2).
-Below, we provide only a high-level description of key model features and focus in detail only on submodels and configurations specific to this study.
+For this study, we used the Ecosystem Demography Model, version 2.2 (ED-2.2).
 A full description of the default configuration of the model is provided by @longo_2019_ed1.
+Briefly, ED-2.2 solves the energy, water, and carbon cycles separately for each of multiple "cohorts" of trees of similar composition, size, and age sharing a micro-environment and disturbance history [@moorcroft_2001_method; @medvigy_2009_mechanistic; @longo_2019_ed1].
+Besides the cohort-based approximation of gap dynamics, a distinctive feature of ED-2.2 is that the equations for energy, water, and carbon fluxes are defined in terms of total energy, water, and carbon, which ensures excellent conservation of mass in long-running (multidecadal) simulations [@longo_2019_ed1].
+Various versions of the ED model have been validated in boreal [@medvigy_2011_predicting], temperate [@medvigy_2009_mechanistic; @dietze_2014_quantitative; @raczka_2018_what], and tropical biomes [@moorcroft_2001_method; @longo_2019_ed2], and have been applied in, among others,
+paleoecological studies [@rollinson_2017_emergent],
+free-air CO~2~ enrichment studies [@dekauwe_2013_forest; @miller_2015_alteration],
+estimation of potential carbon stocks [@hurtt_2004_beyond_potential_vegetation],
+and analyses of regional vegetation-climate feedbacks [@swann_2015_future].
 
-The key feature of the "ecosystem demography" approach underlying the ED2 model is a system of partial differential equations that simulate the emergent mean behavior of "cohorts" of individuals of similar composition, size, and age [@moorcroft_2001_method]. <!-- TODO Run this description by Mike? -->
-The original "Ecosystem Demography" (ED) model [@moorcroft_2001_method] was enhanced by @medvigy_2009_mechanistic (as ED2) with fully-coupled leaf physiology, canopy radiative transfer, and micrometeorology, and each of these components have been further refined over the last decade [culminating in ED2.2; @longo_2019_ed1].
-Various versions of the ED model have been validated in boreal [@medvigy_2011_predicting], temperate [@medvigy_2009_mechanistic; @dietze_2014_quantitative; @raczka_2018_what], and tropical biomes [@moorcroft_2001_method; @longo_2019_ed2], and have been applied in:
-
-- paleoecological studies [@rollinson_2017_emergent];
-- free-air CO~2~ enrichment studies [@dekauwe_2013_forest; @miller_2015_alteration];
-- estimation of potential carbon stocks [@hurtt_2004_beyond_potential_vegetation]
-- vegetation-climate feedbacks {Swann, etc} <!-- TODO -->
-
-
-ED2 represents both spatial and temporal variability hierarchically.
-The largest spatial unit is the "polygon", within which all elements share the same meteorological forcings.
-Polygons are divided into multiple "sites", each site with its own set of abiotic characteristics such as soil texture and topography.
-Sites are divided into discrete "patches" according to time since last disturbance.
-Finally, each patch is composed of an arbitrary (and dynamic) number of "cohorts", representing the mean behavior of groups of plant individuals of similar size and composition.
-Temporal variability in ED2 is similarly hierarchical.
-Thermodynamics, including energy, water, and eddy (e.g. CO~2~) fluxes, are resolved on the order of seconds.
-Biophysics, including photosynthesis, respiration, and radiative transfer, and the evaluation of energy, water, and CO2 budgets, are resolved on the order of minutes.
-Phenology and plant carbon balance are evaluated daily.
-Cohort dynamics, including structural growth, mortality, and reproduction, are evaluated monthly.
-Finally, patch dynamics (e.g. annual disturbances) are evaluated annually.
-In this study, we consider only a single patch (and, therefore, a single site and polygon) starting from a "near bare ground" condition.
-
-<!-- TODO -->
-{Brief summary of thermodynamics?}
-{Brief summary of water cycle?} BBL: maybe in one sentence each, but otherwise no, send 'em to a citation.
-
-ED2 represents the carbon flux for each cohort as the net sum of contributions from turbulent mixing, leaf photosynthesis and respiration, (fine) root respiration, growth and maintenance respiration, and heterotrophic respiration.
-In addition, each cohort also has a virtual carbon balance that links fast processes like photosynthesis and respiration to slow processes like allocation (to growth, storage, and reproduction) and mortality.
-
-The official ED2 source code is available at https://github.com/EDmodel/ED2, and the exact version used in this study (which includes minor revisions to accommodate the requirements of this study) can be obtained  https://github.com/ashiklom/ED2/tree/b048950971e91699b78fc566df133caf977fda32.
+The official ED2 source code is available at https://github.com/EDmodel/ED2, and the exact version used in this study (which includes minor revisions to accommodate the requirements of this study) can be obtained at https://github.com/ashiklom/ED2/tree/b048950971e91699b78fc566df133caf977fda32.
 
 ## ED2 submodels
 
