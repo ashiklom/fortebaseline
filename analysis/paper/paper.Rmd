@@ -144,25 +144,21 @@ and analyses of regional vegetation-climate feedbacks [@swann_2015_future].
 
 The official ED2 source code is available at https://github.com/EDmodel/ED2, and the exact version used in this study (which includes minor revisions to accommodate the requirements of this study) can be obtained at https://github.com/ashiklom/ED2/tree/b048950971e91699b78fc566df133caf977fda32.
 
-## ED2 submodels
+## Submodels
 
-In this study, we ran a factorial combination of the following ED2 configurations: (1) two-stream vs. multiple-scatter canopy radiative transfer models; (2) infinite vs. finite crown area (a.k.a. complete vs. partial shading); and (3) static vs. light-plastic traits.
+In this study, we ran a factorial combination of the following ED-2.2 configurations: (1) two-stream vs. multiple-scatter canopy radiative transfer models; (2) infinite vs. finite crown area (a.k.a. complete vs. partial shading); and (3) static vs. light-plastic traits.
 
-Both canopy radiative transfer models in ED2 resolve the full vertical radiation profile within a patch as a function of canopy structure (leaf and wood area indices, crown area, leaf angle distribution) and incident solar radiation.
-The two models differ in the mathematical approximations of the underlying differential radiative transfer equations.
+Both canopy radiative transfer models in ED-2.2 resolve the full vertical radiation profile within a patch as a function of canopy structure (leaf and wood area indices, crown area, leaf angle distribution) and incident solar radiation, following the definitions in CLM 4.5 [@clm45_note].
+Both models also use identical definitions for the optical properties of a single canopy layer as a function of leaf and wood optical properties, leaf angle distribution, canopy clumping, solar zenith angle, and leaf, wood, and crown area indices.
+Both models represent direct (a.k.a. "beam") radiation as an exponentially decaying process, and solve for the diffuse (a.k.a. "hemispherical", "isotropic") radiation at each layer using a linear matrix equation.
+Where the models differ is in the terms of this matrix equation.
+The two-stream model (default) uses the two-stream approximation originally derived for atmospheric radiative transfer [@meador_1980_two] and later adapted to vegetation canopies [@dickinson_1983_land; @sellers_1985_canopy].
+Meanwhile, the multiple-scatter model was derived from first principles by @zhao_2005_multiple specifically for vegetation canopies, specifically to address known biases and limitations of the two-stream approach [e.g. @wang_2003_comparison].
+Both of these models are described in detail in the Supplementary Information. <!-- TODO Exact reference to Appendix -->
 
-- Two-stream model (ED default)
-    - Same general approach as in CLM 4.5 [@clm45_note], but rather than solving for just two layers (sunlit and shaded), solve for each canopy layer.
-    - Set up the two-stream equations for each layer as a linear system and solve the entire set of equations numerically
-    - Similar to approaches used in other models: JULES [@mercado_2007_improving], ORCHIDEE-CAN [@naudts_2015_vertically], CLM(SPA) [@bonan_2014_modeling]
-    - For details, see Supplements S9 and S10 in [@longo_2019_ed1].
-- Multiple scatter model
-    - Based on @zhao_2005_multiple
-    
-The crown area submodel in ED2 determines the nature of competition for light between cohorts.
+The crown area submodel in ED-2.2 determines the nature of competition for light between cohorts.
 In the default configuration ("infinite crown area", or "complete shading"), the leaf area of a cohort is distributed across the entire horizontal area of a patch.
 This means that taller cohorts always receive more incoming radiation than shorter cohorts, even when the height difference is small.
-Put another way, this means that there is no horizontal competition, only vertical.
 This has been shown to excessively suppress competition from sub-dominant individuals and result in unrealistically homogeneous canopies [@fisher_2015_taking].
 In the alternate configuration ("finite crown area", or "partial shading"), canopies take up only a fraction of the available horizontal area, meaning that multiple cohorts of similar height can receive the same level of light.
 The horizontal area of crowns is determined by allometric equations from @dietze_2008_changing.
@@ -180,7 +176,7 @@ These sub-models are summarized in Table X.
 | `closed` (default)           | Cohort crowns take up entire patch area. Competition for light based only on height. | Light                     |
 | `finite`                     | Cohort crown area is proportional to DBH according to PFT-specific allometry.        | Dark                      |
 | **Radiative transfer model** |                                                                                      |                           |
-| `two-stream` (default)       | Two-stream approximation, as in CLM 4.5                                              | Primary (red, blue)       |
+| `two-stream` (default)       | Two-stream approximation [@sellers_1985_canopy; @clm45_note]                         | Primary (red, blue)       |
 | `multi-scatter`              | Multiple-scatter approximation, following [@zhao_2005_multiple]                      | Secondary (green, orange) |
 | **Trait plasticity**         |                                                                                      |                           |
 | `static` (default)           | SLA and Vcmax are constant                                                           | Cool (blue, green)        |
