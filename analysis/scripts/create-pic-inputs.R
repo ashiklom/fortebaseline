@@ -6,7 +6,7 @@ dir.create(pic_input_dir, recursive = TRUE, showWarnings = FALSE)
 
 set.seed(12345678)
 
-nparams <- 200
+nparams <- 500
 
 write_ed2_xml <- function(trait_values) {
   pft_list <- tibble::tibble(bety_name = names(trait_values)) %>%
@@ -40,7 +40,7 @@ create_case <- function(case, basedir = "analysis/data/model_output/cases") {
   XML::saveXML(config_xml, file.path(outdir, "config.xml"))
   ed2in_template_file <- file.path("inst", "ED2IN")
   ed2in_template <- PEcAn.ED2::read_ed2in(ed2in_template_file)
-  remote_basedir <- file.path("/projects", "birthright", "shik544")
+  remote_basedir <- file.path("/qfs", "projects", "forteproject")
   remote_input_dir <- file.path(remote_basedir, "ed")
   remote_output_dir <- file.path(remote_basedir, "forte-ed-runs")
 
@@ -78,7 +78,7 @@ create_case <- function(case, basedir = "analysis/data/model_output/cases") {
     IMOUTPUT = 3,
     # Enable "observed" fast output at specified interval
     IOOUTPUT = 3,
-    OBSTIME_DB = file.path(remote_output_dir, "forte_obstime.time"),
+    OBSTIME_DB = file.path(remote_input_dir, "forte_obstime.time"),
     OUTFAST = 0,
     # Include monthly history files
     ISOUTPUT = 3,
@@ -157,7 +157,7 @@ structures <- tibble(
 
 cases <- crossing(structures, param_nest)
 PEcAn.logger::logger.setLevel("INFO")
-pb <- progress::progress_bar$new(total = length(cases))
+pb <- progress::progress_bar$new(total = nrow(cases))
 for (c in purrr::transpose(cases)) {
   pb$tick()
   tryCatch(
