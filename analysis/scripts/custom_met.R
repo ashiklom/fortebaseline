@@ -27,6 +27,8 @@ met_ts <- tibble(
   date = str_remove(fname, "\\.h5$") %>% parse_date_time("ym")
 ) %>% arrange(date)
 
+summary(met_ts)
+
 # Read the Mauna Loa and Law Dome records
 law_dome_url <- "https://cdiac.ess-dive.lbl.gov/ftp/trends/co2/lawdome.smoothed.yr20"
 law_dome_raw <- readLines(law_dome_url)
@@ -41,7 +43,7 @@ mlo_data <- read_table(mlo_url, skip = 72, col_names = mlo_cols) %>%
 # Combine them both
 co2_record <- law_dome_data %>%
   rename(year = mean_air_age, law_dome = CO2_20yr_smooth) %>%
-  left_join(
+  full_join(
     mlo_data %>%
       group_by(year) %>%
       summarize(mlo = mean(interpolated, na.rm = TRUE)),
@@ -57,6 +59,11 @@ co2_record_6hr <- tibble(
   co2 = approx(co2_record$year, co2_record$co2, decimal_date(date))[["y"]]
 ) %>%
   mutate(date_floor = floor_date(date, "month"))
+
+stopifnot(
+  max(co2_record_6hr$date) > "2000-01-01",
+  !any(is.na(co2_record_6hr$co2))
+)
 
 if (interactive()) {
   plot(co2 ~ date, data = co2_record_6hr, type = "l")
@@ -78,6 +85,8 @@ add_co2 <- function(file, data) {
 
 co2_wrote <- co2_record_nested %>%
   mutate(wrote = map2_lgl(full_path, data, possibly(add_co2, FALSE)))
+
+filter(co2_wrote, !wrote)
 
 # Write out the revised ED met header
 emh <- PEcAn.ED2::read_ed_metheader(path(local_out_dir, "ED_MET_DRIVER_HEADER"),
