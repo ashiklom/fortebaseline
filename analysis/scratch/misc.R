@@ -1198,3 +1198,101 @@ nc$grid
 
 v <- grep("_PY$", names(hf), value = TRUE)
 for (i in v) print(hf[[i]])
+
+#########################################
+# Which runs suddenly dying?
+d <- jja_means
+setDT(d)
+sdcols <- c("agb", "gpp", "npp", "lai")
+dvar <- d[order(year, case, model_id),] %>%
+  .[, `:=`(dagb = agb - shift(agb),
+           dgpp = gpp - shift(gpp),
+           dnpp = npp - shift(npp),
+           dlai = lai - shift(lai)), .(case, model_id)]
+
+dsub <- dvar[year > 1915][agb < 0.1][dagb < -0.4]
+dsub <- dvar[year > 1915][lai < 0.1][dlai < -3]
+ddied <- unique(dsub[, .(case)])
+d_deathyear <- unique(dsub[, .(case, year)])
+
+ddied[d, on = "case", nomatch = 0] %>%
+  ggplot() +
+  aes(x = year, y = agb) +
+  geom_line() +
+  facet_wrap(vars(case))
+
+ccc <- c("034CMP", "034FMS", "110FTP", "110FTS", "153FTS",
+         "009FMP", "012CMP", "012CTP", "012CTS")
+
+xf <- fst(cohort_file)
+x <- xf[xf$datetime < "1950-01-01" &
+          xf$datetime > "1947-01-01" &
+          grepl("034|110|153", xf$case),]
+setDT(x)
+
+x[, .(y = sum(fmean_fsw_co * nplant)), .(case, datetime, pft)] %>%
+  .[, param_id := substring(case, 0, 3)] %>%
+  ggplot() +
+  aes(x = datetime, y = y,
+      color = factor(param_id),
+      linetype = factor(pft),
+      group = interaction(case, pft)) +
+  geom_line() +
+  scale_x_datetime(date_breaks = "2 months")
+
+plong <- run_params %>%
+  gather(variable, value, -param_id, -bety_name, -pft, -shortname)
+psub <- filter(plong, param_id %in% c(34, 110, 153))
+ggplot() +
+  aes(x = shortname, y = value, fill = shortname) +
+  geom_violin(data = plong, fill = "grey70") +
+  geom_point(aes(color = factor(param_id)), data = psub, size = 2) +
+  facet_wrap(vars(variable), scales = "free_y")
+
+# In 1948, some runs are dying because of C starvation triggered by
+# water stress (fmean_fsw_co). Sensitivity to drought is caused by
+# stomatal conductance -- high stomatal conductance. The high
+# mortality may also be related to the high value of `mort1`
+# (background mortality rate).
+
+# Was 1948 a particularly dry year?
+sf <- fst("analysis/data/retrieved/all-output-soil.fst")
+s <- sf[sf$param_id %in% c(34, 110, 153), ]
+setDT(s)
+
+s %>%
+  .[slz >= -0.7, lapply(.SD, mean),
+    .(case, floor_date(datetime, "month")),
+    .SDcols = map_lgl(s, is.numeric)] %>%
+  .[floor_date > "1940-01-01" & floor_date < "1950-01-01"] %>%
+  ggplot() +
+  aes(x = floor_date, y = fmean_soil_water_py, color = factor(param_id), group = case) +
+  geom_line() +
+  scale_x_datetime(date_breaks = "6 months")
+
+scf <- fst("analysis/data/retrieved/all-output-scalar.fst")
+scf_cols <- c("fmean_atm_temp_py", "fmean_atm_vpdef_py",
+              "total_agb_mort", "total_basal_area_mort")
+sc <- scf[scf$param_id %in% c(34, 110, 153),
+          c("datetime", "case", "param_id", scf_cols)]
+setDT(sc)
+
+summary(sc)
+
+sc %>%
+  .[datetime > "1940-01-01" & datetime < "1950-01-01"] %>%
+  .[, lapply(.SD, mean), .(param_id, case, floor_date(datetime, "month")),
+    .SDcols = scf_cols] %>%
+  ggplot() +
+  aes(x = floor_date, y = total_basal_area_mort,
+      color = factor(param_id), group = case) +
+  geom_line()
+
+pyf <- fst("analysis/data/retrieved/all-output-pft.fst")
+
+#########################################
+# Why are all runs stopping in 1977?
+# First guess: Met
+library(tidync)
+nc <- tidync("analysis/data/retrieved/CUSTOM_ED2_site_1-33/1978JAN.h5")
+met <- hyper_tibble(nc)
