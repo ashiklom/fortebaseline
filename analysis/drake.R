@@ -8,7 +8,8 @@ if (getRversion() >= "3.6") {
                             "setdiff", "setequal", "union"))
   conflictRules("lubridate",
                 mask.ok = c("as.difftime", "date"),
-                exclude = c("intersect", "setdiff", "union", "here"))
+                exclude = c("intersect", "setdiff", "union", "here",
+                            "stamp"))
   conflictRules("ggplot2", exclude = "ggsave")
   conflictRules("data.table", exclude = c("between", "first", "last",
                                           "transpose", "hour", "isoweek",
