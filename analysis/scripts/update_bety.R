@@ -67,7 +67,7 @@ define_pfts <- function(pft_dict,
 
 # Set the PFT-species relationship in BETY
 set_pft_species <- function(species_df, con = bety(),
-                            overwrite = FALSE, dryrun = FALSE) {
+                            dryrun = FALSE) {
   stopifnot(all(c("species", "pft") %in% colnames(species_df)))
   input_species <- species_df[["species"]]
   input_pfts <- unique(species_df[["pft"]])
@@ -124,7 +124,8 @@ set_pft_species <- function(species_df, con = bety(),
 }
 
 set_prior <- function(variable, distn, parama, paramb, pft,
-                      con = bety(), overwrite = TRUE, dryrun = FALSE) {
+                      con = bety(), dryrun = FALSE,
+                      overwrite = FALSE) {
   # Get variable IDs
   add_variable_if_missing(variable, con = con)
   variable_id <- get_variable_ids(variable, con)
@@ -240,7 +241,13 @@ other_priors <- tribble(
   "umbs.northern_pine", "minimum_height", "gamma", 1.5, 0.2,
   # Pine leaf respiration prior was missing. This is an uninformative
   # prior for pine barrens
-  "umbs.northern_pine", "leaf_respiration_rate_m2", "weibull", 2, 6
+  "umbs.northern_pine", "leaf_respiration_rate_m2", "weibull", 2, 6,
+  # Water conductance prior is way too wide. This one is centered on
+  # the default value, but isn't quite as ridiculously broad.
+  "umbs.early_hardwood", "water_conductance", "lnorm", log(2e-5), 3.5,
+  "umbs.mid_hardwood", "water_conductance", "lnorm", log(2e-5), 3.5,
+  "umbs.late_hardwood", "water_conductance", "lnorm", log(2e-5), 3.5,
+  "umbs.northern_pine", "water_conductance", "lnorm", log(2e-5), 3.5,
 )
 
 pft_definition <- here("analysis", "data", "derived-data", "pft_definition.yml") %>%
@@ -277,9 +284,42 @@ pfts <- pfts()
 ma_results <- map(pfts[["bety_name"]], pecan_ma_pft, con = bety()) %>%
   setNames(pfts[["pft"]])
 
+# Post-process
+ma_posterior <- ma_results %>%
+  tidy_posterior() %>%
+  mutate(is_posterior = TRUE)
+ma_prior <- priors %>%
+  select(bety_name = pft, one_of(colnames(ma_posterior))) %>%
+  left_join(pfts(), by = "bety_name")
+missing_posteriors <- ma_prior %>%
+  anti_join(ma_posterior, by = c("pft", "trait")) %>%
+  draw_traits() %>%
+  mutate(is_posterior = FALSE)
+trait_distribution <- ma_posterior %>%
+  bind_rows(missing_posteriors)
+
+if (interactive()) {
+  library(ggplot2)
+  trait_distribution %>%
+    mutate(pft = factor(pft, pfts("pft"))) %>%
+    tidyr::unnest(draws) %>%
+    filter(draws < quantile(draws, 0.975),
+           draws > quantile(draws, 0.025)) %>%
+    ggplot() +
+    aes(x = pft, y = draws, fill = pft) +
+    geom_violin() +
+    facet_wrap(vars(trait), scales = "free_y") +
+    scale_fill_manual(values = pfts("color")) +
+    labs(x = "PFT", fill = "PFT") +
+    cowplot::theme_cowplot() +
+    theme(axis.title.y = element_blank(),
+          axis.text.x = element_blank())
+}
+
 # Store results
 write_csv(priors, path(
   "analysis", "data", "derived-data", "pft-priors.csv"
 ))
-ma_outfile <- here("analysis", "data", "retrieved", "meta-analysis.rds")
-saveRDS(ma_results, ma_outfile)
+ma_outdir <- dir_ls(here("analysis", "data", "retrieved"))
+saveRDS(ma_results, path(ma_outdir, "meta-analysis.rds"))
+saveRDS(trait_distribution, path(ma_outdir, "trait-distribution.rds"))

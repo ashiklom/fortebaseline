@@ -1296,3 +1296,34 @@ pyf <- fst("analysis/data/retrieved/all-output-pft.fst")
 library(tidync)
 nc <- tidync("analysis/data/retrieved/CUSTOM_ED2_site_1-33/1978JAN.h5")
 met <- hyper_tibble(nc)
+
+#########################################
+ma_prior %>%
+  filter(shortname == "Early", trait == "root_respiration_rate")
+
+params_raw %>%
+  filter(trait == "root_respiration_rate")
+
+meta_analysis_file <- "analysis/data/retrieved/meta-analysis.rds"
+ma <- readRDS(meta_analysis_file)
+ma_eh <- ma[["Early hardwood"]]
+
+ma_prior %>%
+  filter(trait == "water_conductance")
+
+x <- rlnorm(5000, -5.4, 3)
+curve(log10(qlnorm(x, -5.4, 3)))
+qlnorm(c(0.025, 0.25, 0.5, 0.75, 0.975), log(2e-5), 3.5)
+log10(qlnorm(c(0.005, 0.995), exp(-5.4)-, 3))
+1 - plnorm(, -5.4, 3)
+qlnorm(-5.4, 3)
+summary(x)
+hist(x)
+
+con <- bety()
+
+wid <- 45
+tbl(con, "priors") %>%
+  filter(variable_id == wid) %>%
+  collect() %>%
+  glimpse()
