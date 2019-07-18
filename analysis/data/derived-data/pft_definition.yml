@@ -1,4 +1,5 @@
 - pft: umbs.early_hardwood
+  based_on: temperate.Early_Hardwood
   species:
     - Betula papyrifera var. cordifolia
     - Betula papyrifera
@@ -7,6 +8,7 @@
     - Populus grandidentata
     - Populus tremuloides
 - pft: umbs.mid_hardwood
+  based_on: temperate.North_Mid_Hardwood
   species:
     - Acer rubrum
     - Acer rubrum var. drummondii
@@ -17,6 +19,7 @@
     - Quercus rubra var. rubra
     - Acer pensylvanicum
 - pft: umbs.late_hardwood
+  based_on: temperate.Late_Hardwood
   species:
     - Acer saccharum
     - Acer saccharum var. saccharum
@@ -24,5 +27,6 @@
     - Fagus grandifolia
     - Fagus grandfolia
 - pft: umbs.northern_pine
+  based_on: temperate.Northern_Pine
   species:
     - Pinus strobus

@@ -25,7 +25,10 @@ devtools::load_all(here())
 invisible(bety())
 
 # Assign plant functional types in BETY
-define_pfts <- function(pft_names, con = bety()) {
+define_pfts <- function(pft_dict,
+                        con = bety()) {
+  pft_names <- pft_dict[["pft"]]
+  based_on <- pft_dict[["based_on"]]
   stopifnot(setequal(pft_names, pfts("bety_name")))
   inbety <- tbl(con, "pfts") %>%
     filter(name %in% pft_names) %>%
@@ -39,14 +42,33 @@ define_pfts <- function(pft_names, con = bety()) {
     q <- DBI::dbBind(s, unname(as.list(insert)))
     DBI::dbClearResult(q)
   }
-  tbl(con, "pfts") %>%
+  result <- tbl(con, "pfts") %>%
     filter(name %in% !!pfts("bety_name")) %>%
     collect()
+  dict2 <- result %>%
+    left_join(pft_dict, c("name" = "pft")) %>%
+    select(pft_id = id, target_pft = name, pft = based_on)
+
+  # Copy any missing priors from the "based_on" PFTs
+  add_priors <- pfts_priors(based_on, con, collect = TRUE) %>%
+    select(pft, variable, prior_id) %>%
+    inner_join(dict2, "pft") %>%
+    anti_join(pfts_priors(pft_names, con, collect = TRUE),
+              c("target_pft" = "pft", "variable"))
+  if (nrow(add_priors) > 0) {
+    q <- DBI::dbExecute(con, paste0(
+      "INSERT INTO pfts_priors (pft_id, prior_id) ",
+      "VALUES ($1, $2)"
+    ), with(add_priors, list(pft_id, prior_id)))
+  }
+
+  result
 }
 
 # Set the PFT-species relationship in BETY
-set_pft_species <- function(species_df, con = bety(), dryrun = FALSE) {
-  stopifnot(setequal(c("species", "pft"), colnames(species_df)))
+set_pft_species <- function(species_df, con = bety(),
+                            overwrite = FALSE, dryrun = FALSE) {
+  stopifnot(all(c("species", "pft") %in% colnames(species_df)))
   input_species <- species_df[["species"]]
   input_pfts <- unique(species_df[["pft"]])
   bety_species <- tbl(con, "species") %>%
@@ -226,10 +248,13 @@ pft_definition <- here("analysis", "data", "derived-data", "pft_definition.yml")
   map_dfr(data.frame, stringsAsFactors = FALSE) %>%
   as_tibble()
 
-p_pfts <- define_pfts(unique(pft_definition[["pft"]]))
+p_pfts <- pft_definition %>%
+  distinct(pft, based_on) %>%
+  define_pfts()
 p_pfts_species <- set_pft_species(pft_definition)
 spec_priors_data <- read_csv(here("analysis", "data",
-                                 "derived-data", "priors_spectra.csv"))
+                                  "derived-data", "priors_spectra.csv"),
+                             col_types = "ccddc")
 
 set_prior_l <- lift_dl(set_prior, overwrite = TRUE)
 set_spec_priors <- set_prior_l(spec_priors_data)
