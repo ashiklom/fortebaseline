@@ -4,11 +4,8 @@ library(tidyverse)
 pic_input_dir <- file.path("analysis", "data", "model_output", "pic-inputs")
 dir.create(pic_input_dir, recursive = TRUE, showWarnings = FALSE)
 
-set.seed(12345678)
-
-nparams <- 500
-
 param_draws <- read_csv("analysis/data/retrieved/input-parameters.csv")
+nparams <- nrow(param_draws)
 
 write_ed2_xml <- function(trait_values) {
   pft_list <- tibble::tibble(bety_name = names(trait_values)) %>%
