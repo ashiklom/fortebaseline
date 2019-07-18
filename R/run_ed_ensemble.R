@@ -72,7 +72,7 @@ run_ed_ensemble <- function(start_date, end_date,
     )
   )
 
-  if (is.null(con)) con <- default_connection()
+  if (is.null(con)) con <- bety()
 
   model_id <- pecanapi::get_model_id(con, "ED2-experimental", "experimental")
   site_id <- 1000000033                   # UMBS disturbance

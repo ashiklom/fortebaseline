@@ -9,7 +9,7 @@ import::from("dplyr", "mutate", "case_when", "tbl", "inner_join", "semi_join", "
 import::from("pecanapi", "prepared_statement", .into = "")
 # end imports
 
-con <- default_connection()
+con <- bety()
 
 species_list <- file.path("analysis", "data",
                           "derived-data", "species_list.txt") %>%

@@ -210,7 +210,7 @@ plot(lai, type = "l")
 
 ##################################################
 # Old code for working with ED2IN
-parse_ed2ins <- function(workflow_id, con = default_connection()) {
+parse_ed2ins <- function(workflow_id, con = bety()) {
   filepath <- runfile(workflow_id, "ED2IN", con)
   PEcAn.ED2::read_ed2in(filepath)
 }
@@ -218,7 +218,7 @@ parse_ed2ins <- function(workflow_id, con = default_connection()) {
 ed2in_dat <- tibble(workflow_id = workflow_ids) %>%
   mutate(ed2in = map(
     workflow_id, possibly(parse_ed2ins, NULL),
-    con = default_connection()
+    con = bety()
   )) %>%
   filter(map_lgl(ed2in, negate(is.null)))
 
@@ -244,7 +244,7 @@ run_info <- ed2in_dat %>%
 all_configs <- tibble(workflow_id = workflow_ids) %>%
   mutate(configs = map(
     workflow_id, possibly(parse_configs, NULL),
-    con = default_connection()
+    con = bety()
   )) %>%
   filter(map_lgl(configs, negate(is.null))) %>%
   unnest()

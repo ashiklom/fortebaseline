@@ -5,7 +5,7 @@ library(purrr)
 library(readr)
 library(rlang, include.only = "syms")
 
-con <- default_connection()
+con <- bety()
 
 start_date <- "1902-06-01"
 end_date <- "2000-12-31"

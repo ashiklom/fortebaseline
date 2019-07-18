@@ -6,7 +6,7 @@
 #' @return Character vector of URLs for reading or downloading files.
 #' @author Alexey Shiklomanov
 #' @export
-runfiles <- function(workflow_id, target, con = default_connection()) {
+runfiles <- function(workflow_id, target, con = bety()) {
   runs <- pecanapi::list_runs(con, workflow_id)
   if (nrow(runs) == 0) return(NULL)
   purrr::map_chr(file.path("run", runs[["id"]], target),

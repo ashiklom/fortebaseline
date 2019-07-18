@@ -4,13 +4,13 @@
 \alias{runfiles}
 \title{Retrieve all the `run` files from a particular workflow.}
 \usage{
-runfiles(workflow_id, target, con = default_connection())
+runfiles(workflow_id, target, con = bety())
 }
 \arguments{
 \item{workflow_id}{ID of PEcAn workflow (from BETY `workflows` table)}
 
 \item{con}{DBI database connection object for BETY database.
-Default is output of [default_connection()].}
+Default is output of [bety()].}
 }
 \value{
 Character vector of URLs for reading or downloading files.
