@@ -8,6 +8,8 @@ set.seed(12345678)
 
 nparams <- 500
 
+param_draws <- read_csv("analysis/data/retrieved/input-parameters.csv")
+
 write_ed2_xml <- function(trait_values) {
   pft_list <- tibble::tibble(bety_name = names(trait_values)) %>%
     dplyr::left_join(pfts(), by = "bety_name") %>%
@@ -32,15 +34,16 @@ as_pft_list <- function(dat) {
   vals
 }
 
-create_case <- function(case, basedir = "analysis/data/model_output/cases") {
+create_case <- function(case,
+                        remote_basedir = file.path("/qfs", "projects", "forteproject"),
+                        local_basedir = remote_basedir) {
   casename <- sprintf("%03d%s", case$param_id, case$case)
-  outdir <- file.path(basedir, casename)
+  outdir <- file.path(local_basedir, casename)
   dir.create(outdir, showWarnings = FALSE, recursive = TRUE)
   config_xml <- as_pft_list(case$data) %>% write_ed2_xml()
   XML::saveXML(config_xml, file.path(outdir, "config.xml"))
   ed2in_template_file <- file.path("inst", "ED2IN")
   ed2in_template <- PEcAn.ED2::read_ed2in(ed2in_template_file)
-  remote_basedir <- file.path("/qfs", "projects", "forteproject")
   remote_input_dir <- file.path(remote_basedir, "ed")
   remote_output_dir <- file.path(remote_basedir, "forte-ed-runs")
 
@@ -70,8 +73,12 @@ create_case <- function(case, basedir = "analysis/data/model_output/cases") {
     SOIL_DATABASE = file.path(remote_input_dir, "EDI", "faoOLD", "FAO_"),
     LU_DATABASE = file.path(remote_input_dir, "EDI", "ed_inputs", "glu"),
     THSUMS_DATABASE = file.path(remote_input_dir, "EDI", "ed_inputs/"),
-    ED_MET_DRIVER_DB = file.path(remote_input_dir, "met",
-                                 "CUSTOM_ED2_site_1-33", "ED_MET_DRIVER_HEADER"),
+    ED_MET_DRIVER_DB = file.path(
+      remote_input_dir,
+      "met",
+      "CUSTOM_ED2_site_1-33",
+      "ED_MET_DRIVER_HEADER"
+    ),
     # No tower output -- this makes runs 10-20x faster
     ITOUTPUT = 0,
     # Monthly output instead
@@ -115,26 +122,6 @@ create_case <- function(case, basedir = "analysis/data/model_output/cases") {
   PEcAn.ED2::write_ed2in(ed2in, file.path(outdir, "ED2IN"), barebones = TRUE)
   invisible(outdir)
 }
-
-params_raw <- drake::readd("trait_distribution")
-params <- params_raw %>%
-  select(-num, -bety_name) %>%
-  left_join(params_raw %>%
-              distinct(pft, num, bety_name) %>%
-              filter(!is.na(num)), "pft") %>%
-  unnest(draws) %>%
-  filter(trait != "cuticular_cond") %>%
-  select(name = bety_name, trait, draws)
-
-param_draws <- params %>%
-  group_by(name, trait) %>%
-  sample_n(nparams) %>%
-  mutate(param_id = row_number()) %>%
-  spread(trait, draws) %>%
-  ungroup() %>%
-  select(param_id, everything())
-
-write_csv(param_draws, "analysis/data/retrieved/input-parameters.csv")
 
 param_nest <- param_draws %>%
   nest(-param_id)
