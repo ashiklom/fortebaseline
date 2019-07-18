@@ -53,14 +53,31 @@ analysis_dir <- dir_create(here("analysis"))
 data_dir <- dir_create(path(analysis_dir, "data"))
 download_dir <- dir_create(path(data_dir, "retrieved"))
 
+# "Observation time" output files
 cohort_file <- path(download_dir, "all-cohort-output.fst")
-## cohort_osf <- "2af5g"
+cohort_osf <- "d4u2j"
+pft_file <- path(download-dir, "all-output-pft.fst")
+pft_osf <- "5dht2"
+scalar_file <- path(download-dir, "all-output-scalar.fst")
+scalar_osf <- "fgdkm"
+soil_file <- path(download-dir, "all-output-soil.fst")
+soil_osf <- "4gjpy"
+
+# Monthly output files
+mcohort_file <- path(download_dir, "all-cohort-monthly-output.fst")
+mcohort_osf <- "..."
+mpft_file <- path(download-dir, "all-output-monthly-pft.fst")
+mpft_osf <- "..."
+mscalar_file <- path(download-dir, "all-output-monthly-scalar.fst")
+mscalar_osf <- "..."
+msoil_file <- path(download-dir, "all-output-monthly-soil.fst")
+msoil_osf <- "..."
 
 ensemble_params_file <- path(download_dir, "input-parameters.csv")
-## params_osf <- "8e45j"
+params_osf <- "87ku4"
 
-meta_analysis_file <- path(download_dir, "meta-analysis.rds")
-ma_osf <- "pcrav"
+trait_distribution_file <- path(download_dir, "trait-distribution.rds")
+td_osf <- "bfyuh"
 
 get_timestamp <- function(osf_id) {
   osfr::osf_retrieve_file(osf_id) %>%
@@ -192,25 +209,12 @@ plan <- drake_plan(
   #########################################
   # Parameter distributions
   #########################################
-  meta_analysis_dl = target(
-    download.file(file.path("https://osf.io/download", ma_osf),
-                  file_out(!!meta_analysis_file)),
-    trigger = trigger(change = get_timestamp(ma_osf))
+  trait_distribution_dl = target(
+    download.file(file.path("https://osf.io/download", td_osf),
+                  file_out(!!trait_distribution_file)),
+    trigger = trigger(change = get_timestamp(td_osf))
   ),
-  ma_posterior = file_in(!!meta_analysis_file) %>%
-    readRDS() %>%
-    tidy_posterior() %>%
-    mutate(is_posterior = TRUE),
-  ma_prior = file_in(!!path(data_dir, "derived-data", "pft-priors.csv")) %>%
-    read_csv() %>%
-    select(bety_name = pft, one_of(colnames(ma_posterior))) %>%
-    left_join(pfts(), by = "bety_name"),
-  missing_posteriors = ma_prior %>%
-    anti_join(ma_posterior, by = c("pft", "trait")) %>%
-    draw_traits() %>%
-    mutate(is_posterior = FALSE),
-  trait_distribution = ma_posterior %>%
-    bind_rows(missing_posteriors),
+  trait_distribution = readRDS(file_in(!!trait_distribution_file)),
   param_dist_gg = trait_distribution %>%
     mutate(pft = factor(pft, pfts("pft"))) %>%
     unnest(draws) %>%
