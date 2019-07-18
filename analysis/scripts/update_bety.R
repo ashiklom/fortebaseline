@@ -236,10 +236,7 @@ set_spec_priors <- set_prior_l(spec_priors_data)
 set_structure_priors <- set_prior_l(structure_priors)
 set_other_priors <- set_prior_l(other_priors)
 remove_priors <- delete_prior(c(
-  "c2n_fineroot",
-  "c2n_leaf",
   "cuticular_cond",
-  "leaf_turnover_rate",
   "leaf_width",
   "Vm_low_temp"
 ))
@@ -249,14 +246,15 @@ priors <- pfts_priors() %>%
          pft_id, prior_id) %>%
   mutate(is_posterior = FALSE)
 
-write_csv(priors, path(
-  "analysis", "data", "derived-data", "pft-priors.csv"
-))
-
 # Run PEcAn meta-analysis
 PEcAn.logger::logger.setLevel("WARN")
 pfts <- pfts()
 ma_results <- map(pfts[["bety_name"]], pecan_ma_pft, con = bety()) %>%
   setNames(pfts[["pft"]])
+
+# Store results
+write_csv(priors, path(
+  "analysis", "data", "derived-data", "pft-priors.csv"
+))
 ma_outfile <- here("analysis", "data", "retrieved", "meta-analysis.rds")
 saveRDS(ma_results, ma_outfile)
