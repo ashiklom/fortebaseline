@@ -285,11 +285,17 @@ ma_results <- map(pfts[["bety_name"]], pecan_ma_pft, con = bety()) %>%
   setNames(pfts[["pft"]])
 
 # Post-process
+priors <- read_csv("analysis/data/derived-data/pft-priors.csv")
+ma_results <- readRDS("analysis/data/retrieved/meta-analysis.rds")
 ma_posterior <- ma_results %>%
   tidy_posterior() %>%
-  mutate(is_posterior = TRUE)
+  mutate(is_posterior = TRUE,
+         pft = factor(pft, pfts("pft"))) %>%
+  left_join(pfts(), by = "pft")
 ma_prior <- priors %>%
-  select(bety_name = pft, one_of(colnames(ma_posterior))) %>%
+  ## rename(bety_name = pft) %>%
+  select(bety_name = pft, intersect(colnames(ma_posterior),
+                                    colnames(priors))) %>%
   left_join(pfts(), by = "bety_name")
 missing_posteriors <- ma_prior %>%
   anti_join(ma_posterior, by = c("pft", "trait")) %>%
@@ -320,6 +326,6 @@ if (interactive()) {
 write_csv(priors, path(
   "analysis", "data", "derived-data", "pft-priors.csv"
 ))
-ma_outdir <- dir_ls(here("analysis", "data", "retrieved"))
+ma_outdir <- dir_create(here("analysis", "data", "retrieved"))
 saveRDS(ma_results, path(ma_outdir, "meta-analysis.rds"))
 saveRDS(trait_distribution, path(ma_outdir, "trait-distribution.rds"))
