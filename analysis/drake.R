@@ -56,21 +56,21 @@ download_dir <- dir_create(path(data_dir, "retrieved"))
 # "Observation time" output files
 cohort_file <- path(download_dir, "all-cohort-output.fst")
 cohort_osf <- "d4u2j"
-pft_file <- path(download-dir, "all-output-pft.fst")
+pft_file <- path(download_dir, "all-output-pft.fst")
 pft_osf <- "5dht2"
-scalar_file <- path(download-dir, "all-output-scalar.fst")
+scalar_file <- path(download_dir, "all-output-scalar.fst")
 scalar_osf <- "fgdkm"
-soil_file <- path(download-dir, "all-output-soil.fst")
+soil_file <- path(download_dir, "all-output-soil.fst")
 soil_osf <- "4gjpy"
 
 # Monthly output files
 mcohort_file <- path(download_dir, "all-cohort-monthly-output.fst")
 mcohort_osf <- "..."
-mpft_file <- path(download-dir, "all-output-monthly-pft.fst")
+mpft_file <- path(download_dir, "all-output-monthly-pft.fst")
 mpft_osf <- "..."
-mscalar_file <- path(download-dir, "all-output-monthly-scalar.fst")
+mscalar_file <- path(download_dir, "all-output-monthly-scalar.fst")
 mscalar_osf <- "..."
-msoil_file <- path(download-dir, "all-output-monthly-soil.fst")
+msoil_file <- path(download_dir, "all-output-monthly-soil.fst")
 msoil_osf <- "..."
 
 ensemble_params_file <- path(download_dir, "input-parameters.csv")
@@ -99,12 +99,12 @@ plan <- drake_plan(
     read_csv(),
   #########################################
   # Summary time series
-  #########################################
-  ## cohort_file_dl = target(
-  ##   download.file(file.path("https://osf.io/download/", cohort_osf),
-  ##                 file_out(!!cohort_file)),
-  ##   trigger = trigger(change = get_timestamp(cohort_osf))
-  ## ),
+  cohort_file_dl = target(
+    download.file(file.path("https://osf.io/download/", cohort_osf),
+                  file_out(!!cohort_file)),
+    trigger = trigger(change = get_timestamp(cohort_osf),
+                      condition = !file.exists(cohort_file))
+  ),
   variable_cols = c("case", "datetime", "pft", "nplant",
                     "bleaf", "bsapwooda", "bstorage",
                     "fmean_gpp_co", "fmean_npp_co", "lai_co"),
