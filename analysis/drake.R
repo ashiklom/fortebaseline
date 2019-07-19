@@ -126,6 +126,8 @@ plan <- drake_plan(
     arrange(model) %>%
     mutate(color = RColorBrewer::brewer.pal(n(), "Paired")),
   model_colors = tibble::deframe(models[, c("model", "color")]),
+  use_vars = c("gpp", "npp", "agb", "lai", "shannon"),
+  use_vars_cap = c("GPP", "NPP", "AGB", "LAI", "Shannon"),
   plot_means = setDT(fst(!!cohort_file)[, variable_cols])[j = .(
     agb = sum((bleaf + bsapwooda + bstorage) * nplant),
     gpp = sum(fmean_gpp_co * nplant),
@@ -159,8 +161,6 @@ plan <- drake_plan(
     left_join(diversity, by = c("case", "model_id", "year")) %>%
     mutate(shannon = if_else(is.na(shannon), 0, shannon)) %>%
     inner_join(models, by = "model_id"),
-  use_vars = c("gpp", "npp", "agb", "lai", "shannon"),
-  use_vars_cap = c("GPP", "NPP", "AGB", "LAI", "Shannon"),
   jja_long = jja_means %>%
     gather(variable, value, agb:shannon) %>%
     mutate(variable = factor(variable, use_vars),

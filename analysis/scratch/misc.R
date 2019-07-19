@@ -1327,3 +1327,75 @@ tbl(con, "priors") %>%
   filter(variable_id == wid) %>%
   collect() %>%
   glimpse()
+#########################################
+library(data.table)
+library(fst)
+library(magrittr)
+library(ggplot2)
+
+f <- fst("analysis/data/retrieved/all-output-monthly-scalar.fst")
+nf <- names(f)
+vvv <- c("case", "model_id", "param_id", "datetime",
+         grep("^mmean_(npp|gpp|nep)", nf, value = TRUE))
+d <- setDT(f[, vvv])
+# Assign datetimes by hand
+mseq <- function(i) {
+  j <- i + 5
+  m <- j %% 12
+  m[m == 0] <- 12
+  y <- 1902 + j %/% 12
+  ISOdate(y, m, 01, tz = "UTC")
+}
+d <- d[, datetime := mseq(seq_len(.N)), case]
+
+ymeans <- d %>%
+  .[month(datetime) %in% c(6, 8),] %>%
+  .[, yr := year(datetime)] %>%
+  .[, lapply(.SD, mean), .(case, model_id, param_id, yr)]
+
+ggplot(ymeans) +
+  aes(x = yr, y = mmean_gpp_py, group = case) +
+  geom_line(alpha = 0.5) +
+  facet_wrap(vars(model_id), scales = "fixed")
+
+means <- d[datetime > "1950-01-01" & month(datetime) %in% c(6, 8),
+           lapply(.SD, mean),
+           .(case, model_id, param_id)]
+hist(means[, mmean_npp_py])
+
+#########################################
+# Read monthly cohort output
+
+f <- fst("analysis/data/retrieved/all-output-monthly-cohort.fst")
+nf <- names(f)
+vvv <- c("case", "model_id", "param_id", "datetime", "pft", "nplant",
+         "agb_co", "balive", "bdead", "bleaf", "broot",
+         "bsapwooda", "bsapwoodb", "bstorage", "dbh", "lai_co", 
+         grep("^mmean_(npp|gpp)", nf, value = TRUE))
+d <- setDT(f[, vvv])
+# Assign datetimes by hand
+mseq <- function(i) {
+  j <- i + 5
+  m <- j %% 12
+  m[m == 0] <- 12
+  y <- 1902 + j %/% 12
+  ISOdate(y, m, 01, tz = "UTC")
+}
+d <- d[, datetime := mseq(seq_len(.N)), .(case, pft, dbh)]
+
+ggplot(d) +
+  aes(x = factor(pft), y = nplant) +
+  geom_violin() +
+  facet_wrap(vars(model_id), scales = "fixed")
+
+summary(d)
+
+ymeans <- d %>%
+  .[month(datetime) %in% c(6, 8),] %>%
+  .[, yr := year(datetime)] %>%
+  .[, lapply(.SD, mean), .(case, model_id, param_id, yr)]
+
+ggplot(ymeans) +
+  aes(x = yr, y = mmean_gpp_py, group = case) +
+  geom_line(alpha = 0.5) +
+  facet_wrap(vars(model_id), scales = "fixed")
