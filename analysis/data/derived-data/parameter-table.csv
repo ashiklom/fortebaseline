@@ -1,29 +1,30 @@
 ED Name,Description,unit_parsed,unit_markdown,Raczka,Dietze,Ran
-mort1,Time-scale at which low-carbon balance plants die,years ^ -1,years^-1^,Carbon balance mortality,Mortality,no
-root_turnover_rate,Temperature dependent rate of fine root loss,years ^ -1,year^-1^,Root turnover,Root turnover,yes
-growth_resp_factor,Fraction of daily C gain lost to growth respiration,"""0 - 1""",unitless (0-1),Growth respiration,Growth Resp,yes
-stomatal_slope,Slope between _A_ and stomatal conductance (Leuning),"""0 - 1""",unitless,Stomatal sensitivity,Stomatal Slope,yes
-fineroot2leaf (q),Ratio of fine root to leaf biomass,,unitless (mass ratio),Root/Leaf carbon,Leaf:Root,yes
-r_fract,Fraction of C storage to seed reproduction,,unitless,Recruitment carbon,Reproduction?,yes
-f_labile,Fraction of litter that goes to labile (fast) C pool,"""0 - 1""",unitless (0-1),Labile carbon,,yes
-water_conductance,"""Water availability factor""",m^-2 ~ a^-1 ~ (kg*C~root)^-1,m^-2^ a^-1^ (kg C root)^-1^,Soil-plant water conductance,Water Cond,yes
-mort3,Density-independent (background) mortality rate,years ^ -1,year^-1^,Background mortality,,no
-SLA,Specific leaf area,m^2 ~ (kg*C)^-1,m^2^ kg^-1^ C,Specific leaf area,SLA,yes
-Rd0,Leaf dark respiration at 15 °C,,???,Leaf respiration*,Leaf Resp*,yes
-dark_respiration_factor,Ratio of leaf respiration to Vcmax,,???,Leaf respiration*,Leaf Resp*,yes
-quantum_efficiency,Farquhar model parameter (TODO),,mol CO~2~ (mol photons)^-1^,Quantum efficiency,Quantum Eff.,yes
-Vcmax (Vm0),Maximum rate of CO~2~ carboxylation at 15 °C,mu*mol ~ m^-2 s^-1,μmol m^-2^ s^-1^,Vcmax,Vcmax,yes
-root_respiration_rate (_factor),Root respiration rate at 15 °C,mu*mol ~ CO_2 (kg~fineroot)^-1,μmol CO~2~ (kg fineroot)^-1^,Root respiration,,yes
-minimum_height,Minimum height for plant reproduction,m,m,Minimum height,,no
-leaf_reflect_vis,Leaf reflectance in visible range (400-700 nm),"""0 - 1""",unitless (0-1),,,no
-leaf_reflect_nir,Leaf reflectance in NIR range (700-2500 nm),"""0 - 1""",unitless (0-1),,,no
-leaf_trans_vis,Leaf transmittance in visible range (400-700 nm),"""0 - 1""",unitless (0-1),,,no
-leaf_trans_nir,Leaf transmittance in NIR range (700-2500 nm),"""0 - 1""",unitless (0-1),,,no
 c2n_fineroot,C:N ratio in fine roots,,unitless (mass ratio),,,yes
 c2n_leaf,C:N ratio in leaves,,unitless (mass ratio),,,yes
+clumping_factor,Canopy clumping factor,"""0 - 1""",,,,yes
+f_labile,Fraction of litter that goes to labile (fast) C pool,"""0 - 1""",unitless (0-1),Labile carbon,,yes
+fineroot2leaf (q),Ratio of fine root to leaf biomass,,unitless (mass ratio),Root/Leaf carbon,Leaf:Root,yes
+growth_resp_factor,Fraction of daily C gain lost to growth respiration,"""0 - 1""",unitless (0-1),Growth respiration,Growth Resp,yes
+leaf_reflect_nir,Leaf reflectance in NIR range (700-2500 nm),"""0 - 1""",unitless (0-1),,,yes
+leaf_reflect_vis,Leaf reflectance in visible range (400-700 nm),"""0 - 1""",unitless (0-1),,,yes
+leaf_respiration_rate (Rd0),Ratio of leaf respiration to Vcmax,,???,Leaf respiration*,Leaf Resp*,yes
+leaf_trans_nir,Leaf transmittance in NIR range (700-2500 nm),"""0 - 1""",unitless (0-1),,,yes
+leaf_trans_vis,Leaf transmittance in visible range (400-700 nm),"""0 - 1""",unitless (0-1),,,yes
 leaf_turnover_rate,Temperature dependent rate of leaf loss (conifer only),years ^ -1,year^-1^,,,yes
-leaf_width,Mean leaf width (for boundary layer conductance),m,m,,,yes
+minimum_height,Minimum height for plant reproduction,m,m,Minimum height,,yes
+mort1,Time-scale at which low-carbon balance plants die,years ^ -1,years^-1^,Carbon balance mortality,Mortality,yes
 mort2,C balance ratio at which mortality rapidly increases,,unitless (mass ratio),,,yes
-nonlocal_dispersal,"""Proportion of dispersal that is global""","""0 - 1""",unitless (0-1),,,yes
+mort3,Density-independent (background) mortality rate,years ^ -1,year^-1^,Background mortality,,yes
+nonlocal_dispersal,Proportion of dispersal that is global,"""0 - 1""",unitless (0-1),,,yes
+orient_factor,Leaf angle orientation distribution,"""-1 - 1""",unitless (-1-1),,,yes                                 
+quantum_efficiency,Farquhar model parameter (TODO),,mol CO~2~ (mol photons)^-1^,Quantum efficiency,Quantum Eff.,yes
+r_fract,Fraction of C storage to seed reproduction,,unitless,Recruitment carbon,Reproduction?,yes
+root_respiration_rate (_factor),Root respiration rate at 15 °C,mu*mol ~ CO_2 (kg~fineroot)^-1,μmol CO~2~ (kg fineroot)^-1^,Root respiration,,yes
+root_turnover_rate,Temperature dependent rate of fine root loss,years ^ -1,year^-1^,Root turnover,Root turnover,yes
 seedling_mortality,Proportion of seed that dies and goes to litter pool,"""0 - 1""",unitless (0-1),,,yes
-Vm_low_temp,Minimum temperature for photosynthesis,degree * C,°C,,,yes
+SLA,Specific leaf area,m^2 ~ (kg*C)^-1,m^2^ kg^-1^ C,Specific leaf area,SLA,yes
+stomatal_slope,Slope between _A_ and stomatal conductance (Leuning),"""0 - 1""",unitless,Stomatal sensitivity,Stomatal Slope,yes
+Vcmax (Vm0),Maximum rate of CO~2~ carboxylation at 15 °C,mu*mol ~ m^-2 s^-1,μmol m^-2^ s^-1^,Vcmax,Vcmax,yes
+water_conductance,Water availability factor,m^-2 ~ a^-1 ~ (kg*C~root)^-1,m^-2^ a^-1^ (kg C root)^-1^,Soil-plant water conductance,Water Cond,yes
+leaf_width,Mean leaf width (for boundary layer conductance),m,m,,,no
+Vm_low_temp,Minimum temperature for photosynthesis,degree * C,°C,,,no

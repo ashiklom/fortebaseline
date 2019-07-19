@@ -229,7 +229,7 @@ Density-independent mortality from aging ($M_I$) is a prescribed, PFT-specific p
 Density-dependent mortality from C starvation is calculated as a function of a cohort's C balance limitation:
 
 $$
-M_D = \frac{y_1}{1 + \exp\left[y_2 left( \frac{C_k}{C_k^*} \right)\right]}
+M_D = \frac{y_1}{1 + \exp\left[y_2 \left( \frac{C_k}{C_k^*} \right)\right]}
 $$
 
 where $C_k$ is the 12 month running mean C balance of the cohort, $C_k^*$ is the running mean ideal C balance if there was no light or water limitation, and $y_1$ (`mort1`; plants year^-1^) and $y_2$ (`mort2`; unitless) are PFT-specific parameters.
@@ -242,19 +242,35 @@ leaf _orientation factor_ describes the average distribution of leaf angles (-1 
 Four parameters control leaf optical properties, namely the fractions of light reflected or transmitted in visible and near-infrared wavelengths (`leaf_(reflect|trans)_(vis|nir)`).
 Details of how these parameters influence canopy radiative transfer are described in the Supplementary Information.
 
-Three other parameters:
+Other parameters:
 
 - Fraction of litter carbon that enters the labile (fast) soil carbon pool (`f_labile`)
 - Minimum plant height for reproduction (`minimum_height`)
 - Soil-plant water conductance, or "water availability factor" (`water_conductance`)
+- C:N ratio in fine roots (`c2n_fineroot`) and leaves (`c2n_leaf`)
+- Leaf turnover rate (evergreen-only; `leaf_turnover_rate`)
+- Proportion of dispersal that is "global" (`nonlocal_dispersal`) <!-- TODO What is this? Can I drop it from the analysis? -->
+
+The full list of parameters is shown in Table 2.
+
+```{r param-table}
+tbl <- readd(param_table)
+tbl <- subset(tbl, Ran == "yes", select = c(-unit_parsed, -Ran))
+tbl[["ED Name"]] <- sprintf("`%s`", tbl[["ED Name"]])
+knitr::kable(tbl, escape = FALSE, caption = paste0(
+  "Table 2: Parameter descriptions. ",
+  "For additional information, see the ",
+  "[ED2 model wiki](https://github.com/EDmodel/ED2/wiki/PFT-parameters)."
+))
+```
 
 ## Plant functional types and parameterization
 
 By default, ED-2.2 supports 17 different plant functional types, which divide plant species according to photosynthetic pathway (C3 vs. C4), growth form (grass vs. tree), leaf phenology habit (deciduous vs. evergreen), biome (e.g. temperate vs. tropical), and successional status (e.g. early, mid, late).
 However, we limited our simulations to the four plant functional types that have any appreciable presence at UMBS: Early, mid, and late temperate deciduous trees and pines.
-The species comprising these plant functional types are shown in Table 2.
+The species comprising these plant functional types are shown in Table 3.
 
-Table 2: Plant functional type-species mappings
+Table 3: Plant functional type-species mappings
 
 | Plant functional type | Species                 | Color  |
 |-----------------------|-------------------------|--------|
@@ -296,7 +312,6 @@ Each ensemble member was initialized from a "near-bare ground" condition: An equ
 Driving meteorological data was 6-hourly CRU-NCEP <!-- TODO ref. More here? --> combined with an annual atmospheric CO~2~ record from Law-Dome ice core [@etheridge_1998_historical] and Mauna Loa observatory [@thoning_1989_atmospheric].
 Soil texture was set to 92% sand, 7% silt, and 1% clay, per site-level observations in [@gough_2010_wood].
 The initial soil moisture profile was set to the average soil moisture profile reported in the UMBS Ameriflux ancillary data (https://ameriflux.lbl.gov/sites/siteinfo/US-UMd).
-The entire model execution workflow was conducted using the Predictive Ecosystem Analyzer (PEcAn, www.pecanproject.org).
 
 <!-- TODO This would probably fit better somewhere else.  -->
 Driver uncertainty is outside the scope of this study, and initial condition uncertainty is minimized by our experimental design, which is conditioned on a specific initial condition (near bare ground).
@@ -312,6 +327,9 @@ Driver uncertainty is outside the scope of this study, and initial condition unc
     - Breakdown of parameter uncertainty -- PEcAn sensitivity and uncertainty analysis [@lebauer_2013_facilitating; @dietze_2014_quantitative]
 - Details of structural uncertainty:
     - Vertical profiles of radiation, traits?
+    
+All analyses for this work were performed using R 3.6 (see "Colophon" for full details).
+Code and supporting data for reproducing this analysis are publicly available on the Open Science Framework (OSF) at https://osf.io/dznuf/.
 
 # Results
 
@@ -639,17 +657,6 @@ $$ \lambda = \frac{a_{proj}}{\mu} $$
         - _Ostyra virginiana_ (hop-hornbeam)
     - Pine
         - _Pinus resinosa_ (red pine)
-
-```{r param-table}
-tbl <- readd(param_table)
-tbl <- subset(tbl, select = -unit_parsed)
-tbl[["ED Name"]] <- sprintf("`%s`", tbl[["ED Name"]])
-knitr::kable(tbl, escape = FALSE, caption = paste0(
-  "**Table**: Parameter descriptions. ",
-  "For additional information, see the ",
-  "[ED2 model wiki](https://github.com/EDmodel/ED2/wiki/PFT-parameters)."
-))
-```
 
 ##### pagebreak
 
