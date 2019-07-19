@@ -17,16 +17,16 @@ abstract: |
   However, the composition of these forests has recently started to shift toward mid-successional species.
   Combined with a rapidly changing climate and novel disturbance regime, this means that future biogeochemical cycling and ecological dynamics in these forests is highly uncertain.
   Demographic vegetation models provide a tool for analyzing this uncertainty and its implications for predictions about the future.
-  In this study, we evaluate the relative importance of two sources of model predictive uncertainty -- "structural" (which processes are represented, and the equations used to represent them) and "parameteric" (plant traits and other parameters used in those equations) -- in simulations of multidecadal carbon cycling and forest succession.
+  In this study, we evaluate the relative importance of two sources of model predictive uncertainty -- "structural" (which processes are represented, and the equations used to represent them) and "paramteric" (plant traits and other parameters used in those equations) -- in simulations of multidecadal carbon cycling and forest succession.
   Specifically, we seek to answer the following research questions:
   (1) Which processes related to light utilization are most important to accurately modeling community succession and C cycle dynamics in temperate forests of the Upper Midwest?
-  (2) What are the relative contributions of parameteric uncertainty (data limitation) vs. structural uncertainty (theoretical limitation?)?
+  (2) What are the relative contributions of parametric uncertainty (data limitation) vs. structural uncertainty (theoretical limitation?)?
   To address these questions, used the Ecosystem Demography model v2.2 (ED-2.2) to simulate 100 years of forest dynamics (1900-2000) starting from bare ground at the University of Michigan Biological Station (v2.2).
   To assess structural uncertainty, we ran ED-2.2 with different representations of key processes important to competition for light, namely crown architecture, canopy radiative transfer, and trait plasticity in shade.
   To assess parametric uncertainty, we ran ensembles that sample over parameter uncertainties (based on existing trait data and best estimates in the literature).
   We then compared the magnitude of structural (across representations) and parametric (within each representation) uncertainty, and assess which (if any) of the submodel-parameter combinations could reproduce the observed C fluxes and 100-year succession.
   Our simulations agreed well with observed net primary productivity after a century of forest growth, but systematically underestimated observed leaf area index.
-  Parameter uncertainty contributed more than structural uncertainty to overall uncertainty in the simulations, but both the overall level of parameteric uncertainty and the relative importance of different parameters varied with model structure.
+  Parameter uncertainty contributed more than structural uncertainty to overall uncertainty in the simulations, but both the overall level of parametric uncertainty and the relative importance of different parameters varied with model structure.
   We therefore conclude that:
   (1) targeted collection of data to constrain vegetation model parameters should be a higher priority than further model development;
   (2) parameter sensitivity analyses are not necessarily generalizable across model structures; and
@@ -124,8 +124,8 @@ Ben's notes:which of the last two categories--structural versus parametric uncer
 **This study focuses on the interaction between parametric and structural uncertainty in the ED2 model.**
 Our study is organized around the following guiding questions:
 (1) Which processes related to light utilization are most important to accurately modeling community succession and C cycle dynamics in temperate forests of the Upper Midwest?
-(2) What is the cost of considering these processes, in terms of additional parameteric uncertainty?
-(3) What are the relative contributions of parameteric uncertainty (data limitation) vs. structural uncertainty (theoretical limitation?)?
+(2) What is the cost of considering these processes, in terms of additional parametric uncertainty?
+(3) What are the relative contributions of parametric uncertainty (data limitation) vs. structural uncertainty (theoretical limitation?)?
 To answer these questions, we ran ED2 ensemble simulationes with a factorial combination of submodels related to radiative transfer formulation (two-stream vs. multiple scatter), horizontal competition (finite canopy radius vs. complete shading), and trait plasticity (whether or not SLA and Vcmax vary with light level)
 We then used sensitivity and variance decomposition analyses to evaluate the contribution of parameter uncertainty for each model configuration, exploring the ecological implications of the results.
 
@@ -356,7 +356,7 @@ readd(pairs_time_averaged)
 ```{r within-vs-across, fig.cap = within_vs_across_cap, fig.dim = c(9, 4)}
 within_vs_across_cap <- paste(
   htmlfig(),
-  "Comparison of parameteric uncertainty within ensembles (colored bars, colored by model type)",
+  "Comparison of parametric uncertainty within ensembles (colored bars, colored by model type)",
   "and \"structural\" uncertainty (variance in ensemble means; black bar) by output variable.",
   "Output variables are expressed as growing season averages for all years after 1910."
 )
@@ -551,7 +551,7 @@ $$ \gamma = w_0 \frac{1 + \bar{\mu} \lambda}{\bar{\mu} \lambda} $$
         - [@dekauwe_2013_forest] -- ED2 at Duke and Oak Ridge FACE
         - [@longo_2019_ed2] -- Model evaluation in Tropics
 - How much complexity do we need to accurately model ecological dynamics?
-    - Lots of existing work on parameteric uncertainty
+    - Lots of existing work on parametric uncertainty
         - [@dietze_2014_quantitative]
         - [@raczka_2018_what]
         - [@pandit_2018_optimizing]
@@ -570,8 +570,8 @@ $$ \gamma = w_0 \frac{1 + \bar{\mu} \lambda}{\bar{\mu} \lambda} $$
     - The combination of stand-replacing disturbance ~100 years ago and suppressed disturbance since then makes this an ideal site for testing a vegetation model run from bare ground without having to prescribe disturbance.
 - Guiding questions:
     - Which of these processes do we need to be able to accurately model what happens ("community succession and C cycle dynamics") to Midwestern forests?
-    - What is the cost of considering these processes, in terms of additional parameteric uncertainty?
-    - What are the relative contributions of parameteric uncertainty (data limitation) vs. structural uncertainty (theoretical limitation?)?
+    - What is the cost of considering these processes, in terms of additional parametric uncertainty?
+    - What are the relative contributions of parametric uncertainty (data limitation) vs. structural uncertainty (theoretical limitation?)?
 - Study overview:
     - ED with factorial combination of submodels related to radiative transfer formulation (two-stream vs. multiple scatter), horizontal competition (finite canopy radius vs. complete shading), and trait plasticity (whether or not SLA and Vcmax vary with light level)
     - Ensemble analysis to look at parameter uncertainty
