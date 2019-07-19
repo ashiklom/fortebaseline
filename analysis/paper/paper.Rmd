@@ -187,6 +187,8 @@ In the alternate configuration, as light level decreases (trees become more shad
 
 These sub-models are summarized in Table 1.
 
+Table 1: ED-2.2 submodel descriptions
+
 | Name                         | Description                                                                          | Color                     |
 |------------------------------|--------------------------------------------------------------------------------------|---------------------------|
 | **Crown model**              |                                                                                      |                           |
@@ -196,12 +198,11 @@ These sub-models are summarized in Table 1.
 | `two-stream` (default)       | Two-stream approximation [@sellers_1985_canopy; @clm45_note]                         | Primary (red, blue)       |
 | `multi-scatter`              | Multiple-scatter approximation, following [@zhao_2005_multiple]                      | Secondary (green, orange) |
 | **Trait plasticity**         |                                                                                      |                           |
-| `static` (default)           | SLA and Vcmax are constant                                                           | Cool (blue, green)        |
-| `plastic`                    | SLA increases, and Vcmax decreases, with light level                                 | Warm (red, orange)        |
+| `static` (default)           | SLA and V~c,max~ are constant                                                        | Cool (blue, green)        |
+| `plastic`                    | SLA increases, and V~c,max~ decreases, with light level                              | Warm (red, orange)        |
 
 
-
-## ED-2.2 parameters
+## Parameter descriptions
 
 The full list of parameters in ED-2.2 is large, with over 100 parameters per plant functional type.
 A full sensitivity and uncertainty analysis across all of these parameters is outside the scope of this study.
@@ -247,11 +248,13 @@ Three other parameters:
 - Minimum plant height for reproduction (`minimum_height`)
 - Soil-plant water conductance, or "water availability factor" (`water_conductance`)
 
+## Plant functional types and parameterization
+
 By default, ED-2.2 supports 17 different plant functional types, which divide plant species according to photosynthetic pathway (C3 vs. C4), growth form (grass vs. tree), leaf phenology habit (deciduous vs. evergreen), biome (e.g. temperate vs. tropical), and successional status (e.g. early, mid, late).
 However, we limited our simulations to the four plant functional types that have any appreciable presence at UMBS: Early, mid, and late temperate deciduous trees and pines.
-The species comprising these plant functional types are shown in Table X.
+The species comprising these plant functional types are shown in Table 2.
 
-Table: Plant functional type-species mappings
+Table 2: Plant functional type-species mappings
 
 | Plant functional type | Species                 | Color  |
 |-----------------------|-------------------------|--------|
@@ -265,10 +268,10 @@ Table: Plant functional type-species mappings
 |                       | _Fagus grandifolia_     |        |
 | Pine                  | _Pinus strobus_         | Yellow |
 
-For each plant functional type, we generated a distribution of parameter values via a trait-meta analysis [@lebauer_2013_facilitating; see also @dietze_2014_quantitative; @raczka_2018_what].
-Prior distributions for this meta-analysis were the same as those used in @dietze_2014_quantitative, @raczka_2018_what, and @viskari_2019_influence.
+For each plant functional type, we generated a distribution of parameter values via the Predictive Ecosystem Analyzer (PEcAn) trait-meta analysis [@lebauer_2013_facilitating; see also @dietze_2014_quantitative; @raczka_2018_what].
+Prior distributions for this meta-analysis were largely adapted from previous ED2 parameter uncertainty studies [@dietze_2014_quantitative; @raczka_2018_what; @viskari_2019_influence], and are shown in detail in Supplementary Information X. <!-- TODO Priors supplement; maybe describe entire meta-analysis? -->
 Species trait data for this meta-analysis came from existing records in the BETY database [www.betydb.org, @lebauer_2017_betydb], as well as from publicly available records in the TRY database [www.try-db.org, @kattge_2011_try] and, specifically for leaf optical properties, from Shiklomanov (2019 {dissertation, chapter 3}).
-The resulting parameter distributions are shown in Figure X.
+The resulting parameter distributions are shown in Figure 1.
 <!-- TODO more on this? -->
 All parameters not described in this section were set to their ED-2.2 PFT-specific default values.
 
