@@ -185,7 +185,7 @@ In the default configuration, all cohorts of a given plant functional type will 
 This ignores the globally-documented intraspecific trait variability as a function of light level [@niinemets_2010_review; @keenan_2016_global]. <!-- TODO Also, classical ecological succession theory bazzaz_1979_physiological? -->
 In the alternate configuration, as light level decreases (trees become more shaded), specific leaf area increases and V~cmax~ decreases, following empirical relationships from the tropics [@lloyd_2010_optimisation].
 
-These sub-models are summarized in Table X.
+These sub-models are summarized in Table 1.
 
 | Name                         | Description                                                                          | Color                     |
 |------------------------------|--------------------------------------------------------------------------------------|---------------------------|
@@ -205,33 +205,49 @@ These sub-models are summarized in Table X.
 
 The full list of parameters in ED-2.2 is large, with over 100 parameters per plant functional type.
 A full sensitivity and uncertainty analysis across all of these parameters is outside the scope of this study.
-Instead, we selected a subset of parameters that were identified as important by previous ED2 sensitivity studies [@dietze_2014_quantitative; @raczka_2018_what; @viskari_2019_influence].
+Instead, we selected a subset of parameters guided by (but expanding upon) previous ED2 sensitivity studies [@dietze_2014_quantitative; @raczka_2018_what; @viskari_2019_influence].
 
 Three parameters are related to leaf-level physiology:
 Following the enzyme-kinetic model of @farquhar_1980_biochemical, the rate of photosynthesis is the minimum of light-limited and enzyme-limited reactions.
 The former are controlled by the _quantum efficiency_ parameter---maximum efficiency with which absorbed photosynthetically active radiation is converted to CO~2~.
 The latter are controlled by _V~cmax~_, the maximum rate of carbon fixation by Rubisco.
 The water demand of photosynthesis is controlled by the _stomatal slope_, the sensitivity of stomatal conductance of CO~2~ as a function of CO~2~ concentration and humidity at the leaf surface [@leuning_1995_critical; @ball_1987_model].
-Three more parameters correspond to the respiration rates of leaves, roots, and "growth maintenance".
+Three more parameters correspond to the respiration rates of _leaves_, _roots_, and "_growth maintenance_".
 
 Two more parameters control carbon allocation:
 One is the ratio of fine root to leaf biomass (`fineroot2leaf`, or `q`), and another is the ratio of "storage" carbon allocated to reproduction (`r_fract`).
 
-Three parameters control various aspects of adult tree mortality, namely the density-independent mortality rate (`mort3`), and the time scale (`mort1`) and critical carbon balance (`mort2`) of mortality from carbon starvation.
-An additional parameter controls seedling mortality.
-_Specific leaf area_ (`SLA`) is used to convert leaf biomass to leaf area index, which in turn is used in a variety of calculations related to canopy radiative transfer and micrometeorology.
+Three parameters control various aspects of adult tree mortality.
+The overall adult mortality rate in ED-2.2 ($M$) is the sum of density-independent mortality from aging ($M_I$, plants year^-1^), density-dependent mortality from C starvation ($M_D$), and mortality from cold/frost ($M_F$) (ED-2.2 technically also includes additional term for fire mortality, but we did not include fire in our simulations):
 
-Two additional parameters describe canopy structure in ways critical to the canopy radiative transfer:
+$$
+M = M_I + M_D + M_F
+$$
+
+Density-independent mortality from aging ($M_I$) is a prescribed, PFT-specific parameter (`mort3`).
+Density-dependent mortality from C starvation is calculated as a function of a cohort's C balance limitation:
+
+$$
+M_D = \frac{y_1}{1 + \exp\left[y_2 left( \frac{C_k}{C_k^*} \right)\right]}
+$$
+
+where $C_k$ is the 12 month running mean C balance of the cohort, $C_k^*$ is the running mean ideal C balance if there was no light or water limitation, and $y_1$ (`mort1`; plants year^-1^) and $y_2$ (`mort2`; unitless) are PFT-specific parameters.
+_Seedling mortality_ rate is prescribed as its own PFT-specific parameter.
+
+Several parameters are related to canopy structure and radiative transfer.
+_Specific leaf area_ (`SLA`) is used to convert leaf biomass to leaf area index, which in turn is used in a variety of calculations related to canopy radiative transfer and micrometeorology.
 Canopy _clumping factor_ describes how evenly leaf area is distributed in horizontal space (1 being perfectly evenly; 0 being a "black hole" where all leaves are concentrated in a single point); and
 leaf _orientation factor_ describes the average distribution of leaf angles (-1 being perfectly vertical, 1 being perfectly horizontal, and 0 being random).
 Four parameters control leaf optical properties, namely the fractions of light reflected or transmitted in visible and near-infrared wavelengths (`leaf_(reflect|trans)_(vis|nir)`).
+Details of how these parameters influence canopy radiative transfer are described in the Supplementary Information.
+
 Three other parameters:
 
 - Fraction of litter carbon that enters the labile (fast) soil carbon pool (`f_labile`)
 - Minimum plant height for reproduction (`minimum_height`)
 - Soil-plant water conductance, or "water availability factor" (`water_conductance`)
 
-By default, ED2 supports 17 different plant functional types, which divide plant species according to photosynthetic pathway (C3 vs. C4), growth form (grass vs. tree), leaf phenology habit (deciduous vs. evergreen), biome (e.g. temperate vs. tropical), and successional status (e.g. early, mid, late).
+By default, ED-2.2 supports 17 different plant functional types, which divide plant species according to photosynthetic pathway (C3 vs. C4), growth form (grass vs. tree), leaf phenology habit (deciduous vs. evergreen), biome (e.g. temperate vs. tropical), and successional status (e.g. early, mid, late).
 However, we limited our simulations to the four plant functional types that have any appreciable presence at UMBS: Early, mid, and late temperate deciduous trees and pines.
 The species comprising these plant functional types are shown in Table X.
 
