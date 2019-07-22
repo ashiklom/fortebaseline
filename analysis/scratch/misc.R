@@ -1399,3 +1399,9 @@ ggplot(ymeans) +
   aes(x = yr, y = mmean_gpp_py, group = case) +
   geom_line(alpha = 0.5) +
   facet_wrap(vars(model_id), scales = "fixed")
+
+#########################################
+# Cleaner sensitivity results figure
+#########################################
+
+sensitivity_plot_data
