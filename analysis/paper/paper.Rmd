@@ -362,28 +362,40 @@ The latter configurations also had the largest number of ensemble members that f
 pairs_time_cap <- paste(
   htmlfig(),
   "Post-1975 growing season averaged NPP vs. LAI, with observation (in black)",
-  "and linear regression, by model type."
+  "and linear regression, by model type.",
+  "Letter labels are selected runs with the same parameters,",
+  "and match the rows in Figure 4. The characteristics of these poitns are",
+  "as follows:",
+  "(A) high NPP and LAI, and relatively high pine LAI;",
+  "(B) high Shannon diversity;",
+  "(C) close to observed NPP and LAI values;",
+  "(D) high early hardwood LAI",
+  "(E) high late hardwood LAI."
 )
 readd(pairs_time_averaged)
 ```
 
-In most simulations, the leaf area index was usually too low relative for a given level of net primary productivity, but the relationship between these two variables varied with model configuration (Figure 3).
+In most simulations, the leaf area index was usually too low for a given level of net primary productivity, but the relationship between these two variables varied with model configuration (Figure 3).
 The crown model (closed vs. finite) had the strongest effect: Compared to the simulations with "closed" crowns, simulations with finite canopy radius generally had lower net primary productivity for the same leaf area index.
 Only a few simulations matched _both_ the observed leaf area index and net primary productivity, and all of them had the finite canopy radius configuration.
 
 ```{r bigfacet-plot, fig.cap = bigfacet_cap, fig.dim = c(12, 8)}
 bigfacet_cap <- paste(
   htmlfig(),
-  "ED-2.2 PFT-level predictions of leaf area index (LAI) by model configuration and parameterization."
+  "PFT-level predictions of leaf area index (LAI) by model configuration and parameterization.",
+  "Each row of plots is a simulation with the same set of parameters across model configurations.",
+  "Letters correspond to the labels in Figure 3."
 )
 readd(lai_pft_plot)
 ```
 
 `r mdcap(bigfacet_cap)`
 
-Different parameter combinations led to model outputs that had not only different bulk ecosystem properties but also qualitatively different plant communities (Figure 3).
-The most common outcome was immediate and persistent dominance by early hardwood trees, though in some cases, early hardwoods co-existed with late hardwood or pine.
-<!-- TODO Probably need to do a different analysis here. Maybe look at all the outputs, identify several different "ecological scenarios", and then analyze the fraction of runs that experienced those probabilities? -->
+Model structure and parameters interacted in determining the community assembly and dynamics of each simulation (Figure 4).
+Generally, the highest net primary productivity and leaf area index values (averaged across growing seasons from 1975 to 2000) occurred in runs dominated by pine.
+With the exception of the configuration with finite canopy radius and two-stream radiative transfer (under which most simulations had near-zero productivity), parameter values were more important to determining the ecological trajectory than model configuration.
+For example, all model configurations in parameter combination _E_ saw immediate and total dominance by late hardwood followed by eventual die-off.
+However, the magnitude of peak leaf area index and the pace of the subsequent die-off varied with model configuration, with a smaller peak and slower die-off under a finite canopy compared to the default closed canopy.
 
 ## Uncertainty analysis
 

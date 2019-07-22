@@ -278,8 +278,9 @@ plan <- drake_plan(
     295, "High diversity", "B",
     160, "Close to observations", "C",
     25, "High early hardwood", "D",
-    50, "High mid hardwood", "E",
-    172, "High late hardwood", "F"
+    # No runs have particularly high mid-hardwood LAI
+    ## 50, "High mid hardwood", "E",
+    172, "High late hardwood", "E"
   ),
   lai_pft_plot = lai_q90 %>%
     inner_join(models, by = "model_id") %>%

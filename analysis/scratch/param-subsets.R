@@ -55,6 +55,9 @@ ta_pft %>%
   ungroup() %>%
   count(param_id, sort = TRUE)
 
+ta_pft %>%
+  filter(param_id == 50, shortname == "Mid")
+
 # Late hardwood -- 172
 ta_pft %>%
   filter(shortname == "Late") %>%
