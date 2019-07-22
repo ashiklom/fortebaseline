@@ -54,7 +54,7 @@ data_dir <- dir_create(path(analysis_dir, "data"))
 download_dir <- dir_create(path(data_dir, "retrieved"))
 
 # "Observation time" output files
-cohort_file <- path(download_dir, "all-cohort-output.fst")
+cohort_file <- path(download_dir, "all-output-cohort.fst")
 cohort_osf <- "d4u2j"
 pft_file <- path(download_dir, "all-output-pft.fst")
 pft_osf <- "5dht2"
