@@ -95,16 +95,31 @@ plan <- drake_plan(
       .format
     ),
     transform = map(.format = c("html_document"))),
-  param_table = file_in(!!(path(data_dir, "derived-data", "parameter-table.csv"))) %>%
+  param_table = file_in(!!(path(data_dir, "derived-data",
+                                "parameter-table.csv"))) %>%
     read_csv(),
   #########################################
+  # File downloads
+  #########################################
+  ## cohort_file_dl = target(
+  ##   download.file(file.path("https://osf.io/download/", cohort_osf),
+  ##                 file_out(!!cohort_file)),
+  ##   trigger = trigger(change = get_timestamp(cohort_osf),
+  ##                     condition = !file.exists(cohort_file))
+  ## ),
+  ## run_params_dl = target(
+  ##   download.file(file.path("https://osf.io/download/", params_osf),
+  ##                 file_out(!!ensemble_params_file)),
+  ##   trigger = trigger(change = get_timestamp(params_osf))
+  ## ),
+  ## trait_distribution_dl = target(
+  ##   download.file(file.path("https://osf.io/download", td_osf),
+  ##                 file_out(!!trait_distribution_file)),
+  ##   trigger = trigger(change = get_timestamp(td_osf))
+  ## ),
+  #########################################
   # Summary time series
-  cohort_file_dl = target(
-    download.file(file.path("https://osf.io/download/", cohort_osf),
-                  file_out(!!cohort_file)),
-    trigger = trigger(change = get_timestamp(cohort_osf),
-                      condition = !file.exists(cohort_file))
-  ),
+  #########################################
   variable_cols = c("case", "datetime", "pft", "nplant",
                     "bleaf", "bsapwooda", "bstorage",
                     "fmean_gpp_co", "fmean_npp_co", "lai_co"),
@@ -113,11 +128,14 @@ plan <- drake_plan(
     mutate(
       param_id = as.numeric(substring(case, 1, 3)),
       model_id = substring(case, 4, 6),
-      crown = fct_recode(substring(model_id, 1, 1), "closed" = "C", "finite" = "F") %>%
+      crown = fct_recode(substring(model_id, 1, 1),
+                         "closed" = "C", "finite" = "F") %>%
         fct_relevel("closed", "finite"),
-      rtm = fct_recode(substring(model_id, 2, 2), "multi-scatter" = "M", "two-stream" = "T") %>%
+      rtm = fct_recode(substring(model_id, 2, 2),
+                       "multi-scatter" = "M", "two-stream" = "T") %>%
         fct_relevel("two-stream", "multi-scatter"),
-      traits = fct_recode(substring(model_id, 3, 3), "static" = "S", "plastic" = "P") %>%
+      traits = fct_recode(substring(model_id, 3, 3),
+                          "static" = "S", "plastic" = "P") %>%
         fct_relevel("static", "plastic"),
       model = interaction(crown, rtm, traits, sep = " ")
     ) %>%
@@ -137,20 +155,13 @@ plan <- drake_plan(
     as_tibble() %>%
     mutate(model_id = substr(case, 4, 6)),
   # Calculate diversity indices based on LAI
-  diversity = setDT(fst(!!cohort_file)[, c("case", "datetime", "pft", "lai_co")])[
-    j = year := year(datetime)
-  ][
-    j = .(lai_co = quantile(lai_co, 0.9)),
-    by = c("case", "year", "pft")
-  ][
-    j = lai_p := lai_co / sum(lai_co),
-    by = c("case", "year")
-  ][
-    lai_p > 0
-  ][
-    j = .(shannon = -sum(lai_p * log(lai_p))),
-    by = c("case", "year")
-  ] %>%
+  diversity = as.data.table(fst(cohort_file)[, c("case", "datetime",
+                                                   "pft", "lai_co")]) %>%
+    .[, year := year(datetime)] %>%
+    .[, .(lai_co = quantile(lai_co, 0.9)), .(case, year, pft)] %>%
+    .[, lai_p := lai_co / sum(lai_co), .(case, year)] %>%
+    .[lai_p > 0] %>%
+    .[, .(shannon = -sum(lai_p * log(lai_p))), .(case, year)] %>%
     as_tibble() %>%
     mutate(model_id = substr(case, 4, 6)),
   jja_means = plot_means %>%
@@ -209,11 +220,6 @@ plan <- drake_plan(
   #########################################
   # Parameter distributions
   #########################################
-  trait_distribution_dl = target(
-    download.file(file.path("https://osf.io/download", td_osf),
-                  file_out(!!trait_distribution_file)),
-    trigger = trigger(change = get_timestamp(td_osf))
-  ),
   trait_distribution = readRDS(file_in(!!trait_distribution_file)),
   param_dist_gg = trait_distribution %>%
     mutate(pft = factor(pft, pfts("pft"))) %>%
@@ -236,11 +242,10 @@ plan <- drake_plan(
     .[, c("case", "datetime", "pft", "lai_co")] %>%
     as_tibble(),
   lai_q90 = setDT(fst(file_in(!!cohort_file))[, j = c(
-    "case", "datetime", "pft", "lai_co")])[
-      j = model_id := substr(case, 4, 6)
-    ][j = .(
-      lai = quantile(lai_co, 0.9)
-    ), by = .(case, model_id, year = year(datetime), pft)] %>%
+    "case", "datetime", "pft", "lai_co")]) %>%
+    .[, model_id := substr(case, 4, 6)] %>%
+    .[, .(lai = quantile(lai_co, 0.9)),
+      .(case, model_id, year = year(datetime), pft)] %>%
     as_tibble() %>%
     rename(num = pft) %>%
     left_join(pfts(), by = "num"),
@@ -310,11 +315,6 @@ plan <- drake_plan(
   #########################################
   # Sensitivity analysis
   #########################################
-  ## run_params_dl = target( 
-  ##   download.file(file.path("https://osf.io/download/", params_osf),
-  ##                 file_out(!!ensemble_params_file)),
-  ##   trigger = trigger(change = get_timestamp(params_osf))
-  ## ),
   run_params = file_in(!!ensemble_params_file) %>%
     read_csv(col_types = cols(name = col_character(),
                               .default = col_double())) %>%
