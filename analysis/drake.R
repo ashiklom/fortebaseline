@@ -42,6 +42,7 @@ suppressPackageStartupMessages({
   library(here)
   # Plotting
   library(ggplot2)
+  library(ggrepel)
   library(cowplot)
   library(fortebaseline)
 })
@@ -263,20 +264,37 @@ plan <- drake_plan(
   use_runs = run_groups %>%
     group_by(model_id, cluster) %>%
     slice(1),
+  matches_observed = time_averages %>%
+    ungroup() %>%
+    filter(lai >= observations_wide$lai_low,
+           lai <= observations_wide$lai_hi,
+           npp >= observations_wide$npp_low,
+           npp <= observations_wide$npp_hi) %>%
+    distinct(case, param_id),
+  # See analysis/scratch/param-subsets.R for origins
+  my_subsets = tribble(
+    ~param_id, ~why, ~label,
+    294, "High NPP and LAI; high pine", "A",
+    295, "High diversity", "B",
+    160, "Close to observations", "C",
+    25, "High early hardwood", "D",
+    50, "High mid hardwood", "E",
+    172, "High late hardwood", "F"
+  ),
   lai_pft_plot = lai_q90 %>%
     inner_join(models, by = "model_id") %>%
-    inner_join(use_runs, by = c("model_id", "case")) %>%
+    mutate(param_id = as.numeric(substring(case, 0, 3))) %>%
+    inner_join(my_subsets, "param_id") %>%
     ggplot() +
     aes(x = year, y = lai, color = pft) +
     geom_line() +
-    facet_grid(vars(cluster), vars(model), labeller = my_labeller) +
+    facet_grid(vars(label), vars(model), labeller = my_labeller) +
     scale_color_manual(values = pfts("color")) +
     labs(y = "Leaf area index", color = "PFT") +
     theme_cowplot() +
     theme(
       axis.title.x = element_blank(),
-      axis.text.x = element_text(angle = 90, vjust = 0.5),
-      strip.text.y = element_blank()
+      axis.text.x = element_text(angle = 90, vjust = 0.5)
     ),
   #########################################
   # Parameter vs. structure uncertainty 
@@ -396,6 +414,9 @@ plan <- drake_plan(
   #########################################
   # Pairs plot of time-averaged values
   #########################################
+  my_subsets_time_avg = time_averages %>%
+    ungroup() %>%
+    inner_join(my_subsets, "param_id"),
   pairs_time_averaged = time_averages %>%
     ungroup() %>%
     ggplot() +
@@ -416,13 +437,17 @@ plan <- drake_plan(
               linetype = "dashed",
               color = "black",
               inherit.aes = FALSE) +
+    geom_label_repel(data = my_subsets_time_avg,
+                    aes(label = label),
+                    color = "black",
+                    min.segment.length = 0) +
     scale_color_manual(values = model_colors) +
     coord_cartesian(xlim = c(0, 9), ylim = c(0, 11)) +
     labs(x = "LAI", y = expression(NPP ~ (MgC ~ ha^-1 ~ year ^ -1))) +
     ## guides(color = guide_legend(nrow = 4)) +
     guides(color = FALSE) +
-    facet_wrap(vars(model), scales = "fixed",
-               labeller = my_labeller) +
+    ## facet_wrap(vars(model), scales = "fixed", labeller = my_labeller) +
+    facet_wrap(vars(model), scales = "fixed") +
     theme_cowplot() +
     theme(legend.position = "bottom",
           strip.background = element_blank())
