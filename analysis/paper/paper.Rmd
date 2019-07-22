@@ -13,24 +13,17 @@ output:
 bibliography: references.bib
 csl: "../templates/ecology.csl"
 abstract: |
-  Following near-complete deforestation around the end of the 19th century, forests in the US Upper Midwest have been a net carbon sink, driven by their large fraction of fast-growing, early successional species.
-  However, the composition of these forests has recently started to shift toward mid-successional species.
-  Combined with a rapidly changing climate and novel disturbance regime, this means that future biogeochemical cycling and ecological dynamics in these forests is highly uncertain.
-  Demographic vegetation models provide a tool for analyzing this uncertainty and its implications for predictions about the future.
-  In this study, we evaluate the relative importance of two sources of model predictive uncertainty -- "structural" (which processes are represented, and the equations used to represent them) and "paramteric" (plant traits and other parameters used in those equations) -- in simulations of multidecadal carbon cycling and forest succession.
-  Specifically, we seek to answer the following research questions:
-  (1) Which processes related to light utilization are most important to accurately modeling community succession and C cycle dynamics in temperate forests of the Upper Midwest?
-  (2) What are the relative contributions of parametric uncertainty (data limitation) vs. structural uncertainty (theoretical limitation?)?
-  To address these questions, used the Ecosystem Demography model v2.2 (ED-2.2) to simulate 100 years of forest dynamics (1900-2000) starting from bare ground at the University of Michigan Biological Station (v2.2).
-  To assess structural uncertainty, we ran ED-2.2 with different representations of key processes important to competition for light, namely crown architecture, canopy radiative transfer, and trait plasticity in shade.
-  To assess parametric uncertainty, we ran ensembles that sample over parameter uncertainties (based on existing trait data and best estimates in the literature).
-  We then compared the magnitude of structural (across representations) and parametric (within each representation) uncertainty, and assess which (if any) of the submodel-parameter combinations could reproduce the observed C fluxes and 100-year succession.
-  Our simulations agreed well with observed net primary productivity after a century of forest growth, but systematically underestimated observed leaf area index.
-  Parameter uncertainty contributed more than structural uncertainty to overall uncertainty in the simulations, but both the overall level of parametric uncertainty and the relative importance of different parameters varied with model structure.
-  We therefore conclude that:
-  (1) targeted collection of data to constrain vegetation model parameters should be a higher priority than further model development;
-  (2) parameter sensitivity analyses are not necessarily generalizable across model structures; and
-  (3) robust model validation requires multiple different variables, including those related to vegetation productivity, structure, and composition.
+  Forests in the US Upper Midwest have been a net C sink for a century, driven by their fast-growing, early successional species. 
+  However, the composition of these regrown forests has started to shift toward mid-successional species. 
+  Combined with changing climate and disturbance, this means that future biogeochemical and ecological dynamics in these forests are highly uncertain. 
+  Demographic vegetation models provide a tool for analyzing this uncertainty and its implications. 
+  Here, we evaluate the relative importance of model "structural" (which processes are represented, and how) and "parameter" (parameters used in those equations) uncertainty, asking: 
+  (1) Which processes are most important to accurately model community succession and C cycling in Upper Midwest forests?
+  (2) What are the relative contributions of parameter vs. structural uncertainty? We ran ensembles of the Ecosystem Demography model v2.2 (sampling over parameter uncertainty) from 1900 to 2000 with different representations of key processes important to competition for light.
+  We then compared the magnitude of structural (across representations) and parameter (within each representation) uncertainty, and assessed which submodel-parameter combinations reproduced observed C fluxes and succession.
+  Our simulations agreed well with observed net primary productivity but systematically underestimated leaf area index.
+  Overall, parameter uncertainty contributed more than structural uncertainty to total simulation uncertainty, but the amount of parameter uncertainty varied with model structure.
+  We conclude that: (1) targeted data collection to constrain vegetation model parameters should be a higher priority than model development; (2) parameter sensitivity analyses are not necessarily generalizable across model structures; and (3) robust model validation requires scrutiny of multiple different variables, including those related to vegetation productivity, structure, and composition.
 keywords: |
   Dynamic vegetation modeling; carbon cycle; forest succession
 highlights: |
