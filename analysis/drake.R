@@ -184,31 +184,38 @@ plan <- drake_plan(
   my_labeller = labeller(
     model = function(x) gsub(" ", "\n", x),
     variable = as_labeller(c(
-      "gpp" = "GPP ~ (kgC ~ year^{-1})",
-      "npp" = "NPP ~ (kgC ~ year^{-1})",
+      "gpp" = "GPP ~ (MgC ~ ha^-1 ~ year^-1)",
+      "npp" = "NPP ~ (MgC ~ ha^-1 ~ year^-1)",
       "agb" = "AGB ~ (kgC)",
       "lai" = "LAI",
       "shannon" = "Shannon ~ diversity"
     ), default = label_parsed),
     .default = label_value
   ),
-  hardiman = tribble(
-    ~variable, ~low, ~mean, ~hi,
-    "lai", 1.8, 4.14, 6.56,
-    "npp", 1.68, 3.11, 7.26
+  observations = tribble(
+    ~variable, ~low, ~mean, ~hi, ~source,
+    ## "lai", 1.8, 4.14, 6.56, "Hardiman 2013",
+    ## "npp", 1.68, 3.11, 7.26, "Hardiman 2013",
+    "npp", 1.69 - 1.96 * 0.512, 1.69, 1.69 + 1.96 * 0.512, "UMBS",
+    "lai", 3.97 - 1.96 * 0.423, 3.97, 3.97 + 1.96 * 0.423, "Ameriflux"
   ) %>% mutate(variable = factor(variable, use_vars),
                year = max(jja_summary$year)),
-  hardiman_wide = hardiman %>%
-    select(-year) %>%
+  observations_wide = observations %>%
+    select(-year, -source) %>%
     gather(stat, value, low, mean, hi) %>%
     unite("variable", variable, stat) %>%
     spread(variable, value),
   summary_ts_plot = ggplot(jja_long) +
     aes(x = year) +
-    geom_line(aes(y = value, group = param_id, color = color), alpha = 0.5) +
+    geom_line(aes(y = value, group = param_id, color = color), alpha = 0.25) +
+    geom_line(data = jja_summary, aes(y = hi),
+              color = "black", linetype = "dashed") +
+    geom_line(data = jja_summary, aes(y = lo),
+              color = "black", linetype = "dashed") +
     geom_line(aes(y = avg), color = "black", size = 1, data = jja_summary) +
-    geom_pointrange(aes(y = mean, ymin = low, ymax = hi), color = "black",
-                    data = hardiman) +
+    geom_pointrange(data = observations,
+                    aes(y = mean, ymin = low, ymax = hi),
+                    color = "black") +
     scale_color_identity() +
     facet_grid(vars(variable), vars(model), scales = "free_y",
                switch = "y", labeller = my_labeller) +
@@ -275,7 +282,7 @@ plan <- drake_plan(
   # Parameter vs. structure uncertainty 
   #########################################
   time_averages = jja_means %>%
-    filter(year > 1910) %>%
+    filter(year > 1975) %>%
     group_by(model, color, case) %>%
     summarize_at(use_vars, mean) %>%
     mutate(param_id = as.numeric(substr(case, 1, 3))),
@@ -393,25 +400,32 @@ plan <- drake_plan(
     ungroup() %>%
     ggplot() +
     aes(x = lai, y = npp, color = model) +
-    geom_point() +
+    geom_point(alpha = 0.3) +
     geom_smooth(method = "lm", se = FALSE) +
-    geom_point(aes(x = lai_mean, y = npp_mean),
+    geom_rug(color = "black", alpha = 0.5) +
+    geom_point(data = observations_wide,
+               aes(x = lai_mean, y = npp_mean),
                size = 3,
                shape = 17,
                color = "black",
-               inherit.aes = FALSE,
-               data = hardiman_wide) +
-    geom_rect(aes(xmin = lai_low, xmax = lai_hi, ymin = npp_low, ymax = npp_hi),
+               inherit.aes = FALSE) +
+    geom_rect(data = observations_wide,
+              aes(xmin = lai_low, xmax = lai_hi,
+                  ymin = npp_low, ymax = npp_hi),
               fill = NA,
               linetype = "dashed",
               color = "black",
-              inherit.aes = FALSE,
-              data = hardiman_wide) +
+              inherit.aes = FALSE) +
     scale_color_manual(values = model_colors) +
     coord_cartesian(xlim = c(0, 9), ylim = c(0, 11)) +
-    labs(x = "LAI", y = expression(NPP ~ (kgC ~ year ^ -1))) +
-    guides(color = guide_legend(nrow = 4)) +
-    theme(legend.position = "bottom")
+    labs(x = "LAI", y = expression(NPP ~ (MgC ~ ha^-1 ~ year ^ -1))) +
+    ## guides(color = guide_legend(nrow = 4)) +
+    guides(color = FALSE) +
+    facet_wrap(vars(model), scales = "fixed",
+               labeller = my_labeller) +
+    theme_cowplot() +
+    theme(legend.position = "bottom",
+          strip.background = element_blank())
 )
 
 if ("--poster" %in% cmdargs) source("analysis/drake_poster.R")

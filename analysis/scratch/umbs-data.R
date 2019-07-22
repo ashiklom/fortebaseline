@@ -40,9 +40,9 @@ umbs_npp <- read_xlsx(umbs_npp_file, range = "A3:C21",
 umbs_npp_summary <- umbs_npp %>%
   summarize(
     mean_npp_wood = mean(npp_wood),
-    sd_npp_wood = sd(sd)
+    sd_npp_wood = mean(sd)
   ) %>%
-  mutate_all()
+  mutate_all(`/`, 1000) # Convert from kgC to MgC (ha-1 yr-1)
 
 # NPP_LAI data
 npp_lai_file <- path(data_dir, "NPP_LAI_All AF Litter Traps .xlsx")
