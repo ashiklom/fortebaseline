@@ -379,39 +379,18 @@ plan <- drake_plan(
         lvls_revalue(use_vars_cap)
     ),
   sensitivity_plot_piece = target(
-    ggplot(sensitivity_plot_data) +
-      aes(x = shortname, y = trait_alpha, fill = YYY) +
-      geom_tile() +
-      facet_grid(vars(yvar), vars(model)) +
-      SCALE +
-      labs(x = "PFT", y = "Trait") +
-      theme_cowplot() +
-      theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
-            axis.text.y = element_text(size = rel(0.6)),
-            legend.position = "bottom",
-            legend.key.width = unit(3, "lines")),
-    transform = map(YYY = c(elasticity, fpvar),
-                    SCALE = c(scale_fill_gradientn(colors = c("darkred", "darkorange3",
-                                                              "white",
-                                                              "deepskyblue3", "darkblue"),
-                                                   values = scales::rescale(c(
-                                                     -75, -25,
-                                                     0,
-                                                     25, 75))),
-                              scale_fill_continuous(low = "white", high = "darkblue")))
+    top_n_sensitivity_plot(sensitivity_plot_data, .y_var, .metric) +
+      labs(x = .xlab, y = "Trait", color = "PFT") +
+      theme_cowplot(),
+    transform = map(.y_var = rep(c("NPP", "LAI"), 2),
+                    .metric = rep(c("elasticity", "pvar"), each = 2),
+                    .xlab = rep(c("Elasticity", "Partial variance"),
+                                each = 2))
   ),
   sensitivity_plot = target(
-    cowplot::plot_grid(sensitivity_plot_piece),
+    cowplot::plot_grid(sensitivity_plot_piece, nrow = 2),
     transform = combine(sensitivity_plot_piece)
   ),
-  top_params_fpvar = sensitivity_plot_data %>%
-    group_by(yvar, model) %>%
-    top_n(5, fpvar) %>%
-    arrange(desc(fpvar), .by_group = TRUE) %>%
-    ungroup() %>%
-    select(model, shortname, yvar, xvar, fpvar),
-  top_params_fpvar_count = top_params_fpvar %>%
-    count(yvar, shortname, xvar, sort = TRUE),
   #########################################
   # Pairs plot of time-averaged values
   #########################################

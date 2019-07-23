@@ -421,8 +421,8 @@ Finally, using a multiple-scatter (secondary colors) rather than a two-stream (p
 uncertainty_analysis_cap <- paste(
   htmlfig(),
   "PEcAn-like parameter sensitivity and uncertainty analysis, by model type.",
-  "Elasticity (a) is the normalized sensitivity of the model to a fixed change in the parameter.",
-  "pvar (b) is the partial variance, which describes the overall contribution of the parameter to model predictive uncertainty based on the combination of parameter uncertainty and model sensitivity.",
+  "Elasticity (a, b) is the normalized sensitivity of the model to a fixed change in the parameter.",
+  "Partial variance (c, d) describes the overall contribution of the parameter to model predictive uncertainty based on the combination of parameter uncertainty and model sensitivity.",
   "Input parameter distributions are shown in Figure 1."
 )
 readd(sensitivity_plot)

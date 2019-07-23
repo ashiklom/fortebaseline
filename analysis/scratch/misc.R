@@ -1403,5 +1403,17 @@ ggplot(ymeans) +
 #########################################
 # Cleaner sensitivity results figure
 #########################################
+top_n_sensitivity_plot(sensitivity_plot_data, "NPP", elasticity) +
+  labs(y = "Partial variance", x = "Trait") +
+  scale_color_manual(values = pfts("color")) +
+  theme_cowplot()
 
-sensitivity_plot_data
+top_n_sensitivity_plot(sensitivity_plot_data, "NPP", elasticity) +
+  labs(y = "Partial variance", x = "Trait") +
+  scale_color_manual(values = pfts("color")) +
+  theme_cowplot()
+
+top_n_sensitivity_plot(sensitivity_plot_data, "NPP", pvar) +
+  labs(y = "Partial variance", x = "Trait") +
+  scale_color_manual(values = pfts("color")) +
+  theme_cowplot()
