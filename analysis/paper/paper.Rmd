@@ -361,38 +361,37 @@ pairs_time_cap <- paste(
   "Post-1975 growing season averaged NPP vs. LAI, with observation (in black)",
   "and linear regression, by model type.",
   "Letter labels are selected runs with the same parameters,",
-  "and match the rows in Figure 4. The characteristics of these poitns are",
-  "as follows:",
-  "(A) high NPP and LAI, and relatively high pine LAI;",
-  "(B) high Shannon diversity;",
-  "(C) close to observed NPP and LAI values;",
-  "(D) high early hardwood LAI",
-  "(E) high late hardwood LAI."
+  "and match the rows in Figure 4."
 )
 readd(pairs_time_averaged)
 ```
 
-In most simulations, the leaf area index was usually too low for a given level of net primary productivity, but the relationship between these two variables varied with model configuration (Figure 3).
-The crown model (closed vs. finite) had the strongest effect: Compared to the simulations with "closed" crowns, simulations with finite canopy radius generally had lower net primary productivity for the same leaf area index.
-Only a few simulations matched _both_ the observed leaf area index and net primary productivity, and all of them had the finite canopy radius configuration.
+In most simulations, the leaf area index was too low for a given level of net primary productivity, but the relationship between these two variables varied with model configuration (Figure 3).
+The crown model (closed vs. finite) had the strongest effect:
+Compared to the simulations with "closed" crowns, simulations with finite canopy radius generally had lower net primary productivity for the same leaf area index.
+Only a few individual simulations matched _both_ the observed leaf area index and net primary productivity, and all of them had the finite canopy radius configuration.
 
 ```{r bigfacet-plot, fig.cap = bigfacet_cap, fig.dim = c(12, 8)}
 bigfacet_cap <- paste(
   htmlfig(),
   "PFT-level predictions of leaf area index (LAI) by model configuration and parameterization.",
   "Each row of plots is a simulation with the same set of parameters across model configurations.",
-  "Letters correspond to the labels in Figure 3."
+  "Letters correspond to the labels in Figure 3.",
+  "Note that these are predictions of total leaf area index summed across all cohorts of the same PFT,",
+  "meaning that higher LAI in one PFT does not necessarily indicate dominance, size, etc."
 )
 readd(lai_pft_plot)
 ```
 
 `r mdcap(bigfacet_cap)`
 
-Model structure and parameters interacted in determining the community assembly and dynamics of each simulation (Figure 4).
-Generally, the highest net primary productivity and leaf area index values (averaged across growing seasons from 1975 to 2000) occurred in runs dominated by pine.
-With the exception of the configuration with finite canopy radius and two-stream radiative transfer (under which most simulations had near-zero productivity), parameter values were more important to determining the ecological trajectory than model configuration.
-For example, all model configurations in parameter combination _E_ saw immediate and total dominance by late hardwood followed by eventual die-off.
-However, the magnitude of peak leaf area index and the pace of the subsequent die-off varied with model configuration, with a smaller peak and slower die-off under a finite canopy compared to the default closed canopy.
+Model structure and parameters interacted to determine the community assembly and dynamics of each simulation, with consequences for overall ecosystem productivity that varied by model structure (Figure 4).
+Consider simulations _A_ and _C_, the former showing competition of early hardwood with pine, and the latter completely dominated by pine:
+With a closed canopy and static traits, both simulations produced similar overall LAI and NPP values (Figure 3), but moving to a finite canopy dramatically increased the total LAI in _C_ without much affecting _A_, while enabling trait plasticity dramatically increased the NPP of _A_ without much affecting _C_ (Figure 3).
+This example also shows the impacts of different configurations on predicted community dynamics -- namely, in this specific case, enabling trait plasticity helped pine out-perform early hardwood, but only under a closed (rather than finite) canopy.
+Finite canopy radius similarly benefits early hardwood in its competition against late hardwood in simulations _B_ and, to a lesser extent, _D_.
+Simulations _B_ and _D_ also show that the sensitivity of a given parameter combination to model structure is itself dependent on the parameters -- simulation _B_ produced similar ecological dynamics and aggregate state variables regardless of model configuration (except the extreme cases; Figure 3), while simulation _D_ had near-zero NPP and LAI in two cases (closed, two-stream, static and finite, multi-scatter, plastic), comparable NPP and LAI to _B_ with closed canopy and trait plasticity, and higher NPP and LAI than _D_ with a finite canopy, multi-scatter radiative transfer, and static traits (Figure 3).
+
 
 ## Uncertainty analysis
 
@@ -409,12 +408,12 @@ readd(within_across_plot)
 `r mdcap(within_vs_across_cap)`
 
 Across all variables, parameter uncertainty (across ensembles within each model configuration) was at least as large, and usually larger, than structural uncertainty (Figure 4).
-The relative importance of parameter uncertainty varied with both model configuration and the variable in question. 
-Allowing SLA and V~cmax~ to vary with light level (warm colors, as opposed to static traits -- cool colors) led to reduced predictive uncertainty for all four variables considered, with the largest uncertainty reduction for gross and net primary productivity.
-Meanwhile, facilitating horizontal competition by enabling the finite canopy radius (dark colors; compared to closed canopy -- light colors) substantially reduced uncertainty in aboveground biomass and diversity, and slightly reduced uncertainty in gross and net primary productivity.
-Finally, using a multiple-scatter (secondary colors) rather than a two-stream (primary colors) radiative transfer scheme increased uncertainty in leaf area index, aboveground biomass, and diversity, but did not have a consistent effect on uncertainty in predictions of productivity.
+The relative importance of parameter uncertainty varied with both model configuration and the variable in question.
+Facilitating horizontal competition by enabling the finite canopy radius (dark colors; compared to closed canopy -- light colors) reduced uncertainty in aboveground biomass, diversity, and primary productivity.
+Using a multiple-scatter (secondary colors) rather than a two-stream (primary colors) radiative transfer scheme increased uncertainty in leaf area index, aboveground biomass, and diversity, but did not have a consistent effect on uncertainty in productivity.
+Allowing SLA and V~cmax~ to vary with light level (warm colors, as opposed to static traits -- cool colors) had effectively no impact on simulation uncertainty (_but see caveat at the beginning of results_.)
 
-```{r uncertainty-analysis, fig.cap = uncertainty_analysis_cap, fig.dim = c(15, 15)}
+```{r uncertainty-analysis, fig.cap = uncertainty_analysis_cap, fig.dim = c(20, 15)}
 uncertainty_analysis_cap <- paste(
   htmlfig(),
   "PEcAn-like parameter sensitivity and uncertainty analysis, by model type.",
