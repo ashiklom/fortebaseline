@@ -251,9 +251,9 @@ plan <- drake_plan(
     as_tibble(),
   lai_q90 = setDT(fst(file_in(!!cohort_file))[, j = c(
     "case", "datetime", "pft", "lai_co")]) %>%
+    .[, .(lai = sum(lai_co)), .(case, datetime, pft)] %>%
+    .[, .(lai = quantile(lai, 0.9)), .(case, year = year(datetime), pft)] %>%
     .[, model_id := substr(case, 4, 6)] %>%
-    .[, .(lai = quantile(lai_co, 0.9)),
-      .(case, model_id, year = year(datetime), pft)] %>%
     as_tibble() %>%
     rename(num = pft) %>%
     left_join(pfts(), by = "num"),
@@ -388,7 +388,7 @@ plan <- drake_plan(
     ),
   sensitivity_plot_piece = target(
     top_n_sensitivity_plot(sensitivity_plot_data, .y_var, .metric) +
-      ggtitle(.yvar) +
+      ggtitle(.y_var) +
       labs(y = .ylab, x = "Trait", color = "PFT") +
       scale_color_manual(values = pfts("color")) +
       theme_cowplot() +
