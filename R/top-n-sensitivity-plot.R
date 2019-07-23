@@ -9,12 +9,12 @@
 #' @author Alexey Shiklomanov
 #' @export
 top_n_sensitivity_plot <- function(sensitivity_plot_data, y_var, metric,
-                                   n = 10) {
+                                   n = 10, scales = "free_y") {
   top_x <- sensitivity_plot_data %>%
     group_by(model, yvar) %>%
     top_n(n, abs({{metric}})) %>%
     ungroup() %>%
-    arrange(yvar, model, {{metric}}) %>%
+    arrange(yvar, model, abs({{metric}})) %>%
     mutate(i = row_number())
 
   top_x %>%
@@ -23,7 +23,7 @@ top_n_sensitivity_plot <- function(sensitivity_plot_data, y_var, metric,
     aes(x = i, y = {{metric}}, color = shortname) +
     geom_segment(aes(xend = i, yend = 0)) +
     geom_point() +
-    facet_wrap(vars(model), scales = "free_y", drop = TRUE) +
+    facet_wrap(vars(model), scales = scales, drop = TRUE) +
     coord_flip() +
     scale_x_continuous(
       breaks = top_x$i,

@@ -417,47 +417,30 @@ Finally, using a multiple-scatter (secondary colors) rather than a two-stream (p
 ```{r uncertainty-analysis, fig.cap = uncertainty_analysis_cap, fig.dim = c(20, 15)}
 uncertainty_analysis_cap <- paste(
   htmlfig(),
-  "PEcAn-like parameter sensitivity and uncertainty analysis, by model type.",
-  "Elasticity (a, b) is the normalized sensitivity of the model to a fixed change in the parameter.",
-  "Partial variance (c, d) describes the overall contribution of the parameter to model predictive uncertainty based on the combination of parameter uncertainty and model sensitivity.",
-  "Input parameter distributions are shown in Figure 1."
+  "PEcAn-like parameter sensitivity and uncertainty analysis, by model type,",
+  "for 1975-2000 averaged growing season net primary productivity (left) and leaf area index (right).",
+  "Elasticity (top) is the normalized sensitivity of the model to a fixed change in the parameter.",
+  "Partial variance (bottom) describes the overall contribution of the parameter to model predictive uncertainty based on the combination of parameter uncertainty and model sensitivity.",
+  "Each panel shows the top 10 parameter values, in terms of the absolute value of the corresponding quantity.",
+  "Input parameter distributions are shown in Figure 1.",
+  "Note that x-axis scales vary across panels."
 )
 readd(sensitivity_plot)
 ```
 
 `r mdcap(uncertainty_analysis_cap)`
 
-Model sensitivity to specific parameters ("elasticity" _sensu_ ...) varied depending on the model configuration and the target output variable (Figure 5).
-For predicting C fluxes, biomass, and leaf area, the three most important parameters in terms of model sensitivity were specific leaf area (SLA) for early and late hardwoods, leaf C:N ratio (`c2n_leaf`) for early and mid hardwoods, and V~cmax~ for mid and late hardwoods.
-Both the magnitude and direction of sensitivity to these parameters varied by model configuration.
-For example, in the default ED-2.2 configuration (closed canopy, two-stream radiative transfer, static traits), net primary productivity increased with early hardwood specific leaf area, but when this configuration was altered so SLA and V~cmax~ could vary with light level, net primary productivity decreased with early hardwood specific leaf area.
-Similarly, the model became much more sensitive to early- and mid-hardwood leaf C:N ratio when switching from a closed canopy to a finite canopy configuration.
+Model sensitivity to specific parameters ["elasticity" _sensu_ @lebauer_2013_facilitating] varied depending on the model configuration and the target output variable (Figure 5).
+The parameter with the single highest elasticity to NPP and LAI across all model configurations was specific leaf area (SLA), though the PFT whose SLA was most important varied with model configuration.
+Other frequently (but not always) important parameters were the leaf C:N ratio (`c2n_leaf`), ratio of fine root to leaf biomass (`fineroot2leaf`), leaf and root respiration rates, and leaf optical properties (`leaf_reflect_vis/nir`).
+<!-- TODO Dig into model configurations. -->
 
-The parameters that contributed most to overall model predictive uncertainty ("partial variance") differed the parameters to which the model was most sensitive (Figure 5), largely driven by the fact that many of the parameters with the highest sensitivity (e.g. SLA, V~cmax~) were also well constrained by data (Figure 1).
-Patterns in partial variance were largely idiosyncratic across model configurations;
-when we considered the top-5 most important parameters for a given output variable and model configuration,
-only five combinations were present in at least half of the model configurations:
-growth respiration, C balance mortality ratio (`mort2`), and stomatal slope (all for early hardwoods).
-
-<!-- TODO Probably need a different analysis here more along the lines of that last sentence. -->
-
-<!--
-## Details about model structures
-
-```{r rad_prof, fig.cap = rad_barplot_cap, fig.dim = c(5, 7)}
-rad_barplot_cap <- paste(
-  "Comparison of radiation profiles under two-stream and multiple scatter",
-  "canopy radiative transfer models."
-)
-```
-
-`r mdcap(rad_barplot_cap)`
-
-Compared to the default two-stream model, the multiple scatter model leads to slightly less beam (direct) radiation in the understory but slightly more diffuse radiation.
-
-(TODO)
--->
-
+The parameters that contributed most to overall model predictive uncertainty ("partial variance") differed from parameters to which the model was most sensitive (Figure 5), largely driven by the fact that many of the parameters with the highest sensitivity (e.g. SLA, V~cmax~) were also well constrained by data (Figure 1).
+Leaf optical properties of at least one PFT were among the top 10 most important parameters across all configurations, and in multiple cases, were the most important.
+Other often important parameters were plant-soil water conductance (`water_conductance`), parameters related to adult mortality (`mort1,2,3`), and growth respiration.
+Again, patterns in partial variance were largely idiosyncratic across model configurations.
+<!-- TODO Dig into this more -->
+<!-- TODO Check this analysis. Look at pairs plots of trait vs. variable, and my SA spline fits. -->
 
 # Discussion
 

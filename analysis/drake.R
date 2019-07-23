@@ -370,9 +370,9 @@ plan <- drake_plan(
     unnest(raw_sa) %>%
     ungroup(),
   sensitivity_plot_data = sensitivity_results %>%
-    mutate(elasticity = if_else(abs(elasticity) > 75,
-                                75 * sign(elasticity),
-                                elasticity)) %>%
+    ## mutate(elasticity = if_else(abs(elasticity) > 75,
+    ##                             75 * sign(elasticity),
+    ##                             elasticity)) %>%
     group_by(model, yvar) %>%
     mutate(fpvar = pvar / sum(pvar)) %>%
     group_by(xvar) %>%
@@ -387,7 +387,8 @@ plan <- drake_plan(
         lvls_revalue(use_vars_cap)
     ),
   sensitivity_plot_piece = target(
-    top_n_sensitivity_plot(sensitivity_plot_data, .y_var, .metric) +
+    top_n_sensitivity_plot(sensitivity_plot_data, .y_var, .metric,
+                           scales = "free") +
       ggtitle(.y_var) +
       labs(y = .ylab, x = "Trait", color = "PFT") +
       scale_color_manual(values = pfts("color")) +
