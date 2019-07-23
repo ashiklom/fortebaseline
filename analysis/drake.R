@@ -373,15 +373,20 @@ plan <- drake_plan(
     ),
   sensitivity_plot_piece = target(
     top_n_sensitivity_plot(sensitivity_plot_data, .y_var, .metric) +
-      labs(x = .xlab, y = "Trait", color = "PFT") +
-      theme_cowplot(),
-    transform = map(.y_var = rep(c("NPP", "LAI"), 2),
-                    .metric = rep(c("elasticity", "pvar"), each = 2),
-                    .xlab = rep(c("Elasticity", "Partial variance"),
+      labs(y = .ylab, x = "Trait", color = "PFT") +
+      scale_color_manual(values = pfts("color")) +
+      theme_cowplot() +
+      theme(
+        axis.text.x = element_text(size = rel(0.5)),
+        legend.position = "bottom"
+      ),
+    transform = map(.y_var = !!rep(c("NPP", "LAI"), 2),
+                    .metric = c(elasticity, elasticity, pvar, pvar),
+                    .ylab = !!rep(c("Elasticity", "Partial variance"),
                                 each = 2))
   ),
   sensitivity_plot = target(
-    cowplot::plot_grid(sensitivity_plot_piece, nrow = 2),
+    cowplot::plot_grid(sensitivity_plot_piece, ncol = 2),
     transform = combine(sensitivity_plot_piece)
   ),
   #########################################
