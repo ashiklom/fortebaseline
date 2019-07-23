@@ -12,7 +12,7 @@ top_n_sensitivity_plot <- function(sensitivity_plot_data, y_var, metric,
                                    n = 10) {
   top_x <- sensitivity_plot_data %>%
     group_by(model, yvar) %>%
-    top_n(n, {{metric}}) %>%
+    top_n(n, abs({{metric}})) %>%
     ungroup() %>%
     arrange(yvar, model, {{metric}}) %>%
     mutate(i = row_number())
