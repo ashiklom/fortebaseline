@@ -124,7 +124,7 @@ plan <- drake_plan(
   variable_cols = c("case", "datetime", "pft", "nplant",
                     "bleaf", "bsapwooda", "bstorage",
                     "fmean_gpp_co", "fmean_npp_co", "lai_co"),
-  cases = fst(!!cohort_file)[, "case", drop = FALSE] %>%
+  cases = fst(file_in(!!cohort_file))[, "case", drop = FALSE] %>%
     distinct() %>%
     mutate(
       param_id = as.numeric(substring(case, 1, 3)),
@@ -147,7 +147,7 @@ plan <- drake_plan(
   model_colors = tibble::deframe(models[, c("model", "color")]),
   use_vars = c("gpp", "npp", "agb", "lai", "shannon"),
   use_vars_cap = c("GPP", "NPP", "AGB", "LAI", "Shannon"),
-  plot_means = setDT(fst(!!cohort_file)[, variable_cols])[j = .(
+  plot_means = setDT(fst(file_in(!!cohort_file))[, variable_cols])[j = .(
     agb = sum((bleaf + bsapwooda + bstorage) * nplant),
     gpp = sum(fmean_gpp_co * nplant),
     npp = sum(fmean_npp_co * nplant),
@@ -156,7 +156,7 @@ plan <- drake_plan(
     as_tibble() %>%
     mutate(model_id = substr(case, 4, 6)),
   # Calculate diversity indices based on LAI
-  diversity = as.data.table(fst(cohort_file)[, c("case", "datetime",
+  diversity = as.data.table(fst(!!cohort_file)[, c("case", "datetime",
                                                    "pft", "lai_co")]) %>%
     .[, year := year(datetime)] %>%
     .[, .(lai_co = quantile(lai_co, 0.9)), .(case, year, pft)] %>%
