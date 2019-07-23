@@ -266,15 +266,30 @@ plan <- drake_plan(
     distinct(case, param_id),
   # See analysis/scratch/param-subsets.R for origins
   my_subsets = tribble(
-    ~param_id, ~why, ~label,
-    294, "High NPP and LAI; high pine", "A",
-    295, "High diversity", "B",
-    160, "Close to observations", "C",
-    25, "High early hardwood", "D",
-    # No runs have particularly high mid-hardwood LAI
-    ## 50, "High mid hardwood", "E",
-    172, "High late hardwood", "E"
-  ),
+    ~param_id, ~why,
+    ## 37, "Overall high NPP",
+    31, "Relatively high LAI; close to observation; competitive",
+    25, "High NPP and LAI; closest to observation",
+    91, "Overall high LAI; pine dominanted",
+    50, "Overall high diversity",
+    160, "Overall closest to observation",
+  ) %>% mutate(label = LETTERS[seq_len(n())]),
+    ## 31, "High NPP and LAI; closest to observation",
+    ## 25, "High NPP and LAI; closest to observation",
+    ## 180, "High NPP and LAI; early-mid competition",
+    ## 172, "High NPP and LAI; early-mid competition",
+    ## 169, "High diversity",
+    ## 160, "High pine",
+  ## my_subsets = tribble(
+  ##   ~param_id, ~why, ~label,
+  ##   294, "High NPP and LAI; high pine", "A",
+  ##   295, "High diversity", "B",
+  ##   160, "Close to observations", "C",
+  ##   25, "High early hardwood", "D",
+  ##   # No runs have particularly high mid-hardwood LAI
+  ##   ## 50, "High mid hardwood", "E",
+  ##   172, "High late hardwood", "E"
+  ## ),
   lai_pft_plot = lai_q90 %>%
     inner_join(models, by = "model_id") %>%
     mutate(param_id = as.numeric(substring(case, 0, 3))) %>%
@@ -291,7 +306,7 @@ plan <- drake_plan(
       axis.text.x = element_text(angle = 90, vjust = 0.5)
     ),
   #########################################
-  # Parameter vs. structure uncertainty 
+  # Parameter vs. structure uncertainty
   #########################################
   time_averages = jja_means %>%
     filter(year > 1975) %>%
@@ -373,6 +388,7 @@ plan <- drake_plan(
     ),
   sensitivity_plot_piece = target(
     top_n_sensitivity_plot(sensitivity_plot_data, .y_var, .metric) +
+      ggtitle(.yvar) +
       labs(y = .ylab, x = "Trait", color = "PFT") +
       scale_color_manual(values = pfts("color")) +
       theme_cowplot() +
@@ -401,7 +417,7 @@ plan <- drake_plan(
     aes(x = lai, y = npp, color = model) +
     geom_point(alpha = 0.3) +
     geom_smooth(method = "lm", se = FALSE) +
-    geom_rug(color = "black", alpha = 0.5) +
+    ## geom_rug(color = "black", alpha = 0.5) +
     geom_point(data = observations_wide,
                aes(x = lai_mean, y = npp_mean),
                size = 3,
@@ -415,7 +431,7 @@ plan <- drake_plan(
               linetype = "dashed",
               color = "black",
               inherit.aes = FALSE) +
-    geom_label_repel(data = my_subsets_time_avg,
+    geom_text_repel(data = my_subsets_time_avg,
                     aes(label = label),
                     color = "black",
                     min.segment.length = 0) +
