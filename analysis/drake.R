@@ -257,13 +257,6 @@ plan <- drake_plan(
     as_tibble() %>%
     rename(num = pft) %>%
     left_join(pfts(), by = "num"),
-  run_groups = lai_q90 %>%
-    select(case, model_id, year, pft, lai) %>%
-    group_by(model_id) %>%
-    group_modify(create_run_groups),
-  use_runs = run_groups %>%
-    group_by(model_id, cluster) %>%
-    slice(1),
   matches_observed = time_averages %>%
     ungroup() %>%
     filter(lai >= observations_wide$lai_low,
