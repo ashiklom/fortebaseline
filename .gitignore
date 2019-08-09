@@ -23,3 +23,5 @@ _rendered_output/
 analysis/figures/
 /.drake_bety/
 /analysis/paper/_deploy/
+.drake_history
+/analysis/data/retrieved

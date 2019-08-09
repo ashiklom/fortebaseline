@@ -90,12 +90,6 @@ plan <- drake_plan(
   #########################################
   # Common elements
   #########################################
-  paper = target(
-    rmarkdown::render(
-      knitr_in(!!(path(analysis_dir, "paper", "paper.Rmd"))),
-      .format
-    ),
-    transform = map(.format = c("html_document"))),
   param_table = file_in(!!(path(data_dir, "derived-data",
                                 "parameter-table.csv"))) %>%
     read_csv(),
@@ -449,6 +443,17 @@ plan <- drake_plan(
 )
 
 if ("--poster" %in% cmdargs) source("analysis/drake_poster.R")
+if ("--postgrad" %in% cmdargs) source("analysis/drake_postgrad.R")
+if ("--paper" %in% cmdargs) {
+  plan <- bind_plans(plan, drake_plan(
+    paper = target(
+      rmarkdown::render(
+        knitr_in(!!(path(analysis_dir, "paper", "paper.Rmd"))),
+        .format
+      ),
+      transform = map(.format = c("html_document"))),
+    ))
+}
 
 # Parallelism configuration. Not sure which of these is better...
 future::plan(future.callr::callr)
