@@ -468,6 +468,8 @@ Again, patterns in partial variance were largely idiosyncratic across model conf
 - Future directions: Predicting disturbance response
     - FoRTE project -- Forecasting a disturbance.
         - Compare ecological resilience/memory between model and reality
+- Other relevant references:
+  - @gough_2019_high -- Canopy structural complexity is the strongest predictor of productivity across NEON sites. Possible future direction?
 
 Moreover, these models' **predictions of species composition and ecosystem structure are relevant outside of carbon cycle science**, particularly for forest management and wildlife conservation. <!-- BBL: maybe move this sentence to discussion? TODO refs -->
 
