@@ -10,6 +10,8 @@ output:
     bookdown::html_document2:
       fig_caption: yes
       reference_docx: "../templates/template.docx" # Insert path for the DOCX file
+    pdf_document:
+      latex_engine: xelatex
 bibliography: references.bib
 csl: "../templates/ecology.csl"
 abstract: |

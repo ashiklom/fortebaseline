@@ -451,7 +451,7 @@ if ("--paper" %in% cmdargs) {
         knitr_in(!!(path(analysis_dir, "paper", "paper.Rmd"))),
         .format
       ),
-      transform = map(.format = c("html_document"))),
+      transform = map(.format = c("html_document", "pdf_document"))),
     ))
 }
 
