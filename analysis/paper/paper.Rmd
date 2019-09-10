@@ -350,11 +350,12 @@ readd(summary_ts_plot)
 `r mdcap(summary_ts_cap)`
 
 Model projections of gross and net primary productivity, aboveground biomass, leaf area index, and functional diversity varied with both parameter value and model structure (Figure 2).
-One model configuration -- finite canopy radius, two-stream radiative transfer, and plastic traits -- failed to grow at all, regardless of parameter combinations, and a similar configuration with static traits showed much less growth than any other model configurations.
-The remaining configurations all exhibited a similar trajectory of rapid growth in the first 15-20 years followed by a gradual decline to a lower, stable value around 1975 (with individual ensemble members sometimes undergoing sudden collapse in specific years).
-The ensemble mean ecosystem state of most model confugrations had net primary productivity very close to that observed at UMBS, but generally much lower leaf area index.
-However, the ensemble spread around the mean was large -- across all configurations (except the finite canopy - two-stream radiative transfer cases), the spread in net primary productivity was from zero to several times higher than the observed.
-Ensemble variance in leaf area index was lower on average but, in some case (e.g. finite canopy, multiple-scatter radiative transfer, static traits) was over an order of magnitude.
+All model configurations exhibited a similar trajectory of rapid growth in the first 15-20 years followed by a gradual decline to a lower, stable value around 1975 (with individual ensemble members sometimes undergoing sudden collapse in specific years).
+Two model configurations -- finite canopy radius and two-stream radiative transfer (regardless of trait plasticity) -- had much lower productivity, biomass, and diversity than the other configurations, which generally had similar ensemble mean values and spread.
+The ensemble means of all model configurations under-predicted observed net primary productivity and leaf area index, both at the peak of initial growth (around 1920) and at the end of the simulations, though peak predicted values were much closer to thte observations.
+However, the ensemble spread around the mean was large:
+across all configurations (except the finite canopy - two-stream radiative transfer cases), the spread in net primary productivity was from zero to nearly twice as high as the observation.
+Ensemble variance in leaf area index was lower on average but, in some cases (especially the combination of finite canopy and multiple-scatter radiative transfer) was over an order of magnitude.
 The predicted Shannon diversity index of plant functional types was, on average, higher in simulations when the canopy architecture was finite rather than closed.
 
 ```{r pairs-time, fig.cap = pairs_time_cap, fig.dim = c(8, 8)}
