@@ -146,10 +146,6 @@ The site was intensively logged in the late 1800s and early 1900s, and experienc
 As a result, the average stand age in 2013 was 95 years. <!-- TODO ref -->
 The majority of the forest that is aspen-dominated is undergoing succession to "northern hardwood" (maple, beech, basswood, birch, ash, hemlock), "upland conifer" (red and white pine), or "northern red-oak" ecotypes [@bergen_2007_observing].
 
-Forest stands at UMBS were previously exposed to experimental disturbance as part of the Forest Accelerated Succession Experiment (FASET). <!-- TODO ref -->
-{Canonical FoRTE citation [@curtis_2018_forest]}
-<!-- TODO more on this -->
-
 
 ## Ecosystem Demography Model (version 2.2)
 
