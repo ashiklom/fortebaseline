@@ -191,7 +191,8 @@ plan <- drake_plan(
     ~variable, ~low, ~mean, ~hi, ~source,
     ## "lai", 1.8, 4.14, 6.56, "Hardiman 2013",
     ## "npp", 1.68, 3.11, 7.26, "Hardiman 2013",
-    "npp", 1.69 - 1.96 * 0.512, 1.69, 1.69 + 1.96 * 0.512, "UMBS",
+    # TODO: These are ballpark numbers from Gough 2008 AFM. Replace with more precise numbers
+    "npp", 6, 6.5, 7, "UMBS",
     "lai", 3.97 - 1.96 * 0.423, 3.97, 3.97 + 1.96 * 0.423, "Ameriflux"
   ) %>% mutate(variable = factor(variable, use_vars),
                year = max(jja_summary$year)),
