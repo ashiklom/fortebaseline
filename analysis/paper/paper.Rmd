@@ -372,16 +372,17 @@ pairs_time_cap <- paste(
   htmlfig(),
   "Post-1975 growing season averaged NPP vs. LAI, with observation (in black)",
   "and linear regression, by model type.",
+  "Each point indicates a single ensemble run with a different parameter combination.",
   "Letter labels are selected runs with the same parameters,",
   "and match the rows in Figure 4."
 )
 fig("pairs-time-averaged.png")
 ```
 
-
+Model configuration affected the emergent relationship between net primary productivity and leaf area index (Figure 3).
 The crown model (closed vs. finite) had the strongest effect:
 Compared to the simulations with "closed" crowns, simulations with finite canopy radius generally had lower net primary productivity for the same leaf area index.
-Only a few individual simulations matched _both_ the observed leaf area index and net primary productivity, and all of them had the finite canopy radius configuration.
+Although many simulations matched _either_ the observed net primary productivity or the observed leaf area index, only a few individual runs matched _both_.
 
 ```{r bigfacet-plot, fig.cap = bigfacet_cap}
 bigfacet_cap <- paste(
