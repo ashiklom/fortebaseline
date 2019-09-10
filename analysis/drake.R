@@ -10,7 +10,6 @@ if (getRversion() >= "3.6") {
                 mask.ok = c("as.difftime", "date"),
                 exclude = c("intersect", "setdiff", "union", "here",
                             "stamp"))
-  conflictRules("ggplot2", exclude = "ggsave")
   conflictRules("data.table", exclude = c("between", "first", "last",
                                           "transpose", "hour", "isoweek",
                                           "mday", "minute", "month",
@@ -53,6 +52,7 @@ cmdargs <- commandArgs(trailingOnly = TRUE)
 analysis_dir <- dir_create(here("analysis"))
 data_dir <- dir_create(path(analysis_dir, "data"))
 download_dir <- dir_create(path(data_dir, "retrieved"))
+fig_dir <- dir_create(path(analysis_dir, "figures"))
 
 # "Observation time" output files
 cohort_file <- path(download_dir, "all-output-cohort.fst")
@@ -220,6 +220,12 @@ plan <- drake_plan(
           axis.text.x = element_text(angle = 90, vjust = 0.5),
           strip.placement = "outside",
           strip.background = element_blank()),
+  summary_ts_plot_png = ggsave(
+    file_out(!!path(fig_dir, "summary-ts-plot.png")),
+    summary_ts_plot,
+    # TODO: Fix dims so axis titles aren't cut off
+    width = 10, height = 10
+  ),
   #########################################
   # Parameter distributions
   #########################################
@@ -237,7 +243,13 @@ plan <- drake_plan(
     labs(x = "PFT", fill = "PFT") +
     theme_cowplot() +
     theme(axis.title.y = element_blank(),
-          axis.text.x = element_blank()),
+          axis.text.x = element_blank(),
+          legend.position = c(0.7, 0.1)),
+  param_dist_png = ggsave(
+    file_out(!!path(fig_dir, "param-dist.png")),
+    param_dist_gg,
+    width = 15.3, height = 9.9
+  ),
   #########################################
   # LAI by PFT plot
   #########################################
@@ -300,6 +312,11 @@ plan <- drake_plan(
       axis.title.x = element_blank(),
       axis.text.x = element_text(angle = 90, vjust = 0.5)
     ),
+  lai_pft_plot_png = ggsave(
+    file_out(!!path(fig_dir, "lai-pft-plot.png")),
+    lai_pft_plot,
+    width = 11.42, height = 5.67
+  ),
   #########################################
   # Parameter vs. structure uncertainty
   #########################################
@@ -336,11 +353,19 @@ plan <- drake_plan(
     scale_fill_manual(
       values = tibble::deframe(both_uncertainty[, c("model", "color")])
     ) +
+    guides(fill = guide_legend(ncol = 1)) +
+    theme_cowplot() +
     theme(
       axis.text.x = element_blank(),
       axis.ticks.x = element_blank(),
-      legend.title = element_blank()
+      legend.title = element_blank(),
+      legend.position = c(0.7, 0.28)
     ),
+  within_across_plot_png = ggsave(
+    file_out(!!path(fig_dir, "within-across-plot.png")),
+    within_across_plot,
+    width = 8.3, height = 5.1
+  ),
   #########################################
   # Sensitivity analysis
   #########################################
@@ -401,6 +426,12 @@ plan <- drake_plan(
     cowplot::plot_grid(sensitivity_plot_piece, ncol = 2),
     transform = combine(sensitivity_plot_piece)
   ),
+  sensitivity_plot_png = ggsave(
+    file_out(!!path(fig_dir, "sensitivity-plot.png")),
+    sensitivity_plot,
+    # TODO: This is huge...
+    width = 20, height = 15
+  ),
   #########################################
   # Pairs plot of time-averaged values
   #########################################
@@ -437,10 +468,16 @@ plan <- drake_plan(
     ## guides(color = guide_legend(nrow = 4)) +
     guides(color = FALSE) +
     ## facet_wrap(vars(model), scales = "fixed", labeller = my_labeller) +
-    facet_wrap(vars(model), scales = "fixed") +
+    facet_wrap(vars(model), scales = "fixed", ncol = 4, dir = "h") +
     theme_cowplot() +
     theme(legend.position = "bottom",
-          strip.background = element_blank())
+          strip.background = element_blank()),
+  pairs_time_averaged_png = ggsave(
+    file_out(!!path(fig_dir, "pairs-time-averaged.png")),
+    pairs_time_averaged,
+    height = 5.67,
+    width = 8.92
+  )
 )
 
 if ("--poster" %in% cmdargs) source("analysis/drake_poster.R")

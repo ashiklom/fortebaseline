@@ -33,7 +33,16 @@ highlights: |
 ---
 
 ```{r, setup, echo = FALSE}
-knitr::opts_chunk$set(
+library(knitr)
+library(here)
+library(drake)
+
+fig <- function(...) {
+  filepath <- here("analysis", "figures", ...)
+  knitr::include_graphics(file_in(filepath))
+}
+
+opts_chunk$set(
   collapse = TRUE,
   warning = FALSE,
   message = FALSE,
@@ -293,8 +302,8 @@ param_dist_cap <- paste(
 )
 ```
 
-```{r param_dist, fig.cap = param_dist_cap, fig.dim = c(13, 10)}
-readd(param_dist_gg)
+```{r param_dist, fig.cap = param_dist_cap}
+fig("param-dist.png")
 ```
 
 `r mdcap(param_dist_cap)`
@@ -330,7 +339,7 @@ Code and supporting data for reproducing this analysis are publicly available on
 
 ## Summary
 
-```{r summary-ts-plot, fig.cap = summary_ts_cap, fig.dim = c(10, 10)}
+```{r summary-ts-plot, fig.cap = summary_ts_cap}
 summary_ts_cap <- paste(
   htmlfig(),
   "ED2 plot-level predictions of",
@@ -341,10 +350,10 @@ summary_ts_cap <- paste(
   "by model configuration.",
   "The solid line is the ensemble mean.",
   "The dashed line is the 80% confidence interval.",
-  "Black dot with error bars is the mean and min/max value",
-  "from Hardiman et al. (2013)."
+  "Black dot with error bars is the observed mean and min/max value",
+  "(TODO REF)."
 )
-readd(summary_ts_plot)
+fig("summary-ts-plot.png")
 ```
 
 `r mdcap(summary_ts_cap)`
@@ -358,7 +367,7 @@ across all configurations (except the finite canopy - two-stream radiative trans
 Ensemble variance in leaf area index was lower on average but, in some cases (especially the combination of finite canopy and multiple-scatter radiative transfer) was over an order of magnitude.
 The predicted Shannon diversity index of plant functional types was, on average, higher in simulations when the canopy architecture was finite rather than closed.
 
-```{r pairs-time, fig.cap = pairs_time_cap, fig.dim = c(8, 8)}
+```{r pairs-time, fig.cap = pairs_time_cap}
 pairs_time_cap <- paste(
   htmlfig(),
   "Post-1975 growing season averaged NPP vs. LAI, with observation (in black)",
@@ -366,15 +375,15 @@ pairs_time_cap <- paste(
   "Letter labels are selected runs with the same parameters,",
   "and match the rows in Figure 4."
 )
-readd(pairs_time_averaged)
+fig("pairs-time-averaged.png")
 ```
 
-In most simulations, the leaf area index was too low for a given level of net primary productivity, but the relationship between these two variables varied with model configuration (Figure 3).
+
 The crown model (closed vs. finite) had the strongest effect:
 Compared to the simulations with "closed" crowns, simulations with finite canopy radius generally had lower net primary productivity for the same leaf area index.
 Only a few individual simulations matched _both_ the observed leaf area index and net primary productivity, and all of them had the finite canopy radius configuration.
 
-```{r bigfacet-plot, fig.cap = bigfacet_cap, fig.dim = c(12, 8)}
+```{r bigfacet-plot, fig.cap = bigfacet_cap}
 bigfacet_cap <- paste(
   htmlfig(),
   "PFT-level predictions of leaf area index (LAI) by model configuration and parameterization.",
@@ -383,7 +392,7 @@ bigfacet_cap <- paste(
   "Note that these are predictions of total leaf area index summed across all cohorts of the same PFT,",
   "meaning that higher LAI in one PFT does not necessarily indicate dominance, size, etc."
 )
-readd(lai_pft_plot)
+fig("lai-pft-plot.png")
 ```
 
 `r mdcap(bigfacet_cap)`
@@ -405,7 +414,7 @@ within_vs_across_cap <- paste(
   "and \"structural\" uncertainty (variance in ensemble means; black bar) by output variable.",
   "Output variables are expressed as growing season averages for all years after 1910."
 )
-readd(within_across_plot)
+fig("within-across-plot.png")
 ```
 
 `r mdcap(within_vs_across_cap)`
@@ -417,7 +426,7 @@ Enabling the finite canopy radius (dark colors; compared to closed canopy -- lig
 reduced variance in aboveground biomass, diversity, and primary productivity.
 Finally, using a multiple-scatter (secondary colors) rather than a two-stream (primary colors) radiative transfer scheme increased variance in leaf area index, aboveground biomass, and diversity, but did not have a consistent effect on variance in productivity productivity.
 
-```{r uncertainty-analysis, fig.cap = uncertainty_analysis_cap, fig.dim = c(20, 15)}
+```{r uncertainty-analysis, fig.cap = uncertainty_analysis_cap}
 uncertainty_analysis_cap <- paste(
   htmlfig(),
   "PEcAn-like parameter sensitivity and uncertainty analysis, by model type,",
@@ -428,7 +437,7 @@ uncertainty_analysis_cap <- paste(
   "Input parameter distributions are shown in Figure 1.",
   "Note that x-axis scales vary across panels."
 )
-readd(sensitivity_plot)
+fig("sensitivity-plot.png")
 ```
 
 `r mdcap(uncertainty_analysis_cap)`
