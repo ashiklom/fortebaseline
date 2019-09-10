@@ -399,11 +399,11 @@ fig("lai-pft-plot.png")
 `r mdcap(bigfacet_cap)`
 
 Model structure and parameters interacted to determine the community assembly and dynamics of each simulation, with consequences for overall ecosystem productivity that varied by model structure (Figure 4).
-Consider simulations _A_ and _C_, the former showing competition of early hardwood with pine, and the latter completely dominated by pine:
-With a closed canopy and static traits, both simulations produced similar overall LAI and NPP values (Figure 3), but moving to a finite canopy dramatically increased the total LAI in _C_ without much affecting _A_, while enabling trait plasticity dramatically increased the NPP of _A_ without much affecting _C_ (Figure 3).
+Consider simulations **A** and **C**, the former showing competition of early hardwood with pine, and the latter completely dominated by pine:
+With a closed canopy and static traits, both simulations produced similar overall LAI and NPP values (Figure 3), but moving to a finite canopy dramatically increased the total LAI in **C** without much affecting **A**, while enabling trait plasticity dramatically increased the NPP of **A** without much affecting **C** (Figure 3).
 This example also shows the impacts of different configurations on predicted community dynamics -- namely, in this specific case, enabling trait plasticity helped pine out-perform early hardwood, but only under a closed (rather than finite) canopy.
-Finite canopy radius similarly benefits early hardwood in its competition against late hardwood in simulations _B_ and, to a lesser extent, _D_.
-Simulations _B_ and _D_ also show that the sensitivity of a given parameter combination to model structure is itself dependent on the parameters -- simulation _B_ produced similar ecological dynamics and aggregate state variables regardless of model configuration (except the extreme cases; Figure 3), while simulation _D_ had near-zero NPP and LAI in two cases (closed, two-stream, static and finite, multi-scatter, plastic), comparable NPP and LAI to _B_ with closed canopy and trait plasticity, and higher NPP and LAI than _D_ with a finite canopy, multi-scatter radiative transfer, and static traits (Figure 3).
+Finite canopy radius similarly benefits early hardwood in its competition against late hardwood in simulations **B** and, to a lesser extent, **D**.
+Simulations **B** and **D** also show that the sensitivity of a given parameter combination to model structure is itself dependent on the parameters -- simulation **B** produced similar ecological dynamics and aggregate state variables regardless of model configuration (except the extreme cases; Figure 3), while simulation **D** had near-zero NPP and LAI in two cases (closed, two-stream, static and finite, multi-scatter, plastic), comparable NPP and LAI to **B** with closed canopy and trait plasticity, and higher NPP and LAI than **D** with a finite canopy, multi-scatter radiative transfer, and static traits (Figure 3).
 
 
 ## Uncertainty analysis
