@@ -77,3 +77,32 @@ tau_direct <- function(L, theta, orient) {
   K <- kfunction(theta, orient)
   exp(-K * L)
 }
+
+#' Integrate light levels from flux estimates
+#'
+#' @param down0 Cohort-level direct downwelling flux
+#' @param down Cohort-level diffuse downwelling flux
+#' @param up Cohort-level diffuse upwelling flux
+#' @return List containing overall light level, and levels of direct and diffuse light
+#' @author Alexey Shiklomanov
+#' @export
+integrate_light <- function(down0, down, up) {
+  # Integrate light levels
+  ncoh <- length(down0) - 1
+  light_level <- numeric(ncoh)
+  light_beam_level <- numeric(ncoh)
+  light_diff_level <- numeric(ncoh)
+
+  for (k in seq_len(ncoh)) {
+    kp1 <- k + 1
+    light_level[k] <- light_level[k] + 0.5 * (down[k] + down[kp1] + down0[k] + down0[kp1])
+    light_beam_level[k] <- light_beam_level[k] + 0.5 * (down0[k] + down0[kp1])
+    light_diff_level[k] <- light_diff_level[k] + 0.5 * (down[k] + down[kp1])
+  }
+
+  list(
+    light_level = light_level,
+    light_beam_level = light_beam_level,
+    light_diff_level = light_diff_level
+  )
+}

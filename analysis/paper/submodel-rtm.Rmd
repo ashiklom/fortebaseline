@@ -1,6 +1,7 @@
 ---
-title: "Submodel descriptions: Radiative transfer"
+title: "Description of radiative transfer submodels"
 author: Alexey Shiklomanov
+bibliography: references.bib
 ---
 
 ```{r setup, include = FALSE}
@@ -349,4 +350,40 @@ $$
 
 # Two-stream
 
+# Comparison
 
+First, we generate some common inputs:
+
+```{r, echo = TRUE}
+ipft <- c(2, 1, 1)
+L <- c(1, 1.5, 2)
+p4 <- rrtm::prospect4(1.4, c(40, 60), 0.01, 0.01)
+vis <- p4[(400:700) - 399, , ]
+lr <- colMeans(vis[,,1])
+lt <- colMeans(vis[,,2])
+
+orient <- c(0.2, 0.25)
+
+theta <- 15
+S0_beam <- 0.8
+S0_diff <- 1 - S0_beam
+alb_ground <- 0.1
+
+```
+
+Then we run both models.
+
+```{r}
+ms_out <- multi_scatter(ipft, L, lr, lt, orient,
+                        theta, S0_beam, S0_diff, alb_ground)
+ts_out <- two_stream(ipft, L, lr, lt, orient,
+                     theta, S0_beam, S0_diff, alb_ground)
+
+plot(ms_out$light_level, type = "l")
+lines(ts_out$light_level, col = 2)
+
+plot(ms_out$light_diff_level, type = "l")
+lines(ts_out$light_diff_level, col = 2)
+```
+
+# References
