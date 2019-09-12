@@ -138,7 +138,7 @@ Our study is organized around the following guiding questions:
 (1) Which processes related to light utilization are most important to accurately modeling community succession and C cycle dynamics in temperate forests of the Upper Midwest?
 (2) What is the cost of considering these processes, in terms of additional parametric uncertainty?
 (3) What are the relative contributions of parametric uncertainty (data limitation) vs. structural uncertainty (theoretical limitation?)?
-To answer these questions, we ran ED2 ensemble simulationes with a factorial combination of submodels related to radiative transfer formulation (two-stream vs. multiple scatter), horizontal competition (finite canopy radius vs. complete shading), and trait plasticity (whether or not SLA and Vcmax vary with light level)
+To answer these questions, we ran ED2 ensemble simulations with a factorial combination of submodels related to radiative transfer formulation (two-stream vs. multiple scatter), horizontal competition (finite canopy radius vs. complete shading), and trait plasticity (whether or not SLA and Vcmax vary with light level)
 We then used sensitivity and variance decomposition analyses to evaluate the contribution of parameter uncertainty for each model configuration, exploring the ecological implications of the results.
 
 # Methods
