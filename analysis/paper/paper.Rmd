@@ -363,6 +363,9 @@ fig("summary-ts-plot.png")
 
 `r mdcap(summary_ts_cap)`
 
+<!-- TODO Should one of these be Early Hardwood (or other PFT?) LAI/biomass fraction -->
+<!-- TODO Drop some of these variables? -->
+
 Model projections of gross and net primary productivity, aboveground biomass, leaf area index, and functional diversity varied with both parameter value and model structure (Figure 2).
 All model configurations exhibited a similar trajectory of rapid growth in the first 15-20 years followed by a gradual decline to a lower, stable value around 1975 (with individual ensemble members sometimes undergoing sudden collapse in specific years).
 Two model configurations -- finite canopy radius and two-stream radiative transfer (regardless of trait plasticity) -- had much lower productivity, biomass, and diversity than the other configurations, which generally had similar ensemble mean values and spread.
