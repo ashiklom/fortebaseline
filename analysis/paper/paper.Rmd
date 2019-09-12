@@ -518,6 +518,7 @@ Collectively, this means that **sensitivity and uncertainty analyses are not nec
 
 # Acknowledgements
 
+<!-- TODO Fill in Acknowledgements -->
 This project funded by NSF grant.
 Cyberinfrastructure provided by Pacific Northwest National Laboratory (PNNL).
 Data from University of Michigan Biological Station (UMBS).
