@@ -478,34 +478,6 @@ ED2.2 has a mortality scheme, and indeed, parameters related to mortality were o
 <!-- Maybe move this elsewhere? -->
 <!-- TODO Look at mortality across ED runs. Does it relate at all to results? -->
 However, **our simulations did not include other sources of disturbance**, such as partial harvests, extreme weather, and damage from insects and pathogens, which are common to this region [@amiro_2010_ecosystem] and which may contribute to sustaining productivity and dominance of early-successional forests [@gough_2016_disturbance].
-- Parameter uncertainty is the dominant driver of model predictive uncertainty.
-- ...but the nature of this parameter uncertainty depends on model configuration.
-
-- Ecological implications of structural uncertainty
-    - Predictions about ecological succession are very sensitive to the understory light environment.
-        - Need a good representation of canopy structure (finite canopy radius)
-        - How you model canopy radiative transfer matters! Small differences in the model can give significant results.
-    - But, trait plasticity can provide an alternative mechanism for success in the understory.
-        - Important modeling implication for all the emerging research on intra-specific trait variability.
-        - This combination of discrete functional types with plastic traits is closer to reality than purely trait-based ("eco-evolutionary?") models or completely discretized models with static traits on the other.
-        - Important caveat: Current implementation is based entirely on tropical data, which has more extreme canopy shading than temperate forests (REF), so tropical species may have evolved stronger trait plasticity than temperate species (REF).
-        - Perhaps note "ecological equifinality" here: there are different ways to arrive at similar outcomes in the model; this is also true in nature? 
-- Implications of uncertainty analysis for future data collection and model development
-    - Parameter uncertainty is still a _huge_ source of overall model predictive uncertainty. Different parameters can give _qualitatively_ different ecological outcomes.
-    - Looking beyond aggregate variables (e.g. net primary productivity, total LAI) is essential to model evaluation and calibration. It's possible to generate a relatively?
-    - (Expected) Subsurface parameters (e.g. leaf-root ratios) have high sensitivity, but are poorly constrained.
-    - Trait covariance may alleviate some data limitation (Shiklomanov et al. 2018 [preprint])
-- Comparisons against other studies
-    - Parameter sensitivity
-        - [@pandit_2018_optimizing] -- Most important parameters for shrubs were SLA, Vcmax, stomatal slope, root:leaf ratio, and root turonver rate (slightly less important: leaf turnover rate, growth respiration, cuticular conductance; much less important: water conductance; basically irrelevant: storage turnover, leaf width)
-        - Compare against @dietze_2014_quantitative and @raczka_2018_what
-- Future directions: Predicting disturbance response
-    - FoRTE project -- Forecasting a disturbance.
-        - Compare ecological resilience/memory between model and reality
-- Other relevant references:
-  - @gough_2019_high -- Canopy structural complexity is the strongest predictor of productivity across NEON sites. Possible future direction?
-
-Moreover, these models' **predictions of species composition and ecosystem structure are relevant outside of carbon cycle science**, particularly for forest management and wildlife conservation. <!-- BBL: maybe move this sentence to discussion? TODO refs -->
 
 # Conclusions
 
