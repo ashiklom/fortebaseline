@@ -383,6 +383,9 @@ pairs_time_cap <- paste(
 fig("pairs-time-averaged.png")
 ```
 
+<!-- TODO Use peak instead of post-1975? -->
+<!-- TODO Use a logarithmic, rather than a linear fit? -->
+
 Model configuration affected the emergent relationship between net primary productivity and leaf area index (Figure 3).
 The crown model (closed vs. finite) had the strongest effect:
 Compared to the simulations with "closed" crowns, simulations with finite canopy radius generally had lower net primary productivity for the same leaf area index.
