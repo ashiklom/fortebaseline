@@ -125,6 +125,14 @@ TODO Do we have any examples? Or are these studies entirely non-existent?
 Ben's notes:which of the last two categories--structural versus parametric uncertainty--is more important (Fisher et al. 2015, https://onlinelibrary.wiley.com/doi/full/10.1111/j.1523-1739.2003.00614.x, Ricciuto et al. 2008).
 -->
 
+<!-- TODO This paragraph is janky as hell. Needs heavy revision. -->
+Previous work found that an earlier version of ED had difficulty sustaining multiple plant functional types in long simulations [@fisher_2010_assessing].
+One of the primary drivers of successional change in temperate forests is competition for light <!-- TODO REF -- Bazaaz? -->, and differences in plants' strategies for light acquisition and utilization are a key driver of niche differentiation in these ecosystems <!-- TODO REF -->.
+To this end, we focused our structural uncertainty analysis on three processes related to competition for light:
+Representation of horizontal competition;
+representation of canopy radiative transfer (especially of diffuse radiation);
+and trait plasticity with light level.
+
 **This study focuses on the interaction between parametric and structural uncertainty in the ED2 model.**
 Our study is organized around the following guiding questions:
 (1) Which processes related to light utilization are most important to accurately modeling community succession and C cycle dynamics in temperate forests of the Upper Midwest?
