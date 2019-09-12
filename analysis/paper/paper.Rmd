@@ -482,6 +482,30 @@ ED2.2 has a mortality scheme, and indeed, parameters related to mortality were o
 <!-- Maybe move this elsewhere? -->
 <!-- TODO Look at mortality across ED runs. Does it relate at all to results? -->
 However, **our simulations did not include other sources of disturbance**, such as partial harvests, extreme weather, and damage from insects and pathogens, which are common to this region [@amiro_2010_ecosystem] and which may contribute to sustaining productivity and dominance of early-successional forests [@gough_2016_disturbance].
+Future work will: (1) Calibrate ED2.2 disturbance response to experimental observations (FoRTE), and (2) run long-term simulations with prescribed disturbance frequencies and see how they affect ecological dynamics.
+
+- Figure 3:
+  - For the same LAI, closed canopy had higher productivity than finite. Why?
+    - Not zero-sum; finite canopy hurts dominant trees but doesn't improve subdominant species that much <!-- TODO Need support for this! -->
+  - Importance of using multiple observational constraints. Ecological equifinality is a real problem.
+
+## Drivers of uncertainty
+
+**Parameter uncertainty was the dominant driver of uncertainty in our analysis**.
+Different parameter combinations led to **huge ranges in ensemble predictions of ensemble variables** -- NPP ranged from 0 to almost 2x the observed, and LAI was up to 3x observed (though more tightly clustered around zero) (Figure 2).
+Moreover, different parameter combinations produced **qualitatively different ecological narratives** (Figure 4).
+**Parameter uncertainty has implications beyond C cycling**---differences in species composition and relative abundance have implications for forest management and wildlife conservation, among others.
+
+**Parameter uncertainty is not synonymous with sensitivity**.
+Many of the parameters to which model outputs are most sensitive are already well constrained by data and do not contribute as much to predictive uncertainty (Figure 6).
+Although parameter uncertainty is still large, this means that **targeted data collection works and that we are moving in the right direction**!
+This speaks to the value of looking at not just sensitivity, but partial variance [@lebauer_2013_facilitating; @dietze_2014_quantitative].
+(Compare sensitivity results to these studies, and also to @pandit_2018_optimizing).
+
+Although parameter uncertainty dominated, **structural and parameter uncertainty interacted in important ways**.
+The relative position of different parameter combinations in multivariate space (Figure 3), the total amount of parameter uncertainty (Figure 5), and the relative importance of different parameters to predictive uncertainty (Figure 6) all differed across model structures (Figure 3).
+This is despite the fact that our model structure changes were relatively modest compared to differences between different models.
+Collectively, this means that **sensitivity and uncertainty analyses are not necessarily generalizable across models**.
 
 # Conclusions
 
