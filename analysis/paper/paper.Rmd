@@ -21,7 +21,8 @@ abstract: |
   Demographic vegetation models provide a tool for analyzing this uncertainty and its implications. 
   Here, we evaluate the relative importance of model "structural" (which processes are represented, and how) and "parameter" (parameters used in those equations) uncertainty, asking: 
   (1) Which processes are most important to accurately model community succession and C cycling in Upper Midwest forests?
-  (2) What are the relative contributions of parameter vs. structural uncertainty? We ran ensembles of the Ecosystem Demography model v2.2 (sampling over parameter uncertainty) from 1900 to 2000 with different representations of key processes important to competition for light.
+  (2) What are the relative contributions of parameter vs. structural uncertainty?
+  We ran ensembles of the Ecosystem Demography model v2.2 (sampling over parameter uncertainty) from 1900 to 2000 with different representations of key processes important to competition for light.
   We then compared the magnitude of structural (across representations) and parameter (within each representation) uncertainty, and assessed which submodel-parameter combinations reproduced observed C fluxes and succession.
   Our simulations agreed well with observed net primary productivity but systematically underestimated leaf area index.
   Overall, parameter uncertainty contributed more than structural uncertainty to total simulation uncertainty, but the amount of parameter uncertainty varied with model structure.
