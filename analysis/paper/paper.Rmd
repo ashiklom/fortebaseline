@@ -541,7 +541,7 @@ The current Git commit details are:
 ```{r}
 # what commit is this file at? You may need to change the path value
 # if your Rmd is not in analysis/paper/
-git2r::repository("../..")
+git2r::repository(here::here())
 ```
 
 View this project on GitHub in repository [ashiklom/fortebaseline](https://github.com/ashiklom/fortebaseline)
