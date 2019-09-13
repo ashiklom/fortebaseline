@@ -33,7 +33,7 @@ highlights: |
   These are the highlights.
 ---
 
-```{r, setup, echo = FALSE}
+```{r setup, echo = FALSE}
 library(knitr)
 library(here)
 library(drake)
