@@ -1,14 +1,19 @@
 #' Transmissivity to diffuse radiation for the multiple-scatter model
 #'
-#' @inheritParams tau_direct 
+#' @param C Crown area index (CAI) (default = 1)
+#' @inheritParams tau_direct
 #' @export
-ms_tau_diffuse <- function(L, orient) {
+ms_tau_diffuse <- function(L, orient, C = 1) {
+  # Locally-exposed leaf area
+  locetai <- L / C
   phi1 <- phi1_f(orient)
   phi2 <- phi2_f(orient)
-  ext_diff1 <- phi1 * L
-  ext_diff2 <- phi2 * L
-  -exp(-ext_diff1 - ext_diff2) *
-    (ext_diff1^2 * exp(ext_diff1) * gsl::expint_Ei(-ext_diff1) + ext_diff1 - 1)
+  ext_diff1 <- phi1 * locetai
+  ext_diff2 <- phi2 * locetai
+  (1 - C) -
+    C * exp(-ext_diff1 - ext_diff2) *
+    (ext_diff1 ^ 2 * exp(ext_diff1) *
+       gsl::expint_Ei(-ext_diff1) + ext_diff1 - 1)
 }
 
 #' Multiple-scatter model

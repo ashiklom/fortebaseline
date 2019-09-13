@@ -70,10 +70,11 @@ single_scatter_albedo <- function(theta, orient, theta_rad = theta * pi / 180) {
 #' Transmissivity to direct radiation
 #'
 #' @param L Leaf (or total) area index
+#' @param C Crown area index (default = 1)
 #' @inheritParams kfunction
 #' @author Alexey Shiklomanov
 #' @export
-tau_direct <- function(L, theta, orient) {
+tau_direct <- function(L, theta, orient, C = 1) {
   K <- kfunction(theta, orient)
   exp(-K * L)
 }

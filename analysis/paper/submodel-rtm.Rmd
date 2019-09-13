@@ -292,7 +292,7 @@ For the $K(\psi)$ defined in "Directional scattering and leaf angle distribution
 $$
 \tau_i = -\exp(-L_i (\phi_1 + \phi_2))
 \left(
-\phi_1^2 L_i^2 \exp(\phi_1 L_i) * E_i(-\phi_1 L_i) +
+\phi_1^2 L_i^2 \exp(\phi_1 L_i) E_i(-\phi_1 L_i) +
 \phi_1 L_i - 1
 \right)
 $$
@@ -315,7 +315,11 @@ purrr::walk2(
 
 ```
 
-## Finite canopy radius
+# Two-stream
+
+(TODO)
+
+# Finite canopy radius
 
 Crown area ($C_i$) is computed as a function of DBH.
 
@@ -348,7 +352,6 @@ C_i \exp(-\frac{L_i}{C_i} (\phi_1 + \phi_2))
 \right)
 $$
 
-# Two-stream
 
 # Comparison
 
@@ -368,7 +371,6 @@ theta <- 15
 S0_beam <- 0.8
 S0_diff <- 1 - S0_beam
 alb_ground <- 0.1
-
 ```
 
 Then we run both models.
