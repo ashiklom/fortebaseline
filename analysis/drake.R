@@ -226,6 +226,9 @@ plan <- drake_plan(
     # TODO: Fix dims so axis titles aren't cut off
     width = 10, height = 10
   ),
+  summary_ts_plot_knit = knitr::include_graphics(file_in(!!path(
+    fig_dir, "summary-ts-plot.png"
+  ))),
   #########################################
   # Parameter distributions
   #########################################
@@ -250,6 +253,7 @@ plan <- drake_plan(
     param_dist_gg,
     width = 15.3, height = 9.9
   ),
+  param_dist_knit = knitr::include_graphics(file_in(!!path(fig_dir, "param-dist.png"))),
   #########################################
   # LAI by PFT plot
   #########################################
@@ -317,6 +321,9 @@ plan <- drake_plan(
     lai_pft_plot,
     width = 11.42, height = 5.67
   ),
+  lai_pft_plot_knit = knitr::include_graphics(file_in(!!path(
+    fig_dir, "lai-pft-plot.png"
+  ))),
   #########################################
   # Parameter vs. structure uncertainty
   #########################################
@@ -366,6 +373,9 @@ plan <- drake_plan(
     within_across_plot,
     width = 8.3, height = 5.1
   ),
+  within_across_plot_knit = knitr::include_graphics(file_in(!!path(
+    fig_dir, "within-across-plot.png"
+  ))),
   #########################################
   # Sensitivity analysis
   #########################################
@@ -432,6 +442,9 @@ plan <- drake_plan(
     # TODO: This is huge...
     width = 20, height = 15
   ),
+  sensitivity_plot_knit = knitr::include_graphics(file_in(!!path(
+    fig_dir, "sensitivity-plot.png"
+  ))),
   #########################################
   # Pairs plot of time-averaged values
   #########################################
@@ -477,7 +490,10 @@ plan <- drake_plan(
     pairs_time_averaged,
     height = 5.67,
     width = 8.92
-  )
+  ),
+  pairs_time_averaged_knit = knitr::include_graphics(file_in(!!path(
+    fig_dir, "pairs-time-averaged.png"
+  ))),
 )
 
 if ("--poster" %in% cmdargs) source("analysis/drake_poster.R")
@@ -489,7 +505,7 @@ if ("--paper" %in% cmdargs) {
         knitr_in(!!(path(analysis_dir, "paper", "paper.Rmd"))),
         .format
       ),
-      transform = map(.format = c("html_document", "pdf_document"))),
+      transform = map(.format = c("html_document", "pdf_document")))
     ))
 }
 

@@ -38,17 +38,13 @@ library(knitr)
 library(here)
 library(drake)
 
-fig <- function(...) {
-  filepath <- here("analysis", "figures", ...)
-  knitr::include_graphics(file_in(filepath))
-}
-
 opts_chunk$set(
   collapse = TRUE,
   warning = FALSE,
   message = FALSE,
   echo = FALSE,
-  comment = "#>"
+  comment = "#>",
+  out.width = "\\linewidth"
   ## fig.path = "../figures/"
 )
 
@@ -300,15 +296,12 @@ The resulting parameter distributions are shown in Figure 1.
 <!-- TODO more on this? -->
 All parameters not described in this section were set to their ED-2.2 PFT-specific default values.
 
-```{r methods_captions}
+```{r param_dist, fig.cap = param_dist_cap}
 param_dist_cap <- paste(
   htmlfig(),
   "Input parameter distributions from PEcAn trait meta-analysis."
 )
-```
-
-```{r param_dist, fig.cap = param_dist_cap}
-fig("param-dist.png")
+readd(param_dist_knit)
 ```
 
 `r mdcap(param_dist_cap)`
@@ -354,11 +347,11 @@ summary_ts_cap <- paste(
   "and Shannon diversity index (of plant functional types)",
   "by model configuration.",
   "The solid line is the ensemble mean.",
-  "The dashed line is the 80% confidence interval.",
+  "The dashed line is the 80\\% confidence interval.",
   "Black dot with error bars is the observed mean and min/max value",
-  "(TODO REF)."
+   "(TODO REF)."
 )
-fig("summary-ts-plot.png")
+readd(summary_ts_plot_knit)
 ```
 
 `r mdcap(summary_ts_cap)`
@@ -384,7 +377,7 @@ pairs_time_cap <- paste(
   "Letter labels are selected runs with the same parameters,",
   "and match the rows in Figure 4."
 )
-fig("pairs-time-averaged.png")
+readd(pairs_time_averaged_knit)
 ```
 
 <!-- TODO Use peak instead of post-1975? -->
@@ -404,7 +397,7 @@ bigfacet_cap <- paste(
   "Note that these are predictions of total leaf area index summed across all cohorts of the same PFT,",
   "meaning that higher LAI in one PFT does not necessarily indicate dominance, size, etc."
 )
-fig("lai-pft-plot.png")
+readd(lai_pft_plot_knit)
 ```
 
 `r mdcap(bigfacet_cap)`
@@ -426,7 +419,7 @@ within_vs_across_cap <- paste(
   "and \"structural\" uncertainty (variance in ensemble means; black bar) by output variable.",
   "Output variables are expressed as growing season averages for all years after 1910."
 )
-fig("within-across-plot.png")
+readd(within_across_plot_knit)
 ```
 
 `r mdcap(within_vs_across_cap)`
@@ -449,7 +442,7 @@ uncertainty_analysis_cap <- paste(
   "Input parameter distributions are shown in Figure 1.",
   "Note that x-axis scales vary across panels."
 )
-fig("sensitivity-plot.png")
+readd(sensitivity_plot_knit)
 ```
 
 `r mdcap(uncertainty_analysis_cap)`
