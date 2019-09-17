@@ -65,7 +65,7 @@ soil_file <- path(download_dir, "all-output-soil.fst")
 soil_osf <- "4gjpy"
 
 # Monthly output files
-mcohort_file <- path(download_dir, "all-cohort-monthly-output.fst")
+mcohort_file <- path(download_dir, "all-output-monthly-cohort.fst")
 mcohort_osf <- "..."
 mpft_file <- path(download_dir, "all-output-monthly-pft.fst")
 mpft_osf <- "..."
