@@ -1417,3 +1417,40 @@ top_n_sensitivity_plot(sensitivity_plot_data, "NPP", pvar) +
   labs(y = "Partial variance", x = "Trait") +
   scale_color_manual(values = pfts("color")) +
   theme_cowplot()
+
+##################################################
+variable_cols <- c("case", "datetime", "pft", "nplant",
+                   "dbh", "bleaf", "lai_co", "crown_area_co")
+f <- fst(mcohort_file)
+d <- f[, variable_cols, drop = FALSE]
+setDT(d)
+d[, config := substr(case, 4, 6)]
+
+dpeak <- d[data.table::between(datetime, "1920-01-01", "1940-01-01"), ] %>%
+  .[data.table::month(datetime) %in% 6:8, ]
+
+ggplot(dpeak) +
+  aes(x = crown_area_co, fill = factor(pft), group = factor(pft)) +
+  geom_histogram() +
+  facet_wrap(vars(config), scales = "fixed")
+
+ggplot(dpeak) +
+  aes(x = dbh, y = crown_area_co) +
+  geom_point() +
+  facet_wrap(vars(config), scales = "fixed")
+
+ggplot(dpeak) +
+  aes(x = dbh, y = crown_area_co) +
+  geom_hex()
+
+plot(crown_area_co ~ dbh, data = d, pch = ".")
+
+dsum <- d[, .(CA = sum(crown_area_co)), .(case, datetime)][, config := substr(case, 4, 6)]
+dsum2 <- dsum[, .(mid = mean(CA), lo = quantile(CA, 0.1), hi = quantile(CA, 0.9)), .(config, datetime)]
+
+ggplot(dsum2) +
+  aes(x = datetime, y = mid, ymin = lo, ymax = hi) +
+  geom_ribbon(fill = "gray70") +
+  geom_line() +
+  facet_wrap(vars(config)) +
+  coord_cartesian(ylim = c(0, 3))
