@@ -17,10 +17,10 @@ library(fortebaseline)
 
 ## Scattering and backscattering of canopy elements
 
-Following @clm45_note, forward- ($\nu$) and backscattering of leaves or stems ($\omega$) are defined as a function of reflectance ($R$) and transmittance ($T$) of the corresponding materials:
+Following @clm45_note, forward- ($\nu$) and backscattering ($\omega$) of canopy elements (leaves or stems) are defined as a function of those elements' reflectance ($R$) and transmittance ($T$):
 
-$$ \nu = R + T $$
-$$ \omega = \frac{R + T + \frac{1}{4} (R-T)(1 - \chi)^2}{2 (R+T)} $$
+$$ \nu_x = R_x + T_x $$
+$$ \omega_x = \frac{R_x + T_x + \frac{1}{4} (R_x-T_x)(1 - \chi)^2}{2 (R_x+T_x)} $$
 
 Both of these quantities are calculated independently for leaves and wood, and then averaged based on the relative area indices of leaves (LAI, $L$) and wood (WAI, $W$) within a canopy layer.
 
@@ -317,7 +317,85 @@ purrr::walk2(
 
 # Two-stream
 
-(TODO)
+The $X$ and $Y$ vectors of the matrix problem for diffuse fluxes are defined as follows:
+
+$$
+X =
+\begin{bmatrix}
+SWuO_0 \\
+SWd0_1 \\
+SWu0_1 \\
+... \\
+SWd0_i \\
+SWu0_i \\
+... \\
+SWd0_m \\
+SWu0_m \\
+SWd0_{m + 1}
+\end{bmatrix}
+$$
+
+$$
+Y = 
+\begin{bmatrix}
+S_0 a_{ground} () \\
+S_1 r(\psi)_1 \left[ 1 - r_0 r_1 (1 - \alpha_0) (1 - \tau_0) (1 - \alpha_1) (1 - \tau_1) \right] (1 - \tau(\psi)_1) (1 - \alpha_1) \\
+S_1 \left[ 1 - r_1 r_2 (1 - \alpha_1) (1 - \tau_1) (1 - \alpha_2) (1 - \tau_2) \right] (1 - \tau(\psi)_1) (1 - \alpha_1) (1 - r(\psi)_1) \\
+... \\
+S_i r(\psi)_i \left[ i - r_{i-1} r_i (i - \alpha_{i-1}) (i - \tau_{i-1}) (i - \alpha_i) (i - \tau_i) \right] (i - \tau(\psi)_i) (i - \alpha_i) \\
+S_i \left[ i - r_i r_{i+1} (i - \alpha_i) (i - \tau_i) (i - \alpha_{i+1}) (i - \tau_{i+1}) \right] (i - \tau(\psi)_i) (i - \alpha_i) (i - r(\psi)_i) \\
+... \\
+S_m r(\psi)_m \left[ m - r_{m-1} r_m (m - \alpha_{m-1}) (m - \tau_{m-1}) (m - \alpha_m) (m - \tau_m) \right] (m - \tau(\psi)_m) (m - \alpha_m) \\
+S_m \left[ m - r_m r_{m+1} (m - \alpha_m) (m - \tau_m) (m - \alpha_{m+1}) (m - \tau_{m+1}) \right] (m - \tau(\psi)_m) (m - \alpha_m) (m - r(\psi)_m) \\
+SW_{sky}
+\end{bmatrix}
+$$
+
+Diffuse transmittance.
+
+```{r}
+
+plot(c(0, Lmax), c(0, 1), type = "n",
+     xlab = "Leaf area index",
+     ylab = "Diffuse transmittance fraction")
+legend("topright", as.character(orient),
+       title = "Orient factor",
+       lty = "solid",
+       col = colors)
+purrr::walk2(
+  orient, colors,
+  ~curve(ts_tau_diffuse(x, .x, lr = 0.056, lt = 0.045, cai = 1), 0, Lmax, add = TRUE, col = .y)
+)
+
+```
+
+Here it is compared with the multi-scatter model.
+
+```{r}
+
+orient_sub <- c(-0.5, 0, 0.5)
+colors_sub <- colors[c(1, 3, 5)]
+plot(c(0, Lmax), c(0, 1), type = "n",
+     xlab = "Leaf area index",
+     ylab = "Diffuse transmittance fraction")
+legend("topright", as.character(orient_sub),
+       title = "Orient factor",
+       lty = "solid",
+       col = colors_sub)
+legend("top", c("multi-scatter", "two-stream"),
+       title = "RTM",
+       lty = c("dashed", "solid"))
+purrr::walk2(
+  orient_sub, colors_sub,
+  ~curve(ms_tau_diffuse(x, .x), 0, Lmax, add = TRUE, col = .y, lty = "dashed")
+)
+purrr::walk2(
+  orient_sub, colors_sub,
+  ~curve(ts_tau_diffuse(x, .x, lr = 0.056, lt = 0.045, cai = 1), 0, Lmax, add = TRUE, col = .y)
+)
+
+```
+
 
 # Finite canopy radius
 
@@ -339,19 +417,66 @@ curve(dbh2ca(x), 0, 50,
       ylab = "Crown area index (unitless)")
 ```
 
-The crown area index ($C_i$) affects the following terms in the following ways:
+In both models, the transmittance of direct radiation corrected for crown area index ($\tau(\psi)_i^*$) is calculated as follows:
 
-$$ \tau(\psi)_i = (1 - C_i) + C_i \exp(-K(\psi)_i \frac{L_i}{C_i}) $$
+$$ \tau(\psi)_i^* = (1 - C_i) + C_i \exp(-K(\psi)_i \frac{L_i}{C_i}) $$
+
+```{r}
+tau_psi_star <- function(L, C, theta, orient) {
+  k <- kfunction(theta, orient)
+  1 - C + C * exp(-k * L / C)
+}
+curve(tau_psi_star(1, x, 0, 0), 0, 1,
+      ylim = c(0, 1),
+      xlab = "Crown area index", y = expression(tau(psi) ^ "*"))
+curve(tau_psi_star(2, x, 0, 0), 0, 1, col = 2, add = TRUE)
+curve(tau_psi_star(3, x, 0, 0), 0, 1, col = 3, add = TRUE)
+curve(tau_psi_star(4, x, 0, 0), 0, 1, col = 4, add = TRUE)
+```
+
+The effect of the crown area index on diffuse transmittance varies by model.
+In the **two-stream** model, the crown area index affects the average diffuse optical depth ($\bar{\mu}$) as follows:
 
 $$
-\tau_i = (1 - C_i) - 
-C_i \exp(-\frac{L_i}{C_i} (\phi_1 + \phi_2))
-\left(
-\frac{\phi_1^2 L_i^2}{C_i^2} \exp(\phi_1 \frac{L_i}{C_i}) * E_i(-\phi_1 \frac{L_i}{C_i}) +
-\phi_1 \frac{L_i}{C_i} - 1
-\right)
+\bar{\mu}^* = \frac{-L_i}{\log(1 - C_i + C_i \exp( -L_i / \bar{\mu} ))}
 $$
 
+(Note that if $C_i = 1$, this simplifies to $\bar{\mu}^* = \bar{\mu}$).
+
+In the **multiple-scatter** model, if we define the diffuse transmittance expression ($\tau_i$) above as a function of leaf area index, $T_i(L)$,
+then the diffuse transmittance corrected for crown area ($\tau_i^*$) becomes:
+
+$$
+\tau_i^* = (1 - C_i) + C_i T_i\left( \frac{L_i}{C_i} \right)
+$$
+
+Comparing the diffuse radiation response of the two models:
+
+```{r}
+
+cai <- c(0.1, 0.25, 0.5, 1)
+colors_sub <- c("red1", "red2", "red3", "black")
+plot(c(0, Lmax), c(0, 1), type = "n",
+     xlab = "Leaf area index",
+     ylab = "Diffuse transmittance fraction")
+legend("bottomleft", as.character(cai),
+       title = "CAI",
+       lty = "solid",
+       col = colors_sub,
+       inset = c(0, 0.2))
+legend("bottomleft", c("MS", "2S"),
+       title = "RTM",
+       lty = c("dashed", "solid"))
+purrr::walk2(
+  cai, colors_sub,
+  ~curve(ms_tau_diffuse(x, 0, .x), 0, Lmax, add = TRUE, col = .y, lty = "dashed")
+)
+purrr::walk2(
+  cai, colors_sub,
+  ~curve(ts_tau_diffuse(x, 0, lr = 0.056, lt = 0.045, cai = .x), 0, Lmax, add = TRUE, col = .y)
+)
+
+```
 
 # Comparison
 

@@ -107,3 +107,13 @@ integrate_light <- function(down0, down, up) {
     light_diff_level = light_diff_level
   )
 }
+
+scatter <- function(lr, lt) {
+  lr + lt
+}
+
+backscatter <- function(lr, lt, orient) {
+  num <- lr + lt + 0.25 * (lr - lt) * (1 - orient) ^ 2
+  den <- 2 * (lr + lt)
+  num / den
+}

@@ -217,3 +217,30 @@ two_stream <- function(ipft, L,
     ll_list
   )
 }
+#' Average inverse optical depth for diffuse radiation: Two-stream
+#'
+#' With correction for finite crown area.
+#'
+#' @inheritParams two_stream
+#' @return
+#' @author Alexey Shiklomanov
+#' @export
+ts_mubar_star <- function(orient_factor, lai, cai = 1) {
+  mubar <- mu_bar(orient_factor)
+  -lai / log(1 - cai + cai * exp(-lai / mubar))
+}
+
+#' Transmissivity of diffuse radiation: Two-stream
+#'
+#' @inheritParams two_stream
+#' @return
+#' @author Alexey Shiklomanov
+#' @export
+ts_tau_diffuse <- function(lai, orient_factor, lr, lt, cai) {
+  mu <- ts_mubar_star(orient_factor, lai, cai)
+  iota <- scatter(lr, lt)
+  beta <- backscatter(lr, lt, orient_factor)
+  epsil <- 1 - 2 * beta
+  lambda <- sqrt((1 - epsil * iota) * (1 - iota)) / mu
+  exp(-lambda * lai)
+}
