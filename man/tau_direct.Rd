@@ -4,7 +4,7 @@
 \alias{tau_direct}
 \title{Transmissivity to direct radiation}
 \usage{
-tau_direct(L, theta, orient)
+tau_direct(L, theta, orient, C = 1)
 }
 \arguments{
 \item{L}{Leaf (or total) area index}
@@ -12,6 +12,8 @@ tau_direct(L, theta, orient)
 \item{theta}{Projection angle (degrees)}
 
 \item{orient}{Leaf orientation factor (-1, 1)}
+
+\item{C}{Crown area index (default = 1)}
 }
 \description{
 Transmissivity to direct radiation
