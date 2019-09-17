@@ -506,11 +506,54 @@ ms_out <- multi_scatter(ipft, L, lr, lt, orient,
 ts_out <- two_stream(ipft, L, lr, lt, orient,
                      theta, S0_beam, S0_diff, alb_ground)
 
-plot(ms_out$light_level, type = "l")
-lines(ts_out$light_level, col = 2)
+plot(ms_out$light_level, type = "l", lty = "dashed",
+     xlab = "Cohort", ylab = "Total light level")
+lines(ts_out$light_level, lty = "solid")
+legend("topleft", c("2S", "MS"), lty = c("solid", "dashed"))
 
-plot(ms_out$light_diff_level, type = "l")
-lines(ts_out$light_diff_level, col = 2)
+plot(ms_out$light_diff_level, type = "l", lty = "dashed",
+     xlab = "Cohort", ylab = "Diffuse light level")
+lines(ts_out$light_diff_level, lty = "solid")
+legend("topleft", c("2S", "MS"), lty = c("solid", "dashed"))
+```
+
+Run both models under different crown area indices.
+
+```{r}
+
+ncoh <- 3
+ipft <- rep(1, ncoh)
+lai <- rep(0.5, ncoh)
+cai <- c(0.1, 0.25, 0.5, 1)
+colors <- c("red1", "red2", "red3", "black")
+ms1 <- lapply(cai, function(.x) multi_scatter(
+  ipft, lai, lr[1], lt[1], orient[1], C = .x,
+  theta, S0_beam, S0_diff, alb_ground
+))
+ts1 <- lapply(cai, function(.x) two_stream(
+  ipft, lai, lr[1], lt[1], orient[1], cai = .x,
+  theta, S0_beam, S0_diff, alb_ground
+))
+## par(mfrow = c(ncoh, 1))
+## for (i in rev(seq_len(ncoh))) {
+##   ms1_ll <- vapply(ms1, function(x) x[["light_level"]][i], numeric(1))
+##   ts1_ll <- vapply(ts1, function(x) x[["light_level"]][i], numeric(1))
+##   matplot(cai, cbind(ts1_ll, ms1_ll), type = "l", col = "black",
+##           ylim = c(0.2, 1))
+##   legend("topright", c("2S", "MS"), lty = 1:2)
+## }
+
+v <- "light_diff_level"
+par(mfrow = c(length(cai), 1))
+for (i in seq_along(cai)) {
+  ms1_ll <- ms1[[i]][[v]]
+  ts1_ll <- ts1[[i]][[v]]
+  matplot(cbind(ts1_ll, ms1_ll), type = "l", col = "black",
+          xlab = "Cohort", ylab = "Total light level",
+          ylim = c(0, 0.4), main = paste("CAI = ", cai[i]))
+  legend("bottomright", c("2S", "MS"), lty = 1:2)
+}
+
 ```
 
 # References

@@ -31,6 +31,8 @@ ms_tau_diffuse <- function(L, orient, C = 1) {
 multi_scatter <- function(ipft, L,
                           # PFT-level parameters
                           lr, lt, orient,
+                          # Crown area index
+                          C = 1,
                           # Site scalars
                           theta = 15,
                           S0_beam = 0.8,
@@ -80,14 +82,14 @@ multi_scatter <- function(ipft, L,
   t <- fvector(seq(0, ncoh + 1))
   t[0] <- 0
   t[ncoh + 1] <- 1
-  t[1:ncoh] <- ms_tau_diffuse(L, orient)
+  t[1:ncoh] <- ms_tau_diffuse(L, orient, C)
   ti <- 1 - t   # omt_diff
 
   # Direct transmittance (tau_beam in ED2)
   tpsi <- fvector(seq(0, ncoh + 1))
   tpsi[0] <- 0
   tpsi[ncoh + 1] <- 1
-  tpsi[1:ncoh] <- tau_direct(L, theta, orient)
+  tpsi[1:ncoh] <- tau_direct(L, theta, orient, C)
   tpsii <- 1 - tpsi  # omt_beam
 
   # Direct reflectance (r_beam in ED2)

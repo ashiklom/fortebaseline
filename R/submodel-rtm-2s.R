@@ -21,6 +21,7 @@
 #' @export
 two_stream <- function(ipft, L,
                        lr, lt, orient,
+                       cai = rep(1, length(L)),
                        theta = 15,
                        S0_beam = 0.8,
                        S0_diff = 1 - S0_beam,
@@ -65,7 +66,6 @@ two_stream <- function(ipft, L,
   ## leaf_weight <- elai / etai
   ## wood_weight <- 1 - leaf_weight
 
-  cai <- rep(1, length(L))
   czen <- cos(theta * pi / 180)
 
   # Inverse optical depth of direct radiation

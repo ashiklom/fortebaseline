@@ -4,8 +4,8 @@
 \alias{multi_scatter}
 \title{Multiple-scatter model}
 \usage{
-multi_scatter(ipft, L, lr, lt, orient, theta = 15, S0_beam = 0.8,
-  S0_diff = 1 - S0_beam, alb_ground = 0.1)
+multi_scatter(ipft, L, lr, lt, orient, C = 1, theta = 15,
+  S0_beam = 0.8, S0_diff = 1 - S0_beam, alb_ground = 0.1)
 }
 \arguments{
 \item{ipft}{Integer indices of PFTs (`icohort`)}
@@ -17,6 +17,8 @@ multi_scatter(ipft, L, lr, lt, orient, theta = 15, S0_beam = 0.8,
 \item{lt}{Leaf transmittance (`ipft`)}
 
 \item{orient}{Leaf orientation factor (-1, 1)}
+
+\item{C}{Crown area index (default = 1)}
 
 \item{theta}{Projection angle (degrees)}
 }
