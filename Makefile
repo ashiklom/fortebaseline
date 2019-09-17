@@ -14,3 +14,6 @@ deploy:
 
 postgrad:
 	./analysis/drake.R make --postgrad
+
+submodel: ./analysis/paper/submodel-rtm.Rmd
+	Rscript -e "rmarkdown::render('analysis/paper/submodel-rtm.Rmd')"
