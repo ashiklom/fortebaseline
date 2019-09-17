@@ -13,9 +13,10 @@ analysis/data/model_output/
 analysis/data/retrieved/
 
 # Rmd output
-analysis/paper/exploratory_cache/
-analysis/paper/exploratory_files/
-analysis/paper/exploratory.html
+/analysis/paper/exploratory_cache/
+/analysis/paper/exploratory_files/
+/analysis/paper/exploratory.html
+/analysis/paper/submodel-rtm_files/
 
 _rendered_output/
 
