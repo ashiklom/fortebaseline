@@ -1419,12 +1419,81 @@ top_n_sensitivity_plot(sensitivity_plot_data, "NPP", pvar) +
   theme_cowplot()
 
 ##################################################
-variable_cols <- c("case", "datetime", "pft", "nplant",
-                   "dbh", "bleaf", "lai_co", "crown_area_co")
-f <- fst(mcohort_file)
-d <- f[, variable_cols, drop = FALSE]
+library(data.table)
+library(fst)
+library(magrittr)
+library(fs)
+library(here)
+library(ggplot2)
+
+analysis_dir <- dir_create(here("analysis"))
+data_dir <- dir_create(path(analysis_dir, "data"))
+download_dir <- dir_create(path(data_dir, "retrieved"))
+fig_dir <- dir_create(path(analysis_dir, "figures"))
+cohort_file <- path(download_dir, "all-output-cohort.fst")
+pft_file <- path(download_dir, "all-output-pft.fst")
+scalar_file <- path(download_dir, "all-output-scalar.fst")
+soil_file <- path(download_dir, "all-output-soil.fst")
+mcohort_file <- path(download_dir, "all-output-monthly-cohort.fst")
+mpft_file <- path(download_dir, "all-output-monthly-pft.fst")
+mscalar_file <- path(download_dir, "all-output-monthly-scalar.fst")
+msoil_file <- path(download_dir, "all-output-monthly-soil.fst")
+
+fx <- fst(mcohort_file)
+names(fx)
+yvar <- "mmean_leaf_maintenance_co"
+dx <- fx[fx$datetime < "1902-08-01",
+         c("case", "model_id", "param_id", "datetime", "pft", "hite",
+           yvar)]
+setDT(dx)
+ggplot(dx) +
+  aes(x = datetime, group = case) + aes_string(y = yvar) +
+  geom_line(alpha = 0.05) +
+  facet_grid(vars(pft), vars(model_id))
+
+names(fs)
+fs <- fst(scalar_file)
+ds <- fs[fs$datetime < "1902-06-02",]
+setDT(ds)
+
+dslong <- melt(ds, id.vars = c("datetime", "case", "model_id", "param_id", "casefile"))
+dslong[, var(value), .(datetime, variable)][V1 > 0][, unique(variable)]
+
+ggplot(ds) +
+  aes(x = datetime, y = fmean_rlong_albedo_py, group = case) +
+  geom_line(alpha = 0.05) +
+  facet_grid(cols = vars(model_id))
+
+
+## variable_cols <- c("case", "datetime", "pft", "nplant",
+##                    "dbh", "bleaf", "lai_co", "crown_area_co",
+##                    "fmean_light_level_co", "fmean_npp_co")
+names(f)
+f <- fst(cohort_file)
+## d <- f[, variable_cols, drop = FALSE]
+d <- f[f$datetime < "1902-06-02",]
 setDT(d)
-d[, config := substr(case, 4, 6)]
+invisible(d[, config := substr(case, 4, 6)])
+
+# In FTP, FTS...
+# Higher leaf temperature (fmean_leaf_temp_co)
+# Higher leaf respiration (fmean_leaf_resp_co)
+# Much higher leaf longwave radiation (fmean_rlong_l_co)
+# Higher leaf energy (fmean_leaf_energy_co)
+dpft <- d[, .(y = sum(fmean_leaf_energy_co)), .(config, case, datetime, pft)]
+ggplot(dpft) +
+  aes(x = datetime, y = y, group = case) +
+  geom_line(alpha = 0.05) +
+  facet_grid(vars(factor(pft)), vars(config), scales = "free_y")
+
+ggplot(dstart) +
+  aes(x = config, y = mmean_light_level_co, color = factor(pft)) +
+  ggbeeswarm::geom_quasirandom()
+
+ggplot(dstart) +
+  aes(x = mmean_light_level_co, y = lai_co, color = factor(pft)) +
+  geom_hex() +
+  facet_wrap(vars(config), scales = "fixed")
 
 dpeak <- d[data.table::between(datetime, "1920-01-01", "1940-01-01"), ] %>%
   .[data.table::month(datetime) %in% 6:8, ]
