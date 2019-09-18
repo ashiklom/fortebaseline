@@ -467,14 +467,19 @@ The overarching objective of this study was to investigate how model structure a
 
 Our first question was: To what extent can the model, under any configuration, reproduce the observed reality?
 **Ensemble mean trajectory matches traditional understanding of succession**---rapid growth to peak productivity, followed by gradual decline [@odum_1969_strategy_ecosystem_development]---but **happens too quickly** (Figure 2);
-real ecosystems sustain peak productivity for longer [@gough_2016_disturbance].
-This idea that ED2.2's main issue is that it is moving too quickly is supported by the fact that ED2.2 generally underestimates productivity after 100 years, but model **predictions at peak productivity are close to reality**.
+real ecosystems sustain peak productivity for longer [@gough_2016_disturbance]. 
+This is a common characteristic of many ecosystem models: they may be relatively insensitive to short-term changes (e.g. https://onlinelibrary.wiley.com/doi/full/10.1111/gcb.13626) but have trouble sustaining forest production over long time periods, not capturing forest resilience (https://www.sciencedirect.com/science/article/pii/S0378112716310581). 
+This is likely because of species successional changes (https://www.nature.com/articles/s41598-018-23763-y, https://www.mdpi.com/1999-4907/9/8/460) and the role of minor or subtle disturbances (http://dx.doi.org/10.1111/nph.15227). 
+Neither of these processes is well captured by current models (https://onlinelibrary.wiley.com/doi/full/10.1111/j.1365-2486.2004.00891.x, maybe B-L 2016?). 
+This is likely to be an increasingly important limitation in a world of rising disturbances and climate-driven species changes.
+
+This idea that ED2.2's main issue is that it is moving too quickly is supported by the fact that ED2.2 generally underestimates productivity after 100 years, but model **predictions at peak productivity are close to reality**. (https://onlinelibrary.wiley.com/doi/full/10.1111/gcb.13077) 
 One reason ED2.2 is moving too quickly through succession is **missing mechanisms for sustaining productivity through early succession**.
 In particular, recent evidence points to the **important role of low-severity, high-frequency disturbances** in sustaining ecosystem productivity [@gough_2016_disturbance].
-ED2.2 has a mortality scheme, and indeed, parameters related to mortality were often among the top 10 most important parameters for predictive uncertainty (Figure 6).
-<!-- Maybe move this elsewhere? -->
-<!-- TODO Look at mortality across ED runs. Does it relate at all to results? -->
-However, **our simulations did not include other sources of disturbance**, such as partial harvests, extreme weather, and damage from insects and pathogens, which are common to this region [@amiro_2010_ecosystem] and which may contribute to sustaining productivity and dominance of early-successional forests [@gough_2016_disturbance].
+ED2.2 has a mortality scheme, and indeed, parameters related to mortality were often among the top 10 most important parameters for predictive uncertainty (Figure 6). 
+In addition, **our simulations did not include other sources of disturbance**, such as partial harvests, extreme weather, and damage from insects and pathogens, which are common to this region [@amiro_2010_ecosystem] and which may contribute to sustaining productivity and dominance of early-successional forests [@gough_2016_disturbance]. 
+We suggest that how these mortality processes interact with factors such as canopy restructuring and thus radiation transmission (http://dx.doi.org/10.1016/j.foreco.2013.02.031), sustaining the productivity of aging forests over decades (Luyssaert 2008?) is critical to explore in future research.
+
 Future work will: (1) Calibrate ED2.2 disturbance response to experimental observations (FoRTE), and (2) run long-term simulations with prescribed disturbance frequencies and see how they affect ecological dynamics.
 
 - Figure 3:
