@@ -1426,20 +1426,7 @@ library(fs)
 library(here)
 library(ggplot2)
 
-analysis_dir <- dir_create(here("analysis"))
-data_dir <- dir_create(path(analysis_dir, "data"))
-download_dir <- dir_create(path(data_dir, "retrieved"))
-fig_dir <- dir_create(path(analysis_dir, "figures"))
-cohort_file <- path(download_dir, "all-output-cohort.fst")
-pft_file <- path(download_dir, "all-output-pft.fst")
-scalar_file <- path(download_dir, "all-output-scalar.fst")
-soil_file <- path(download_dir, "all-output-soil.fst")
-mcohort_file <- path(download_dir, "all-output-monthly-cohort.fst")
-mpft_file <- path(download_dir, "all-output-monthly-pft.fst")
-mscalar_file <- path(download_dir, "all-output-monthly-scalar.fst")
-msoil_file <- path(download_dir, "all-output-monthly-soil.fst")
-
-fx <- fst(mcohort_file)
+fx <- fst_cohort_monthly()
 names(fx)
 yvar <- "mmean_leaf_maintenance_co"
 dx <- fx[fx$datetime < "1902-08-01",
@@ -1452,7 +1439,7 @@ ggplot(dx) +
   facet_grid(vars(pft), vars(model_id))
 
 names(fs)
-fs <- fst(scalar_file)
+fs <- fst_scalar()
 ds <- fs[fs$datetime < "1902-06-02",]
 setDT(ds)
 
@@ -1469,7 +1456,7 @@ ggplot(ds) +
 ##                    "dbh", "bleaf", "lai_co", "crown_area_co",
 ##                    "fmean_light_level_co", "fmean_npp_co")
 names(f)
-f <- fst(cohort_file)
+f <- fst_cohort()
 ## d <- f[, variable_cols, drop = FALSE]
 d <- f[f$datetime < "1902-06-02",]
 setDT(d)
@@ -1523,3 +1510,85 @@ ggplot(dsum2) +
   geom_line() +
   facet_wrap(vars(config)) +
   coord_cartesian(ylim = c(0, 3))
+
+##################################################
+library(data.table)
+library(magrittr)
+library(fst)
+
+common_vars <- c("case", "model_id", "param_id", "datetime", "pft", "hite")
+interest_vars <- c("mmean_npp_co", "mmean_lai_co", "nplant", "agb_co")
+select_vars <- c(common_vars, interest_vars)
+f <- fst_scalar_cohort()
+d <- f[, select_vars, drop = FALSE]
+setDT(d)
+
+dgs <- d[!is.na(datetime),][month(datetime) %in% 6:8, ][, year := year(datetime)]
+
+## dgs_summary <- dgs[, .(y = mean(mmean_npp_co)), .(case, model_id, param_id, year, pft)]
+## dgs_summary <- dgs[, .(y = sum(mmean_npp_co)), .(case, model_id, param_id, year)]
+dgs_summary <- dgs[, .(y = mean(mmean_lai_co)), .(case, model_id, param_id, year, pft)]
+## dgs_summary <- dgs[, .(y = sum(agb_co * nplant)), .(case, model_id, param_id, year, pft)]
+## dgs_summary <- dgs[, .(y = sum(agb_co * nplant)), .(case, model_id, param_id, year)]
+ggplot(dgs_summary) +
+  aes(x = year, y = y, group = case) +
+  geom_line(alpha = 0.05) +
+  facet_grid(vars(pft), vars(model_id))
+  ## facet_grid(cols = vars(model_id))
+
+dgs_summary[y > 5, .N, case][order(N, decreasing = TRUE)]
+
+bigcmp <- f[f$case == "195CMP", ]
+setDT(bigcmp)
+
+bigcmp[mmean_lai_co > 4, 1:10]
+
+bcs <- bigcmp[year(datetime) == 1933 & month(datetime) == 6]
+bcs[,c("pft", "hite", "dbh", "lai_co", "mmean_gpp_co", "agb_co")]
+
+params <- fread("analysis/data/retrieved/input-parameters.csv")
+params[param_id == 195,]
+
+fs <- fst_scalar_monthly()
+vs <- c("case", "model_id", "param_id", "datetime",
+        "mmean_nep_py", "mmean_npp_py", "mmean_gpp_py")
+ds <- fs[, vs]
+setDT(ds)
+dgss <- ds[!is.na(datetime),][month(datetime) %in% 6:8, ][, year := year(datetime)]
+
+dgss_summary <- dgss[, lapply(.SD, mean), .(case, model_id, param_id, year),
+                     .SDcols = c("mmean_nep_py", "mmean_npp_py", "mmean_gpp_py")]
+
+ggplot(dgss_summary) +
+  aes(x = year, y = mmean_gpp_py * 1000, group = case) +
+  geom_line(alpha = 0.05) +
+  facet_grid(cols = vars(model_id))
+
+
+# PFT file
+pcommon_vars <- c("case", "model_id", "param_id", "datetime", "pft")
+pinterest_vars <- c("agb_py", "mmean_lai_py", "mmean_bleaf_py")
+pselect_vars <- c(pcommon_vars, pinterest_vars)
+fp <- fst_pft_monthly()
+dp <- fp[, pselect_vars, drop = FALSE]
+setDT(dp)
+
+dpss <- dp[!is.na(datetime),][month(datetime) %in% 6:8, ][, year := year(datetime)]
+dpss_summary <- dpss[, lapply(.SD, mean), .(case, model_id, param_id, year, pft),
+                     .SDcols = pinterest_vars]
+
+xx <- dp[datetime > "1910-01-01" & datetime < "1920-01-01",] %>%
+  .[month(datetime) %in% 6:8,] %>%
+  .[, year := year(datetime)]
+
+xx[, lapply(.SD, quantile, 0.8), .(year, model_id, pft), .SDcols = pinterest_vars][year < 1912]
+
+  ggplot() +
+  aes(x = factor(year), y = mmean_lai_py) +
+  geom_boxplot() +
+  facet_grid(vars(pft), vars(model_id), scales = "free_y")
+
+ggplot(dpss_summary) +
+  aes(x = year, y = mmean_lai_py, group = case) +
+  geom_line(alpha = 0.05) +
+  facet_grid(vars(pft), vars(model_id))
