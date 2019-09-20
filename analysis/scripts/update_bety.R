@@ -21,6 +21,8 @@ library(assertthat)
 library(readr)
 devtools::load_all(here())
 
+ma_outdir <- dir_create(here("analysis", "data", "retrieved"))
+
 # Make sure we can connect to bety
 invisible(bety())
 
@@ -248,9 +250,14 @@ other_priors <- tribble(
   "umbs.mid_hardwood", "water_conductance", "lnorm", log(2e-5), 3.5,
   "umbs.late_hardwood", "water_conductance", "lnorm", log(2e-5), 3.5,
   "umbs.northern_pine", "water_conductance", "lnorm", log(2e-5), 3.5,
+  # Specific leaf area for pines has too much density in high values. This one
+  # is centered on the ED2 default with some wiggle room.
+  "umbs.northern_pine", "SLA", "gamma", 2, 0.2
+  # Similarly, fineroot2leaf prior for pine is too wide
 )
 
-pft_definition <- here("analysis", "data", "derived-data", "pft_definition.yml") %>%
+pft_definition <- here("analysis", "data", "derived-data",
+                       "pft_definition.yml") %>%
   read_yaml() %>%
   map_dfr(data.frame, stringsAsFactors = FALSE) %>%
   as_tibble()
@@ -273,20 +280,28 @@ remove_priors <- delete_prior(c(
   "Vm_low_temp"
 ))
 
+
 priors <- pfts_priors() %>%
   select(pft, trait = variable, distn, parama, paramb,
          pft_id, prior_id) %>%
   mutate(is_posterior = FALSE)
+write_csv(priors, path(ma_outdir, "pft-priors.csv"))
 
 # Run PEcAn meta-analysis
 PEcAn.logger::logger.setLevel("WARN")
 pfts <- pfts()
 ma_results <- map(pfts[["bety_name"]], pecan_ma_pft, con = bety()) %>%
   setNames(pfts[["pft"]])
+saveRDS(ma_results, path(ma_outdir, "meta-analysis.rds"))
 
 # Post-process
-priors <- read_csv("analysis/data/derived-data/pft-priors.csv")
-ma_results <- readRDS("analysis/data/retrieved/meta-analysis.rds")
+# Use these blocks to optionally skip above steps
+if (!exists("priors")) {
+  priors <- read_csv(path(ma_outdir, "pft-priors.csv"))
+}
+if (!exists("ma_results")){
+  ma_results <- readRDS(path(ma_outdir, "meta-analysis.rds"))
+}
 ma_posterior <- ma_results %>%
   tidy_posterior() %>%
   mutate(is_posterior = TRUE,
@@ -314,7 +329,7 @@ if (interactive()) {
     ggplot() +
     aes(x = pft, y = draws, fill = pft) +
     geom_violin() +
-    facet_wrap(vars(trait), scales = "free_y") +
+    facet_wrap(vars(trait), scales = "free") +
     scale_fill_manual(values = pfts("color")) +
     labs(x = "PFT", fill = "PFT") +
     cowplot::theme_cowplot() +
@@ -323,9 +338,5 @@ if (interactive()) {
 }
 
 # Store results
-write_csv(priors, path(
-  "analysis", "data", "derived-data", "pft-priors.csv"
-))
-ma_outdir <- dir_create(here("analysis", "data", "retrieved"))
 saveRDS(ma_results, path(ma_outdir, "meta-analysis.rds"))
 saveRDS(trait_distribution, path(ma_outdir, "trait-distribution.rds"))
