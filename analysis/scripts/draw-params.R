@@ -9,9 +9,9 @@ stopifnot(
   requireNamespace("here", quietly = TRUE)
 )
 
-params_raw <- here::here("analysis", "data", "retrieved",
-                         "trait-distribution.rds") %>%
-  readRDS()
+ret_dir <- here::here("analysis", "data", "retrieved")
+params_raw <- readRDS(file.path(ret_dir, "trait-distribution.rds"))
+
 params <- params_raw %>%
   select(-num, -bety_name) %>%
   left_join(params_raw %>%
@@ -33,10 +33,11 @@ if (interactive()) {
   param_draws %>%
     gather(trait, value, -param_id, -name) %>%
     filter(!is.na(value)) %>%
+    mutate(name = fct_inorder(name)) %>%
     ggplot() +
     aes(x = name, y = value) +
     geom_violin(aes(fill = name)) +
     facet_wrap(vars(trait), scales = "free_y")
 }
 
-write_csv(param_draws, "analysis/data/retrieved/input-parameters.csv")
+write_csv(param_draws, file.path(ret_dir, "input-parameters.csv"))
