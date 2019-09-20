@@ -7,30 +7,6 @@ dir.create(pic_input_dir, recursive = TRUE, showWarnings = FALSE)
 param_draws <- read_csv("analysis/data/retrieved/input-parameters.csv")
 nparams <- nrow(param_draws)
 
-write_ed2_xml <- function(trait_values) {
-  pft_list <- tibble::tibble(bety_name = names(trait_values)) %>%
-    dplyr::left_join(pfts(), by = "bety_name") %>%
-    dplyr::select(name = bety_name, ed2_pft_number = num) %>%
-    purrr::transpose()
-  settings <- list(
-    model = list(revision = "git"),
-    pfts = pft_list
-  )
-  PEcAn.ED2::write.config.xml.ED2(settings, trait_values)
-}
-
-as_pft_list <- function(dat) {
-  names <- dat[["name"]]
-  stopifnot(!is.null(names))
-  vals <- dat %>%
-    dplyr::select(-name) %>%
-    as.list() %>%
-    purrr::transpose() %>%
-    purrr::map(purrr::discard, is.na)
-  names(vals) <- names
-  vals
-}
-
 create_case <- function(case,
                         remote_basedir = file.path("/qfs", "projects", "forteproject"),
                         local_basedir = remote_basedir) {
