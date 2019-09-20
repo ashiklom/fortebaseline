@@ -8,10 +8,13 @@ all_ivars <- c("case", "model_id", "param_id", "datetime")
 scalar_ivars <- c()
 ## scalar_yvars <- c("mmean_nep_py", "mmean_npp_py", "mmean_rh_py",
 ##                   "mmean_plresp_py")
-scalar_yvars <- c("mmean_gpp_py", "mmean_npp_py", "mmean_plresp_py")
+## scalar_yvars <- c("mmean_gpp_py", "mmean_npp_py", "mmean_plresp_py")
+scalar_yvars <- c("mmean_available_water_py", "mmean_a_closed_py", "mmean_a_co2_py",
+                  "mmean_a_decomp_py", "mmean_a_light_py", "mmean_a_net_py",
+                  "mmean_")
 scalar_vars <- c(all_ivars, scalar_ivars, scalar_yvars)
-mscalar <- fst_scalar_monthly() %>%
-  .[, scalar_vars]
+mscalar0 <- fst_scalar_monthly()
+mscalar <- mscalar[, scalar_vars]
 setDT(mscalar)
 
 # Calculate annual means of fluxes
