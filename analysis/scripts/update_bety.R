@@ -318,6 +318,7 @@ missing_posteriors <- ma_prior %>%
   mutate(is_posterior = FALSE)
 trait_distribution <- ma_posterior %>%
   bind_rows(missing_posteriors)
+saveRDS(trait_distribution, path(ma_outdir, "trait-distribution.rds"))
 
 if (interactive()) {
   library(ggplot2)
@@ -336,7 +337,3 @@ if (interactive()) {
     theme(axis.title.y = element_blank(),
           axis.text.x = element_blank())
 }
-
-# Store results
-saveRDS(ma_results, path(ma_outdir, "meta-analysis.rds"))
-saveRDS(trait_distribution, path(ma_outdir, "trait-distribution.rds"))
