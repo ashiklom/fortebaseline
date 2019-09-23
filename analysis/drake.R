@@ -115,10 +115,7 @@ plan <- drake_plan(
   #########################################
   # Summary time series
   #########################################
-  variable_cols = c("case", "datetime", "pft", "nplant",
-                    "bleaf", "bsapwooda", "bstorage",
-                    "fmean_gpp_co", "fmean_npp_co", "lai_co"),
-  cases = fst(file_in(!!cohort_file))[, "case", drop = FALSE] %>%
+  cases = fst(file_in(!!mcohort_file))[, "case", drop = FALSE] %>%
     distinct() %>%
     mutate(
       param_id = as.numeric(substring(case, 1, 3)),
@@ -135,20 +132,70 @@ plan <- drake_plan(
       model = interaction(crown, rtm, traits, sep = " ")
     ) %>%
     as_tibble(),
-  models = distinct(cases, model_id, model, crown, rtm, traits) %>%
+  models = cases %>%
+    distinct(model_id, model, crown, rtm, traits) %>%
     arrange(model) %>%
     mutate(color = RColorBrewer::brewer.pal(n(), "Paired")),
   model_colors = tibble::deframe(models[, c("model", "color")]),
   use_vars = c("gpp", "npp", "agb", "lai", "shannon"),
   use_vars_cap = c("GPP", "NPP", "AGB", "LAI", "Shannon"),
-  plot_means = setDT(fst(file_in(!!cohort_file))[, variable_cols])[j = .(
-    agb = sum((bleaf + bsapwooda + bstorage) * nplant),
-    gpp = sum(fmean_gpp_co * nplant),
-    npp = sum(fmean_npp_co * nplant),
-    lai = sum(lai_co)
-  ), by = c("case", "datetime")] %>%
-    as_tibble() %>%
-    mutate(model_id = substr(case, 4, 6)),
+  variable_cols = c("case", "datetime", "pft", "nplant",
+                    "bleaf", "bsapwooda", "bstorage",
+                    "fmean_gpp_co", "fmean_npp_co", "lai_co"),
+  scalar_cols = c("case", "model_id", "param_id", "datetime",
+                  "mmean_gpp_py", "mmean_rh_py", "mmean_plresp_py"),
+  scalar_means = setDT(fst(file_in(!!mscalar_file))[, scalar_cols]) %>%
+    .[, `:=`(npp = mmean_gpp_py - mmean_plresp_py,
+             nee = mmean_gpp_py - mmean_plresp_py - mmean_rh_py)] %>%
+    # Annual value (sum), and kgC/m2 -> MgC/ha (x10)
+    .[, lapply(.SD, function(x) sum(x * 10)),
+      by = .(case, model_id, param_id, year = year(datetime)),
+      .SDcols = c("mmean_gpp_py", "mmean_rh_py", "mmean_plresp_py",
+                  "npp", "nee")],
+  pft_cols = c("case", "model_id", "param_id", "pft", "datetime",
+               "agb_py", "mmean_lai_py", "nplant_py"),
+  pft_means = setDT(fst(mpft_file)[, pft_cols]) %>%
+    # Restrict to growing season because LAI is zero otherwise
+    .[between(month(datetime), 6, 8),
+      .(agb = mean(agb_py), lai = mean(mmean_lai_py), nplant = mean(nplant_py)),
+      .(case, model_id, param_id, pft, year = year(datetime))],
+  pft_aggregates = pft_means %>%
+    .[, lapply(.SD, sum), .(case, model_id, param_id, year),
+      .SDcols = c("agb", "lai", "nplant")],
+  plot_means = scalar_means[pft_aggregates,
+                            on = c("case", "model_id", "param_id", "year")],
+  plot_means_long = plot_means %>%
+    rename_all(~gsub("^mmean_", "", .)) %>%
+    rename_all(~gsub("_py$", "", .)) %>%
+    melt(id.vars = c("case", "model_id", "param_id", "year")),
+  ## plot_means2 = setDT(fst(file_in(!!mcohort_file))[, variable_cols])[j = .(
+  ##   agb = sum((bleaf + bsapwooda + bstorage) * nplant),
+  ##   gpp = sum(fmean_gpp_co * nplant),
+  ##   npp = sum(fmean_npp_co * nplant),
+  ##   lai = sum(lai_co)
+  ## ), by = c("case", "datetime")] %>%
+  ##   as_tibble() %>%
+  ##   mutate(model_id = substr(case, 4, 6)),
+  tsplot_vars = c("gpp", "npp", "plresp", "lai"),
+  tsplot_labeller = labeller(
+    model = function(x) gsub(" ", "\n", x),
+    variable = as_labeller(c(
+      "gpp" = "GPP ~ (MgC ~ ha^-1 ~ year^-1)",
+      "npp" = "NPP ~ (MgC ~ ha^-1 ~ year^-1)",
+      "plresp" = "RA ~ (MgC ~ ha^-1 ~ year^-1)",
+      "lai" = "LAI"
+    ), default = label_parsed),
+    .default = label_value
+  ),
+  tsplot_data = plot_means_long %>%
+    .[variable %in% tsplot_vars, ] %>%
+    .[, variable := factor(variable, tsplot_vars)] %>%
+    .[as.data.table(models), on = "model_id"],
+  tsplot_summary = tsplot_data %>%
+    .[, .(mid = mean(value),
+          lo = quantile(value, 0.05),
+          hi = quantile(value, 0.95)),
+      .(model, year, variable)],
   # Calculate diversity indices based on LAI
   diversity = as.data.table(fst(!!cohort_file)[, c("case", "datetime",
                                                    "pft", "lai_co")]) %>%
@@ -201,20 +248,20 @@ plan <- drake_plan(
     gather(stat, value, low, mean, hi) %>%
     unite("variable", variable, stat) %>%
     spread(variable, value),
-  summary_ts_plot = ggplot(jja_long) +
+  summary_ts_plot = ggplot(tsplot_data) +
     aes(x = year) +
     geom_line(aes(y = value, group = param_id, color = color), alpha = 0.25) +
-    geom_line(data = jja_summary, aes(y = hi),
+    geom_line(data = tsplot_summary, aes(y = hi),
               color = "black", linetype = "dashed") +
-    geom_line(data = jja_summary, aes(y = lo),
+    geom_line(data = tsplot_summary, aes(y = lo),
               color = "black", linetype = "dashed") +
-    geom_line(aes(y = avg), color = "black", size = 1, data = jja_summary) +
-    geom_pointrange(data = observations,
-                    aes(y = mean, ymin = low, ymax = hi),
-                    color = "black") +
+    geom_line(aes(y = mid), color = "black", size = 1, data = tsplot_summary) +
+    ## geom_pointrange(data = observations,
+    ##                 aes(y = mean, ymin = low, ymax = hi),
+    ##                 color = "black") +
     scale_color_identity() +
     facet_grid(vars(variable), vars(model), scales = "free_y",
-               switch = "y", labeller = my_labeller) +
+               switch = "y", labeller = tsplot_labeller) +
     theme_cowplot() +
     theme(axis.title = element_blank(),
           axis.text.x = element_text(angle = 90, vjust = 0.5),
@@ -233,6 +280,25 @@ plan <- drake_plan(
   # Parameter distributions
   #########################################
   trait_distribution = readRDS(file_in(!!trait_distribution_file)),
+  ed2_default_params = system.file("data", "history.rgit.csv",
+                                   package = "PEcAn.ED2") %>%
+    read.table(sep = ";", as.is = FALSE) %>%
+    as_tibble() %>%
+    mutate(
+      # Invert conversions from `PEcAn.ED2::convert.samples.ED`
+      fineroot2leaf = q,
+      Vcmax = PEcAn.utils::arrhenius.scaling(Vm0, 15, 25),
+      leaf_respiration_rate_m2 = PEcAn.utils::arrhenius.scaling(Rd0, 15, 25),
+      # 2 here is 1 / default maintenance respiration
+      root_respiration_rate = 2 * PEcAn.utils::arrhenius.scaling(
+        root_respiration_factor, 15, 25
+      ),
+      # 0.48 is default leaf C
+      SLA = SLA * 0.48
+    ) %>%
+    pivot_longer(-num, names_to = "trait", values_to = "default_value") %>%
+    inner_join(pfts(), "num") %>%
+    semi_join(trait_distribution, c("pft", "trait")),
   param_dist_gg = trait_distribution %>%
     mutate(pft = factor(pft, pfts("pft"))) %>%
     unnest(draws) %>%
@@ -241,6 +307,7 @@ plan <- drake_plan(
     ggplot() +
     aes(x = pft, y = draws, fill = pft) +
     geom_violin() +
+    geom_point(aes(y = default_value), data = ed2_default_params, col = "red1") +
     facet_wrap(vars(trait), scales = "free_y") +
     scale_fill_manual(values = pfts("color")) +
     labs(x = "PFT", fill = "PFT") +

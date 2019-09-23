@@ -1592,3 +1592,110 @@ ggplot(dpss_summary) +
   aes(x = year, y = mmean_lai_py, group = case) +
   geom_line(alpha = 0.05) +
   facet_grid(vars(pft), vars(model_id))
+
+##################################################
+ed2_default_params %>%
+  filter(trait == "leaf_reflect_vis")
+
+PEcAn.utils::arrhenius.scaling(20, 15, 25)
+
+variable_cols = c("case", "model_id", "param_id", "datetime",
+                  "nplant", "bleaf", "bsapwooda", "bstorage",
+                  "fmean_gpp_co", "fmean_npp_co", "lai_co")
+
+scalar_cols = c("case", "model_id", "param_id", "datetime",
+                "mmean_gpp_py", "mmean_npp_py", "mmean_nep_py",
+                "mmean_rh_py", "mmean_plresp_py")
+
+pp <- fst(pft_file)
+pft_means = setDT(fst(mpft_file)[, c("case", "model_id", "param_id", "pft", "datetime",
+                                     "agb_py", "mmean_lai_py", "nplant_py")]) %>%
+  # Only makes sense for growing season
+  .[between(month(datetime), 6, 8),
+    .(agb = mean(agb_py), lai = mean(mmean_lai_py), nplant = mean(nplant_py)),
+    .(case, model_id, param_id, pft, year = year(datetime))]
+
+
+pm <- fst(mscalar_file)[, scalar_cols]
+setDT(pm)
+
+x <- scalar_means[pft_aggregates, on = c("case", "model_id", "param_id", "year")]
+
+bypft = pft_means %>%
+  .[, agb_p := agb / sum(agb), .(case, model_id, param_id, year)]
+
+bypft[year %in% c(1910, 1920, 1950, 1990), ] %>%
+  .[, year := factor(year)] %>%
+  .[, pft := factor(pft, labels = c("Early", "Mid", "Late", "Pine"))] %>%
+  ggplot() +
+  aes(x = year, y = agb_p) +
+  geom_violin() +
+  geom_jitter(size = 0.2) +
+  facet_grid(vars(pft), vars(model_id))
+
+
+  .[, .(case, model_id, param_id, pft, year, agb)] %>%
+  .[, tot_agb . ]
+  dcast(case + model_id + param_id + year ~ pft, value.var = "agb") %>%
+  .[, total := `6` + `9` + `10` + `11`] %>%
+  .[, lapply(.SD, )]
+
+diversity = pft_means %>%
+  .[, agb_p := agb / sum(agb), .(case, model_id, param_id, year)] %>%
+  .[agb > 0] %>%
+  .[, .(shannon = -sum(agb_p * log(agb_p))), .(case, model_id, param_id, year)]
+
+ggplot(diversity) +
+  aes(x = year, y = shannon, group = case) +
+  geom_line(alpha = 0.1) +
+  facet_grid(cols = vars(model_id))
+
+
+pm %>%
+  melt(id.vars = c("case", "model_id", "param_id", "datetime")) %>%
+  # Aggregate up to annual (sum); convert kgC/m2 to MgC / ha (x 10)
+  .[, .(value = sum(value * 10)),
+    .(case, model_id, param_id, year = year(datetime), variable)] %>%
+  .[, .(mid = mean(value), q05 = quantile(value, 0.05), q95 = quantile(value, 0.95),
+        lo = min(value), hi = max(value)),
+    .(model_id, year, variable)] %>%
+  ggplot() +
+  aes(x = year, y = mid) +
+  geom_ribbon(aes(ymin = lo, ymax = hi), fill = "gray80") +
+  geom_ribbon(aes(ymin = q05, ymax = q95), fill = "gray50") +
+  geom_line() +
+  facet_grid(vars(variable), vars(model_id), scales = "free_y") +
+  ylab(expression("Flux" ~ (MgC ~ ha ^ {-1})))
+
+scalar_cols = c("case", "model_id", "param_id", "datetime",
+                "mmean_gpp_py", "mmean_rh_py", "mmean_plresp_py",
+                "mmean_npp_py", "mmean_nep_py")
+scalar_vals = setDT(fst(mscalar_file)[, scalar_cols]) %>%
+  .[, `:=`(my_npp = mmean_gpp_py - mmean_plresp_py,
+           my_nee = mmean_gpp_py - mmean_plresp_py - mmean_rh_py)]
+
+scalar_vals %>%
+  .[datetime < "1915-01-01" & model_id == "CTS",] %>%
+  ## .[, cum_npp := cumsum(mmean_npp_py), .(case)] %>%
+  ggplot() +
+  aes(x = datetime, y = mmean_gpp_py, group = case) +
+  geom_line(alpha = 0.1)
+
+scalar_means = setDT(fst(mscalar_file)[, scalar_cols]) %>%
+  .[, `:=`(my_npp = mmean_gpp_py - mmean_plresp_py,
+           my_nee = mmean_gpp_py - mmean_plresp_py - mmean_rh_py)] %>%
+  # Annual value (sum), and kgC/m2 -> MgC/ha (x10)
+  .[, lapply(.SD, function(x) mean(x * 10)),
+    by = .(case, model_id, param_id, year = year(datetime)),
+    .SDcols = c("mmean_gpp_py", "mmean_rh_py", "mmean_plresp_py",
+                "mmean_npp_py", "mmean_nep_py", "my_npp", "my_nee")]
+
+scalar_means %>%
+  melt(id.vars = c("case", "model_id", "param_id", "year")) %>%
+
+
+scalar_means[, npp_diff := mmean_npp_py - my_npp]
+hist(scalar_means$npp_diff)
+
+scalar_means[, nep_diff := mmean_nep_py - my_nee]
+hist(scalar_means$nep_diff)

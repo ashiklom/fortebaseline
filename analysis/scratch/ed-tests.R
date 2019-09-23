@@ -133,6 +133,29 @@ read_output_dir <- function(outdir) {
   result_dfs
 }
 
+ptest <- run_ed("tout", end_date = "1910-01-01", IOOUTPUT = 0, ITOUTPUT = 3)
+tail(readLines(path(out_root, "tout", "stdout.log")))
+
+mout <- read_output_dir(path(out_root, "tout"))
+
+mout$scalar %>%
+  ggplot() +
+  aes(x = datetime, y = mmean_npp_py) +
+  geom_line()
+
+tfiles <- fs::dir_ls(path(out_root, "tout"), glob = "*/analysis-T-*")
+mfiles <- fs::dir_ls(path(out_root, "tout"), glob = "*/analysis-E-*")
+
+tnc <- ncdf4::nc_open(tfiles[[1]])
+gpp <- ncdf4::ncvar_get(tnc, "FMEAN_GPP_PY")
+
+sum(ncdf4::ncvar_get(tnc, "FMEAN_GPP_PY"))
+sum(ncdf4::ncvar_get(tnc, "FMEAN_PLRESP_PY"))
+
+mnc <- ncdf4::nc_open(mfiles[[1]])
+ncdf4::ncvar_get(mnc, "MMEAN_GPP_PY") * 48 * 30
+ncdf4::ncvar_get(mnc, "MMEAN_PLRESP_PY")
+
 pdefault <- run_ed("default2", end_date = "1949-12-31")
 pnowater <- run_ed("nowater", end_date = "1949-12-31", water_lim = FALSE)
 pdefsoil <- run_ed("defsoil", end_date = "1949-12-31",
