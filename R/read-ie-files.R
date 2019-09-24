@@ -104,6 +104,28 @@ read_e_file <- function(fname, .pb = NULL) {
 
 }
 
+#' Read directory full of E files
+#'
+#' @param outdir Output directory containing E files
+#' @return Nested `data.frame` containing the output directory and scalar,
+#'   cohort, soil, and PFT results
+#' @author Alexey Shiklomanov
+#' @export
+read_efile_dir <- function(outdir) {
+  efiles <- fs::dir_ls(outdir, glob = "*/*-E-*")
+  e_data_list <- furrr::future_map(efiles, read_e_file, .progress = TRUE)
+
+  result_dfs <- tibble::tibble(
+    basename = fs::path_file(outdir),
+    scalar = list(purrr::map_dfr(e_data_list, "scalar")),
+    cohort = list(purrr::map_dfr(e_data_list, "cohort")),
+    soil = list(purrr::map_dfr(e_data_list, "soil")),
+    pft = list(purrr::map_dfr(e_data_list, "pft")),
+    outdir = outdir
+  )
+  result_dfs
+}
+
 get_common <- function(fname) {
   case <- basename(dirname(fname))
   model_id <- substring(case, 4, 6)
