@@ -30,7 +30,8 @@ Imports:
     here,
     fst,
     PEcAn.ED2,
-    processx
+    processx,
+    PEcAn.utils
 Remotes:
   pecanproject/pecan/api@develop
 Suggests: 
