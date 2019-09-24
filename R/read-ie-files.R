@@ -107,11 +107,20 @@ read_e_file <- function(fname, .pb = NULL) {
 #' Read directory full of E files
 #'
 #' @param outdir Output directory containing E files
+#' @param overwrite (Logical) If `TRUE`, ignore current saved RDS file.
+#' @param save (Logical) If `TRUE`, save result to RDS file for faster loading later.
 #' @return Nested `data.frame` containing the output directory and scalar,
 #'   cohort, soil, and PFT results
 #' @author Alexey Shiklomanov
 #' @export
-read_efile_dir <- function(outdir) {
+read_efile_dir <- function(outdir, overwrite = FALSE, save = TRUE) {
+  out_rds <- fs::path(outdir, "monthly-output.rds")
+  if (!overwrite && file.exists(out_rds)) {
+    message("Loading cached output")
+    result_dfs <- readRDS(out_rds)
+    return(result_dfs)
+  }
+  message("Reading all HDF5 files")
   efiles <- fs::dir_ls(outdir, glob = "*/*-E-*")
   e_data_list <- furrr::future_map(efiles, read_e_file, .progress = TRUE)
 
@@ -123,6 +132,7 @@ read_efile_dir <- function(outdir) {
     pft = list(purrr::map_dfr(e_data_list, "pft")),
     outdir = outdir
   )
+  if (save) saveRDS(result_dfs, out_rds)
   result_dfs
 }
 

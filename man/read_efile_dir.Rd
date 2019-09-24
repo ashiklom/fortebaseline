@@ -4,10 +4,14 @@
 \alias{read_efile_dir}
 \title{Read directory full of E files}
 \usage{
-read_efile_dir(outdir)
+read_efile_dir(outdir, overwrite = FALSE, save = TRUE)
 }
 \arguments{
 \item{outdir}{Output directory containing E files}
+
+\item{overwrite}{(Logical) If `TRUE`, ignore current saved RDS file.}
+
+\item{save}{(Logical) If `TRUE`, save result to RDS file for faster loading later.}
 }
 \value{
 Nested `data.frame` containing the output directory and scalar,

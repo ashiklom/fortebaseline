@@ -40,7 +40,7 @@ msub <- mall %>%
 msub %>%
   unnest(scalar) %>%
   ggplot() +
-  aes(x = datetime, y = mmean_leaf_temp_py, color = basename) +
+  aes(x = datetime, y = mmean_gpp_py, color = basename) +
   geom_line()
 
 msub %>%
