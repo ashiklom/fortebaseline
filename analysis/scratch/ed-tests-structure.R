@@ -6,25 +6,74 @@ library(tidyverse)
 future::plan(future.callr::callr())
 
 out_root <- getOption("fortebaseline.ed_root")
+ed_src <- getOption("fortebaseline.ed_src_dir")
 
-end <- "1910-01-01"
+ed_alt <- path(ed_src, "ED", "build", "ed_2.1-opt-crown-model-longwave-5c14e311")
 
-ed_alt <- path_home("Projects", "pecan_project", "ed2", "ED", "build",
-                    "ed_2.1-opt-crown-model-longwave-5c14e311")
+run_edc <- partial(
+  run_ed,
+  start_date = "1902-06-01",
+  end_date = "1950-01-02",
+  ed_exe = ed_alt
+)
 
-# Reference case
-pdefault <- run_ed("default", end_date = end)
+fout <- partial(path, out_root)
 
-# Compare the different cases, under default parameters
-pcrown <- run_ed("crown", end_date = end, crown_model = TRUE)
-pms <- run_ed("ms", end_date = end, multiple_scatter = TRUE)
-ptrait <- run_ed("trait", end_date = end, trait_plasticity = TRUE)
-pcrown_alt <- run_ed("crown-alt", end_date = end, crown_model = TRUE,
-                     ed_exe = ed_alt)
+l <- list(
+  cts = run_edc("CTS"),
+  fts = run_edc("FTS", crown_model = TRUE),
+  cms = run_edc("CMS", multiple_scatter = TRUE),
+  fms = run_edc("FMS", crown_model = TRUE, multiple_scatter = TRUE),
+  ctp = run_edc("CTP", trait_plasticity = TRUE),
+  ftp = run_edc("FTP", crown_model = TRUE, trait_plasticity = TRUE),
+  cmp = run_edc("CMP", multiple_scatter = TRUE, trait_plasticity = TRUE),
+  fmp = run_edc("FMP", crown_model = TRUE, multiple_scatter = TRUE,
+                trait_plasticity = TRUE)
+)
 
-tail_ed_output("crown-alt")
+mods <- c("CTS", "FTS", "CMS", "FMS", "CTP", "FTP", "CMP", "FMP")
+out_list <- path(out_root, mods) %>%
+  map(read_efile_dir)
 
-ptrait$wait()
+out_df <- bind_rows(out_list)
+
+out_df %>%
+  unnest(scalar) %>%
+  ggplot() +
+  aes(x = datetime, y = mmean_plresp_py) +
+  geom_line() +
+  facet_wrap(vars(basename))
+
+year_avgs <- out_df %>%
+  unnest(scalar) %>%
+  mutate(year = lubridate::year(datetime)) %>%
+  select(-c(case:datetime), -age, -outdir) %>%
+  select_if(~!is.list(.x)) %>%
+  select_if(~n_distinct(.x) > 1) %>%
+  group_by(basename, year) %>%
+  summarize_all(mean) %>%
+  ungroup()
+
+year_avgs %>%
+  ## filter(year > 1915, year < 1945) %>%
+  mutate(basename = fct_reorder(basename, mmean_npp_py, .desc = TRUE)) %>%
+  ggplot() +
+  aes(x = year, y = mmean_npp_py, color = basename) +
+  geom_line() +
+  scale_color_viridis_d()
+
+year_avgs %>%
+  filter(year > 1930) %>%
+  select(-year) %>%
+  group_by(basename) %>%
+  summarize_all(list(m = mean, s = sd)) %>%
+  ungroup() %>%
+  ggplot() +
+  aes(x = basename, y = 10 * mmean_npp_py_m,
+      ymin = 10 * (mmean_npp_py_m - mmean_npp_py_s),
+      ymax = 10 * (mmean_npp_py_m + mmean_npp_py_s)) +
+  geom_pointrange()
+
 
 mdefault <- read_efile_dir(path(out_root, "default"))
 mcrown <- read_efile_dir(path(out_root, "crown"))
