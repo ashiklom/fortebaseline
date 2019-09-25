@@ -30,9 +30,15 @@ run_ed <- function(casename,
                    crown_model = FALSE,
                    water_lim = TRUE,
                    out_root = getOption("fortebaseline.ed_root"),
-                   ed_exe = "ed2-opt",
+                   ed_exe = fs::path(getOption("fortebaseline.ed_src_dir"),
+                                     "ED", "build", "ed_2.1-opt"),
                    ...) {
 
+  stopifnot(
+    !is.null(ed_exe) &&
+      length(ed_exe) > 0 &&
+      fs::file_exists(ed_exe)
+  )
   start_date <- as.POSIXct(start_date, tz = "UTC")
   end_date <- as.POSIXct(end_date, tz = "UTC")
 
