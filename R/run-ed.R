@@ -126,15 +126,20 @@ ed2in_common <- function() {
         "ED_MET_DRIVER_HEADER"
       ),
       OBSTIME_DB = file.path(ed_input_dir(), "forte_obstime.time"),
-      # Enable "observed" fast output at specified interval
-      IOOUTPUT = 3,
+      # Disable "observed" fast output at specified interval. It interferes with monthly.
+      IOOUTPUT = 0,
       IMOUTPUT = 3,
+      IQOUTPUT = 3,
+      IYOUTPUT = 3,
       # Include monthly history files
       ISOUTPUT = 3,
       UNITSTATE = 2,
       FRQSTATE = 1,
-      # Disable other outputs
-      ITOUTPUT = 0, IFOUTPUT = 0, IDOUTPUT = 0, IQOUTPUT = 0, IYOUTPUT = 0, OUTFAST = 0,
+      # Disable fast outputs
+      ITOUTPUT = 0,
+      IFOUTPUT = 0,
+      IDOUTPUT = 0,
+      OUTFAST = 0,
       INCLUDE_THESE_PFT = c(6, 9, 10, 11),
       ISOILFLG = 2, # Set soil characteristics in ED2IN
       # UMBS soil characteristics (from Gough et al. 2010 FEM)
