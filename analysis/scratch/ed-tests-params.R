@@ -6,11 +6,18 @@ library(tidyverse)
 future::plan(future.callr::callr())
 
 out_root <- getOption("fortebaseline.ed_root")
+ed_src <- getOption("fortebaseline.ed_src_dir")
 
-end <- "1910-01-01"
+ed_alt <- path(ed_src, "ED", "build", "ed_2.1-opt-crown-model-longwave-5c14e311")
 
-ed_alt <- path_home("Projects", "pecan_project", "ed2", "ED", "build",
-                    "ed_2.1-opt-crown-model-longwave-5c14e311")
+run_edc <- partial(
+  run_ed,
+  start_date = "1902-06-01",
+  end_date = "1920-01-02",
+  ed_exe = ed_alt
+)
+
+fout <- partial(path, out_root)
 
 defparam <- ed_default_params()
 
