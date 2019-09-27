@@ -36,11 +36,5 @@ pfts <- function(col = NULL) {
 #' @export
 set_pft <- function(i) {
   stopifnot(all(i %in% c(6, 9, 10, 11)))
-  pfts <- c(
-    rep(NA_character_, 5),
-    "Pine", NA_character_, NA_character_,
-    "Early hardwood", "Mid hardwood", "Late hardwood"
-  )
-  ipfts <- pfts[i]
-  factor(ipfts, pfts("pft"))
+  factor(i, pfts("num"), pfts("pft"))
 }
