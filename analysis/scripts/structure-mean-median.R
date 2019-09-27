@@ -51,14 +51,14 @@ rawout <- pmap(runs, run_ed_maybe)
 # Check status
 if (interactive()) map_chr(rawout, ~.x$log(n = 1))
 
-rawout[[length(rawout)]]$wait()
+map(rawout, ~.x$wait())
 results <- rawout %>%
   map("outdir") %>%
   map_dfr(read_efile_dir)
 
-## results %>%
-##   rename(casename = basename) %>%
-##   right_join(structure_runs, "casename") %>%
-##   select(casename, trait_plasticity, multiple_scatter, crown_model,
-##          scalar, cohort, soil, pft_py = pft, outdir) %>%
-##   saveRDS(here("analysis", "data", "retrieved", "structure-mean-median.R"))
+results %>%
+  rename(casename = basename) %>%
+  right_join(runs, "casename") %>%
+  select(casename, trait_plasticity, multiple_scatter, crown_model,
+         scalar, cohort, soil, pft_py = pft, trait_values, outdir) %>%
+  saveRDS(here("analysis", "data", "retrieved", "structure-mean-median.rds"))
