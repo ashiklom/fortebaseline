@@ -82,11 +82,47 @@ run_ed <- function(casename,
   # Run ED
   std_out <- fs::path(outdir, "stdout.log")
   std_err <- fs::path(outdir, "stdout.log")
-  processx::process$new(ed_exe, c("-f", ed2infile),
-                        stdout = std_out, stderr = std_err)
+  processx::process$new(
+    system.file("ed2-exe.sh", package = "fortebaseline"),
+    c(ed_exe, ed2infile),
+    stdout = std_out,
+    stderr = std_err,
+    post_process = function() read_efile_dir(outdir)
+  )
 }
 
-
+#' Run ED2, but only if there isn't a run there already
+#'
+#' @param overwrite (Logical) If `TRUE`, delete the target output directory and
+#'   force a run.
+#' @inheritParams run_ed
+#' @return List containing the output directory (`outdir`), the
+#'   `processx::process` object (`p`), and a function for checking the current
+#'   log status (`log`).
+#' @export
+run_ed_maybe <- function(casename,
+                         overwrite = FALSE,
+                         out_root = getOption("fortebaseline.ed_root"),
+                         ...) {
+  outdir <- fs::path(out_root, casename)
+  logfun <- function(...) tail_ed_output(
+    casename = casename,
+    out_root = out_root,
+    ...
+  )
+  if (overwrite) {
+    message("Force-removing old files.")
+    fs::dir_delete(outdir)
+  }
+  if (fs::dir_exists(outdir) &&
+        length(fs::dir_ls(outdir, regexp = "analysis-")) > 0) {
+    message("Existing files found. Skipping run.")
+    proc <- NULL
+  } else {
+    proc <- run_ed(casename = casename, ...)
+  }
+  list(outdir = outdir, p = proc, log = logfun)
+}
 
 #' View the end of the ED2 output log file
 #'
