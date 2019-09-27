@@ -14,20 +14,22 @@ trait_distribution <- readRDS(here("analysis", "data",
                                    "retrieved", "trait-distribution.rds"))
 
 medians <- trait_distribution %>%
-  select(name = pft, trait, Median) %>%
+  select(name = bety_name, trait, Median) %>%
   pivot_wider(id_cols = "name", names_from = "trait",
               values_from = "Median") %>%
   as_pft_list()
 
-means <- trait_distribution %>%
-  select(name = pft, trait, Mean) %>%
-  pivot_wider(id_cols = "name", names_from = "trait",
-              values_from = "Mean") %>%
-  as_pft_list()
+## means <- trait_distribution %>%
+##   select(name = bety_name, trait, Mean) %>%
+##   pivot_wider(id_cols = "name", names_from = "trait",
+##               values_from = "Mean") %>%
+##   as_pft_list()
 
 runs <- crossing(
-  nesting(datatype = c("mean", "median"),
-          trait_values = list(means, medians)),
+  ## nesting(datatype = c("mean", "median"),
+  ##         trait_values = list(means, medians)),
+  nesting(datatype = "median",
+          trait_values = list(medians)),
   trait_plasticity = c(TRUE, FALSE),
   multiple_scatter = c(TRUE, FALSE),
   crown_model = c(TRUE, FALSE)

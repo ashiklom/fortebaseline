@@ -53,6 +53,7 @@ run_ed <- function(casename,
     umbs.late_hardwood = list(),
     umbs.northern_pine = list()
   )
+  stopifnot(all(names(trait_values) %in% names(tv_default)))
   tv_list <- modifyList(tv_default, trait_values)
   config_xml <- write_ed2_xml(tv_list)
   XML::saveXML(config_xml, xmlfile)
