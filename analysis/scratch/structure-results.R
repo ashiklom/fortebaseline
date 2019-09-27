@@ -3,12 +3,21 @@ library(tidyverse)
 library(fs)
 library(here)
 library(lubridate, exclude = "here")
-library(drake, exclude = c("expand", "gather"))
 
-structure_results <- file_in(here("analysis", "data", "retrieved",
-                                  "structure-default.rds")) %>%
+fix_cases <- function(x) {
+  x2 <- gsub("^.*-", "", x)
+  mod_levels <- c("CTS", "CTP", "CMS", "CMP",
+                  "FTS", "FTP", "FMS", "FMP")
+  factor(x2, mod_levels)
+}
+
+structure_results <- here("analysis", "data", "retrieved",
+                          "structure-default.rds") %>%
   readRDS() %>%
-  mutate(casename = fct_inorder(casename))
+  mutate(
+    runtype = "default",
+    casename = fix_cases(casename)
+  )
 
 structure_results %>%
   select(casename, cohort) %>%
@@ -17,13 +26,12 @@ structure_results %>%
     month(datetime) == 7,
     year(datetime) %in% c(1910, 1920, 1950, 1980)
   ) %>%
-  mutate(pft = set_pft(pft),
-         datetime = year(datetime),
-         casename = fct_relabel(casename, ~gsub("default-", "", .x)) %>%
-           fct_relevel("CTS", "CTP", "CMS", "CMP",
-                       "FTS", "FTP", "FMS", "FMP")) %>%
+  mutate(
+    pft = set_pft(pft),
+    datetime = year(datetime)
+  ) %>%
   ggplot() +
-  aes(x = mmean_light_level_co, y = hite, group = 1) +
+  aes(x = mmean_light_level_co, y = hite) +
   geom_line() +
   geom_point(aes(color = pft)) +
   facet_grid(vars(casename), vars(datetime)) +
@@ -39,6 +47,19 @@ structure_results %>%
 ggsave("analysis/figures/default-light-levels.png",
        width = 7.16, height = 5.96)
 
+# Now compare default and median parameters
+
+median_results <- here("analysis", "data", "retrieved",
+                       "structure-mean-median.rds") %>%
+  readRDS() %>%
+  filter(grepl("median", casename)) %>%
+  mutate(
+    runtype = "median",
+    casename = fix_cases(casename)
+  )
+
+both_results <- bind_rows(structure_results, median_results)
+
 annual_mean <- function(dat) {
   dat %>%
     mutate(year = lubridate::year(datetime)) %>%
@@ -47,6 +68,21 @@ annual_mean <- function(dat) {
     summarize_all(mean) %>%
     ungroup()
 }
+
+both_long_s <- both_results %>%
+  select(casename, runtype, scalar) %>%
+  unnest(scalar) %>%
+  select(-c(case:param_id), -age, -area, -area_si,
+         -latitude, -longitude, -starts_with("mmsq")) %>%
+  pivot_longer(-c(casename:datetime)) %>%
+  annual_mean()
+
+both_long_s %>%
+  filter(grepl("mmean_(gpp|npp|plresp|rh)_py", name)) %>%
+  ggplot() +
+  aes(x = year, y = value, color = runtype) +
+  geom_line() +
+  facet_grid(vars(name), vars(casename), scales = "free_y")
 
 # Look at each model indidivually
 dcrown <- structure_results %>%
