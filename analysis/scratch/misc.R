@@ -1865,3 +1865,20 @@ scalar %>%
   aes(x = datetime, y = value, color = config) +
   geom_line() +
   facet_wrap(vars(variable), scales = "free_y")
+
+##################################################
+library(tidyverse)
+library(fortebaseline)
+con <- bety()
+
+tbl(con, "variables") %>%
+  filter(name %like% "repro%") %>%
+  glimpse()
+
+tbl(con, "traits") %>%
+  filter(variable_id == 28) %>%
+  glimpse()
+
+tbl(con, "species") %>%
+  filter(id %in% c(31, 183, 1391, 1019)) %>%
+  select(id, scientificname)

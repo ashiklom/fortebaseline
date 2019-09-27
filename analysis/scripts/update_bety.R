@@ -237,10 +237,10 @@ other_priors <- tribble(
   "umbs.late_hardwood", "mort3", "unif", 0, 0.02,
   "umbs.northern_pine", "mort3", "unif", 0, 0.02,
   # Raczka late hardwood posterior, as above.
-  "umbs.early_hardwood", "minimum_height", "gamma", 1.5, 0.2,
-  "umbs.mid_hardwood", "minimum_height", "gamma", 1.5, 0.2,
-  "umbs.late_hardwood", "minimum_height", "gamma", 1.5, 0.2,
-  "umbs.northern_pine", "minimum_height", "gamma", 1.5, 0.2,
+  "umbs.early_hardwood", "repro_min_h", "gamma", 1.5, 0.2,
+  "umbs.mid_hardwood", "repro_min_h", "gamma", 1.5, 0.2,
+  "umbs.late_hardwood", "repro_min_h", "gamma", 1.5, 0.2,
+  "umbs.northern_pine", "repro_min_h", "gamma", 1.5, 0.2,
   # Pine leaf respiration prior was missing. This is an uninformative
   # prior for pine barrens
   "umbs.northern_pine", "leaf_respiration_rate_m2", "weibull", 2, 6,
@@ -277,22 +277,21 @@ set_other_priors <- set_prior_l(other_priors)
 remove_priors <- delete_prior(c(
   "cuticular_cond",
   "leaf_width",
-  "Vm_low_temp"
+  "Vm_low_temp",
+  "minimum_height",
+  "c2n_fineroot"
 ))
-
 
 priors <- pfts_priors() %>%
   select(pft, trait = variable, distn, parama, paramb,
          pft_id, prior_id) %>%
   mutate(is_posterior = FALSE)
-write_csv(priors, path(ma_outdir, "pft-priors.csv"))
 
 # Run PEcAn meta-analysis
 PEcAn.logger::logger.setLevel("WARN")
 pfts <- pfts()
 ma_results <- map(pfts[["bety_name"]], pecan_ma_pft, con = bety()) %>%
   setNames(pfts[["pft"]])
-saveRDS(ma_results, path(ma_outdir, "meta-analysis.rds"))
 
 # Post-process
 # Use these blocks to optionally skip above steps
@@ -318,10 +317,11 @@ missing_posteriors <- ma_prior %>%
   mutate(is_posterior = FALSE)
 trait_distribution <- ma_posterior %>%
   bind_rows(missing_posteriors)
-saveRDS(trait_distribution, path(ma_outdir, "trait-distribution.rds"))
 
 if (interactive()) {
   library(ggplot2)
+  edparams <- ed_default_params() %>%
+    semi_join(trait_distribution, "trait")
   trait_distribution %>%
     mutate(pft = factor(pft, pfts("pft"))) %>%
     tidyr::unnest(draws) %>%
@@ -330,6 +330,8 @@ if (interactive()) {
     ggplot() +
     aes(x = pft, y = draws, fill = pft) +
     geom_violin() +
+    geom_point(aes(y = default_value), data = edparams,
+               size = 3, col = "red1") +
     facet_wrap(vars(trait), scales = "free") +
     scale_fill_manual(values = pfts("color")) +
     labs(x = "PFT", fill = "PFT") +
@@ -337,3 +339,9 @@ if (interactive()) {
     theme(axis.title.y = element_blank(),
           axis.text.x = element_blank())
 }
+
+# Store results. This is all the way down here to allow me to re-run analysis
+# without accidentally overwriting results.
+write_csv(priors, path(ma_outdir, "pft-priors.csv"))
+saveRDS(ma_results, path(ma_outdir, "meta-analysis.rds"))
+saveRDS(trait_distribution, path(ma_outdir, "trait-distribution.rds"))
