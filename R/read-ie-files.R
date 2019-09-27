@@ -63,32 +63,39 @@ read_e_file <- function(fname, .pb = NULL) {
   on.exit(ncdf4::nc_close(hf))
   common <- get_common(fname)
 
+  ncget <- purrr::possibly(ncdf4::ncvar_get, NULL)
+
   cohort_vars <- fortebaseline:::cohort_vars_m()
-  cohort_data <- purrr::map(cohort_vars, ncdf4::ncvar_get, nc = hf) %>%
-    setNames(tolower(cohort_vars)) %>%
-    purrr::discard(is.null)
-  rad_profile <- ncdf4::ncvar_get(hf, "MMEAN_RAD_PROFILE_CO") %>%
-    t() %>%
-    `colnames<-`(c("par_beam_down", "par_beam_up", "par_diff_down",
-                   "par_diff_up", "nir_beam_down", "nir_beam_up", "nir_diff_down",
-                   "nir_diff_up", "tir_diff_down", "tir_diff_up")) %>%
-    tibble::as_tibble()
-  cohort_out <- tibble::tibble(!!!common, !!!cohort_data, !!!rad_profile)
+  if ("AGB_CO" %in% names(hf$var)) {
+    cohort_data <- purrr::map(cohort_vars, ncget, nc = hf) %>%
+      setNames(tolower(cohort_vars)) %>%
+      purrr::discard(is.null)
+    rad_profile <- ncdf4::ncvar_get(hf, "MMEAN_RAD_PROFILE_CO") %>%
+      t() %>%
+      `colnames<-`(c("par_beam_down", "par_beam_up", "par_diff_down",
+                     "par_diff_up", "nir_beam_down", "nir_beam_up", "nir_diff_down",
+                     "nir_diff_up", "tir_diff_down", "tir_diff_up")) %>%
+      tibble::as_tibble()
+    cohort_out <- tibble::tibble(!!!common, !!!cohort_data, !!!rad_profile)
+  } else {
+    warning("File ", fname, " has no cohort data!")
+    cohort_out <- NULL
+  }
 
   scalar_vars <- fortebaseline:::scalar_vars_m()
-  scalar_data <- purrr::map(scalar_vars, ncdf4::ncvar_get, nc = hf) %>%
+  scalar_data <- purrr::map(scalar_vars, ncget, nc = hf) %>%
     setNames(tolower(scalar_vars)) %>%
     purrr::discard(is.null)
   scalar_out <- tibble::tibble(!!!common, !!!scalar_data)
 
   soil_vars <- fortebaseline:::soil_vars_m()
-  soil_data <- purrr::map(soil_vars, ncdf4::ncvar_get, nc = hf) %>%
+  soil_data <- purrr::map(soil_vars, ncget, nc = hf) %>%
     setNames(tolower(soil_vars)) %>%
     purrr::discard(is.null)
   soil_out <- tibble::tibble(!!!common, slz = ncdf4::ncvar_get(hf, "SLZ"), !!!soil_data)
 
   py_vars <- fortebaseline:::pft_vars_m()
-  py_data <- purrr::map(py_vars, ncdf4::ncvar_get, nc = hf,
+  py_data <- purrr::map(py_vars, ncget, nc = hf,
                         start = c(6, 1, 1), count = c(6, -1, -1)) %>%
     purrr::map(~rowSums(.x[c(4:6, 1), ])) %>%
     setNames(tolower(py_vars)) %>%
