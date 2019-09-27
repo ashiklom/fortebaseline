@@ -3,8 +3,6 @@ library(fs)
 library(here)
 library(tidyverse)
 
-future::plan(future.callr::callr())
-
 out_root <- getOption("fortebaseline.ed_root")
 ed_src <- getOption("fortebaseline.ed_src_dir")
 ed_alt <- getOption("fortebaseline.ed_alt")
@@ -25,8 +23,6 @@ structure_runs <- expand_grid(
          ed_exe = ed_alt)
 
 structure_raw <- pmap(structure_runs, run_ed_maybe)
-
-outdir <- path(out_root, "default-CTS")
 
 structure_results <- structure_raw %>%
   map("outdir") %>%
