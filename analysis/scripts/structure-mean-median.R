@@ -63,4 +63,4 @@ results %>%
   right_join(runs, "casename") %>%
   select(casename, trait_plasticity, multiple_scatter, crown_model,
          scalar, cohort, soil, pft_py = pft, trait_values, outdir) %>%
-  saveRDS(here("analysis", "data", "retrieved", "structure-mean-median.rds"))
+  saveRDS(here("analysis", "data", "retrieved", "structure-median.rds"))

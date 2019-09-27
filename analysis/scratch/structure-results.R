@@ -50,9 +50,8 @@ ggsave("analysis/figures/default-light-levels.png",
 # Now compare default and median parameters
 
 median_results <- here("analysis", "data", "retrieved",
-                       "structure-mean-median.rds") %>%
+                       "structure-median.rds") %>%
   readRDS() %>%
-  filter(grepl("median", casename)) %>%
   mutate(
     runtype = "median",
     casename = fix_cases(casename)
@@ -78,11 +77,27 @@ both_long_s <- both_results %>%
   annual_mean()
 
 both_long_s %>%
-  filter(grepl("mmean_(gpp|npp|plresp|rh)_py", name)) %>%
+  filter(grepl("mmean_(gpp|npp|plresp)_py", name)) %>%
   ggplot() +
   aes(x = year, y = value, color = runtype) +
   geom_line() +
   facet_grid(vars(name), vars(casename), scales = "free_y")
+
+both_long_p <- both_results %>%
+  select(casename, runtype, pft_py) %>%
+  unnest(pft_py) %>%
+  select(-c(case:param_id)) %>%
+  mutate(pft = set_pft(pft)) %>%
+  pivot_longer(-c(casename:datetime, pft)) %>%
+  filter(month(datetime) %in% 6:8) %>%
+  annual_mean()
+
+both_long_p %>%
+  filter(name == "mmean_lai_py") %>%
+  ggplot() +
+  aes(x = year, y = value, color = runtype, group = runtype) +
+  geom_line() +
+  facet_grid(vars(pft), vars(casename))
 
 # Look at each model indidivually
 dcrown <- structure_results %>%
