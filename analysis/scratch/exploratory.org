@@ -1,0 +1,347 @@
+#+TITLE: Exploratory analyses
+
+* Which median parameters lead to unrealistic results?
+:PROPERTIES:
+:header-args:R: :session *R-median*
+:END:
+
+** Setup
+
+First, some setup -- load packages, etc.
+
+#+NAME: setup
+#+begin_src R :results output silent
+library(fortebaseline)
+library(fs)
+library(here)
+library(tidyverse)
+library(lubridate, exclude = "here")
+
+out_root <- getOption("fortebaseline.ed_root")
+ed_src <- getOption("fortebaseline.ed_src_dir")
+ed_alt <- getOption("fortebaseline.ed_alt")
+figdir <- dir_create("analysis", "figures", "org-mode")
+
+stopifnot(dir_exists(out_root), dir_exists(ed_src), file_exists(ed_alt))
+
+trait_distribution <- readRDS(here("analysis", "data",
+                                   "retrieved", "trait-distribution.rds"))
+
+median_df <- trait_distribution %>%
+  select(name = bety_name, trait, Median) %>%
+  pivot_wider(id_cols = "name", names_from = "trait",
+              values_from = "Median")
+#+end_src
+
+Also, define some helper functions.
+
+#+NAME: helper-funs
+#+begin_src R :results output silent
+annual_mean <- function(dat) {
+  dat %>%
+    mutate(year = lubridate::year(datetime)) %>%
+    select(-datetime) %>%
+    group_by_at(vars(-value)) %>%
+    summarize_all(mean) %>%
+    ungroup()
+}
+long_pft <- function(dat) {
+  dat %>%
+    select(casename = basename, pft) %>%
+    unnest(pft) %>%
+    select(-c(case:param_id)) %>%
+    mutate(pft = set_pft(pft)) %>%
+    pivot_longer(-c(casename:datetime, pft)) %>%
+    filter(lubridate::month(datetime) %in% 6:8) %>%
+    annual_mean()
+}
+lai_compare <- function(dat, scales = "fixed") {
+  bind_rows(default_long, dat) %>%
+    mutate(casename = fct_inorder(casename)) %>%
+    filter(name == "mmean_lai_py") %>%
+    ggplot() +
+    aes(x = year, y = value, color = casename, group = casename) +
+    geom_line() +
+    facet_grid(vars(pft), scales = scales)
+}
+#+end_src
+
+Load the results from the default runs, for comparison.
+
+#+NAME: default-results
+#+begin_src R :results output silent
+default_out <- read_efile_dir(path(out_root, "default-CTS"))
+default_long <- long_pft(default_out) %>%
+  filter(year <= 1920)
+#+end_src
+
+** Parameter distributions
+
+A useful figure to look at for reference on which parameters are the most different.
+
+#+BEGIN_SRC R :results output graphics :file analysis/figures/org-mode/param-dist.png
+edparams <- ed_default_params() %>%
+  semi_join(trait_distribution, "trait")
+trait_distribution %>%
+  mutate(pft = factor(pft, pfts("pft"))) %>%
+  tidyr::unnest(draws) %>%
+  ggplot() +
+  aes(x = pft, y = draws, fill = pft) +
+  geom_violin() +
+  geom_point(aes(y = default_value), data = edparams,
+             size = 3, col = "red1") +
+  facet_wrap(vars(trait), scales = "free") +
+  scale_fill_manual(values = pfts("color")) +
+  labs(x = "PFT", fill = "PFT") +
+  cowplot::theme_cowplot() +
+  theme(axis.title.y = element_blank(),
+        axis.text.x = element_blank(),
+        legend.position = c(0.6, 0.1))
+#+END_SRC
+
+#+RESULTS:
+
+[[~/Projects/forte_project/fortebaseline/analysis/figures/org-mode/param-dist.png]]
+** Median params
+
+#+NAME: median-results
+#+begin_src R :results output graphics :file analysis/figures/org-mode/median-ts.png
+median_out <- read_efile_dir(path(out_root, "median-CTS"))
+median_long <- long_pft(median_out) %>%
+  filter(year <= 1920)
+lai_compare(median_long)
+#+end_src
+
+#+RESULTS: median-results
+
+[[~/Projects/forte_project/fortebaseline/analysis/figures/org-mode/median-ts.png]]
+
+** Growth resp
+
+#+name: growth-resp
+#+begin_src R :results output graphics :file analysis/figures/org-mode/vary-growth-resp.png
+growth_resp <- median_df %>%
+  select(name, growth_resp_factor) %>%
+  as_pft_list() %>%
+  run_ed_maybe(
+    "vary-growth-resp",
+    trait_values = .,
+    end_date = "1920-01-01"
+  )
+
+gr_out <- read_efile_dir(growth_resp$outdir)
+gr_long <- long_pft(gr_out)
+
+plt <- gr_long %>% lai_compare("free_y")
+print(plt)
+#+end_src
+
+#+RESULTS: growth-resp
+
+#+caption: Growth respiration
+#+name: fig:growth-resp
+[[~/Projects/forte_project/fortebaseline/analysis/figures/org-mode/vary-growth-resp.png]]
+
+** Vcmax
+
+#+name: vcmax
+#+begin_src R :results output graphics :file analysis/figures/org-mode/vary-vcmax.png
+vcmax <- median_df %>%
+  select(name, Vcmax) %>%
+  as_pft_list() %>%
+  run_ed_maybe(
+    "vary-vcmax",
+    trait_values = .,
+    end_date = "1920-01-01"
+  )
+vcmax_out <- read_efile_dir(vcmax$outdir)
+vcmax_long <- long_pft(vcmax_out)
+vcmax_long %>% lai_compare("free_y")
+#+end_src
+
+#+caption: Vcmax
+#+name: fig:vcmax
+[[./../figures/org-mode/vary-vcmax.png]]
+** Fine root to leaf ratio
+
+#+name: fineroot2leaf
+#+begin_src R :results output graphics :file analysis/figures/org-mode/vary-fineroot2leaf.png
+fr2l <- median_df %>%
+  select(name, fineroot2leaf) %>%
+  as_pft_list() %>%
+  run_ed_maybe(
+    "vary-fr2l",
+    trait_values = .,
+    end_date = "1920-01-01"
+  )
+fr2l_out <- read_efile_dir(fr2l$outdir)
+fr2l_long <- long_pft(fr2l_out)
+fr2l_long %>% lai_compare("free_y")
+#+end_src
+
+#+RESULTS: fineroot2leaf
+
+#+caption: Fine root to leaf ratio
+#+name: fig:fr2l
+[[./../figures/org-mode/vary-fineroot2leaf.png]]
+** Quantum efficiency
+
+#+name: quanteff
+#+begin_src R :results output graphics :file analysis/figures/org-mode/vary-quanteff.png
+quanteff <- median_df %>%
+  select(name, quantum_efficiency) %>%
+  as_pft_list() %>%
+  run_ed_maybe(
+    "vary-quanteff",
+    trait_values = .,
+    end_date = "1920-01-01"
+  )
+quanteff_out <- read_efile_dir(quanteff$outdir)
+quanteff_long <- long_pft(quanteff_out)
+quanteff_long %>% lai_compare("free_y")
+#+end_src
+
+#+RESULTS: quanteff
+
+#+caption: Quantum efficiency
+#+name: fig:quanteff
+[[./../figures/org-mode/vary-quanteff.png]]
+** Specific leaf area
+
+#+name: sla
+#+begin_src R :results output graphics :file analysis/figures/org-mode/vary-sla.png
+sla <- median_df %>%
+  select(name, SLA) %>%
+  as_pft_list() %>%
+  run_ed_maybe(
+    "vary-sla",
+    trait_values = .,
+    end_date = "1920-01-01"
+  )
+sla_out <- read_efile_dir(sla$outdir)
+sla_long <- long_pft(sla_out)
+sla_long %>% lai_compare()
+#+end_src
+
+#+RESULTS: sla
+
+#+caption: Specific leaf area
+#+name: fig:sla
+[[./../figures/org-mode/vary-sla.png]]
+** SLA + Growth respiration
+
+#+name: sla-gr
+#+begin_src R :results output graphics :file analysis/figures/org-mode/vary-sla-gr.png
+sla_gr <- median_df %>%
+  select(name, SLA, growth_resp_factor) %>%
+  as_pft_list() %>%
+  run_ed_maybe(
+    "vary-sla-gr",
+    trait_values = .,
+    end_date = "1920-01-01"
+  )
+sla_gr$p$wait()
+sla_gr_out <- read_efile_dir(sla_gr$outdir)
+sla_gr_long <- long_pft(sla_gr_out)
+sla_gr_long %>% lai_compare()
+#+end_src
+
+#+RESULTS: sla-gr
+
+#+RESULTS: sla
+
+#+caption: Specific leaf area
+#+name: fig:sla
+[[./../figures/org-mode/vary-sla-gr.png]]
+** SLA + Growth respiration + Vcmax
+
+#+BEGIN_SRC R
+median_df %>%
+  select(name, SLA, growth_resp_factor, Vcmax)
+#+END_SRC
+
+#+RESULTS:
+| umbs.early_hardwood | 13.8372431249906 | 0.356420179367433 | 82.8726021035146 |
+| umbs.mid_hardwood   | 29.1530362878006 | 0.270873358590787 | 53.2728685414579 |
+| umbs.late_hardwood  | 37.5519297309676 |  0.35278220220776 | 40.5442589897861 |
+| umbs.northern_pine  | 6.38419213268669 |  0.26515499350322 | 75.8695530970677 |
+
+#+name: sla-gr-vm
+#+begin_src R :results output graphics :file analysis/figures/org-mode/vary-sla-gr-vm.png
+sla_gr_vm <- median_df %>%
+  select(name, SLA, growth_resp_factor, Vcmax) %>%
+  as_pft_list() %>%
+  run_ed_maybe(
+    "vary-sla-gr-vm",
+    trait_values = .,
+    end_date = "1920-01-01"
+  )
+try(sla_gr_vm$p$wait(), silent = TRUE)
+sla_gr_vm_out <- read_efile_dir(sla_gr_vm$outdir)
+sla_gr_vm_long <- long_pft(sla_gr_vm_out)
+sla_gr_vm_long %>% lai_compare()
+#+end_src
+
+#+RESULTS: sla-gr-vm
+
+#+caption: Specific leaf area + Growth resp + Vcmax
+#+name: fig:sla
+[[./../figures/org-mode/vary-sla-gr-vm.png]]
+
+What are the actual median values?
+
+#+begin_src R :results table :colnames yes
+median_df %>%
+  select(name, SLA, growth_resp_factor, Vcmax) %>%
+  mutate_if(is.numeric, round, digits = 3)
+#+end_src
+
+#+RESULTS:
+| name                |    SLA | growth_resp_factor |  Vcmax |
+|---------------------+--------+--------------------+--------|
+| umbs.early_hardwood | 14.074 |              0.356 | 80.045 |
+| umbs.mid_hardwood   | 28.683 |              0.271 | 51.808 |
+| umbs.late_hardwood  |  38.53 |              0.351 | 39.484 |
+| umbs.northern_pine  |  6.383 |              0.271 | 121.87 |
+
+What are the default values?
+
+#+BEGIN_SRC R :results table :colnames yes
+ed_default_params() %>%
+  filter(trait %in% c("growth_resp_factor", "Vcmax")) %>%
+  select(pft, trait, default_value) %>%
+  pivot_wider(values_from = "default_value", names_from = "trait") %>%
+  mutate_if(is.numeric, round, digits = 3)
+#+END_SRC
+
+#+RESULTS:
+| pft            | growth_resp_factor |  Vcmax |
+|----------------+--------------------+--------|
+| Early hardwood |                  0 | 28.907 |
+| Mid hardwood   |                  0 | 24.749 |
+| Late hardwood  |                  0 |    9.9 |
+| Pine           |               0.45 | 16.093 |
+
+** Growth respiration + Vcmax
+
+#+name: gr-vm
+#+begin_src R :results output graphics :file analysis/figures/org-mode/vary-gr-vm.png
+gr_vm <- median_df %>%
+  select(name, growth_resp_factor, Vcmax) %>%
+  as_pft_list() %>%
+  run_ed_maybe(
+    "vary-gr-vm",
+    trait_values = .,
+    end_date = "1920-01-01"
+  )
+gr_vm$p$wait()
+gr_vm_out <- read_efile_dir(gr_vm$outdir)
+gr_vm_long <- long_pft(gr_vm_out)
+gr_vm_long %>% lai_compare()
+#+end_src
+
+#+RESULTS: gr-vm
+
+#+caption: Growth resp + Vcmax
+#+name: fig:sla
+[[./../figures/org-mode/vary-gr-vm.png]]
