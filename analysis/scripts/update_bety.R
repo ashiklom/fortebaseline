@@ -252,8 +252,12 @@ other_priors <- tribble(
   "umbs.northern_pine", "water_conductance", "lnorm", log(2e-5), 3.5,
   # Specific leaf area for pines has too much density in high values. This one
   # is centered on the ED2 default with some wiggle room.
-  "umbs.northern_pine", "SLA", "gamma", 2, 0.2
-  # Similarly, fineroot2leaf prior for pine is too wide
+  "umbs.northern_pine", "SLA", "gamma", 2, 0.2,
+  # Vcmax prior is way too uninformative for everything except late hardwood
+  "umbs.early_hardwood", "Vcmax", "weibull", 1.7, 80,
+  "umbs.mid_hardwood", "Vcmax", "weibull", 1.7, 80,
+  "umbs.late_hardwood", "Vcmax", "weibull", 1.7, 80,
+  "umbs.northern_pine", "Vcmax", "weibull", 1.7, 80
 )
 
 pft_definition <- here("analysis", "data", "derived-data",
@@ -325,8 +329,6 @@ if (interactive()) {
   trait_distribution %>%
     mutate(pft = factor(pft, pfts("pft"))) %>%
     tidyr::unnest(draws) %>%
-    filter(draws < quantile(draws, 0.975),
-           draws > quantile(draws, 0.025)) %>%
     ggplot() +
     aes(x = pft, y = draws, fill = pft) +
     geom_violin() +
