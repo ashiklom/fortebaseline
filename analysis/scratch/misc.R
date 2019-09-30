@@ -1872,13 +1872,106 @@ library(fortebaseline)
 con <- bety()
 
 tbl(con, "variables") %>%
-  filter(name %like% "repro%") %>%
+  filter(name %like% "Vcmax%") %>%
   glimpse()
 
-tbl(con, "traits") %>%
-  filter(variable_id == 28) %>%
-  glimpse()
+tbl(con, "species") %>%
+  filter(scientificname %like% "Pinus%") %>%
+  select(specie_id = id, scientificname) %>%
+  inner_join(tbl(con, "traits"), "specie_id") %>%
+  filter(variable_id == 4) %>%
+  select(scientificname, mean, notes) %>%
+  collect() -> vcmax_data
+
+vcmax_data %>%
+  filter(scientificname == "Pinus strobus")
+
+ggplot(vcmax_data) +
+  aes(x = scientificname, y = mean) +
+  geom_jitter(width = 0.1)
+
+pinus <- tbl(con, "species") %>%
+  filter(scientificname %like% "Pinus%") %>%
+  pull(id)
 
 tbl(con, "species") %>%
   filter(id %in% c(31, 183, 1391, 1019)) %>%
   select(id, scientificname)
+
+ed_default_params() %>%
+  filter(trait %in% c("SLA", "growth_resp_factor", "Vcmax")) %>%
+  select(pft, trait, default_value) %>%
+  pivot_wider(values_from = "default_value", names_from = "trait")
+
+trait_distribution <- readRDS(here::here(
+  "analysis", "data", "retrieved",
+  "trait-distribution.rds"
+))
+
+trait_distribution %>%
+  filter(trait == "Vcmax")
+
+prior <- read_csv("analysis/data/derived-data/pft-priors.csv")
+
+prior %>%
+  filter(trait == "Vcmax")
+
+curve(dweibull(x, 1.7, 80), 0, 200)
+
+library(tidyverse)
+library(here)
+trait_distribution <- readRDS(here("analysis", "data",
+                                   "retrieved", "trait-distribution.rds"))
+
+vm <- trait_distribution %>%
+  filter(trait == "Vcmax") %>%
+  unnest(draws)
+
+vm %>%
+  group_by(pft) %>%
+  summarize(mmean = mean(draws),
+            mmedian = median(draws))
+
+trait_distribution %>%
+  filter(trait == "Vcmax")
+
+
+median_df <- trait_distribution %>%
+  select(name = bety_name, trait, Median) %>%
+  pivot_wider(id_cols = "name", names_from = "trait",
+              values_from = "Median")
+
+median_df %>%
+  select(name, Vcmax)
+
+con
+pft <- "umbs.northern_pine"
+
+trait_data$Vcmax
+
+ggplot(trait_data$Vcmax) +
+  aes(x = "", y = mean) +
+  geom_jitter()
+
+tbl(con, "traits") %>%
+  filter(id %in% c(37463, 37464))
+  filter(trait_id %in% c(37463, 37464)) %>%
+  glimpse()
+
+DBI::dbListTables(con)
+
+covariates <- PEcAn.DB:::query.covariates(trait.ids = trait_data$Vcmax$id, con = con)
+
+undebug(PEcAn.DB:::arrhenius.scaling.traits)
+
+tbl(con, "covariates") %>%
+  filter(variable_id %in% c(81, 86)) %>%
+  collect() %>%
+  ggplot() +
+  aes(x = factor(variable_id, c(81, 86), c("leafT", "airT")), y = level) +
+  geom_violin() +
+  geom_jitter()
+
+tbl(con, "variables") %>%
+  filter(id %in% c(81, 86)) %>%
+  select(id, name, description)
