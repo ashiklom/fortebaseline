@@ -1975,3 +1975,38 @@ tbl(con, "covariates") %>%
 tbl(con, "variables") %>%
   filter(id %in% c(81, 86)) %>%
   select(id, name, description)
+
+trait_distribution %>%
+  filter(pft == "Pine", trait == "Vcmax")
+
+##################################################
+options(conflicts.policy = list(warn = TRUE))
+library(fst)
+library(data.table)
+library(magrittr)
+
+trydat <- fst("~/Projects/try-raw-data/4143.fst")
+
+pinus <- setDT(trydat[trydat$AccSpeciesName == "Pinus strobus", ])
+
+dn <- unique(pinus[, .(DataID, DataName, TraitID, TraitName)])
+dn[grep("SLA", TraitName, ignore.case = TRUE), .(TraitID, TraitName)]
+
+pinus_sla <- pinus[TraitID %in% c(3115:3117, 11), ]
+
+pinus_all <- setDT(trydat[trydat$TraitID %in% c(3115:3117, 11) &
+                            grepl("^Pinus", trydat$AccSpeciesName), ])
+
+library(ggplot2)
+
+ggplot(pinus_sla) +
+  ## aes(x = DataName, y = StdValue, color = AccSpeciesName) +
+  aes(x = DataName, y = StdValue) +
+  ## geom_violin() +
+  geom_jitter(width = 0.1) +
+  ## geom_boxplot() +
+  geom_hline(yintercept = c(2.88, 6.38, 4.5), linetype = c("dashed", "dotted", "solid")) +
+  coord_cartesian(ylim = c(0, 15)) +
+  guides(color = FALSE)
+
+pinus[TraitID == 11, .N, .(DataName, DataID)]
