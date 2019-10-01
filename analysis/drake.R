@@ -302,8 +302,6 @@ plan <- drake_plan(
   param_dist_gg = trait_distribution %>%
     mutate(pft = factor(pft, pfts("pft"))) %>%
     unnest(draws) %>%
-    filter(draws < quantile(draws, 0.975),
-           draws > quantile(draws, 0.025)) %>%
     ggplot() +
     aes(x = pft, y = draws, fill = pft) +
     geom_violin() +
