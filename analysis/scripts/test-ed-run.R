@@ -16,9 +16,10 @@ options(
   fortebaseline.ed_src_dir = fs::path_home("ed2")
 )
 
-run_ed_maybe(
+p <- run_ed_maybe(
   "pic-test",
   end_date = "1908-01-01",
-  ed_exe = ed_exe,
   overwrite = TRUE
 )
+p$p$wait()
+read_efile_dir(p$outdir)

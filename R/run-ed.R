@@ -67,8 +67,8 @@ run_ed <- function(casename,
       IYEARZ = lubridate::year(end_date),
       IMONTHZ = lubridate::month(end_date),
       IDATEZ = lubridate::mday(end_date),
-      FFILOUT = path(outdir, "analysis"),
-      SFILOUT = path(outdir, "history"),
+      FFILOUT = fs::path(outdir, "analysis"),
+      SFILOUT = fs::path(outdir, "history"),
       IEDCNFGF = xmlfile,
       TRAIT_PLASTICITY_SCHEME = as.integer(trait_plasticity),
       ICANRAD = ifelse(multiple_scatter, 1, 2),
@@ -111,7 +111,7 @@ run_ed_maybe <- function(casename,
     out_root = out_root,
     ...
   )
-  if (overwrite) {
+  if (fs::dir_exists(outdir) && overwrite) {
     message("Force-removing old files.")
     fs::dir_delete(outdir)
   }
@@ -152,11 +152,11 @@ ed2in_common <- function() {
     modifyList(list(
       # Start and end date
       POI_LAT = 45.5625, POI_LON = -84.6975,
-      VEG_DATABASE = path(ed_input_dir(), "EDI", "oge2OLD", "OGE2_"),
-      SOIL_DATABASE = path(ed_input_dir(), "EDI", "faoOLD", "FAO_"),
-      LU_DATABASE = path(ed_input_dir(), "EDI", "ed_inputs", "glu"),
+      VEG_DATABASE = fs::path(ed_input_dir(), "EDI", "oge2OLD", "OGE2_"),
+      SOIL_DATABASE = fs::path(ed_input_dir(), "EDI", "faoOLD", "FAO_"),
+      LU_DATABASE = fs::path(ed_input_dir(), "EDI", "ed_inputs", "glu"),
       THSUMS_DATABASE = file.path(ed_input_dir(), "EDI", "ed_inputs/"),
-      ED_MET_DRIVER_DB = path(
+      ED_MET_DRIVER_DB = fs::path(
         ed_input_dir(),
         "met",
         "CUSTOM_ED2_site_1-33",
