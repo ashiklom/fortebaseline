@@ -16,8 +16,6 @@ options(
   fortebaseline.ed_src_dir = fs::path_home("ed2")
 )
 
-ed_exe <- fs::path(getOption(fortebaseline.ed_src_dir, "ED", "build", "ed-pic"))
-
 run_ed_maybe(
   "pic-test",
   end_date = "1908-01-01",
