@@ -183,7 +183,7 @@ The crown area submodel in ED-2.2 determines the nature of competition for light
 In the default configuration ("infinite crown area", or "complete shading"), the leaf area of a cohort is distributed across the entire horizontal area of a patch.
 This means that taller cohorts always receive more incoming radiation than shorter cohorts, even when the height difference is small.
 This has been shown to excessively suppress competition from sub-dominant individuals and result in unrealistically homogeneous canopies [@fisher_2015_taking].
-In the alternate configuration ("finite crown area", or "partial shading"), canopies take up only a fraction of the available horizontal area, meaning that multiple cohorts of similar height can receive the same level of light.
+In the alternate configuration ("finite crown area", or "partial shading"), canopies take up only a fraction of the available horizontal area, which generally exposes the understory to more light.
 The horizontal area of crowns is determined by allometric equations from @dietze_2008_changing.
 
 The third submodel we evaluated was trait plasticity.
