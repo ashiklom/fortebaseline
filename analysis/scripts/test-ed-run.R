@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-#SBATCH --account=br19_shik544
+#SBATCH --account=br20_shik544
 #SBATCH --time=00-00:15
 #SBATCH --nodes 1
 
