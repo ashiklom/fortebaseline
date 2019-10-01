@@ -251,7 +251,7 @@ Details of how these parameters influence canopy radiative transfer are describe
 Other parameters:
 
 - Fraction of litter carbon that enters the labile (fast) soil carbon pool (`f_labile`)
-- Minimum plant height for reproduction (`minimum_height`)
+- Minimum plant height for reproduction (`repro_min_h`)
 - Soil-plant water conductance, or "water availability factor" (`water_conductance`)
 - C:N ratio in fine roots (`c2n_fineroot`) and leaves (`c2n_leaf`)
 - Leaf turnover rate (evergreen-only; `leaf_turnover_rate`)

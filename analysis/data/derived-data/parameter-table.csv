@@ -11,7 +11,7 @@ leaf_respiration_rate_m2,Leaf resp.,Ratio of leaf respiration to Vcmax (Rd0),,??
 leaf_trans_nir,Trans. (NIR),Leaf transmittance in NIR range (700-2500 nm),"""0 - 1""",unitless (0-1),,,yes
 leaf_trans_vis,Trans. (VIS),Leaf transmittance in visible range (400-700 nm),"""0 - 1""",unitless (0-1),,,yes
 leaf_turnover_rate,Leaf turnover,Temperature dependent rate of leaf loss (conifer only),years ^ -1,year^-1^,,,yes
-minimum_height,Min. height, Minimum height for plant reproduction,m,m,Minimum height,,yes
+repro_min_h,Min. height, Minimum height for plant reproduction,m,m,Minimum height,,yes
 mort1,Mort. C rate,Time-scale at which low-carbon balance plants die,years ^ -1,years^-1^,Carbon balance mortality,Mortality,yes
 mort2,Mort. C bal.,C balance ratio at which mortality rapidly increases,,unitless (mass ratio),,,yes
 mort3,Mort. bg. rate,Density-independent (background) mortality rate,years ^ -1,year^-1^,Background mortality,,yes
