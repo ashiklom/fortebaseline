@@ -336,6 +336,38 @@ Code and supporting data for reproducing this analysis are publicly available on
 
 # Results
 
+## New outline
+
+- Impacts of structure alone
+  - Figure: ED2 runs with default parameters, looking at (a) fluxes, and (b) cohort composition, and (c) cohort light levels
+  - Fluxes are similar, but there is some variability
+  - Composition: Also similar, but a few noteworthy things
+- Default vs. median parameters
+  - Figure: Compare default params, median params, and parameter subsets
+  - Compared to default values, median parameter values are:
+    - Growth resp --- Early, Mid, Late: Higher; Pine: Lower --- Strong penalty on hardwood productivity.
+    - Fine root : leaf ratio --- Early, Late: Lower; Mid, Pine: Higher --- Reduced early and mid hardwood productivity.
+    - Stomatal slope --- Late: Lower; Others: Higher --- Higher productivity for EH, MH, P; lower productivity for LH
+    - Root turnover --- EH, LH: Lower; Pine: Higher --- Higher productivity for EH, MH, and LH
+    - Quantum efficiency -- All: Lower --- Lower productivity
+    - Leaf refl/trans NIR --- All: Higher --- Higher productivity
+    - Mort 3 --- All: Higher --- Lower productivity
+    - Repro min H --- All: Lower --- Lower productivity
+    - Water conductance -- All: Higher --- Higher productivity
+    - SLA --- Early: same; Mid: much higher; Late: higher; Pine: higher --- Propels mid-hardwood into canopy.
+    - Vcmax --- Higher for all
+  - Primary impact is the difference in SLA. High mid-hardwood SLA drives its productivity. (Panel: SLA)
+  - Vcmax and growth respiration roughly balance each other out (because much higher Vcmax across the board, but also higher growth respiration for hardwoods). But the combination of SLA, Vcmax, and growth respiration allows pine to quickly beat out early and late hardwood, and eventually to catch up to mid-hardwood.
+  - SLA and Vcmax are both very well-constrained by data, so the ED2 defaults are definitely at fault here. With these median values, we end up with the wrong composition.
+- Structure x parameter uncertainty
+  - Figure: Time series of NPP, LAI, and relative PFT dominance
+  - Parameter uncertainty is much larger than structural uncertainty
+  - Figure: Pairs of NPP, LAI, and PFT fraction, for each structure (first draw all, then pick relevant subsets)
+  - Q: How many runs end up with the right composition (EH-dominated) at peak (~1925), ~1950, and 1999?
+- Details of parameter uncertainty
+  - Figure: Parameter sensitivity and uncertainty analysis
+  - Some parameters are always important. Other parameters matter more for different structures.
+
 ## Summary
 
 ```{r summary-ts-plot, fig.cap = summary_ts_cap}
