@@ -1989,6 +1989,10 @@ trydat <- fst("~/Projects/try-raw-data/4143.fst")
 
 pinus <- setDT(trydat[trydat$AccSpeciesName == "Pinus strobus", ])
 
+(pinus[TraitID == 12, StdValue] / 12) ^ -1
+
+pinus[, .N, .(TraitID, TraitName)][grep("longevity|lifespan", TraitName)]
+
 dn <- unique(pinus[, .(DataID, DataName, TraitID, TraitName)])
 dn[grep("SLA", TraitName, ignore.case = TRUE), .(TraitID, TraitName)]
 

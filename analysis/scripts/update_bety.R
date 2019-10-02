@@ -230,6 +230,12 @@ other_priors <- tribble(
   "umbs.mid_hardwood", "mort1", "gamma", 1, 0.05,
   "umbs.late_hardwood", "mort1", "gamma", 1, 0.05,
   "umbs.northern_pine", "mort1", "gamma", 1, 0.05,
+  # Mort 2
+  # Uninformative prior with median centered on ED2 median.
+  "umbs.early_hardwood", "mort2", "gamma", 1.47, 0.0578,
+  "umbs.mid_hardwood", "mort2", "gamma", 1.47, 0.0578,
+  "umbs.late_hardwood", "mort2", "gamma", 1.47, 0.0578,
+  "umbs.northern_pine", "mort2", "gamma", 1.47, 0.0578,
   # Same as Raczka late hardwood posterior. Assume same value for all
   # PFTs because Raczka list all PFTs having the same median.
   "umbs.early_hardwood", "mort3", "unif", 0, 0.02,
@@ -241,15 +247,40 @@ other_priors <- tribble(
   "umbs.mid_hardwood", "repro_min_h", "gamma", 1.5, 0.2,
   "umbs.late_hardwood", "repro_min_h", "gamma", 1.5, 0.2,
   "umbs.northern_pine", "repro_min_h", "gamma", 1.5, 0.2,
-  # Pine leaf respiration prior was missing. This is an uninformative
-  # prior for pine barrens
-  "umbs.northern_pine", "leaf_respiration_rate_m2", "weibull", 2, 6,
+  # Leaf respiration rate.
+  # Most common prior for leaf resp. BETY. Also, places most density in low
+  # values, similar to ED2 default.
+  "umbs.early_hardwood", "leaf_respiration_rate_m2", "gamma", 1.5, 0.4,
+  "umbs.mid_hardwood", "leaf_respiration_rate_m2", "gamma", 1.5, 0.4,
+  "umbs.late_hardwood", "leaf_respiration_rate_m2", "gamma", 1.5, 0.4,
+  "umbs.northern_pine", "leaf_respiration_rate_m2", "gamma", 1.5, 0.4,
+  # Root respiration rate
+  # This is a wide, uninformative prior for all trees. ED2 defaults are
+  # PFT-independent.
+  "umbs.early_hardwood", "root_respiration_rate", "weibull", 2, 10,
+  "umbs.mid_hardwood", "root_respiration_rate", "weibull", 2, 10,
+  "umbs.late_hardwood", "root_respiration_rate", "weibull", 2, 10,
+  "umbs.northern_pine", "root_respiration_rate", "weibull", 2, 10,
+  # Root turnover rate
+  # Late hardwood is from Raczka 2018 posterior. Others are an overdispersed
+  # version of it. All of these are heavy on numbers that are below ED2
+  # defaults.
+  "umbs.early_hardwood", "root_turnover_rate", "weibull", 1.55, 1.5,
+  "umbs.mid_hardwood", "root_turnover_rate", "weibull", 1.55, 1.5,
+  "umbs.late_hardwood", "root_turnover_rate", "weibull", 1.55, 0.862,
+  "umbs.northern_pine", "root_turnover_rate", "weibull", 1.55, 1.5,
   # Water conductance prior is way too wide. This one is centered on
   # the default value, but isn't quite as ridiculously broad.
   "umbs.early_hardwood", "water_conductance", "lnorm", log(2e-5), 3.5,
   "umbs.mid_hardwood", "water_conductance", "lnorm", log(2e-5), 3.5,
   "umbs.late_hardwood", "water_conductance", "lnorm", log(2e-5), 3.5,
   "umbs.northern_pine", "water_conductance", "lnorm", log(2e-5), 3.5,
+  # Stomatal slope
+  # Wide, relatively uninformative prior. We have stomatal slope data for constraining this.
+  "umbs.early_hardwood", "stomatal_slope", "lnorm", 2.3, 1,
+  "umbs.mid_hardwood", "stomatal_slope", "lnorm", 2.3, 1,
+  "umbs.late_hardwood", "stomatal_slope", "lnorm", 2.3, 1,
+  "umbs.northern_pine", "stomatal_slope", "lnorm", 2.3, 1,
   # Specific leaf area for pines has too much density in high values. This one
   # is centered on the ED2 default with some wiggle room.
   "umbs.northern_pine", "SLA", "gamma", 2, 0.2,
@@ -257,7 +288,18 @@ other_priors <- tribble(
   "umbs.early_hardwood", "Vcmax", "weibull", 1.7, 80,
   "umbs.mid_hardwood", "Vcmax", "weibull", 1.7, 80,
   "umbs.late_hardwood", "Vcmax", "weibull", 1.7, 80,
-  "umbs.northern_pine", "Vcmax", "weibull", 1.7, 80
+  "umbs.northern_pine", "Vcmax", "weibull", 1.7, 80,
+  # Growth respiration factor.
+  # Hardwood prior is taken directly from Raczka 2018 (note: all PFTs have same
+  # median, so assume same distribution).
+  # Pine prior has more variance and is centered on ED2 default value
+  "umbs.early_hardwood", "growth_resp_factor", "beta", 4.06, 7.2,
+  "umbs.mid_hardwood", "growth_resp_factor", "beta", 4.06, 7.2,
+  "umbs.late_hardwood", "growth_resp_factor", "beta", 4.06, 7.2,
+  "umbs.northern_pine", "growth_resp_factor", "beta", 3, 3.6,
+  # Leaf turnover rate (conifer only)
+  # ED2 default is 0.3 per year.
+  "umbs.northern_pine", "leaf_turnover_rate", "gamma", 4, 8
 )
 
 pft_definition <- here("analysis", "data", "derived-data",
@@ -322,17 +364,75 @@ missing_posteriors <- ma_prior %>%
 trait_distribution <- ma_posterior %>%
   bind_rows(missing_posteriors)
 
+get_pft_trait_data <- function(con, pft) {
+  pft_id <- PEcAn.DB::db.query("SELECT id FROM pfts WHERE name = $1",
+                               con, values = list(pft))[[1]]
+  stopifnot(length(pft_id) == 1)
+  species <- PEcAn.DB::query.pft_species(pft, con = con)
+  priors <- PEcAn.DB::query.priors(pft_id, con = con)
+  trait_data <- PEcAn.DB::query.traits(
+    species[["id"]],
+    rownames(priors),
+    con = con
+  )
+  trait_data
+}
+
+message("Loading trait data")
+trait_data_l <- map(pfts[["bety_name"]], get_pft_trait_data, con = bety())
+names(trait_data_l) <- pfts[["bety_name"]]
+trait_data_raw <- trait_data_l %>%
+  map(bind_rows, .id = "trait") %>%
+  bind_rows(.id = "pft") %>%
+  as_tibble() %>%
+  mutate(pft = factor(pft, pfts("bety_name"), pfts("pft")))
+
 if (interactive()) {
-  library(ggplot2)
+
+  dcalc <- function(distn, parama, paramb) {
+    from_to <- rlang::exec(paste0("q", distn), c(0.025, 0.975), parama, paramb)
+    x <- seq(from_to[1], from_to[2], length.out = 500)
+    y <- rlang::exec(paste0("d", distn), x, parama, paramb)
+    tibble::tibble(x, y)
+  }
+  prior_curves <- priors %>%
+    select(pft:paramb) %>%
+    mutate(calc = pmap(list(distn, parama, paramb), dcalc),
+           pft = factor(pft, pfts("bety_name"), pfts("pft"))) %>%
+    tidyr::unnest(calc)
+  posterior_curves <- trait_distribution %>%
+    select(pft = bety_name, trait, distn, parama, paramb) %>%
+    mutate(calc = pmap(list(distn, parama, paramb), dcalc),
+           pft = factor(pft, pfts("bety_name"), pfts("pft"))) %>%
+    tidyr::unnest(calc)
   edparams <- ed_default_params() %>%
-    semi_join(trait_distribution, "trait")
+    semi_join(trait_distribution, "trait") %>%
+    select(pft, trait, default_value)
+  trait_data_clean <- trait_data_raw %>%
+    select(pft, trait, value = mean)
+
+  library(ggplot2)
+  plt <- ggplot() +
+    aes(x = x, y = y, color = pft) +
+    geom_line(data = prior_curves, linetype = "dashed") +
+    geom_line(data = posterior_curves, linetype = "solid") +
+    geom_vline(aes(xintercept = default_value, color = pft),
+               data = edparams, linetype = "dotted") +
+    geom_rug(aes(x = value, y = NULL), data = trait_data_clean) +
+    facet_wrap(vars(trait), scales = "free") +
+    scale_color_manual(values = pfts("color"))
+  ggsave("analysis/figures/traits-dists-defaults.png", plt,
+         width = 22.5, height = 12.5)
+
   trait_distribution %>%
     mutate(pft = factor(pft, pfts("pft"))) %>%
     tidyr::unnest(draws) %>%
     ggplot() +
     aes(x = pft, y = draws, fill = pft) +
     geom_violin() +
-    geom_point(aes(y = default_value), data = edparams,
+    geom_point(aes(y = default_value),
+               data = edparams %>%
+                 mutate(pft = factor(pft, pfts("bety_name"), pfts("pft"))),
                size = 3, col = "red1") +
     facet_wrap(vars(trait), scales = "free") +
     scale_fill_manual(values = pfts("color")) +
@@ -340,6 +440,7 @@ if (interactive()) {
     cowplot::theme_cowplot() +
     theme(axis.title.y = element_blank(),
           axis.text.x = element_blank())
+ 
 }
 
 # Store results. This is all the way down here to allow me to re-run analysis
@@ -347,3 +448,4 @@ if (interactive()) {
 write_csv(priors, path(ma_outdir, "pft-priors.csv"))
 saveRDS(ma_results, path(ma_outdir, "meta-analysis.rds"))
 saveRDS(trait_distribution, path(ma_outdir, "trait-distribution.rds"))
+saveRDS(trait_data_raw, path(ma_outdir, "trait-data.rds"))
