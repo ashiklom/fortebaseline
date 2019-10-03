@@ -20,16 +20,7 @@ create_case <- function(case,
   remote_input_dir <- file.path(remote_basedir, "ed")
   remote_output_dir <- file.path(remote_basedir, "forte-ed-runs")
 
-  soil_data <- read.csv(here::here(
-    "analysis",
-    "data",
-    "derived-data",
-    "soil-moisture.csv"
-  ), header = TRUE, stringsAsFactors = FALSE) %>%
-    # Make depth negative
-    dplyr::mutate(depth = -depth) %>%
-    # Start with deepest layer
-    dplyr::arrange(depth)
+  soil_data <- umbs_soil()
 
   ed2in_tags <- list(
     # Start and end date
@@ -56,19 +47,19 @@ create_case <- function(case,
     ITOUTPUT = 0,
     # Monthly output instead
     IMOUTPUT = 3,
-    # Enable "observed" fast output at specified interval
-    IOOUTPUT = 3,
-    OBSTIME_DB = file.path(remote_input_dir, "forte_obstime.time"),
+    IQOUTPUT = 3,
+    IYOUTPUT = 3,
+    # Disable "observed" fast output at specified interval
+    IOOUTPUT = 0,
+    OBSTIME_DB = "",
     OUTFAST = 0,
     # Include monthly history files
     ISOUTPUT = 3,
-    FRQSTATE = 1,
     UNITSTATE = 2,
+    FRQSTATE = 1,
     # Other outputs
     IFOUTPUT = 0,
     IDOUTPUT = 0,
-    IQOUTPUT = 0,
-    IYOUTPUT = 0,
     # Enable cohort-level output
     IADD_COHORT_MEANS = 1,
     PLANT_HYDRO_SCHEME = 0,
@@ -77,6 +68,10 @@ create_case <- function(case,
     TRAIT_PLASTICITY_SCHEME = as.integer(case$trait_plasticity),
     ICANRAD = ifelse(case$multiple_scatter, 1, 2),
     CROWN_MOD = as.integer(case$crown_model),
+    INTEGRATION_SCHEME = 3,
+    RADFRQ = 900,
+    DTLSM = 900,
+    RK4_TOLERANCE = 0.01,
     ## N_PLANT_LIM = 0,
     ## N_DECOMP_LIM = 0,
     INCLUDE_THESE_PFT = c(6, 9, 10, 11),
