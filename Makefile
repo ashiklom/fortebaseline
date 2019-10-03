@@ -6,7 +6,10 @@ refs: analysis/paper/references.bib
 analysis/paper/references.bib: analysis/paper/paper.Rmd
 	./getcitations
 
-drake: refs analysis/drake.R
+drake: analysis/drake.R
+	./analysis/drake.R make
+
+paper: refs analysis/drake.R
 	./analysis/drake.R make --paper
 
 deploy:

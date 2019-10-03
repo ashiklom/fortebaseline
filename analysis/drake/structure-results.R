@@ -1,17 +1,3 @@
-if (FALSE) {
-
-  library(fortebaseline)
-  library(tidyverse)
-  library(fs)
-  library(here)
-  library(lubridate, exclude = "here")
-
-  library(drake, exclude = c("expand", "gather"))
-
-  plan <- drake_plan()
-
-}
-
 fix_cases <- function(x) {
   x2 <- gsub("^.*-", "", x)
   mod_levels <- c("CTS", "CTP", "CMS", "CMP",
@@ -19,18 +5,28 @@ fix_cases <- function(x) {
   factor(x2, mod_levels)
 }
 
-structure_results_file <- here::here("analysis", "data",
+default_results_file <- here::here("analysis", "data",
                                      "retrieved", "structure-default.rds")
+
+### Download files from OSF
+default_results_osf <- "q9cpf"
+plan <- bind_plans(plan, drake_plan(
+  default_results_dl = target(
+    download.file(osf_url(default_results_osf),
+                  file_out(!!default_results_file)),
+    trigger = trigger(change = get_timestamp(default_results_osf))
+  )
+))
 
 ### Processing default outputs
 plan <- bind_plans(plan, drake_plan(
-  default_results = file_in(!!structure_results_file) %>%
+  default_results = file_in(!!default_results_file) %>%
     readRDS() %>%
     mutate(
       runtype = "default",
       casename = fix_cases(casename)
     ),
-  default_annual_scalar = structure_results %>%
+  default_annual_scalar = default_results %>%
     select(runtype, casename, scalar) %>%
     unnest(scalar) %>%
     select(-c(case:param_id), -c(age:area_si),
@@ -39,7 +35,7 @@ plan <- bind_plans(plan, drake_plan(
     select(-datetime) %>%
     summarize_all(mean) %>%
     ungroup(),
-  default_annual_pft = structure_results %>%
+  default_annual_pft = default_results %>%
     select(runtype, casename, pft_py) %>%
     unnest(pft_py) %>%
     select(-c(case:param_id)) %>%
@@ -95,7 +91,7 @@ plan <- bind_plans(plan, drake_plan(
 
 ### Light levels by model type figure
 plan <- bind_plans(plan, drake_plan(
-  structure_default_light_gg = structure_results %>%
+  structure_default_light_gg = default_results %>%
     select(runtype, casename, cohort) %>%
     unnest(cohort) %>%
     filter(
@@ -129,6 +125,8 @@ plan <- bind_plans(plan, drake_plan(
   ))
 ))
 
+stop()
+
 # Now compare default and median parameters
 
 median_results <- here("analysis", "data", "retrieved",
@@ -139,7 +137,7 @@ median_results <- here("analysis", "data", "retrieved",
     casename = fix_cases(casename)
   )
 
-both_results <- bind_rows(structure_results, median_results)
+both_results <- bind_rows(default_results, median_results)
 
 annual_mean <- function(dat) {
   dat %>%
@@ -182,7 +180,7 @@ both_long_p %>%
   facet_grid(vars(pft), vars(casename))
 
 # Look at each model indidivually
-dcrown <- structure_results %>%
+dcrown <- default_results %>%
   filter(!multiple_scatter, !trait_plasticity) %>%
   mutate(crown_model = if_else(crown_model, "finite", "closed") %>%
            factor(c("closed", "finite")))
@@ -223,7 +221,7 @@ dcrown_ca <- dcrown %>%
   select(-c(case:param_id))
 
 ## dcrown_ca %>%
-structure_results %>%
+default_results %>%
   select(casename, cohort) %>%
   unnest(cohort) %>%
   filter(
