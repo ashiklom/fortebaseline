@@ -144,49 +144,6 @@ plan <- bind_plans(plan, drake_plan(
     fig_dir, "summary-ts-plot.png"
   ))),
   #########################################
-  # Parameter distributions
-  #########################################
-  trait_distribution = readRDS(file_in(!!trait_distribution_file)),
-  ed2_default_params = system.file("data", "history.rgit.csv",
-                                   package = "PEcAn.ED2") %>%
-    read.table(sep = ";", as.is = FALSE) %>%
-    as_tibble() %>%
-    mutate(
-      # Invert conversions from `PEcAn.ED2::convert.samples.ED`
-      fineroot2leaf = q,
-      Vcmax = PEcAn.utils::arrhenius.scaling(Vm0, 15, 25),
-      leaf_respiration_rate_m2 = PEcAn.utils::arrhenius.scaling(Rd0, 15, 25),
-      # 2 here is 1 / default maintenance respiration
-      root_respiration_rate = 2 * PEcAn.utils::arrhenius.scaling(
-        root_respiration_factor, 15, 25
-      ),
-      # 0.48 is default leaf C
-      SLA = SLA * 0.48
-    ) %>%
-    pivot_longer(-num, names_to = "trait", values_to = "default_value") %>%
-    inner_join(pfts(), "num") %>%
-    semi_join(trait_distribution, c("pft", "trait")),
-  param_dist_gg = trait_distribution %>%
-    mutate(pft = factor(pft, pfts("pft"))) %>%
-    unnest(draws) %>%
-    ggplot() +
-    aes(x = pft, y = draws, fill = pft) +
-    geom_violin() +
-    geom_point(aes(y = default_value), data = ed2_default_params, col = "red1") +
-    facet_wrap(vars(trait), scales = "free_y") +
-    scale_fill_manual(values = pfts("color")) +
-    labs(x = "PFT", fill = "PFT") +
-    theme_cowplot() +
-    theme(axis.title.y = element_blank(),
-          axis.text.x = element_blank(),
-          legend.position = c(0.7, 0.1)),
-  param_dist_png = ggsave(
-    file_out(!!path(fig_dir, "param-dist.png")),
-    param_dist_gg,
-    width = 15.3, height = 9.9
-  ),
-  param_dist_knit = knitr::include_graphics(file_in(!!path(fig_dir, "param-dist.png"))),
-  #########################################
   # LAI by PFT plot
   #########################################
   cohort_lai = fst(file_in(!!cohort_file)) %>%

@@ -83,7 +83,9 @@ plan <- bind_plans(plan, drake_plan(
           strip.placement = "outside"),
   structure_compare_default_png = ggsave(
     file_out("analysis/figures/structure-compare-default.png"),
-    ),
+    structure_compare_default_gg,
+    width = 10.1, height = 7
+  ),
   structure_compare_default_knit = knitr::include_graphics(file_in(
     "analysis/figures/structure-compare-default.png"
   ))
@@ -125,20 +127,7 @@ plan <- bind_plans(plan, drake_plan(
   ))
 ))
 
-stop()
-
-# Now compare default and median parameters
-
-median_results <- here("analysis", "data", "retrieved",
-                       "structure-median.rds") %>%
-  readRDS() %>%
-  mutate(
-    runtype = "median",
-    casename = fix_cases(casename)
-  )
-
-both_results <- bind_rows(default_results, median_results)
-
+### Now compare default and median parameters
 annual_mean <- function(dat) {
   dat %>%
     mutate(year = lubridate::year(datetime)) %>%
@@ -148,36 +137,81 @@ annual_mean <- function(dat) {
     ungroup()
 }
 
-both_long_s <- both_results %>%
-  select(casename, runtype, scalar) %>%
-  unnest(scalar) %>%
-  select(-c(case:param_id), -age, -area, -area_si,
-         -latitude, -longitude, -starts_with("mmsq")) %>%
-  pivot_longer(-c(casename:datetime)) %>%
-  annual_mean()
+plan <- plan <- bind_plans(plan, drake_plan(
+  median_results = here("analysis", "data", "retrieved",
+                        "structure-median.rds") %>%
+    readRDS() %>%
+    mutate(
+      runtype = "median",
+      casename = fix_cases(casename)
+    ),
+  both_results = bind_rows(default_results, median_results),
+  both_long_s = both_results %>%
+    select(casename, runtype, scalar) %>%
+    unnest(scalar) %>%
+    select(-c(case:param_id), -age, -area, -area_si,
+           -latitude, -longitude, -starts_with("mmsq")) %>%
+    pivot_longer(-c(casename:datetime)) %>%
+    annual_mean(),
+  default_median_fluxes_gg = both_long_s %>%
+    filter(grepl("mmean_(gpp|npp|plresp|rh)_py", name)) %>%
+    mutate(
+      name = stringr::str_remove(name, "mmean_") %>%
+        stringr::str_remove("_py") %>%
+        factor(c("gpp", "plresp", "npp", "rh"), c("GPP", "RA", "NPP", "RH")),
+      # Unit conversion
+      value = value * 10
+    ) %>%
+    ggplot() +
+    aes(x = year, y = value, color = runtype) +
+    geom_line() +
+    facet_grid(vars(name), vars(casename), scales = "free_y") +
+    cowplot::theme_cowplot() +
+    theme(axis.text.x = element_text(angle = 90),
+          axis.title = element_blank()),
+  default_median_fluxes_png = ggsave(
+    file_out("analysis/figures/default-median-fluxes.png"),
+    default_median_fluxes_gg,
+    width = 10.1, height = 7
+  ),
+  default_median_fluxes_knit = knitr::include_graphics(file_in(
+    "analysis/figures/default-median-fluxes.png"
+  ))
+))
 
-both_long_s %>%
-  filter(grepl("mmean_(gpp|npp|plresp)_py", name)) %>%
-  ggplot() +
-  aes(x = year, y = value, color = runtype) +
-  geom_line() +
-  facet_grid(vars(name), vars(casename), scales = "free_y")
+plan <- plan <- bind_plans(plan, drake_plan(
+  both_long_p = both_results %>%
+    select(casename, runtype, pft_py) %>%
+    unnest(pft_py) %>%
+    select(-c(case:param_id)) %>%
+    mutate(pft = set_pft(pft)) %>%
+    pivot_longer(-c(casename:datetime, pft)) %>%
+    filter(month(datetime) %in% 6:8) %>%
+    annual_mean(),
+  default_median_lai_gg = both_long_p %>%
+    filter(name == "mmean_lai_py") %>%
+    ggplot() +
+    aes(x = year, y = value, color = pft, group = pft) +
+    geom_line() +
+    facet_grid(vars(runtype), vars(casename)) +
+    scale_color_manual(values = pfts("color")) +
+    labs(y = "LAI") +
+    cowplot::theme_cowplot() +
+    theme(
+      axis.title.x = element_blank(),
+      axis.text.x = element_text(angle = 90)
+    ),
+  default_median_lai_png = ggsave(
+    file_out("analysis/figures/default-median-lai.png"),
+    default_median_lai_gg,
+    width = 10.1, height = 7
+  ),
+  default_median_lai_knit = knitr::include_graphics(file_in(
+    "analysis/figures/default-median-lai.png"
+  ))
+))
 
-both_long_p <- both_results %>%
-  select(casename, runtype, pft_py) %>%
-  unnest(pft_py) %>%
-  select(-c(case:param_id)) %>%
-  mutate(pft = set_pft(pft)) %>%
-  pivot_longer(-c(casename:datetime, pft)) %>%
-  filter(month(datetime) %in% 6:8) %>%
-  annual_mean()
-
-both_long_p %>%
-  filter(name == "mmean_lai_py") %>%
-  ggplot() +
-  aes(x = year, y = value, color = runtype, group = runtype) +
-  geom_line() +
-  facet_grid(vars(pft), vars(casename))
+stop()
 
 # Look at each model indidivually
 dcrown <- default_results %>%
