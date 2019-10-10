@@ -410,13 +410,10 @@ While the uncertainty in growth respiration is large, we emphasize that SLA and 
 summary_ts_cap <- paste(
   htmlfig(),
   "ED2 plot-level predictions of",
-  "gross (GPP) and net (NPP) primary productivity,",
-  "aboveground biomass (AGB),",
+  "net (NPP) primary productivity and",
   "total leaf area index (LAI),",
-  "and Shannon diversity index (of plant functional types)",
   "by model configuration.",
-  "The solid line is the ensemble mean.",
-  "The dashed line is the 80\\% confidence interval.",
+  "The dashed lines indicate the 10th and 90th quantiles of results.",
   "Black dot with error bars is the observed mean and min/max value",
    "(TODO REF)."
 )
@@ -434,10 +431,39 @@ readd(summary_ts_plot_knit)
 <!-- TODO Should one of these be Early Hardwood (or other PFT?) LAI/biomass fraction -->
 <!-- TODO Drop some of these variables? -->
 
-Model projections of gross and net primary productivity, aboveground biomass, leaf area index, and functional diversity varied with both parameter value and model structure (Figure 2).
+Model projections of net primary productivity (NPP) and leaf area index (LAI) varied with both parameter value and model structure (Figure X).
 All model configurations exhibited a similar trajectory of rapid growth in the first 15-20 years followed by a gradual decline to a lower, stable value around 1975 (with individual ensemble members sometimes undergoing sudden collapse in specific years).
-Two model configurations -- finite canopy radius and two-stream radiative transfer (regardless of trait plasticity) -- had much lower productivity, biomass, and diversity than the other configurations, which generally had similar ensemble mean values and spread.
-The ensemble means of all model configurations under-predicted observed net primary productivity and leaf area index, both at the peak of initial growth (around 1920) and at the end of the simulations, though peak predicted values were much closer to thte observations.
+The ensemble spread within any single configuration---i.e. the parameter uncertainty---was similar across all configurations; both NPP and LAI varied 5-10 fold at any given timestep depending on parameter values.
+Within all configurations, most (>90%) ensemble members under-predicted observed present-day NPP and LAI by year 2000, though individual ensemble members from some configurations over-predicted one or both variables.
+Predictions of peak NPP (between 1910 and 1950 for most simulations) were closer to the observed present-day NPP (though also with large ensemble spread), but predictions of LAI during this period were still too low.
+
+```{r pft-jitterplot, fig.cap = pft_jitterplot_cap}
+pft_jitterplot_cap <- paste(
+  htmlfig(),
+  "Fraction of total aboveground biomass (AGB)",
+  "of each plant functional type (PFT)",
+  "predicted by different parameter-configuration combionations",
+  "of ED2."
+)
+readd(pft_jitterplot_knit)
+
+```
+
+```{r pft-ternplot, fig.cap = pft_tern_cap}
+pft_tern_cap <- paste(
+  htmlfig(),
+  "Ternary plot of predicted PFT composition in 1920, 1950, and 1980.",
+  "Ternary coordinates are as follows:",
+  "L is Early Hardwood; T is the sum of Mid and Late Hardwood; R is Pine.",
+  "Triangle fill color indicates the number of points within that bin."
+)
+readd(pft_tern_knit)
+```
+
+Trajectories of species composition also varied widely by model configuration (Figure X, Y).
+Under all configurations, most ensemble members were dominanted by a single PFT, and the sustained presence of more than 2 PFTs was limited to only a handful specific ensemble members across all configurations.
+However, _which_ PFT was dominant varied depending on the parameter combination.
+
 However, the ensemble spread around the mean was large:
 across all configurations (except the finite canopy - two-stream radiative transfer cases), the spread in net primary productivity was from zero to nearly twice as high as the observation.
 Ensemble variance in leaf area index was lower on average but, in some cases (especially the combination of finite canopy and multiple-scatter radiative transfer) was over an order of magnitude.
