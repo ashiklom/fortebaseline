@@ -464,30 +464,23 @@ Trajectories of species composition also varied widely by model configuration (F
 Under all configurations, most ensemble members were dominanted by a single PFT, and the sustained presence of more than 2 PFTs was limited to only a handful specific ensemble members across all configurations.
 However, _which_ PFT was dominant varied depending on the parameter combination, and any of the four PFTs became the dominant one some subset of simulations.
 
-However, the ensemble spread around the mean was large:
-across all configurations (except the finite canopy - two-stream radiative transfer cases), the spread in net primary productivity was from zero to nearly twice as high as the observation.
-Ensemble variance in leaf area index was lower on average but, in some cases (especially the combination of finite canopy and multiple-scatter radiative transfer) was over an order of magnitude.
-The predicted Shannon diversity index of plant functional types was, on average, higher in simulations when the canopy architecture was finite rather than closed.
-
 ```{r pairs-time, fig.cap = pairs_time_cap}
 pairs_time_cap <- paste(
   htmlfig(),
-  "Post-1975 growing season averaged NPP vs. LAI, with observation (in black)",
-  "and linear regression, by model type.",
-  "Each point indicates a single ensemble run with a different parameter combination.",
-  "Letter labels are selected runs with the same parameters,",
-  "and match the rows in Figure 4."
+  "ED2 predictions of annual mean NPP and growing-season LAI in 1920, 1950, and 1999",
+  "by model type.",
+  "Each point indicates a single ensemble run with a different set of parameters.",
+  "Solid line is the best-fit generalized additive model (GAM).",
+  "Dashed lines indicate the error bounds of present-day observed NPP and LAI."
 )
-readd(pairs_time_averaged_knit)
+readd(npp_lai_pairs_knit)
 ```
 
-<!-- TODO Use peak instead of post-1975? -->
 <!-- TODO Use a logarithmic, rather than a linear fit? -->
 
-Model configuration affected the emergent relationship between net primary productivity and leaf area index (Figure 3).
-The crown model (closed vs. finite) had the strongest effect:
-Compared to the simulations with "closed" crowns, simulations with finite canopy radius generally had lower net primary productivity for the same leaf area index.
-Although many simulations matched _either_ the observed net primary productivity or the observed leaf area index, only a few individual runs matched _both_.
+The emergent relationship between NPP and LAI was similar across model configurations early in the runs, but became more sensitive to model configuration later into the runs.
+Specifically, compared to runs with the default closed canopy, runs with a finite canopy were more likely to have higher LAI values for the same level of NPP, especially later into the simulation.
+Although many simulations matched _either_ the observed net primary productivity or the observed leaf area index, only a small minority of individual runs matched _both_.
 
 ```{r bigfacet-plot, fig.cap = bigfacet_cap}
 bigfacet_cap <- paste(
