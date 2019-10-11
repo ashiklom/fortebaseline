@@ -1,20 +1,28 @@
 ### Pairs plots
-npp_lai_pairs <- function(dat, year) {
-  dat %>%
-    filter(year == !!year) %>%
-    ggplot() +
-    aes(x = mmean_lai_py, y = mmean_npp_py, color = color) +
-    geom_point(size = 0.8) +
-    geom_smooth(method = mgcv::gam, color = "black") +
+npp_lai_pairs <- function(dat, year, labs) {
+  dat_sub <- dat %>%
+    filter(!is.na(model), year == !!year)
+  labs2 <- labs %>%
+    inner_join(dat_sub, "param_id") %>%
+    distinct(param_id, model, label, mmean_lai_py, mmean_npp_py)
+
+  ggplot(dat_sub) +
+    aes(x = mmean_lai_py, y = mmean_npp_py) +
+    geom_point(aes(color = color), size = 0.7, alpha = 0.7) +
+    geom_smooth(method = mgcv::gam, color = "gray30") +
     geom_hline(yintercept = c(6, 7), linetype = "dashed") +
     geom_vline(xintercept = 3.97 + c(-1, 1) * 1.96 * 0.423,
                linetype = "dashed") +
+    geom_point(color = "black", data = labs2) +
+    geom_label_repel(aes(label = label), data = labs2,
+                     min.segment.length = 0) +
     scale_color_identity() +
     facet_wrap(vars(model), ncol = 2) +
     labs(x = "Total LAI", y = expression(NPP ~ (MgC ~ ha^-1 ~ year^-1))) +
     ggtitle(year) +
     theme_cowplot() +
     theme(strip.text = element_text(size = 10))
+
 }
 
 plan <- bind_plans(plan, drake_plan(
@@ -33,10 +41,14 @@ plan <- bind_plans(plan, drake_plan(
     as_tibble() %>%
     left_join(pft_wide, c("case", "year")) %>%
     left_join(lai_wide, c("case", "year")) %>%
-    mutate(model_id = substr(case, 4, 6)) %>%
-    left_join(models, "model_id"),
+    left_join(
+      cases %>%
+        select(case, model_id, param_id),
+      c("case", "model_id")
+    ) %>%
+    left_join(models, c("model_id")),
   npp_lai_pairs_yr = target(
-    npp_lai_pairs(both_wide, .year),
+    npp_lai_pairs(both_wide, .year, use_params),
     transform = map(.year = c(1920, 1950, 1999))
   ),
   npp_lai_pairs_gg = target(
@@ -46,7 +58,7 @@ plan <- bind_plans(plan, drake_plan(
   npp_lai_pairs_png = ggsave(
     file_out("analysis/figures/npp-lai-pairs.png"),
     npp_lai_pairs_gg,
-    width = 12, height = 5.3
+    width = 14, height = 8
   ),
   npp_lai_pairs_knit = knitr::include_graphics(file_in(
     "analysis/figures/npp-lai-pairs.png"

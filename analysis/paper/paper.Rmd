@@ -471,7 +471,8 @@ pairs_time_cap <- paste(
   "by model type.",
   "Each point indicates a single ensemble run with a different set of parameters.",
   "Solid line is the best-fit generalized additive model (GAM).",
-  "Dashed lines indicate the error bounds of present-day observed NPP and LAI."
+  "Dashed lines indicate the error bounds of present-day observed NPP and LAI.",
+  "Text labels match the rows in Figure X below."
 )
 readd(npp_lai_pairs_knit)
 ```
@@ -482,8 +483,8 @@ The emergent relationship between NPP and LAI was similar across model configura
 Specifically, compared to runs with the default closed canopy, runs with a finite canopy were more likely to have higher LAI values for the same level of NPP, especially later into the simulation.
 Although many simulations matched _either_ the observed net primary productivity or the observed leaf area index, only a small minority of individual runs matched _both_.
 
-```{r bigfacet-plot, fig.cap = bigfacet_cap}
-bigfacet_cap <- paste(
+```{r lai-pft-plot, fig.cap = lai_pft_cap}
+lai_pft_cap <- paste(
   htmlfig(),
   "PFT-level predictions of leaf area index (LAI) by model configuration and parameterization.",
   "Each row of plots is a simulation with the same set of parameters across model configurations.",
@@ -494,15 +495,14 @@ bigfacet_cap <- paste(
 readd(lai_pft_plot_knit)
 ```
 
-`r mdcap(bigfacet_cap)`
-
-Model structure and parameters interacted to determine the community assembly and dynamics of each simulation, with consequences for overall ecosystem productivity that varied by model structure (Figure 4).
-Consider simulations **A** and **C**, the former showing competition of early hardwood with pine, and the latter completely dominated by pine:
-With a closed canopy and static traits, both simulations produced similar overall LAI and NPP values (Figure 3), but moving to a finite canopy dramatically increased the total LAI in **C** without much affecting **A**, while enabling trait plasticity dramatically increased the NPP of **A** without much affecting **C** (Figure 3).
-This example also shows the impacts of different configurations on predicted community dynamics -- namely, in this specific case, enabling trait plasticity helped pine out-perform early hardwood, but only under a closed (rather than finite) canopy.
-Finite canopy radius similarly benefits early hardwood in its competition against late hardwood in simulations **B** and, to a lesser extent, **D**.
-Simulations **B** and **D** also show that the sensitivity of a given parameter combination to model structure is itself dependent on the parameters -- simulation **B** produced similar ecological dynamics and aggregate state variables regardless of model configuration (except the extreme cases; Figure 3), while simulation **D** had near-zero NPP and LAI in two cases (closed, two-stream, static and finite, multi-scatter, plastic), comparable NPP and LAI to **B** with closed canopy and trait plasticity, and higher NPP and LAI than **D** with a finite canopy, multi-scatter radiative transfer, and static traits (Figure 3).
-
+Model structure and parameters interacted to determine the community assembly and dynamics of each simulation, with consequences for overall ecosystem productivity that varied by model structure (Figure X).
+Parameter sets **A** and **B** both resulted in similar patterns of immediate and complete dominance by mid- and late-hardwood, respectively, followed by gradual decline to near-zero LAI.
+In both of these simulations, peak productivity was higher and was sustained for longer when the canopy was closed rather than finite, and this difference was larger under a two-stream rather than a multiple-scatter radiative transfer model.
+Trait plasticity had relatively little effect on most of these two simulations, though in parameter set **B**, under the combination of closed canopy, multiple-scatter radiative transfer, and plastic traits, pine overtook the dominant late hardwood PFT starting around 1975.
+Both of these parameter sets also had the lowest LAI of the five selected here, with a peak LAI of 1 in **A** and 2 in **B**.
+Parameter set **C** showed much more variety in compositional dynamics with model structure:
+In all cases, mid-hardwoods began as the dominant species and were eventually overtaken by pine under a closed canopy and plastic traits, or early hardwood in all other cases (though with a closed canopy and static traits, the final LAI was low).
+Parameter sets **D** and **E** had the highest productivity of these five sets, and were characterized by strong dominance of Early Hardwood and Pine, respectively.
 
 ## Uncertainty analysis
 
