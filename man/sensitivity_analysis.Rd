@@ -4,15 +4,22 @@
 \alias{sensitivity_analysis}
 \title{One-at-a-time PEcAn sensitivity analysis}
 \usage{
-sensitivity_analysis(y, x, alpha = 0.01)
+sensitivity_analysis(y, x, ymedian = median(y), xmedian = median(x),
+  alpha = 0.05)
 }
 \arguments{
 \item{y}{Response variable}
 
 \item{x}{Dependent variable}
 
+\item{ymedian}{Median of response variable (default is calculated as
+`median(y)`)}
+
+\item{xmedian}{Median of dependent variable (default is calculated as
+`median(x)`)}
+
 \item{alpha}{Fraction of median around which to calculate
-derivative for sensitivity. Default = 0.01}
+derivative for sensitivity. Default = 0.05}
 }
 \value{
 `tibble` of sensitivity analysis results, with columns
