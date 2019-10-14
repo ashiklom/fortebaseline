@@ -16,7 +16,7 @@ analysis/paper/paper.html: refs analysis/paper/paper.Rmd
 
 pdf: analysis/paper/paper.pdf
 analysis/paper/paper.pdf: refs analysis/paper/paper.Rmd
-	Rscript -e "rmarkdown::render('analysis/paper/paper.pdf', 'pdf_document')"
+	Rscript -e "rmarkdown::render('analysis/paper/paper.Rmd', 'pdf_document')"
 
 deploy:
 	./analysis/scripts/deploy-paper.sh
