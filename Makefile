@@ -1,4 +1,4 @@
-.PHONY: drake deploy refs postgrad all
+.PHONY: drake deploy refs postgrad all html pdf paper
 
 all: drake
 refs: analysis/paper/references.bib
@@ -9,8 +9,14 @@ analysis/paper/references.bib: analysis/paper/paper.Rmd
 drake: analysis/drake.R
 	./analysis/drake.R make
 
-paper: refs analysis/drake.R
-	./analysis/drake.R make --paper
+paper: html pdf
+html: analysis/paper/paper.html
+analysis/paper/paper.html: refs analysis/paper/paper.Rmd
+	Rscript -e "rmarkdown::render('analysis/paper/paper.Rmd', 'html_document')"
+
+pdf: analysis/paper/paper.pdf
+analysis/paper/paper.pdf: refs analysis/paper/paper.Rmd
+	Rscript -e "rmarkdown::render('analysis/paper/paper.pdf', 'pdf_document')"
 
 deploy:
 	./analysis/scripts/deploy-paper.sh

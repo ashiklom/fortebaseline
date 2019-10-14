@@ -64,19 +64,6 @@ walk(src_files, possibly(source, NULL))
 
 if ("--poster" %in% cmdargs) source("analysis/drake_poster.R")
 if ("--postgrad" %in% cmdargs) source("analysis/drake_postgrad.R")
-if ("--paper" %in% cmdargs) {
-  plan <- bind_plans(plan, drake_plan(
-  param_table = file_in(!!(path(data_dir, "derived-data",
-                                "parameter-table.csv"))) %>%
-    read_csv(),
-    paper = target(
-      rmarkdown::render(
-        knitr_in(!!(path(analysis_dir, "paper", "paper.Rmd"))),
-        .format
-      ),
-      transform = map(.format = c("html_document", "pdf_document")))
-    ))
-}
 
 # Parallelism configuration. Not sure which of these is better...
 future::plan(future.callr::callr)

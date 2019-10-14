@@ -33,10 +33,13 @@ highlights: |
   These are the highlights.
 ---
 
-```{r setup, echo = FALSE}
+```{r setup, include = FALSE}
 library(knitr)
 library(here)
-library(drake)
+
+fig <- function(...) {
+  knitr::include_graphics(here::here("analysis", "figures", ...))
+}
 
 opts_chunk$set(
   collapse = TRUE,
@@ -260,10 +263,12 @@ Other parameters:
 The full list of parameters is shown in Table 2.
 
 ```{r param-table}
-tbl <- readd(param_table)
+tbl <- readr::read_csv(here(
+  "analysis", "data", "derived-data", "parameter-table.csv"
+))
 tbl <- subset(tbl, Ran == "yes", select = c(-unit_parsed, -Ran))
 tbl[["ED Name"]] <- sprintf("`%s`", tbl[["ED Name"]])
-knitr::kable(tbl, escape = FALSE, caption = paste0(
+kable(tbl, escape = FALSE, caption = paste0(
   "Table 2: Parameter descriptions. ",
   "For additional information, see the ",
   "[ED2 model wiki](https://github.com/EDmodel/ED2/wiki/PFT-parameters)."
@@ -293,8 +298,6 @@ Table 3: Plant functional type-species mappings
 For each plant functional type, we generated a distribution of parameter values via the Predictive Ecosystem Analyzer (PEcAn) trait-meta analysis [@lebauer_2013_facilitating; see also @dietze_2014_quantitative; @raczka_2018_what].
 Prior distributions for this meta-analysis were largely adapted from previous ED2 parameter uncertainty studies [@dietze_2014_quantitative; @raczka_2018_what; @viskari_2019_influence], and are shown in detail in Supplementary Information X. <!-- TODO Priors supplement; maybe describe entire meta-analysis? -->
 Species trait data for this meta-analysis came from existing records in the BETY database [www.betydb.org, @lebauer_2017_betydb], as well as from publicly available records in the TRY database [www.try-db.org, @kattge_2011_try] and, specifically for leaf optical properties, from Shiklomanov (2019 {dissertation, chapter 3}).
-The resulting parameter distributions are shown in Figure 1.
-<!-- TODO more on this? -->
 All parameters not described in this section were set to their ED-2.2 PFT-specific default values.
 
 ## Modeling workflow
@@ -325,15 +328,16 @@ Code and supporting data for reproducing this analysis are publicly available on
 
 # Results
 
-## Impacts of structure
+## Impacts of structure alone
 
 ```{r , fig.cap = structure_default_cap}
 structure_default_cap <- paste(
+  htmlfig(),
   "Annual NPP and LAI from ED2 runs",
   "with default parameters",
   "across different configurations."
 )
-readd(structure_compare_default_knit)
+fig("structure-compare-default.png")
 ```
 
 Different model structures very closely for the first half of the simulation, at which point they started to diverge.
@@ -341,14 +345,15 @@ Post 1950, the combination of two-stream radiative transfer, finite canopy radiu
 
 ```{r , fig.cap = structure_default_light_cap}
 structure_default_light_cap <- paste(
+  htmlfig(),
   "Radiation profiles of cohorts from ED2 runs with",
-  "default parameters, across different configurations."
-  "Each point represents a single cohort of the given PFT,"
-  "position on the y-axis represents the height of that cohort,"
+  "default parameters, across different configurations.",
+  "Each point represents a single cohort of the given PFT,",
+  "position on the y-axis represents the height of that cohort,",
   "and position on the x-axis represents the relative light level",
   "received by that cohort."
 )
-readd(structure_default_light_knit)
+fig("default-light-levels.png")
 ```
 
 Differences in productivity across structures are perhaps best understood by looking at differences in resulting radiation profiles at different snapshots in time over the course of the simulation.
@@ -363,33 +368,33 @@ param_dist_cap <- paste(
   htmlfig(),
   "Input parameter distributions from PEcAn trait meta-analysis."
 )
-readd(param_dist_knit)
+fig("param-dist.png")
 ```
-
-`r mdcap(param_dist_cap)`
 
 Parameter estimates from the trait meta-analysis were often substantially different from the ED2 defaults.
 In many cases, median parameter estimates were different entirely because of the choice of prior distributions (though, in almost all cases, the distributions provided reasonably high likelihood to ED2 default parameter values).
 However, in several important cases, parameter well-constrained by data produced values substantially different from the ED2 defaults.
 For example, ED2 default values for SLA were too low for all PFTs except Early Hardwoods, and default values for Vcmax values were too low for all PFTs.
 
-```{r , fig.cap = default_median_cap}
-default_median_cap <- paste(
+```{r default-median-flux, fig.cap = default_median_flux_cap}
+default_median_flux_cap <- paste(
+  htmlfig(),
   "Comparing results of ED2 with default parameters and",
   "posterior median parameters from trait meta-analysis",
   "across different strucures."
 )
-readd(default_median_fluxes_knit)
+fig("default-median-fluxes.png")
 ```
 
-```{r}
-default_median_cap <- paste(
+```{r default-median-lai , fig.cap = default_median_lai_cap}
+default_median_lai_cap <- paste(
+  htmlfig(),
   "Comparing results of ED2 PFT-level LAI",
   "with default parameters",
   "posterior median parameters from trait meta-analysis",
   "across different strucures."
 )
-readd(default_median_lai_knit)
+fig("default-median-lai.png")
 ```
 
 The above differences in median parameter led to ED2 runs that differed from the default runs in several important ways.
@@ -404,7 +409,7 @@ However, with the median parameterization, ED2 starts out with forests dominated
 Exploratory analyses (results not shown / supplement) show that the main parameters responsible for this compositional trajectory are SLA (especially the higher SLA of pine and mid-hardwood), Vcmax, and growth respiration.
 While the uncertainty in growth respiration is large, we emphasize that SLA and Vcmax are well constrained by data for all PFTs considered in this analysis.
 
-## Summary
+## Structure vs. parameter uncertainty
 
 ```{r summary-ts-plot, fig.cap = summary_ts_cap}
 summary_ts_cap <- paste(
@@ -417,13 +422,10 @@ summary_ts_cap <- paste(
   "Black dot with error bars is the observed mean and min/max value",
    "(TODO REF)."
 )
-readd(summary_ts_plot_knit)
+fig("summary-ts-plot.png")
 ```
 
-`r mdcap(summary_ts_cap)`
-
 <!-- - Structure x parameter uncertainty -->
-<!--   - Figure: Time series of NPP, LAI, and relative PFT dominance -->
 <!--   - Parameter uncertainty is much larger than structural uncertainty -->
 <!--   - Figure: Pairs of NPP, LAI, and PFT fraction, for each structure (first draw all, then pick relevant subsets) -->
 <!--   - Q: How many runs end up with the right composition (EH-dominated) at peak (~1925), ~1950, and 1999? -->
@@ -433,7 +435,7 @@ readd(summary_ts_plot_knit)
 
 Model projections of net primary productivity (NPP) and leaf area index (LAI) varied with both parameter value and model structure (Figure X).
 All model configurations exhibited a similar trajectory of rapid growth in the first 15-20 years followed by a gradual decline to a lower, stable value around 1975 (with individual ensemble members sometimes undergoing sudden collapse in specific years).
-The ensemble spread within any single configuration---i.e. the parameter uncertainty---was similar across all configurations; both NPP and LAI varied 5-10 fold at any given timestep depending on parameter values.
+The ensemble spread within any single configuration---i.e. the parameter uncertainty---was similar and large across all configurations; both NPP and LAI varied 5-10 fold at any given timestep depending on parameter values.
 Within all configurations, most (>90%) ensemble members under-predicted observed present-day NPP and LAI by year 2000, though individual ensemble members from some configurations over-predicted one or both variables.
 Predictions of peak NPP (between 1910 and 1950 for most simulations) were closer to the observed present-day NPP (though also with large ensemble spread), but predictions of LAI during this period were still too low.
 
@@ -445,8 +447,7 @@ pft_jitterplot_cap <- paste(
   "predicted by different parameter-configuration combionations",
   "of ED2."
 )
-readd(pft_jitterplot_knit)
-
+fig("pft-jitterplot.png")
 ```
 
 ```{r pft-ternplot, fig.cap = pft_tern_cap}
@@ -457,7 +458,7 @@ pft_tern_cap <- paste(
   "L is Early Hardwood; T is the sum of Mid and Late Hardwood; R is Pine.",
   "Triangle fill color indicates the number of points within that bin."
 )
-readd(pft_tern_knit)
+fig("pft-tern.png")
 ```
 
 Trajectories of species composition also varied widely by model configuration (Figure X, Y).
@@ -474,7 +475,7 @@ pairs_time_cap <- paste(
   "Dashed lines indicate the error bounds of present-day observed NPP and LAI.",
   "Text labels match the rows in Figure X below."
 )
-readd(npp_lai_pairs_knit)
+fig("npp-lai-pairs.png")
 ```
 
 <!-- TODO Use a logarithmic, rather than a linear fit? -->
@@ -492,7 +493,7 @@ lai_pft_cap <- paste(
   "Note that these are predictions of total leaf area index summed across all cohorts of the same PFT,",
   "meaning that higher LAI in one PFT does not necessarily indicate dominance, size, etc."
 )
-readd(lai_pft_plot_knit)
+fig("lai-pft.png")
 ```
 
 Model structure and parameters interacted to determine the community assembly and dynamics of each simulation, with consequences for overall ecosystem productivity that varied by model structure (Figure X).
@@ -511,7 +512,7 @@ Parameter sets **D** and **E** had the highest productivity of these five sets, 
 <!--   - Some parameters are always important. Other parameters matter more for different structures. -->
 
 
-```{r within-vs-across, fig.cap = within_vs_across_cap, fig.dim = c(9, 4)}
+```{r within-vs-across, fig.cap = within_vs_across_cap, fig.dim = c(9, 4), eval = FALSE}
 within_vs_across_cap <- paste(
   htmlfig(),
   "Comparison of parametric uncertainty within ensembles (colored bars, colored by model type)",
@@ -521,8 +522,6 @@ within_vs_across_cap <- paste(
 readd(within_across_plot_knit)
 ```
 
-`r mdcap(within_vs_across_cap)`
-
 Except for the configurations with persistently low productivity, parameter uncertainty (across ensembles within each model configuration) was much larger than structural uncertainty (variance in ensemble means across configurations; Figure 4).
 The relative importance of parameter uncertainty varied with both model configuration and the variable in question.
 Allowing SLA and V~cmax~ to vary with light level (warm colors, as opposed to static traits -- cool colors) slightly reduced variability in primary productivity, slightly increased variability in Shannon diversity, and had mixed effects on aboveground biomass and total leaf area.
@@ -530,10 +529,10 @@ Enabling the finite canopy radius (dark colors; compared to closed canopy -- lig
 reduced variance in aboveground biomass, diversity, and primary productivity.
 Finally, using a multiple-scatter (secondary colors) rather than a two-stream (primary colors) radiative transfer scheme increased variance in leaf area index, aboveground biomass, and diversity, but did not have a consistent effect on variance in productivity productivity.
 
-```{r uncertainty-analysis, fig.cap = uncertainty_analysis_cap}
+```{r uncertainty-analysis, fig.cap = uncertainty_analysis_cap, eval = FALSE}
 uncertainty_analysis_cap <- paste(
   htmlfig(),
-  "PEcAn-like parameter sensitivity and uncertainty analysis, by model type,",
+  "Parameter sensitivity and uncertainty analysis, by model type,",
   "for 1975-2000 averaged growing season net primary productivity (left) and leaf area index (right).",
   "Elasticity (top) is the normalized sensitivity of the model to a fixed change in the parameter.",
   "Partial variance (bottom) describes the overall contribution of the parameter to model predictive uncertainty based on the combination of parameter uncertainty and model sensitivity.",
@@ -543,8 +542,6 @@ uncertainty_analysis_cap <- paste(
 )
 readd(sensitivity_plot_knit)
 ```
-
-`r mdcap(uncertainty_analysis_cap)`
 
 Model sensitivity to specific parameters ["elasticity" _sensu_ @lebauer_2013_facilitating] varied depending on the model configuration and the target output variable (Figure 5).
 The parameter with the single highest elasticity to NPP and LAI across all model configurations was specific leaf area (SLA), though the PFT whose SLA was most important varied with model configuration.
