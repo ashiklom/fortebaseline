@@ -111,9 +111,93 @@ stop()
 
 saveRDS(sensitivity_raw_results, "analysis/data/retrieved/sensitivity-raw-results.rds")
 
+library(tidyverse)
+library(here)
+library(fortebaseline)
+sensitivity_raw_results <- readRDS(here(
+  "analysis",
+  "data",
+  "retrieved",
+  "sensitivity-raw-results.rds"
+))
+
 sensitivity_proc = sensitivity_raw_results %>%
   unnest(result) %>%
-  unnest(result)
+  unnest(result) %>%
+  ungroup()
+
+sensitivity_sub <- sensitivity_proc %>%
+  filter(
+    grepl("mmean_", yvar),
+    is.finite(sensitivity),
+    is.finite(elasticity)
+  ) %>%
+  group_by(model_id, yvar) %>%
+  mutate(fpvar = pvar / sum(pvar)) %>%
+  group_by(xvar) %>%
+  mutate(total_pvar = sum(pvar)) %>%
+  ungroup() %>%
+  separate(xvar, c("shortname", "xvar"), extra = "merge") %>%
+  mutate(
+    shortname = factor(shortname, pfts("shortname")),
+    model = factor(model_id, c("CTS", "CTP", "CMS", "CMP",
+                               "FTS", "FTP", "FMS", "FMP"))
+  )
+
+sensplot <- function(dat, sgroup, metric, yvar) {
+  metric <- rlang::enquo(metric)
+  dat %>%
+    filter(sgroup == !!sgroup) %>%
+    top_n_sensitivity_plot(yvar, !!metric, 8, "free") +
+    facet_wrap(vars(model), scales = "free", drop = TRUE, ncol = 2,
+               dir = "v") +
+    scale_color_manual(values = pfts("color")) +
+    labs(color = "PFT") +
+    cowplot::theme_cowplot() +
+    theme(
+      axis.title.y = element_blank(),
+      axis.text.x = element_text(size = 10),
+      axis.text.y = element_text(size = 12)
+    )
+}
+
+pn1 <- sensplot(sensitivity_sub, "1920-1950", fpvar, "mmean_npp_py") +
+  ggtitle("1920-1950") +
+  labs(y = "Partial variance") +
+  guides(color = FALSE)
+pn2 <- sensplot(sensitivity_sub, "1975-1999", fpvar, "mmean_npp_py") +
+  ggtitle("1975-1999") +
+  labs(y = "Partial variance")
+p12 <- cowplot::plot_grid(p1, p2, nrow = 1, rel_widths = c(0.8, 1))
+cowplot::ggsave2(
+  here("analysis", "figures", "partial-variance-npp.png"),
+  p12, width = 16.3, height = 8.4
+)
+
+p1 <- sensplot(sensitivity_sub, "1920-1950", fpvar, "mmean_lai_py") +
+  ggtitle("1920-1950") +
+  labs(y = "Partial variance") +
+  guides(color = FALSE)
+p2 <- sensplot(sensitivity_sub, "1975-1999", fpvar, "mmean_lai_py") +
+  ggtitle("1975-1999") +
+  labs(y = "Partial variance")
+p12 <- cowplot::plot_grid(p1, p2, nrow = 1, rel_widths = c(0.8, 1))
+cowplot::ggsave2(
+  here("analysis", "figures", "partial-variance-lai.png"),
+  p12, width = 16.3, height = 8.4
+)
+
+## sensplot(sensitivity_sub, "1920-1950", elasticity)
+## sensplot(sensitivity_sub, "1975-1999", elasticity)
+
+
+sensitivity_sub %>%
+  filter(sgroup == "1975-1999", model == "FTP")
+
+
+slai <- sensitivity_sub %>%
+  filter(yvar == "mmean_lai_py") %>%
+
 
 sensitivity_proc %>%
   ungroup() %>%
