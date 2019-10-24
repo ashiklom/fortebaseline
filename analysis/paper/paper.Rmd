@@ -579,7 +579,7 @@ The overarching objective of this study was to investigate how model structure a
 ## ED2.2 vs. reality
 
 Our first question was: To what extent can the model, under any configuration, reproduce the observed reality?
-**Ensemble mean trajectory matches traditional understanding of succession**---rapid growth to peak productivity, followed by gradual decline [@odum_1969_strategy_ecosystem_development]---but **happens too quickly** (Figure 2);
+**Ensemble mean trajectory matches traditional understanding of succession**---rapid growth to peak productivity, followed by gradual decline [@odum_1969_strategy_ecosystem_development]---but **happens too quickly** (Figure TODO);
 real ecosystems sustain peak productivity for longer [@gough_2016_disturbance].
 This idea that ED2.2's main issue is that it is moving too quickly is supported by the fact that ED2.2 generally underestimates productivity after 100 years, but model **predictions at peak productivity are close to reality**.
 One reason ED2.2 is moving too quickly through succession is **missing mechanisms for sustaining productivity through early succession**.
@@ -598,24 +598,37 @@ Future work will: (1) Calibrate ED2.2 disturbance response to experimental obser
 ## Drivers of uncertainty
 
 **Parameter uncertainty was the dominant driver of uncertainty in our analysis**.
-Different parameter combinations led to **huge ranges in ensemble predictions of ensemble variables** -- NPP ranged from 0 to almost 2x the observed, and LAI was up to 3x observed (though more tightly clustered around zero) (Figure 2).
-Moreover, different parameter combinations produced **qualitatively different ecological narratives** (Figure 4).
+Different parameter combinations led to **huge ranges in ensemble predictions of ensemble variables** -- NPP ranged from 0 to almost 2x the observed, and LAI was up to 3x observed (though more tightly clustered around zero) (Figure TODO).
+Moreover, different parameter combinations produced **qualitatively different ecological narratives** (Figure TODO).
 **Parameter uncertainty has implications beyond C cycling**---differences in species composition and relative abundance have implications for forest management and wildlife conservation, among others.
-The dominance of parameter uncertainty over structural uncertainty in our results suggests that **targeted data collection should be a higher priority than model development**.
 
-**Parameter uncertainty is not synonymous with sensitivity**.
-Many of the parameters to which model outputs are most sensitive are already well constrained by data and do not contribute as much to predictive uncertainty (Figure 6).
-Although parameter uncertainty is still large, this means that **targeted data collection works and that we are moving in the right direction**!
-This speaks to the value of looking at not just sensitivity, but partial variance [@lebauer_2013_facilitating; @dietze_2014_quantitative].
+The dominance of parameter uncertainty over structural uncertainty in our results suggests that **constraining parameter uncertainty should be a higher priority than model development**.
+Parameter uncertainty can be constrained in two different ways:
+Using observational data if available;
+and, for parameters "that cannot be directly observed", using "quantitative/algorithmic" model calibration techniques (e.g. Fer, other papers).
+For example, leaf optical properties (i.e. reflectance, transmittance) are both measurable and highly influential, and therefore should be a priority for new data collection.
+In contrast, "growth respiration factor" is an empirical coefficient and not measurable, but highly influential (c.f. Dietze, Raczka), and therefore should be constrained through calibration.
 
+(
 So **which parameters are a research priority**?
 Leaf optical properties often do not get a lot of attention, but are important [see also, @viskari_2019_influence].
 Also, soil-plant water conductance and growth respiration -- both of these were important in @dietze_2014_quantitative.
 (Compare also to @raczka_2018_what, @pandit_2018_optimizing).
+)
+
+**Parameter uncertainty is not synonymous with sensitivity**.
+Many of the parameters to which model outputs are most sensitive are already well constrained by data and do not contribute as much to predictive uncertainty (Figure TODO).
+SLA and Vcmax fall into this category.
+Although parameter uncertainty is still large, this means that **targeted data collection works and that we are moving in the right direction**!
+This speaks to the value of looking at not just sensitivity, but partial variance [@lebauer_2013_facilitating; @dietze_2014_quantitative].
 
 Although parameter uncertainty dominated, **structural and parameter uncertainty interacted in important ways**.
-The relative position of different parameter combinations in multivariate space (Figure 3), the total amount of parameter uncertainty (Figure 5), and the relative importance of different parameters to predictive uncertainty (Figure 6) all differed across model structures (Figure 3).
-This is despite the fact that our model structure changes were relatively modest compared to differences between different models.
+Individual model structure changes had relatively modest impacts.
+
+* Interactive effects of different structures -- not additive
+* Interactions between parameter and structural uncertainty -- 
+  - For example, the relative importance of different parameters to predictive uncertainty (Figure TODO) differed across model structures (Figure 3).
+
 Collectively, this means that **sensitivity and uncertainty analyses are not necessarily generalizable across models**.
 
 # Conclusions
