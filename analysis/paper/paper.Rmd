@@ -126,8 +126,13 @@ Ben's notes:which of the last two categories--structural versus parametric uncer
 -->
 
 <!-- TODO This paragraph is janky as hell. Needs heavy revision. -->
+(Chris/Jeff: Help)
 Previous work found that an earlier version of ED had difficulty sustaining multiple plant functional types in long simulations [@fisher_2010_assessing].
-One of the primary drivers of successional change in temperate forests is competition for light <!-- TODO REF -- Bazaaz? -->, and differences in plants' strategies for light acquisition and utilization are a key driver of niche differentiation in these ecosystems <!-- TODO REF -->.
+One of the primary drivers of successional change in temperate forests is competition for light (REF Bazzaz 19XX) <!-- TODO REF -- Bazaaz? -->, and differences in plants' strategies for light acquisition and utilization are a key driver of niche differentiation in these ecosystems <!-- TODO REF -->.
+Plants compete for light in three different ways:
+Growing quickly (early successional, pioneer species),
+structural complexity / morphological change / filling in gaps in existing canopies,
+and adapting traits to maximize light (and other resource) capture and utilization.
 To this end, we focused our structural uncertainty analysis on three processes related to competition for light:
 Representation of horizontal competition;
 representation of canopy radiative transfer (especially of diffuse radiation);
@@ -139,7 +144,7 @@ Our study is organized around the following guiding questions:
 (2) What is the cost of considering these processes, in terms of additional parametric uncertainty?
 (3) What are the relative contributions of parametric uncertainty (data limitation) vs. structural uncertainty (theoretical limitation?)?
 To answer these questions, we ran ED2 ensemble simulations with a factorial combination of submodels related to radiative transfer formulation (two-stream vs. multiple scatter), horizontal competition (finite canopy radius vs. complete shading), and trait plasticity (whether or not SLA and Vcmax vary with light level)
-We then used sensitivity and variance decomposition analyses to evaluate the contribution of parameter uncertainty for each model configuration, exploring the ecological implications of the results.
+We then used sensitivity and variance decomposition analyses to evaluate the contribution of parameter uncertainty for each model configuration, exploring the ecological implications of the results in the context of ongoing climate change.
 
 # Methods
 
@@ -340,8 +345,9 @@ structure_default_cap <- paste(
 fig("structure-compare-default.png")
 ```
 
-Different model structures very closely for the first half of the simulation, at which point they started to diverge.
+Different model structures agree for the first half of the simulation, at which point they started to diverge.
 Post 1950, the combination of two-stream radiative transfer, finite canopy radius, and plastic traits had the highest sustained productivity, followed by the same configuration except with static traits, with the remaining configurations having very similar results.
+Interestingly, the effects of changing individual model configurations are not additive --- for example, enabling trait plasticity had a different effect depending on whether the two-stream or multiple-scatter canopy RTM was used.
 
 ```{r , fig.cap = structure_default_light_cap}
 structure_default_light_cap <- paste(
@@ -545,22 +551,16 @@ partial_variance_npp_cap <- paste(
 fig("partial-variance-npp.png")
 ```
 
-```{r partial-variance-lai, fig.cap = partial_variance_lai_cap}
-partial_variance_lai_cap <- paste(
-  htmlfig(),
-  "Same as above, but for total leaf area index (LAI)."
-)
-fig("partial-variance-lai.png")
-```
-
 <!-- Model sensitivity to specific parameters ["elasticity" _sensu_ @lebauer_2013_facilitating] varied depending on the model configuration and the target output variable (Figure 5). -->
 <!-- The parameter with the single highest elasticity to NPP and LAI across all model configurations was specific leaf area (SLA), though the PFT whose SLA was most important varied with model configuration. -->
 <!-- Other frequently (but not always) important parameters were the leaf C:N ratio (`c2n_leaf`), ratio of fine root to leaf biomass (`fineroot2leaf`), leaf and root respiration rates, and leaf optical properties (`leaf_reflect_vis/nir`). -->
 <!-- TODO Dig into model configurations. -->
 
-The parameters that contributed most to overall model predictive uncertainty ("partial variance") varied with model structure, time period considered, and output variable (NPP or LAI).
+The parameters that contributed most to overall model predictive uncertainty ("partial variance") varied with model structure and time period considered.
 In general, uncertainties in pine growth respiration factor and early hardwood plant-soil water conductance contributed the most to parameter uncertainty in NPP during the "peak" period (1925-1950).
 {TODO: Fill in the rest of this text...}
+
+Parameter sensitivity for total LAI was similar to that of NPP (results not shown).
 
 <!-- This is old text... -->
 <!-- ...differed from parameters to which the model was most sensitive (Figure 5), largely driven by the fact that many of the parameters with the highest sensitivity (e.g. SLA, V~cmax~) were also well constrained by data (Figure 1). -->
