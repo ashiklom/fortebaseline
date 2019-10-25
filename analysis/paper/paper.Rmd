@@ -319,6 +319,30 @@ By using the same initial conditions and drivers, we do not consider initial con
 
 ## Analysis of results
 
+First, we evaluated the impact of model structure independent of any changes to parameters by comparing predictions of average annual net primary productivity (NPP) and summer (June, July, August) total leaf area index (LAI) across model structures while holding ED-2.2 parameters at their default values (Figure 1).
+To understand the physical and ecological mechanisms underlying these differences, we also compared the cohort-level composition, height, and canopy radiation profiles in these simulations in four stages of the simulation (Figure 2).
+
+Second, we compared simulations with ED-2.2 default parameters against simulations using median parameter estimates from a trait meta-analysis (Figure 3).
+Here, we looked predictions of annual mean C fluxes (gross and net primary productivity, and autotrophic and heterotrophic respiration; Figure 4) and of summer LAI by PFT (Figure 5).
+
+Third, we considered the full range of parameter uncertainty by looking at predictions across all parameter ensemble members.
+We begin with predictions annual mean NPP and summer mean total LAI across all parameters and structures and compare these results to contemporary (averaged over years TODO) observations of NPP and LAI at UMBS.
+We look at these variables independently as time series (Figure 6) and as joint predictions in three years (Figure 7).
+We then consider impacts on composition by looking at predicted PFT fractions of total aboveground biomass (AGB) at four different years in the simulation (Figure 8) and at time series of LAI by PFT for five parameter combinations spanning the range of predicted ecological outcomes (Figure 9).
+
+Finally, we assessed which parameters contributed the most to parameter uncertainty for each model structure.
+We did this by performing a sensitivity and variance decomposition analysis following @lebauer_2013_facilitating, @dietze_2014_quantitative, and @raczka_2018_what.
+Briefly, this analysis contains uses a spline to estimate the relationship between individual parameters and output variables and then uses these splines to predict the variance in the output variable attributable to individual parameters ("partial variance").
+For more details, see @lebauer_2013_facilitating.
+
+First, we assessed how ED-2.2 predictions of plot-level ecosystem properties and composition varied across model structures and parameter values.
+For plot-level ecosystem properties, we examined mean annual gross (GPP) and net primary productivity (NPP), and autotrophic (RA) and heterotrophic respiration (RH), as well as total leaf area index (LAI) averaged June-August.
+We compared predicted NPP and LAI values against measurements of NPP and LAI at UMBS averaged over years XXXX-YYYY. <!-- TODO -->
+Although these observations occurred later than the years of the simulation, we found that the distributions of ED-2.2 predictions of NPP and LAI were relatively stable after 1975 and therefore constituted a reasonable approximation of what ED-2.2 would have predicted out to the present day.
+For ease of interpretation, we only show the top eight parameters in terms of partial variance for every model configuration.
+
+For composition, we looked at annual means of summer aboveground biomass and leaf area index
+
 - Overall summary:
     - Overall parameter uncertainty -- Time-series plots of total annual GPP and NPP, and maximum LAI and AGB, averaged across ensemble members
     - Impact of parameter uncertainty on ecological trajectories -- plot of max annual LAI by PFT
@@ -446,6 +470,23 @@ The ensemble spread within any single configuration---i.e. the parameter uncerta
 Within all configurations, most (>90%) ensemble members under-predicted observed present-day NPP and LAI by year 2000, though individual ensemble members from some configurations over-predicted one or both variables.
 Predictions of peak NPP (between 1910 and 1950 for most simulations) were closer to the observed present-day NPP (though also with large ensemble spread), but predictions of LAI during this period were still too low.
 
+```{r pairs-time, fig.cap = pairs_time_cap}
+pairs_time_cap <- paste(
+  htmlfig(),
+  "ED2 predictions of annual mean NPP and growing-season LAI in 1920, 1950, and 1999",
+  "by model type.",
+  "Each point indicates a single ensemble run with a different set of parameters.",
+  "Solid line is the best-fit generalized additive model (GAM).",
+  "Dashed lines indicate the error bounds of present-day observed NPP and LAI.",
+  "Text labels match the rows in Figure X below."
+)
+fig("npp-lai-pairs.png")
+```
+
+The emergent relationship between NPP and LAI was similar across model configurations early in the runs, but became more sensitive to model configuration later into the runs.
+Specifically, compared to runs with the default closed canopy, runs with a finite canopy were more likely to have higher LAI values for the same level of NPP, especially later into the simulation.
+Although many simulations matched _either_ the observed net primary productivity or the observed leaf area index, only a small minority of individual runs matched _both_.
+
 ```{r pft-jitterplot, fig.cap = pft_jitterplot_cap}
 pft_jitterplot_cap <- paste(
   htmlfig(),
@@ -460,25 +501,6 @@ fig("pft-jitterplot.png")
 Trajectories of species composition also varied widely by model configuration (Figure X, Y).
 Under all configurations, most ensemble members were dominanted by a single PFT, and the sustained presence of more than 2 PFTs was limited to only a handful specific ensemble members across all configurations.
 However, _which_ PFT was dominant varied depending on the parameter combination, and any of the four PFTs became the dominant one some subset of simulations.
-
-```{r pairs-time, fig.cap = pairs_time_cap}
-pairs_time_cap <- paste(
-  htmlfig(),
-  "ED2 predictions of annual mean NPP and growing-season LAI in 1920, 1950, and 1999",
-  "by model type.",
-  "Each point indicates a single ensemble run with a different set of parameters.",
-  "Solid line is the best-fit generalized additive model (GAM).",
-  "Dashed lines indicate the error bounds of present-day observed NPP and LAI.",
-  "Text labels match the rows in Figure X below."
-)
-fig("npp-lai-pairs.png")
-```
-
-<!-- TODO Use a logarithmic, rather than a linear fit? -->
-
-The emergent relationship between NPP and LAI was similar across model configurations early in the runs, but became more sensitive to model configuration later into the runs.
-Specifically, compared to runs with the default closed canopy, runs with a finite canopy were more likely to have higher LAI values for the same level of NPP, especially later into the simulation.
-Although many simulations matched _either_ the observed net primary productivity or the observed leaf area index, only a small minority of individual runs matched _both_.
 
 ```{r lai-pft-plot, fig.cap = lai_pft_cap}
 lai_pft_cap <- paste(
