@@ -1,5 +1,4 @@
-ED Name,Display name,Description,unit_parsed,unit_markdown,Raczka,Dietze,Ran
-c2n_fineroot,C:N root,C:N ratio in fine roots,,unitless (mass ratio),,,yes
+ED Name,Display name,Description,unit_parsed,Unit,Raczka,Dietze,Ran
 c2n_leaf,C:N leaf,C:N ratio in leaves,,unitless (mass ratio),,,yes
 clumping_factor,Clumping,Canopy clumping factor,"""0 - 1""",,,,yes
 f_labile,F. labile,Fraction of litter that goes to labile (fast) C pool,"""0 - 1""",unitless (0-1),Labile carbon,,yes
@@ -28,3 +27,4 @@ Vcmax,Vcmax,Maximum rate of CO~2~ carboxylation at 15 °C (`Vm0`),mu*mol ~ m^-2 
 water_conductance,Water cond.,Water availability factor,m^-2 ~ a^-1 ~ (kg*C~root)^-1,m^-2^ a^-1^ (kg C root)^-1^,Soil-plant water conductance,Water Cond,yes
 leaf_width,Leaf width,Mean leaf width (for boundary layer conductance),m,m,,,no
 Vm_low_temp,Tmin,Minimum temperature for photosynthesis,degree * C,°C,,,no
+c2n_fineroot,C:N root,C:N ratio in fine roots,,unitless (mass ratio),,,no

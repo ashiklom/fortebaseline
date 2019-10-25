@@ -38,6 +38,8 @@ highlights: |
 ```{r setup, include = FALSE}
 library(knitr)
 library(here)
+library(magrittr)
+library(kableExtra)
 
 fig <- function(...) {
   knitr::include_graphics(here::here("analysis", "figures", ...))
@@ -202,24 +204,24 @@ These sub-models are summarized in Table 1.
 
 Table 1: ED-2.2 submodel descriptions
 
-| Name                         | Description                                                                          | Color                     |
-|------------------------------|--------------------------------------------------------------------------------------|---------------------------|
-| **Crown model**              |                                                                                      |                           |
-| `closed` (default)           | Cohort crowns take up entire patch area. Competition for light based only on height. | Light                     |
-| `finite`                     | Cohort crown area is proportional to DBH according to PFT-specific allometry.        | Dark                      |
-| **Radiative transfer model** |                                                                                      |                           |
-| `two-stream` (default)       | Two-stream approximation [@sellers_1985_canopy; @clm45_note]                         | Primary (red, blue)       |
-| `multi-scatter`              | Multiple-scatter approximation, following [@zhao_2005_multiple]                      | Secondary (green, orange) |
-| **Trait plasticity**         |                                                                                      |                           |
-| `static` (default)           | SLA and V~c,max~ are constant                                                        | Cool (blue, green)        |
-| `plastic`                    | SLA increases, and V~c,max~ decreases, with light level                              | Warm (red, orange)        |
+| Name | Description | Color |
+|------|-------------|-------|
+| **Crown model** |||
+| **C**losed (default) | Cohort crowns take up entire patch area. Competition for light based only on height. | Light |
+| **F**inite | Cohort crown area is proportional to DBH according to PFT-specific allometry. | Dark |
+| **Radiative transfer model** |||
+| **T**wo-stream (default) | Two-stream approximation [@sellers_1985_canopy; @clm45_note] | Primary (red, blue) |
+| **M**ulti-scatter | Multiple-scatter approximation, following [@zhao_2005_multiple] | Secondary (green, orange) |
+| **Trait plasticity** |||
+| **S**tatic (default) | SLA and V~c,max~ are constant | Cool (blue, green) |
+| **P**lastic | SLA increases, and V~c,max~ decreases, with light level | Warm (red, orange) |
 
 
 ## Parameter descriptions
 
 The full list of parameters in ED-2.2 is large, with over 100 parameters per plant functional type.
 A full sensitivity and uncertainty analysis across all of these parameters is outside the scope of this study.
-Instead, we selected a subset of parameters guided by (but expanding upon) previous ED2 sensitivity studies [@dietze_2014_quantitative; @raczka_2018_what; @viskari_2019_influence].
+Instead, we selected a subset of parameters guided by (but expanding upon) previous ED-2.2 sensitivity studies [@dietze_2014_quantitative; @raczka_2018_what; @viskari_2019_influence].
 
 Three parameters are related to leaf-level physiology:
 Following the enzyme-kinetic model of @farquhar_1980_biochemical, the rate of photosynthesis is the minimum of light-limited and enzyme-limited reactions.
@@ -272,11 +274,12 @@ tbl <- readr::read_csv(here(
 ))
 tbl <- subset(tbl, Ran == "yes", select = c(-unit_parsed, -Ran))
 tbl[["ED Name"]] <- sprintf("`%s`", tbl[["ED Name"]])
-kable(tbl, escape = FALSE, caption = paste0(
+kable(tbl, escape = is_latex_output(), caption = paste0(
   "Table 2: Parameter descriptions. ",
   "For additional information, see the ",
   "[ED2 model wiki](https://github.com/EDmodel/ED2/wiki/PFT-parameters)."
-))
+), booktabs = TRUE) %>%
+  kable_styling(latex_options = "scale_down")
 ```
 
 ## Plant functional types and parameterization
