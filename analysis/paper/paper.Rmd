@@ -516,21 +516,6 @@ Parameter sets **D** and **E** had the highest productivity of these five sets, 
 
 ## Uncertainty analysis
 
-<!-- - Details of parameter uncertainty -->
-<!--   - Figure: Parameter sensitivity and uncertainty analysis -->
-<!--   - Some parameters are always important. Other parameters matter more for different structures. -->
-
-
-```{r within-vs-across, fig.cap = within_vs_across_cap, fig.dim = c(9, 4), eval = FALSE}
-within_vs_across_cap <- paste(
-  htmlfig(),
-  "Comparison of parameter uncertainty within ensembles (colored bars, colored by model type)",
-  "and \"structural\" uncertainty (variance in ensemble means; black bar) by output variable.",
-  "Output variables are expressed as growing season averages for all years after 1910."
-)
-readd(within_across_plot_knit)
-```
-
 <!--
 Except for the configurations with persistently low productivity, parameter uncertainty (across ensembles within each model configuration) was much larger than structural uncertainty (variance in ensemble means across configurations; Figure 4).
 The relative importance of parameter uncertainty varied with both model configuration and the variable in question.
@@ -554,11 +539,6 @@ partial_variance_npp_cap <- paste(
 )
 fig("partial-variance-npp.png")
 ```
-
-<!-- Model sensitivity to specific parameters ["elasticity" _sensu_ @lebauer_2013_facilitating] varied depending on the model configuration and the target output variable (Figure 5). -->
-<!-- The parameter with the single highest elasticity to NPP and LAI across all model configurations was specific leaf area (SLA), though the PFT whose SLA was most important varied with model configuration. -->
-<!-- Other frequently (but not always) important parameters were the leaf C:N ratio (`c2n_leaf`), ratio of fine root to leaf biomass (`fineroot2leaf`), leaf and root respiration rates, and leaf optical properties (`leaf_reflect_vis/nir`). -->
-<!-- TODO Dig into model configurations. -->
 
 The parameters that contributed most to overall model predictive uncertainty ("partial variance") varied with model structure and time period considered.
 In general, uncertainties in pine growth respiration factor and early hardwood plant-soil water conductance contributed the most to parameter uncertainty in NPP during the "peak" period (1925-1950).
