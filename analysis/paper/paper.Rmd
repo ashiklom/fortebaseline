@@ -165,7 +165,7 @@ For this study, we used the Ecosystem Demography Model, version 2.2 (ED-2.2).
 A full description of the default configuration of the model is provided by @longo_2019_ed1.
 Briefly, ED-2.2 solves the energy, water, and carbon cycles separately for each of multiple "cohorts" of trees of similar composition, size, and age sharing a micro-environment and disturbance history [@moorcroft_2001_method; @medvigy_2009_mechanistic; @longo_2019_ed1].
 Besides the cohort-based approximation of gap dynamics, a distinctive feature of ED-2.2 is that the equations for energy, water, and carbon fluxes are defined in terms of total energy, water, and carbon, which ensures excellent conservation of mass in long-running (multidecadal) simulations [@longo_2019_ed1].
-Various versions of the ED model have been validated in boreal [@medvigy_2011_predicting], temperate [@medvigy_2009_mechanistic; @dietze_2014_quantitative; @raczka_2018_what], and tropical biomes [@moorcroft_2001_method; @longo_2019_ed2], and have been applied in, among others,
+Various versions of the ED model have been evaluated in boreal [@medvigy_2011_predicting], temperate [@medvigy_2009_mechanistic; @dietze_2014_quantitative; @raczka_2018_what], and tropical biomes [@moorcroft_2001_method; @longo_2019_ed2], and have been applied in, among others,
 paleoecological studies [@rollinson_2017_emergent],
 free-air CO~2~ enrichment studies [@dekauwe_2013_forest; @miller_2015_alteration],
 estimation of potential carbon stocks [@hurtt_2004_beyond_potential_vegetation],
@@ -182,7 +182,7 @@ Both models also use identical definitions for the optical properties of a singl
 Both models represent direct (a.k.a. "beam") radiation as an exponentially decaying process, and solve for the diffuse (a.k.a. "hemispherical", "isotropic") radiation at each layer using a linear matrix equation.
 Where the models differ is in the terms of this matrix equation.
 The two-stream model (default) uses the two-stream approximation originally derived for atmospheric radiative transfer [@meador_1980_two] and later adapted to vegetation canopies [@dickinson_1983_land; @sellers_1985_canopy].
-Meanwhile, the multiple-scatter model was derived from first principles by @zhao_2005_multiple specifically for vegetation canopies, specifically to address known biases and limitations of the two-stream approach [e.g. @wang_2003_comparison].
+Meanwhile, the multiple-scatter model was derived from first principles by @zhao_2005_multiple specifically for vegetation canopies to address known biases and limitations of the two-stream approach [e.g. @wang_2003_comparison].
 **Compared to the default two-stream model, the multiple-scatter model slightly increases diffuse light levels in the understory.**
 Both of these models are described in detail in the Supplementary Information. <!-- TODO Exact reference to Appendix -->
 
@@ -194,7 +194,7 @@ In the alternate configuration ("finite crown area", or "partial shading"), cano
 The horizontal area of crowns is determined by allometric equations from @dietze_2008_changing.
 
 The third submodel we evaluated was trait plasticity.
-In the default configuration, all cohorts of a given plant functional type will have the same parameters, regardless of environmental conditions.
+In the default configuration, all cohorts of a given plant functional type have the same parameters, regardless of environmental conditions.
 This ignores the globally-documented intraspecific trait variability as a function of light level [@niinemets_2010_review; @keenan_2016_global]. <!-- TODO Also, classical ecological succession theory bazzaz_1979_physiological? -->
 In the alternate configuration, as light level decreases (trees become more shaded), specific leaf area increases and V~cmax~ decreases, following empirical relationships from the tropics [@lloyd_2010_optimisation].
 
