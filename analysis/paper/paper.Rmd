@@ -404,6 +404,17 @@ default_median_flux_cap <- paste(
 fig("default-median-fluxes.png")
 ```
 
+These differences in parameter values resulted in ED-2.2 runs that differed from the default runs in several important ways (Figures 4, 5).
+First, in every model configuration (except finite canopy, two-stream RTM, and static traits), gross primary productivity (GPP) reached a higher peak, and did so earlier under median parameters (Figure 4).
+This was driven primarily by higher V~cmax~ and SLA values for most PFTs (Figure 3).
+However, this increase in GPP was offset by a large increase in autotrophic respiration (RA; Figure 4), driven primarily by higher growth and leaf respiration rates across all PFTs (notably, the ED-2.2 default is _zero growth respiration_ for all temperate hardwood PFTs; Figure 3).
+The resulting net primary productivity (NPP) had similar peak values under default and median parameters, though the temporal patterns were quite different in most model configurations (Figure 4).
+
+Second, the variation across model structures was much higher, with every change in model structure exerting a noticeable effect on flux variability (Figure 4).
+The most dramatic example is that, with median parameter values, simulations with the finite canopy radius produced much lower net productivity and heterotrophic respiration than simulations with a closed canopy in the second half of the simulation.
+Yet again, interactions between configurations were significant.
+For example, under a closed canopy configuration, enabling trait plasticity caused interannual variability in NPP to decrease with a two-stream RTM and increase with a multiple-scatter RTM.
+
 ```{r default-median-lai , fig.cap = default_median_lai_cap}
 ### Figure 5
 default_median_lai_cap <- paste(
@@ -416,17 +427,11 @@ default_median_lai_cap <- paste(
 fig("default-median-lai.png")
 ```
 
-The above differences in median parameter led to ED2 runs that differed from the default runs in several important ways.
-First, throughout all simulations and across all model structures, autotrophic respiration was several times higher with median parameter estimates compared to default values.
-This is driven primarily by higher median values for growth and leaf respiration across all PFTs (notably, the ED2 default is a growth respiration of _zero_ for all temperate hardwood PFTs).
-In some cases, this is compensated by an increase in gross primary productivity (driven by higher Vcmax values across all PFTs), leading to similar net primary productivity values to the default parameter runs.
-Second, the variation across model structures is much higher, with every change in model structure exerting a noticeable effect on flux dynamics.
-The most dramatic example is that, with median parameter values, all of the simulations with the finite canopy radius produced much lower productivity and heterotrophic respiration than simulations with a closed canopy.
-Third, even where net primary productivity is similar between default and median runs, the underlying forest composition is very different.
-Under the default parameterization, ED2 produces forests dominated by Early Hardwoods, with an understory of small mid- and even smaller late-hardwood trees that eventually die out.
-However, with the median parameterization, ED2 starts out with forests dominated by _mid_-hardwood species that are quickly (pre-1910 to 1930, depending on configuration) replaced with pine, which remains the dominant canopy species throughout the rest of the simulation.
-Exploratory analyses (results not shown) show that the main parameters responsible for this compositional trajectory are SLA (especially the higher SLA of pine and mid-hardwood), Vcmax, and growth respiration.
-While the uncertainty in growth respiration is large, we emphasize that SLA and Vcmax are well constrained by data for all PFTs considered in this analysis.
+Third, even where NPP was similar between default and median runs, the underlying forest composition was very different.
+With the default parameterization, ED-2.2 produces forests dominated by Early Hardwoods, with an understory of small mid- and even smaller late-hardwood trees that eventually die out.
+However, with the median parameterization, ED-2.2 starts out with forests dominated by _mid_-hardwood species that are quickly (pre-1910 to 1930, depending on configuration) replaced with pine, which remains the dominant canopy species throughout the rest of the simulation.
+Exploratory analyses (results not shown) show that the main parameters responsible for this compositional trajectory are SLA (especially the higher SLA of pine and mid-hardwood), V~cmax~, and growth respiration.
+While the uncertainty in growth respiration is large, we emphasize that SLA and V~cmax~ are well constrained by data for all PFTs considered in this analysis.
 
 ## Structure vs. parameter uncertainty
 
