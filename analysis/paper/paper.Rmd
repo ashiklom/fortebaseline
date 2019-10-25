@@ -388,10 +388,10 @@ param_dist_cap <- paste(
 fig("param-dist.png")
 ```
 
-Parameter estimates from the trait meta-analysis were often substantially different from the ED2 defaults.
-In many cases, median parameter estimates were different entirely because of the choice of prior distributions (though, in almost all cases, the distributions provided reasonably high likelihood to ED2 default parameter values).
+Parameter estimates from the trait meta-analysis were often substantially different from the ED-2.2 defaults (Figure 3).
+In many cases, median parameter estimates were different entirely because of the choice of prior distributions.
 However, in several important cases, parameters well-constrained by data produced values substantially different from the ED2 defaults.
-For example, ED2 default values for SLA were too low for all PFTs except Early Hardwoods, and default values for Vcmax values were too low for all PFTs.
+For example, ED-2.2 default values for V~cmax~ were too low for all PFTs, and default values for SLA were too low for all PFTs except Early Hardwoods.
 
 ```{r default-median-flux, fig.cap = default_median_flux_cap}
 ### Figure 4
