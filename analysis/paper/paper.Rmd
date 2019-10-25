@@ -561,48 +561,36 @@ Future work will: (1) Calibrate ED2.2 disturbance response to experimental obser
 
 ## Drivers of uncertainty
 
-**Parameter uncertainty was the dominant driver of uncertainty in our analysis**.
-Different parameter combinations led to **huge ranges in ensemble predictions of ensemble variables** -- NPP ranged from 0 to almost 2x the observed, and LAI was up to 3x observed (though more tightly clustered around zero) (Figure TODO).
-Moreover, different parameter combinations produced **qualitatively different ecological narratives** (Figure TODO).
-**Parameter uncertainty has implications beyond C cycling**---differences in species composition and relative abundance have implications for forest management and wildlife conservation, among others.
+Our second question was: What is the relative contribution of structural and parameter uncertainty to C cycling and ecological dynamics at UMBS?
+We found that **parameter uncertainty was by far the dominant driver of uncertainty in our simulations**.
+Different parameter combinations led to **huge ranges in ensemble predictions of ensemble variables**, with NPP and LAI ranging from zero to more than twice the ensemble mean estimates (Figures 6, 7).
+Moreover, different parameter combinations produced **qualitatively different ecological narratives** (Figures 8. 9).
+Therefore, **parameter uncertainty has implications beyond C cycling**---differences in species composition and relative abundance have implications for forest management and wildlife conservation, among others (REFS).
 
 The dominance of parameter uncertainty over structural uncertainty in our results suggests that **constraining parameter uncertainty should be a higher priority than model development**.
-Parameter uncertainty can be constrained in two different ways:
-Using observational data if available;
-and, for parameters "that cannot be directly observed", using "quantitative/algorithmic" model calibration techniques (e.g. Fer, other papers).
-For example, leaf optical properties (i.e. reflectance, transmittance) are both measurable and highly influential, and therefore should be a priority for new data collection.
-In contrast, "growth respiration factor" is an empirical coefficient and not measurable, but highly influential (c.f. Dietze, Raczka), and therefore should be constrained through calibration.
+Parameter uncertainty can be reduced in two different ways:
+Directly constraining parameters using observational data (for parameters that can be observed directly, such as plant functional traits) [@lebauer_2013_facilitating],
+or indirectly constraining parameters through algorithmic model calibration techniques [@fer_2018_linking].
+For example, leaf optical properties (i.e. reflectance, transmittance) are both measurable and highly influential [see also @viskari_2019_influence], and therefore should be a priority for new data collection.
+In contrast, "growth respiration factor" is an empirical coefficient and not measurable, but highly influential [see also @dietze_2014_quantitative; @raczka_2018_what], and therefore should be constrained through calibration.
 
-(
-So **which parameters are a research priority**?
-Leaf optical properties often do not get a lot of attention, but are important [see also, @viskari_2019_influence].
-Also, soil-plant water conductance and growth respiration -- both of these were important in @dietze_2014_quantitative.
-(Compare also to @raczka_2018_what, @pandit_2018_optimizing).
-)
+**Importantly, efforts to reduce model uncertainty are most effective when they target parameters that are poorly constrained and to which the model is most sensitive**.
+For parameters that are already well constrained by data, the marginal value of additional measurements may be limited.
+For example, ED-2.2 is highly sensitive to SLA [@dietze_2014_quantitative; @pandit_2018_optimizing], but thanks to the large number of SLA observations, we were able to estimate it very precisely (Figure 3) and, as a result, it was not a significant source of uncertainty in our analysis (Figure 10).
+At the same time, some parameters have relatively modest impacts on model outputs---for instance, nonlocal dispersal and background mortality rate in our study (Figure 3, 10)---and therefore, reducing their uncertainties is not an effective way to improve model predictions.
+Ultimately, this points to the value of model-data feedbacks [@dietze_2013_improving] in advancing ecological research and setting future research agendas.
 
-<!-- From Introduction: -->
-<!-- Another recent study assessed parameter uncertainty in ED2 as part of its overall goal of parameterizing the model for sagebrush [@pandit_2018_optimizing]. -->
-<!-- They found that the most important parameters were specific leaf area, the maximum rate of carbon fixation (V~cmax~), slope of stomatal conductance, the fine-root to leaf carbon ratio, and the fine root turnover rate. -->
-
-
-**Parameter uncertainty is not synonymous with sensitivity**.
-Many of the parameters to which model outputs are most sensitive are already well constrained by data and do not contribute as much to predictive uncertainty (Figure TODO).
-SLA and Vcmax fall into this category.
-Although parameter uncertainty is still large, this means that **targeted data collection works and that we are moving in the right direction**!
-This speaks to the value of looking at not just sensitivity, but partial variance [@lebauer_2013_facilitating; @dietze_2014_quantitative].
-
-Although parameter uncertainty dominated, **structural and parameter uncertainty interacted in important ways**.
-Individual model structure changes had relatively modest impacts.
-
-* Interactive effects of different structures -- not additive
-* Interactions between parameter and structural uncertainty -- 
-  - For example, the relative importance of different parameters to predictive uncertainty (Figure TODO) differed across model structures (Figure 3).
-
-Collectively, this means that **sensitivity and uncertainty analyses are not necessarily generalizable across models**.
+Although parameter uncertainty was larger in magnitude than structural uncertainty, model structure played an important role in shaping the nature of that uncertainty.
+The consequences of individual model structure changes were *usually* modest, but with several dramatic exceptions (Figure 4).
+Moreover, we found bi-directional interactions between structural and parameter uncertainty:
+Different parameter values (especially ones far removed from ED-2.2 defaults) influenced ED-2.2 sensitivity to structural changes (Figures 4, 5),
+and changes to model structure in turn changed the relative importance of specific parameters to overall uncertainty (Figure 10).
+Collectively, this means that **sensitivity and uncertainty analyses are not necessarily generalizable across models**, and highlights the importance of model intercomparison studies.
+It also reinforces our argument that changing model structure---particularly if such changes increase model complexity---should be pursued with extreme caution.
 
 # Conclusions
 
-<!-- TODO -->
+{TODO}
 
 # Acknowledgements
 
