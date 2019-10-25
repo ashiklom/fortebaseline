@@ -24,8 +24,10 @@ abstract: |
   (2) What are the relative contributions of parameter vs. structural uncertainty?
   We ran ensembles of the Ecosystem Demography model v2.2 (sampling over parameter uncertainty) from 1900 to 2000 with different representations of key processes important to competition for light.
   We then compared the magnitude of structural (across representations) and parameter (within each representation) uncertainty, and assessed which submodel-parameter combinations reproduced observed C fluxes and succession.
-  Our simulations agreed well with observed net primary productivity but systematically underestimated leaf area index.
-  Overall, parameter uncertainty contributed more than structural uncertainty to total simulation uncertainty, but the amount of parameter uncertainty varied with model structure.
+  On average, our simulations underestimated both net primary productivity (NPP) and leaf area index (LAI) after 100 simulation years, though NPP estimates at peak productivity (20-50 years into the simulations) were closer to observations.
+  However, parameter uncertainty was large; at any given timestep, both NPP and LAI ranged from ~0 to >200% of their mean value.
+  Although many simulations matched either the observed NPP or observed LAI at some point during the simulation, only a small minority of individual runs matched both.
+  Structural uncertainty was less important than parameter uncertainty, but model configuration did influence the ecological dynamics within a given parameter set, and affected which parameters were most influential.
   We conclude that: (1) targeted data collection to constrain vegetation model parameters should be a higher priority than model development; (2) parameter sensitivity analyses are not necessarily generalizable across model structures; and (3) robust model validation requires scrutiny of multiple different variables, including those related to vegetation productivity, structure, and composition.
 keywords: |
   Dynamic vegetation modeling; carbon cycle; forest succession
