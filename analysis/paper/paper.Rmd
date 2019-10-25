@@ -558,8 +558,6 @@ Parameter sensitivity for total LAI was similar to that of NPP (results not show
 <!-- TODO Dig into this more -->
 <!-- TODO Check this analysis. Look at pairs plots of trait vs. variable, and my SA spline fits. -->
 
-{TODO: Basic analysis of contributions from parameter interactions, a la Raczka et al. 2018? I expect these will be important.}
-
 # Discussion
 
 The overarching objective of this study was to investigate how model structure and parameters interact in multidecadal simulations of forest ecosystem productivity and community assembly.
