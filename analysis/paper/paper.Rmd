@@ -602,6 +602,11 @@ Also, soil-plant water conductance and growth respiration -- both of these were 
 (Compare also to @raczka_2018_what, @pandit_2018_optimizing).
 )
 
+<!-- From Introduction: -->
+<!-- Another recent study assessed parameter uncertainty in ED2 as part of its overall goal of parameterizing the model for sagebrush [@pandit_2018_optimizing]. -->
+<!-- They found that the most important parameters were specific leaf area, the maximum rate of carbon fixation (V~cmax~), slope of stomatal conductance, the fine-root to leaf carbon ratio, and the fine root turnover rate. -->
+
+
 **Parameter uncertainty is not synonymous with sensitivity**.
 Many of the parameters to which model outputs are most sensitive are already well constrained by data and do not contribute as much to predictive uncertainty (Figure TODO).
 SLA and Vcmax fall into this category.
