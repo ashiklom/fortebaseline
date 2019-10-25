@@ -455,17 +455,6 @@ pft_jitterplot_cap <- paste(
 fig("pft-jitterplot.png")
 ```
 
-```{r pft-ternplot, fig.cap = pft_tern_cap}
-pft_tern_cap <- paste(
-  htmlfig(),
-  "Ternary plot of predicted PFT composition in 1920, 1950, and 1980.",
-  "Ternary coordinates are as follows:",
-  "L is Early Hardwood; T is the sum of Mid and Late Hardwood; R is Pine.",
-  "Triangle fill color indicates the number of points within that bin."
-)
-fig("pft-tern.png")
-```
-
 Trajectories of species composition also varied widely by model configuration (Figure X, Y).
 Under all configurations, most ensemble members were dominanted by a single PFT, and the sustained presence of more than 2 PFTs was limited to only a handful specific ensemble members across all configurations.
 However, _which_ PFT was dominant varied depending on the parameter combination, and any of the four PFTs became the dominant one some subset of simulations.
