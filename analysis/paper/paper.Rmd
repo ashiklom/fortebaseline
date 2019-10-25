@@ -335,24 +335,6 @@ We did this by performing a sensitivity and variance decomposition analysis foll
 Briefly, this analysis contains uses a spline to estimate the relationship between individual parameters and output variables and then uses these splines to predict the variance in the output variable attributable to individual parameters ("partial variance").
 For more details, see @lebauer_2013_facilitating.
 
-First, we assessed how ED-2.2 predictions of plot-level ecosystem properties and composition varied across model structures and parameter values.
-For plot-level ecosystem properties, we examined mean annual gross (GPP) and net primary productivity (NPP), and autotrophic (RA) and heterotrophic respiration (RH), as well as total leaf area index (LAI) averaged June-August.
-We compared predicted NPP and LAI values against measurements of NPP and LAI at UMBS averaged over years XXXX-YYYY. <!-- TODO -->
-Although these observations occurred later than the years of the simulation, we found that the distributions of ED-2.2 predictions of NPP and LAI were relatively stable after 1975 and therefore constituted a reasonable approximation of what ED-2.2 would have predicted out to the present day.
-For ease of interpretation, we only show the top eight parameters in terms of partial variance for every model configuration.
-
-For composition, we looked at annual means of summer aboveground biomass and leaf area index
-
-- Overall summary:
-    - Overall parameter uncertainty -- Time-series plots of total annual GPP and NPP, and maximum LAI and AGB, averaged across ensemble members
-    - Impact of parameter uncertainty on ecological trajectories -- plot of max annual LAI by PFT
-    - Both compared against observations of recently observed LAI and NPP at UMBS (e.g. FASET, FoRTE)
-- Uncertainty analysis:
-    - Parameter vs. structural uncertainty -- Variance in mean annual GPP from 19XX to 19YY across ensembles within model structure, and compare against 
-    - Breakdown of parameter uncertainty -- PEcAn sensitivity and uncertainty analysis [@lebauer_2013_facilitating; @dietze_2014_quantitative]
-- Details of structural uncertainty:
-    - Vertical profiles of radiation, traits?
-    
 All analyses for this work were performed using R 3.6 (see "Colophon" for full details).
 Code and supporting data for reproducing this analysis are publicly available on the Open Science Framework (OSF) at https://osf.io/dznuf/.
 
