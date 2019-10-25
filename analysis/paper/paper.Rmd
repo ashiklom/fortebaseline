@@ -342,7 +342,8 @@ Code and supporting data for reproducing this analysis are publicly available on
 
 ## Impacts of structure alone
 
-```{r , fig.cap = structure_default_cap}
+```{r structure-compare-default, fig.cap = structure_default_cap}
+### Figure 1
 structure_default_cap <- paste(
   htmlfig(),
   "Annual NPP and LAI from ED2 runs",
@@ -356,7 +357,8 @@ Different model structures agree for the first half of the simulation, at which 
 Post 1950, the combination of two-stream radiative transfer, finite canopy radius, and plastic traits had the highest sustained productivity, followed by the same configuration except with static traits, with the remaining configurations having very similar results.
 Interestingly, the effects of changing individual model configurations are not additive --- for example, enabling trait plasticity had a different effect depending on whether the two-stream or multiple-scatter canopy RTM was used.
 
-```{r , fig.cap = structure_default_light_cap}
+```{r structure-compare-light, fig.cap = structure_default_light_cap}
+### Figure 2
 structure_default_light_cap <- paste(
   htmlfig(),
   "Radiation profiles of cohorts from ED2 runs with",
@@ -377,6 +379,7 @@ However, none of the configurations were able to sustain any PFTs other than ear
 ## Default vs. median parameters
 
 ```{r param_dist, fig.cap = param_dist_cap}
+### Figure 3
 param_dist_cap <- paste(
   htmlfig(),
   "Input parameter distributions from PEcAn trait meta-analysis."
@@ -390,6 +393,7 @@ However, in several important cases, parameters well-constrained by data produce
 For example, ED2 default values for SLA were too low for all PFTs except Early Hardwoods, and default values for Vcmax values were too low for all PFTs.
 
 ```{r default-median-flux, fig.cap = default_median_flux_cap}
+### Figure 4
 default_median_flux_cap <- paste(
   htmlfig(),
   "Comparing results of ED2 with default parameters and",
@@ -400,6 +404,7 @@ fig("default-median-fluxes.png")
 ```
 
 ```{r default-median-lai , fig.cap = default_median_lai_cap}
+### Figure 5
 default_median_lai_cap <- paste(
   htmlfig(),
   "Comparing results of ED2 PFT-level LAI",
@@ -425,6 +430,7 @@ While the uncertainty in growth respiration is large, we emphasize that SLA and 
 ## Structure vs. parameter uncertainty
 
 ```{r summary-ts-plot, fig.cap = summary_ts_cap}
+### Figure 6
 summary_ts_cap <- paste(
   htmlfig(),
   "ED2 plot-level predictions of",
@@ -453,6 +459,7 @@ Within all configurations, most (>90%) ensemble members under-predicted observed
 Predictions of peak NPP (between 1910 and 1950 for most simulations) were closer to the observed present-day NPP (though also with large ensemble spread), but predictions of LAI during this period were still too low.
 
 ```{r pairs-time, fig.cap = pairs_time_cap}
+### Figure 7
 pairs_time_cap <- paste(
   htmlfig(),
   "ED2 predictions of annual mean NPP and growing-season LAI in 1920, 1950, and 1999",
@@ -470,6 +477,7 @@ Specifically, compared to runs with the default closed canopy, runs with a finit
 Although many simulations matched _either_ the observed net primary productivity or the observed leaf area index, only a small minority of individual runs matched _both_.
 
 ```{r pft-jitterplot, fig.cap = pft_jitterplot_cap}
+### Figure 8
 pft_jitterplot_cap <- paste(
   htmlfig(),
   "Fraction of total aboveground biomass (AGB)",
@@ -485,6 +493,7 @@ Under all configurations, most ensemble members were dominanted by a single PFT,
 However, _which_ PFT was dominant varied depending on the parameter combination, and any of the four PFTs became the dominant one some subset of simulations.
 
 ```{r lai-pft-plot, fig.cap = lai_pft_cap}
+### Figure 9
 lai_pft_cap <- paste(
   htmlfig(),
   "PFT-level predictions of leaf area index (LAI) by model configuration and parameterization.",
@@ -532,6 +541,7 @@ Finally, using a multiple-scatter (secondary colors) rather than a two-stream (p
 -->
 
 ```{r partial-variance-npp, fig.cap = partial_variance_npp_cap}
+### Figure 10
 partial_variance_npp_cap <- paste(
   htmlfig(),
   "Contributions of individual parameters to predicted uncertainty in NPP,",
