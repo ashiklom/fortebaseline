@@ -177,9 +177,9 @@ The official ED2 source code is available at https://github.com/EDmodel/ED2, and
 
 ## Submodels
 
-In this study, we ran a factorial combination of the following ED-2.2 configurations: (1) two-stream vs. multiple-scatter canopy radiative transfer models; (2) infinite vs. finite crown area (a.k.a. complete vs. partial shading); and (3) static vs. light-plastic traits.
+In this study, we ran a factorial combination of the following ED-2.2 configurations: (1) two-stream vs. multiple-scatter canopy radiative transfer models (RTMs); (2) infinite vs. finite crown area (a.k.a. complete vs. partial shading); and (3) static vs. light-plastic traits.
 
-Both canopy radiative transfer models in ED-2.2 resolve the full vertical radiation profile within a patch as a function of canopy structure (leaf and wood area indices, crown area, leaf angle distribution) and incident solar radiation, following the definitions in CLM 4.5 [@clm45_note].
+Both canopy RTMs in ED-2.2 resolve the full vertical radiation profile within a patch as a function of canopy structure (leaf and wood area indices, crown area, leaf angle distribution) and incident solar radiation, following the definitions in CLM 4.5 [@clm45_note].
 Both models also use identical definitions for the optical properties of a single canopy layer as a function of leaf and wood optical properties, leaf angle distribution, canopy clumping, solar zenith angle, and leaf, wood, and crown area indices.
 Both models represent direct (a.k.a. "beam") radiation as an exponentially decaying process, and solve for the diffuse (a.k.a. "hemispherical", "isotropic") radiation at each layer using a linear matrix equation.
 Where the models differ is in the terms of this matrix equation.
@@ -209,7 +209,7 @@ Table 1: ED-2.2 submodel descriptions
 | **Crown model** |||
 | **C**losed (default) | Cohort crowns take up entire patch area. Competition for light based only on height. | Light |
 | **F**inite | Cohort crown area is proportional to DBH according to PFT-specific allometry. | Dark |
-| **Radiative transfer model** |||
+| **Radiative transfer model (RTM)** |||
 | **T**wo-stream (default) | Two-stream approximation [@sellers_1985_canopy; @clm45_note] | Primary (red, blue) |
 | **M**ulti-scatter | Multiple-scatter approximation, following [@zhao_2005_multiple] | Secondary (green, orange) |
 | **Trait plasticity** |||
@@ -507,8 +507,8 @@ fig("lai-pft.png")
 
 Model structure and parameters interacted to determine the community assembly and dynamics of each simulation, with consequences for overall ecosystem productivity that varied by model structure (Figure X).
 Parameter sets **A** and **B** both resulted in similar patterns of immediate and complete dominance by mid- and late-hardwood, respectively, followed by gradual decline to near-zero LAI.
-In both of these simulations, peak productivity was higher and was sustained for longer when the canopy was closed rather than finite, and this difference was larger under a two-stream rather than a multiple-scatter radiative transfer model.
-Trait plasticity had relatively little effect on most of these two simulations, though in parameter set **B**, under the combination of closed canopy, multiple-scatter radiative transfer, and plastic traits, pine overtook the dominant late hardwood PFT starting around 1975.
+In both of these simulations, peak productivity was higher and was sustained for longer when the canopy was closed rather than finite, and this difference was larger under a two-stream rather than a multiple-scatter RTM.
+Trait plasticity had relatively little effect on most of these two simulations, though in parameter set **B**, under the combination of closed canopy, multiple-scatter RTM, and plastic traits, pine overtook the dominant late hardwood PFT starting around 1975.
 Both of these parameter sets also had the lowest LAI of the five selected here, with a peak LAI of 1 in **A** and 2 in **B**.
 Parameter set **C** showed much more variety in compositional dynamics with model structure:
 In all cases, mid-hardwoods began as the dominant species and were eventually overtaken by pine under a closed canopy and plastic traits, or early hardwood in all other cases (though with a closed canopy and static traits, the final LAI was low).
