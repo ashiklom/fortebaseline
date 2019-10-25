@@ -306,14 +306,13 @@ All parameters not described in this section were set to their ED-2.2 PFT-specif
 
 ## Modeling workflow
 
-For each factorial combination of ED-2.2 configurations (described above), we ran 100 ensemble members from 1901 to 2000.
-Each ensemble member was initialized from a "near-bare ground" condition: An equal number of seedlings of each plant functional type (see previous section) at the minimum resolvable size.
-Driving meteorological data was 6-hourly CRU-NCEP <!-- TODO ref. More here? --> combined with an annual atmospheric CO~2~ record from Law-Dome ice core [@etheridge_1998_historical] and Mauna Loa observatory [@thoning_1989_atmospheric].
+For each factorial combination of model configurations (described above), we ran ED-2.2 once with its default parameter values, once at the posterior median estimates from the meta-analysis, and 500 times with parameters sampled randomly from the meta-analysis posterior distributions.
+For the latter, the same 500 parameter samples were used for all model structures to allow us to independently evaluate the impacts of model structure at specific parameter values.
+Each ensemble member ran from January 1, 1902 through December 31, 1999 and was initialized from a "near-bare ground" condition: An equal number of seedlings of each plant functional type (see previous section) at the minimum resolvable size.
+Driving meteorological data was 6-hourly CRU-NCEP <!-- TODO ref. More here? --> combined with an annual atmospheric CO~2~ record from Law-Dome ice core [@etheridge_1998_historical] and Mauna Loa observatory [@thoning_1989_atmospheric] linearly interpolated to 3-hourly resolution.
 Soil texture was set to 92% sand, 7% silt, and 1% clay, per site-level observations in [@gough_2010_wood].
 The initial soil moisture profile was set to the average soil moisture profile reported in the UMBS Ameriflux ancillary data (https://ameriflux.lbl.gov/sites/siteinfo/US-UMd).
-
-<!-- TODO This would probably fit better somewhere else.  -->
-Driver uncertainty is outside the scope of this study, and initial condition uncertainty is minimized by our experimental design, which is conditioned on a specific initial condition (near bare ground).
+By using the same initial conditions and drivers, we do not consider initial condition and driver uncertainty, which are outside the scope of this study.
 
 ## Analysis of results
 
