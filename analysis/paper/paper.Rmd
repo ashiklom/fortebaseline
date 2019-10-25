@@ -427,7 +427,7 @@ default_median_lai_cap <- paste(
 fig("default-median-lai.png")
 ```
 
-Third, even where NPP was similar between default and median runs, the underlying forest composition was very different.
+Third, even where NPP was similar between default and median runs, the underlying forest composition was very different (Figure 5).
 With the default parameterization, ED-2.2 produces forests dominated by Early Hardwoods, with an understory of small mid- and even smaller late-hardwood trees that eventually die out.
 However, with the median parameterization, ED-2.2 starts out with forests dominated by _mid_-hardwood species that are quickly (pre-1910 to 1930, depending on configuration) replaced with pine, which remains the dominant canopy species throughout the rest of the simulation.
 Exploratory analyses (results not shown) show that the main parameters responsible for this compositional trajectory are SLA (especially the higher SLA of pine and mid-hardwood), V~cmax~, and growth respiration.
@@ -450,17 +450,9 @@ summary_ts_cap <- paste(
 fig("summary-ts-plot.png")
 ```
 
-<!-- - Structure x parameter uncertainty -->
-<!--   - Parameter uncertainty is much larger than structural uncertainty -->
-<!--   - Figure: Pairs of NPP, LAI, and PFT fraction, for each structure (first draw all, then pick relevant subsets) -->
-<!--   - Q: How many runs end up with the right composition (EH-dominated) at peak (~1925), ~1950, and 1999? -->
-
-<!-- TODO Should one of these be Early Hardwood (or other PFT?) LAI/biomass fraction -->
-<!-- TODO Drop some of these variables? -->
-
-Net primary productivity (NPP) and leaf area index (LAI) varied with both parameter value and model structure (Figure X).
-All model configurations exhibited a similar trajectory of rapid growth in the first 15-20 years followed by a gradual decline to a lower, stable value around 1975 (with individual ensemble members sometimes undergoing sudden collapse in specific years).
-The ensemble spread within any single configuration---i.e. the parameter uncertainty---was similar and large across all configurations; both NPP and LAI varied 5-10 fold at any given timestep depending on parameter values.
+Net primary productivity (NPP) and total leaf area index (LAI) varied with both parameter value and model structure (Figure 6).
+All model configurations exhibited a similar mean trajectory of rapid growth in the first 15-20 years followed by a gradual decline to a lower, stable value around 1975 (with individual ensemble members sometimes undergoing sudden collapse in specific years).
+The ensemble spread within any single configuration---i.e. the parameter uncertainty---was similar and large across all configurations; both NPP and LAI varied from close to zero to more than twice the mean value at any given timestep.
 Within all configurations, most (>90%) ensemble members under-predicted observed present-day NPP and LAI by year 2000, though individual ensemble members from some configurations over-predicted one or both variables.
 Predictions of peak NPP (between 1910 and 1950 for most simulations) were closer to the observed present-day NPP (though also with large ensemble spread), but predictions of LAI during this period were still too low.
 
@@ -478,9 +470,9 @@ pairs_time_cap <- paste(
 fig("npp-lai-pairs.png")
 ```
 
-The emergent relationship between NPP and LAI was similar across model configurations early in the runs, but became more sensitive to model configuration later into the runs.
-Specifically, compared to runs with the default closed canopy, runs with a finite canopy were more likely to have higher LAI values for the same level of NPP, especially later into the simulation.
-Although many simulations matched _either_ the observed net primary productivity or the observed leaf area index, only a small minority of individual runs matched _both_.
+The emergent relationship between NPP and LAI was similar across model configurations early in the runs, but became more sensitive to model configuration later into the runs (Figure 7).
+Compared to runs with a closed canopy, runs with a finite canopy usually had higher LAI for the same NPP, especially later into the simulation.
+Although many simulations matched _either_ the observed NPP or the observed LAI, only a small minority of individual runs matched _both_.
 
 ```{r pft-jitterplot, fig.cap = pft_jitterplot_cap}
 ### Figure 8
@@ -488,15 +480,17 @@ pft_jitterplot_cap <- paste(
   htmlfig(),
   "Fraction of total aboveground biomass (AGB)",
   "of each plant functional type (PFT)",
-  "predicted by different parameter-configuration combionations",
-  "of ED2."
+  "predicted by different parameter-configuration combinations",
+  "of ED2.",
+  "Each point represents the AGB fraction of a single PFT",
+  "in a single ensemble member at the given point in time."
 )
 fig("pft-jitterplot.png")
 ```
 
-Trajectories of species composition also varied widely by model configuration (Figure X, Y).
-Under all configurations, most ensemble members were dominanted by a single PFT, and the sustained presence of more than 2 PFTs was limited to only a handful specific ensemble members across all configurations.
-However, _which_ PFT was dominant varied depending on the parameter combination, and any of the four PFTs became the dominant one some subset of simulations.
+The large parameter uncertainty in NPP and LAI also extended to species composition (Figure 8).
+Under all configurations, at any moment in time, most ensemble members were dominated by a single PFT, and the sustained coexistence of more than two PFTs was limited to only a handful specific ensemble members across all configurations.
+However, _which_ PFT was dominant depended strongly on parameter values, and any of the four PFTs became the dominant one in some subset of simulations.
 
 ```{r lai-pft-plot, fig.cap = lai_pft_cap}
 ### Figure 9
@@ -504,32 +498,21 @@ lai_pft_cap <- paste(
   htmlfig(),
   "PFT-level predictions of leaf area index (LAI) by model configuration and parameterization.",
   "Each row of plots is a simulation with the same set of parameters across model configurations.",
-  "Letters correspond to the labels in Figure 3.",
+  "Letters correspond to the labels in Figure 7.",
   "Note that these are predictions of total leaf area index summed across all cohorts of the same PFT,",
   "meaning that higher LAI in one PFT does not necessarily indicate dominance, size, etc."
 )
 fig("lai-pft.png")
 ```
 
-Model structure and parameters interacted to determine the community assembly and dynamics of each simulation, with consequences for overall ecosystem productivity that varied by model structure (Figure X).
+Model structure and parameters interacted to determine the community assembly and dynamics of each simulation, with consequences for overall ecosystem productivity that varied by model structure (Figure 9).
 Parameter sets **A** and **B** both resulted in similar patterns of immediate and complete dominance by mid- and late-hardwood, respectively, followed by gradual decline to near-zero LAI.
-In both of these simulations, peak productivity was higher and was sustained for longer when the canopy was closed rather than finite, and this difference was larger under a two-stream rather than a multiple-scatter RTM.
+In both of these simulations, peak productivity was higher and more sustained when the canopy was closed rather than finite, and this difference was larger under a two-stream rather than a multiple-scatter RTM.
 Trait plasticity had relatively little effect on most of these two simulations, though in parameter set **B**, under the combination of closed canopy, multiple-scatter RTM, and plastic traits, pine overtook the dominant late hardwood PFT starting around 1975.
 Both of these parameter sets also had the lowest LAI of the five selected here, with a peak LAI of 1 in **A** and 2 in **B**.
 Parameter set **C** showed much more variety in compositional dynamics with model structure:
-In all cases, mid-hardwoods began as the dominant species and were eventually overtaken by pine under a closed canopy and plastic traits, or early hardwood in all other cases (though with a closed canopy and static traits, the final LAI was low).
+In all cases, mid-hardwoods began as the dominant species and were eventually overtaken by either pine (closed canopy and plastic traits) or early hardwood (all other cases; though with a closed canopy and static traits, the final LAI was low).
 Parameter sets **D** and **E** had the highest productivity of these five sets, and were characterized by strong dominance of Early Hardwood and Pine, respectively.
-
-## Uncertainty analysis
-
-<!--
-Except for the configurations with persistently low productivity, parameter uncertainty (across ensembles within each model configuration) was much larger than structural uncertainty (variance in ensemble means across configurations; Figure 4).
-The relative importance of parameter uncertainty varied with both model configuration and the variable in question.
-Allowing SLA and V~cmax~ to vary with light level (warm colors, as opposed to static traits -- cool colors) slightly reduced variability in primary productivity, slightly increased variability in Shannon diversity, and had mixed effects on aboveground biomass and total leaf area.
-Enabling the finite canopy radius (dark colors; compared to closed canopy -- light colors) dramatically decreased variability in primary productivity and Shannon diversity and increased variability in leaf area, and had mixed effects on aboveground biomass.
-reduced variance in aboveground biomass, diversity, and primary productivity.
-Finally, using a multiple-scatter (secondary colors) rather than a two-stream (primary colors) radiative transfer scheme increased variance in leaf area index, aboveground biomass, and diversity, but did not have a consistent effect on variance in productivity productivity.
--->
 
 ```{r partial-variance-npp, fig.cap = partial_variance_npp_cap}
 ### Figure 10
@@ -540,25 +523,18 @@ partial_variance_npp_cap <- paste(
   "Panels on the left are for the \"peak\" NPP period (averaged over 1925-1950),",
   "and on the right are for the end of the simulation (averaged over 1975-1999)",
   "Each panel shows the top 8 parameter values in terms of their variance contribution.",
-  "Input parameter distributions are shown in Figure 1.",
+  "Input parameter distributions are shown in Figure 3.",
   "Note that x-axis scales vary across panels."
 )
 fig("partial-variance-npp.png")
 ```
 
-The parameters that contributed most to overall model predictive uncertainty ("partial variance") varied with model structure and time period considered.
-In general, uncertainties in pine growth respiration factor and early hardwood plant-soil water conductance contributed the most to parameter uncertainty in NPP during the "peak" period (1925-1950).
-{TODO: Fill in the rest of this text...}
-
-Parameter sensitivity for total LAI was similar to that of NPP (results not shown).
-
-<!-- This is old text... -->
-<!-- ...differed from parameters to which the model was most sensitive (Figure 5), largely driven by the fact that many of the parameters with the highest sensitivity (e.g. SLA, V~cmax~) were also well constrained by data (Figure 1). -->
-<!-- Leaf optical properties of at least one PFT were among the top 10 most important parameters across all configurations, and in multiple cases, were the most important. -->
-<!-- Other often important parameters were plant-soil water conductance (`water_conductance`), parameters related to adult mortality (`mort1,2,3`), and growth respiration. -->
-<!-- Again, patterns in partial variance were largely idiosyncratic across model configurations. -->
-<!-- TODO Dig into this more -->
-<!-- TODO Check this analysis. Look at pairs plots of trait vs. variable, and my SA spline fits. -->
+The parameters that contributed most to predictive uncertainty in NPP during the "peak" period (1920-1950) ("partial variance") varied with model structure (Figure 10).
+The "water availability factor" (a.k.a. plant-soil water conductance) for early hardwoods was the most or second-most important parameter for all but one model configuration (the ED-2.2 default---closed canopy, two-stream RTM, static traits---where it was not even in the top 8), and was particularly important in simulations with a finite canopy.
+The growth respiration factor, particularly of pine and, to a lesser extent, early hardwood, was also among the most influential parameters across most configurations.
+Which parameters were most important, and how important they were, varied with model configuration.
+For instance, the C balance ratio of mortality (`mort2`) of early hardwoods was among the top four most important parameters when the canopy was closed but mattered less when the canopy was finite.
+Similarly, parameters related to leaf optical properties had relatively higher importance in simulations with the two-stream model than the multiple-scatter model.
 
 # Discussion
 
