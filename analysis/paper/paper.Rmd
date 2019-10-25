@@ -353,9 +353,9 @@ structure_default_cap <- paste(
 fig("structure-compare-default.png")
 ```
 
-Different model structures agree for the first half of the simulation, at which point they started to diverge.
-Post 1950, the combination of two-stream radiative transfer, finite canopy radius, and plastic traits had the highest sustained productivity, followed by the same configuration except with static traits, with the remaining configurations having very similar results.
-Interestingly, the effects of changing individual model configurations are not additive --- for example, enabling trait plasticity had a different effect depending on whether the two-stream or multiple-scatter canopy RTM was used.
+Different model structures agreed for the first half of the simulation, at which point they started to diverge (Figure 1).
+Post 1950, the combination of two-stream RTM, finite canopy radius, and plastic traits had the highest productivity, followed by the same configuration with static traits, with the remaining configurations having very similar results.
+Interestingly, the effects of changing individual model configurations were not additive --- for example, enabling trait plasticity had a much stronger positive effect when paired with the two-stream canopy RTM than with the multiple-scatter canopy RTM.
 
 ```{r structure-compare-light, fig.cap = structure_default_light_cap}
 ### Figure 2
@@ -371,10 +371,11 @@ structure_default_light_cap <- paste(
 fig("default-light-levels.png")
 ```
 
-Differences in productivity across structures are perhaps best understood by looking at differences in resulting radiation profiles at different snapshots in time over the course of the simulation.
-Enabling the finite canopy radius increased the availability of light for understory cohorts throughout the simulation, with the most notable effects up to 1950.
-Under a closed canopy, switching from a two-stream to a multiple-scatter canopy radiative transfer model also enhanced the understory light environment, but to a lesser extent, and the brightest understory occurred under the combination of the two-stream radiative transfer and finite canopy radius.
-However, none of the configurations were able to sustain any PFTs other than early hardwoods by 1980, and only the unique combination of finite canopy radius and two-stream radiative transfer were able to sustain more than a single dominant cohort (2 early hardwood cohorts with static traits, and 3 with plastic traits).
+Differences in productivity across model structures were related to differences in composition and vertical canopy radiation profiles over the course of the simulation (Figure 2).
+Enabling the finite canopy radius increased the availability of light for understory cohorts throughout the simulation, particularly in the first half of the simulation.
+Again, however, the effects of model structures were not strictly additive:
+Switching from a two-stream to a multiple-scatter canopy RTM enhanced the understory light environment (albeit slightly) under a closed canopy, but the brightest understory occurred under the combination of the two-stream RTM and finite canopy.
+Despite these differences, by 1980 none of the configurations was able to sustain any PFTs other than early hardwoods, and only configurations with finite canopy and two-stream RTM were able to sustain more than a single dominant cohort (two early hardwood cohorts with static traits, and three with plastic traits).
 
 ## Default vs. median parameters
 
