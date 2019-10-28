@@ -14,8 +14,8 @@ npp_lai_pairs <- function(dat, year, labs) {
     geom_vline(xintercept = 3.97 + c(-1, 1) * 1.96 * 0.423,
                linetype = "dashed") +
     geom_point(color = "black", data = labs2) +
-    geom_label_repel(aes(label = label), data = labs2,
-                     min.segment.length = 0) +
+    geom_text_repel(aes(label = label), data = labs2,
+                    min.segment.length = 0) +
     scale_color_identity() +
     facet_wrap(vars(model), ncol = 2) +
     labs(x = "Total LAI", y = expression(NPP ~ (MgC ~ ha^-1 ~ year^-1))) +
@@ -49,7 +49,7 @@ plan <- bind_plans(plan, drake_plan(
     left_join(models, c("model_id")),
   npp_lai_pairs_yr = target(
     npp_lai_pairs(both_wide, .year, use_params),
-    transform = map(.year = c(1920, 1950, 1999))
+    transform = map(.year = c(1925, 1999))
   ),
   npp_lai_pairs_gg = target(
     plot_grid(npp_lai_pairs_yr, nrow = 1),

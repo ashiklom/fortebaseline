@@ -460,7 +460,7 @@ Predictions of peak NPP (between 1910 and 1950 for most simulations) were closer
 ### Figure 7
 pairs_time_cap <- paste(
   htmlfig(),
-  "ED2 predictions of annual mean NPP and growing-season LAI in 1920, 1950, and 1999",
+  "ED-2.2 predictions of annual mean NPP and growing-season LAI in 1925 and 1999",
   "by model type.",
   "Each point indicates a single ensemble run with a different set of parameters.",
   "Solid line is the best-fit generalized additive model (GAM).",
@@ -518,11 +518,11 @@ Parameter sets **D** and **E** had the highest productivity of these five sets, 
 ### Figure 10
 partial_variance_npp_cap <- paste(
   htmlfig(),
-  "Contributions of individual parameters to predicted uncertainty in NPP,",
+  "Contributions of individual parameters to predicted uncertainty in",
+  "average net primary productivity (NPP) over the period 1920-1950",
   "by model type.",
-  "Panels on the left are for the \"peak\" NPP period (averaged over 1925-1950),",
-  "and on the right are for the end of the simulation (averaged over 1975-1999)",
-  "Each panel shows the top 8 parameter values in terms of their variance contribution.",
+  "Each panel shows the top 8 parameter values by their fractional contribution",
+  'to parameter uncertainty ("partial variance").',
   "Input parameter distributions are shown in Figure 3.",
   "Note that x-axis scales vary across panels."
 )
@@ -545,14 +545,17 @@ The overarching objective of this study was to investigate how model structure a
 Our first question was: To what extent can the model, under any configuration, reproduce the observed reality?
 **Ensemble average trajectory matches traditional understanding of succession**---rapid growth to peak productivity, followed by gradual decline [@odum_1969_strategy_ecosystem_development]---but **happens too quickly** (Figure \@ref(fig:summary-ts-plot));
 real ecosystems sustain peak productivity for longer [@gough_2016_disturbance].
-This idea that ED2.2's main issue is that it is moving too quickly is supported by the fact that ED2.2 generally underestimates productivity after 100 years, but model **predictions at peak productivity are close to reality**.
-One reason ED2.2 is moving too quickly through succession is **missing mechanisms for sustaining productivity through early succession**.
-In particular, recent evidence points to the **important role of low-severity, high-frequency disturbances** in sustaining ecosystem productivity [@gough_2016_disturbance].
-ED2.2 has a mortality scheme, and indeed, parameters related to mortality were often among the top 10 most important parameters for predictive uncertainty (Figure \@ref(fig:partial-variance-npp)).
+Although ED-2.2 underestimates productivity after 100 years, model **predictions at peak productivity are close to reality**.
+One possible reason for the excessive pace of succession in ED-2.2 is **missing mechanisms for sustaining productivity through early succession**.
+In particular, recent evidence points to the **importance of low-severity, high-frequency disturbances** in sustaining ecosystem productivity [@gough_2016_disturbance].
+ED2.2 has a mortality scheme, and indeed, parameters related to mortality were often among the most important parameters for predictive uncertainty (Figure \@ref(fig:partial-variance-npp)).
 <!-- Maybe move this elsewhere? -->
 <!-- TODO Look at mortality across ED runs. Does it relate at all to results? -->
-However, **our simulations did not include other sources of disturbance**, such as partial harvests, extreme weather, and damage from insects and pathogens, which are common to this region [@amiro_2010_ecosystem] and which may contribute to sustaining productivity and dominance of early-successional forests [@gough_2016_disturbance].
+However, although our simulations used real meteorology (which included occasional extreme weather events), **we did not consider other sources of disturbance** common to this region [such as harvests, insects and pathogens, and fire; @amiro_2010_ecosystem], which may contribute to sustaining productivity and dominance of early-successional forests [@gough_2016_disturbance].
 Future work will: (1) Calibrate ED2.2 disturbance response to experimental observations (FoRTE), and (2) run long-term simulations with prescribed disturbance frequencies and see how they affect ecological dynamics.
+
+Under all but a small minority of parameter combinations, **ED-2.2 was unable to create---let alone sustain---a forest with any appreciable functional diversity**.
+The large majority of runs tended towards 
 
 - Figure \@ref(fig:pairs-time):
   - For the same LAI, closed canopy had higher productivity than finite. Why?
