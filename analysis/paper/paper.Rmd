@@ -1,5 +1,7 @@
 ---
-title: "FoRTE baseline"
+title: |
+  Structure and parameter uncertainty in centennial-scale projections
+  of community succession in an Upper Midwest temperate forest
 author:
   - Alexey N. Shiklomanov
   - Ben Bond-Lamberty
@@ -10,7 +12,7 @@ output:
     bookdown::html_document2:
       fig_caption: yes
       reference_docx: "../templates/template.docx" # Insert path for the DOCX file
-    pdf_document:
+    bookdown::pdf_document2:
       latex_engine: xelatex
 bibliography: references.bib
 csl: "../templates/ecology.csl"
@@ -70,7 +72,7 @@ m <- 0
 htmlfig <- function() {
   m <<- m + 1
   out <- paste0("**Figure ", m, "**:")
-  if (grepl("html", knitr::opts_knit$get("rmarkdown.pandoc.to"), ignore.case = TRUE)) {
+  if (knitr::is_html_output()) {
     out
   } else {
     invisible(NULL)
@@ -200,9 +202,9 @@ In the default configuration, all cohorts of a given plant functional type have 
 This ignores the globally-documented intraspecific trait variability as a function of light level [@niinemets_2010_review; @keenan_2016_global]. <!-- TODO Also, classical ecological succession theory bazzaz_1979_physiological? -->
 In the alternate configuration, as light level decreases (trees become more shaded), specific leaf area increases and V~cmax~ decreases, following empirical relationships from the tropics [@lloyd_2010_optimisation].
 
-These sub-models are summarized in Table 1.
+These sub-models are summarized in Table \@ref(tab:submodels).
 
-Table 1: ED-2.2 submodel descriptions
+Table: (\#tab:submodels) ED-2.2 submodel descriptions
 
 | Name | Description | Color |
 |------|-------------|-------|
@@ -219,9 +221,23 @@ Table 1: ED-2.2 submodel descriptions
 
 ## Parameter descriptions
 
+```{r param-table}
+tbl <- readr::read_csv(here(
+  "analysis", "data", "derived-data", "parameter-table.csv"
+))
+tbl <- subset(tbl, Ran == "yes", select = c(-unit_parsed, -Ran))
+tbl[["ED Name"]] <- sprintf("`%s`", tbl[["ED Name"]])
+kable(tbl, escape = is_latex_output(), caption = paste0(
+  "Parameter descriptions. ",
+  "For additional information, see the ",
+  "[ED2 model wiki](https://github.com/EDmodel/ED2/wiki/PFT-parameters)."
+), booktabs = TRUE) %>%
+  kable_styling(latex_options = "scale_down")
+```
+
 The full list of parameters in ED-2.2 is large, with over 100 parameters per plant functional type.
 A full sensitivity and uncertainty analysis across all of these parameters is outside the scope of this study.
-Instead, we selected a subset of parameters guided by (but expanding upon) previous ED-2.2 sensitivity studies [@dietze_2014_quantitative; @raczka_2018_what; @viskari_2019_influence].
+Instead, we selected a subset of parameters (Table \@ref(tab:param-table)) guided by (but expanding upon) previous ED-2.2 sensitivity studies [@dietze_2014_quantitative; @raczka_2018_what; @viskari_2019_influence].
 
 Three parameters are related to leaf-level physiology:
 Following the enzyme-kinetic model of @farquhar_1980_biochemical, the rate of photosynthesis is the minimum of light-limited and enzyme-limited reactions.
@@ -266,29 +282,13 @@ Other parameters:
 - Leaf turnover rate (evergreen-only; `leaf_turnover_rate`)
 - Proportion of dispersal that is "global" (`nonlocal_dispersal`) <!-- TODO What is this? Can I drop it from the analysis? -->
 
-The full list of parameters is shown in Table 2.
-
-```{r param-table}
-tbl <- readr::read_csv(here(
-  "analysis", "data", "derived-data", "parameter-table.csv"
-))
-tbl <- subset(tbl, Ran == "yes", select = c(-unit_parsed, -Ran))
-tbl[["ED Name"]] <- sprintf("`%s`", tbl[["ED Name"]])
-kable(tbl, escape = is_latex_output(), caption = paste0(
-  "Table 2: Parameter descriptions. ",
-  "For additional information, see the ",
-  "[ED2 model wiki](https://github.com/EDmodel/ED2/wiki/PFT-parameters)."
-), booktabs = TRUE) %>%
-  kable_styling(latex_options = "scale_down")
-```
-
 ## Plant functional types and parameterization
 
 By default, ED-2.2 supports 17 different plant functional types, which divide plant species according to photosynthetic pathway (C3 vs. C4), growth form (grass vs. tree), leaf phenology habit (deciduous vs. evergreen), biome (e.g. temperate vs. tropical), and successional status (e.g. early, mid, late).
 However, we limited our simulations to the four plant functional types that have any appreciable presence at UMBS: Early, mid, and late temperate deciduous trees and pines.
 The species comprising these plant functional types are shown in Table 3.
 
-Table 3: Plant functional type-species mappings
+Table: (\#tab:pft-species) Plant functional type-species mappings
 
 | Plant functional type | Species                 | Color  |
 |-----------------------|-------------------------|--------|
@@ -319,19 +319,19 @@ By using the same initial conditions and drivers, we do not consider initial con
 
 ## Analysis of results
 
-First, we evaluated the impact of model structure independent of any changes to parameters by comparing predictions of average annual net primary productivity (NPP) and summer (June, July, August) total leaf area index (LAI) across model structures while holding ED-2.2 parameters at their default values (Figure 1).
-To understand the physical and ecological mechanisms underlying these differences, we also compared the cohort-level composition, height, and canopy radiation profiles in these simulations in four stages of the simulation (Figure 2).
+First, we evaluated the impact of model structure independent of any changes to parameters by comparing predictions of average annual net primary productivity (NPP) and summer (June, July, August) total leaf area index (LAI) across model structures while holding ED-2.2 parameters at their default values (Figure \@ref(fig:structure-compare-default)).
+To understand the physical and ecological mechanisms underlying these differences, we also compared the cohort-level composition, height, and canopy radiation profiles in these simulations in four stages of the simulation (Figure \@ref(fig:structure-compare-light)).
 
-Second, we compared simulations with ED-2.2 default parameters against simulations using median parameter estimates from a trait meta-analysis (Figure 3).
-Here, we looked predictions of annual mean C fluxes (gross and net primary productivity, and autotrophic and heterotrophic respiration; Figure 4) and of summer LAI by PFT (Figure 5).
+Second, we compared simulations with ED-2.2 default parameters against simulations using median parameter estimates from a trait meta-analysis (Figure \@ref(fig:param-dist)).
+Here, we looked predictions of annual mean C fluxes (gross and net primary productivity, and autotrophic and heterotrophic respiration; Figure \@ref(fig:default-median-flux)) and of summer LAI by PFT (Figure \@ref(fig:default-median-lai)).
 
 Third, we considered the full range of parameter uncertainty by looking at predictions across all parameter ensemble members.
 We begin with predictions annual mean NPP and summer mean total LAI across all parameters and structures and compare these results to contemporary (averaged over years TODO) observations of NPP and LAI at UMBS.
-We look at these variables independently as time series (Figure 6) and as joint predictions in three years (Figure 7).
-We then consider impacts on composition by looking at predicted PFT fractions of total aboveground biomass (AGB) at four different years in the simulation (Figure 8) and at time series of LAI by PFT for five parameter combinations spanning the range of predicted ecological outcomes (Figure 9).
+We look at these variables independently as time series (Figure \@ref(fig:summary-ts-plot)) and as joint predictions in three years (Figure \@ref(fig:pairs-time)).
+We then consider impacts on composition by looking at predicted PFT fractions of total aboveground biomass (AGB) at four different years in the simulation (Figure \@ref(fig:pft-jitterplot)) and at time series of LAI by PFT for five parameter combinations spanning the range of predicted ecological outcomes (Figure \@ref(fig:lai-pft-plot)).
 
 Finally, we assessed which parameters contributed the most to parameter uncertainty for each model structure.
-We did this by performing a sensitivity and variance decomposition analysis following @lebauer_2013_facilitating, @dietze_2014_quantitative, and @raczka_2018_what.
+We did this by performing a sensitivity and variance decomposition analysis following @lebauer_2013_facilitating, @dietze_2014_quantitative, and @raczka_2018_what (Figure \@ref(fig:partial-variance-npp)).
 Briefly, this analysis contains uses a spline to estimate the relationship between individual parameters and output variables and then uses these splines to predict the variance in the output variable attributable to individual parameters ("partial variance").
 For more details, see @lebauer_2013_facilitating.
 
@@ -379,7 +379,7 @@ Despite these differences, by 1980 none of the configurations was able to sustai
 
 ## Default vs. median parameters
 
-```{r param_dist, fig.cap = param_dist_cap}
+```{r param-dist, fig.cap = param_dist_cap}
 ### Figure 3
 param_dist_cap <- paste(
   htmlfig(),
@@ -415,7 +415,7 @@ The most dramatic example is that, with median parameter values, simulations wit
 Yet again, interactions between configurations were significant.
 For example, under a closed canopy configuration, enabling trait plasticity caused interannual variability in NPP to decrease with a two-stream RTM and increase with a multiple-scatter RTM.
 
-```{r default-median-lai , fig.cap = default_median_lai_cap}
+```{r default-median-lai, fig.cap = default_median_lai_cap}
 ### Figure 5
 default_median_lai_cap <- paste(
   htmlfig(),
