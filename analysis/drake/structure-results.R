@@ -55,14 +55,14 @@ plan <- bind_plans(plan, drake_plan(
 
 ### Structure NPP and LAI figure
 plan <- bind_plans(plan, drake_plan(
-  structure_compare_default_gg = default_annual %>%
+  structure_default_data = default_annual %>%
     select(runtype, model_id = casename, year,
            npp = mmean_npp_py, lai) %>%
     left_join(models, "model_id") %>%
     # Convert kgC m-2 yr-1 to MgC ha-1 yr-1
     mutate(npp = npp * 10) %>%
-    pivot_longer(c(npp, lai)) %>%
-    ggplot() +
+    pivot_longer(c(npp, lai)),
+  structure_compare_default_gg = ggplot(structure_default_data) +
     aes(x = year, y = value, color = model) +
     geom_line() +
     guides(color = guide_legend(title = "Model",

@@ -540,10 +540,10 @@ Similarly, parameters related to leaf optical properties had relatively higher i
 
 The overarching objective of this study was to investigate how model structure and parameters interact in multidecadal simulations of forest ecosystem productivity and community assembly.
 
-## ED2.2 vs. reality
+## ED-2.2 vs. reality
 
 Our first question was: To what extent can the model, under any configuration, reproduce the observed reality?
-**Ensemble mean trajectory matches traditional understanding of succession**---rapid growth to peak productivity, followed by gradual decline [@odum_1969_strategy_ecosystem_development]---but **happens too quickly** (Figure \@ref(fig:summary-ts-plot));
+**Ensemble average trajectory matches traditional understanding of succession**---rapid growth to peak productivity, followed by gradual decline [@odum_1969_strategy_ecosystem_development]---but **happens too quickly** (Figure \@ref(fig:summary-ts-plot));
 real ecosystems sustain peak productivity for longer [@gough_2016_disturbance].
 This idea that ED2.2's main issue is that it is moving too quickly is supported by the fact that ED2.2 generally underestimates productivity after 100 years, but model **predictions at peak productivity are close to reality**.
 One reason ED2.2 is moving too quickly through succession is **missing mechanisms for sustaining productivity through early succession**.

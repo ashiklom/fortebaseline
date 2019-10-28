@@ -57,6 +57,12 @@ plan <- bind_plans(plan, drake_plan(
     ggplot() +
     aes(x = year, color = color) +
     geom_line(aes(y = value, group = case), alpha = 0.1, size = 0.3) +
+    ## # ED2 default results.
+    ## geom_line(
+    ##   aes(y = value),
+    ##   data = rename(structure_default_data, variable = name),
+    ##   linetype = "solid", color = "black"
+    ## ) +
     geom_ribbon(
       aes(ymin = lo, ymax = hi),
       data = ts_summary,
