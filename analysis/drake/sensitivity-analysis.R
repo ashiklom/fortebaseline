@@ -106,44 +106,7 @@ plan <- bind_plans(plan, drake_plan(
     summarize(result = list(do_sensitivity(y, x, ymedian, xmedian)))
 ))
 
-### STOP HERE
-stop()
-
-saveRDS(sensitivity_raw_results, "analysis/data/retrieved/sensitivity-raw-results.rds")
-
-library(tidyverse)
-library(here)
-library(fortebaseline)
-sensitivity_raw_results <- readRDS(here(
-  "analysis",
-  "data",
-  "retrieved",
-  "sensitivity-raw-results.rds"
-))
-
-sensitivity_proc = sensitivity_raw_results %>%
-  unnest(result) %>%
-  unnest(result) %>%
-  ungroup()
-
-sensitivity_sub <- sensitivity_proc %>%
-  filter(
-    grepl("mmean_", yvar),
-    is.finite(sensitivity),
-    is.finite(elasticity)
-  ) %>%
-  group_by(model_id, yvar) %>%
-  mutate(fpvar = pvar / sum(pvar)) %>%
-  group_by(xvar) %>%
-  mutate(total_pvar = sum(pvar)) %>%
-  ungroup() %>%
-  separate(xvar, c("shortname", "xvar"), extra = "merge") %>%
-  mutate(
-    shortname = factor(shortname, pfts("shortname")),
-    model = factor(model_id, c("CTS", "CTP", "CMS", "CMP",
-                               "FTS", "FTP", "FMS", "FMP"))
-  )
-
+### Sensitivity analysis outputs
 sensplot <- function(dat, sgroup, metric, yvar) {
   metric <- rlang::enquo(metric)
   dat %>%
@@ -161,17 +124,60 @@ sensplot <- function(dat, sgroup, metric, yvar) {
     )
 }
 
-pn1 <- sensplot(sensitivity_sub, "1920-1950", fpvar, "mmean_npp_py") +
-  ggtitle("1920-1950") +
-  labs(y = "Partial variance") +
-  guides(color = FALSE)
+plan <- bind_plans(plan, drake_plan(
+  sensitivity_proc = sensitivity_raw_results %>%
+    unnest(result) %>%
+    unnest(result) %>%
+    ungroup(),
+  sensitivity_sub = sensitivity_proc %>%
+    filter(
+      grepl("mmean_", yvar),
+      is.finite(sensitivity),
+      is.finite(elasticity)
+    ) %>%
+    group_by(model_id, yvar) %>%
+    mutate(fpvar = pvar / sum(pvar)) %>%
+    group_by(xvar) %>%
+    mutate(total_pvar = sum(pvar)) %>%
+    ungroup() %>%
+    separate(xvar, c("shortname", "xvar"), extra = "merge") %>%
+    mutate(
+      shortname = factor(shortname, pfts("shortname")),
+      model = factor(model_id, c("CTS", "CTP", "CMS", "CMP",
+                                 "FTS", "FTP", "FMS", "FMP"))
+    ),
+  sensitivity_period1_gg =
+    sensplot(sensitivity_sub, "1920-1950", fpvar, "mmean_npp_py") +
+    labs(y = "Partial variance") +
+    guides(color = FALSE),
+  sensitivity_period1_png = cowplot::ggsave2(file_out(!!here(
+    "analysis", "figures", "partial-variance-npp.png"
+  )), sensitivity_period1_gg, width = 16.3, height = 8.4
+  )
+))
+
+### STOP HERE
+stop()
+
+saveRDS(sensitivity_raw_results, "analysis/data/retrieved/sensitivity-raw-results.rds")
+
+library(tidyverse)
+library(here)
+library(fortebaseline)
+sensitivity_raw_results <- readRDS(here(
+  "analysis",
+  "data",
+  "retrieved",
+  "sensitivity-raw-results.rds"
+))
+
 pn2 <- sensplot(sensitivity_sub, "1975-1999", fpvar, "mmean_npp_py") +
   ggtitle("1975-1999") +
   labs(y = "Partial variance")
 p12 <- cowplot::plot_grid(p1, p2, nrow = 1, rel_widths = c(0.8, 1))
 cowplot::ggsave2(
   here("analysis", "figures", "partial-variance-npp.png"),
-  p12, width = 16.3, height = 8.4
+  pn1, width = 10, height = 8
 )
 
 p1 <- sensplot(sensitivity_sub, "1920-1950", fpvar, "mmean_lai_py") +
