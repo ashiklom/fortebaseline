@@ -29,12 +29,13 @@ abstract: |
   On average, our simulations underestimated both net primary productivity (NPP) and leaf area index (LAI) after 100 simulation years, though NPP estimates at peak productivity (20-50 years into the simulations) were closer to observations.
   However, parameter uncertainty was large; at any given timestep, both NPP and LAI ranged from ~0 to >200% of their mean value.
   Although many simulations matched either the observed NPP or observed LAI at some point during the simulation, only a small minority of individual runs matched both.
+  The few runs that matched observed NPP and LAI also matched the present-day PFT mixture (early hardwood-dominated) at UMBS.
   Structural uncertainty was less important than parameter uncertainty, but model configuration did influence the ecological dynamics within a given parameter set, and affected which parameters were most influential.
   We conclude that: (1) targeted data collection to constrain vegetation model parameters should be a higher priority than model development; (2) parameter sensitivity analyses are not necessarily generalizable across model structures; and (3) robust model validation requires scrutiny of multiple different variables, including those related to vegetation productivity, structure, and composition.
 keywords: |
   Dynamic vegetation modeling; carbon cycle; forest succession
 highlights: |
-  These are the highlights.
+  TODO
 ---
 
 ```{r setup, include = FALSE}
@@ -91,22 +92,21 @@ In addition, these forests face a multitude of **direct and indirect pressures f
 Collectively, these processes have culminated in forests that are different from their pre-settlement climax counterparts [@stearns_2002_one; @wolter_2002_recent; @thompson_2013_four], and **our ability to make predictions about such non-analog environments based on the past is limited**.
 
 **More reliable predictions can in theory be obtained by using dynamic vegetation models that explicitly represent processes involved in forest growth and mortality.**
-Vegetation models fall broadly along the following spectrum of complexity, which is a direct consequence of trade-offs between **realism and process fidelity** on one hand and **tractability, computational demand, and data requirements** on the other [@hawkes_2000_woody]. <!-- TODO Might need a better ref here -->
-On one side are relatively simple **"big leaf" models**---such as PNET, SiBCASA, and Biome-BGC---in which the vegetation at a particular location consists essentially of a single large "plant" whose characteristics are the (weighted) average of all the vegetation at that site <!-- TODO REFS -->
-On the other end of the spectrum are **"individual-based" models** (a.k.a. "gap models"), which explicitly simulate multiple indivduals competing for resources at a single site [@shugart_2015_computer]. <!-- TODO other refs? -->
-Examples of such models are LANDIS [@mladenoff_2004_landis; @scheller_2007_design] and UVAFME. <!-- TODO ref --> <!-- TODO Other examples? -->
-Because these models can explicitly represent inter-specific differences in plant productivity, resource allocation, and stress tolerance (among others), as well as the competition that emerges out of these differences, they may be better able to represent changes in ecosystem-scale processes, especially in no-analog conditions [@purves_2008_predictive].
-Between these two extremes are models that use approximations to attempt to capture the emergent biogeochemical and ecological outcomes of interactions between individual plants without the need for explicitly simulating each individual [@purves_2008_predictive].
-One specific example of this approach is the **Ecosystem Demography model** [ED2; @moorcroft_2001_method; @medvigy_2011_predicting; @longo_2019_ed1], which is the focus of this study.
+Vegetation models fall along a spectrum of complexity, which is a direct consequence of trade-offs between **realism and process fidelity** on one hand and **tractability, computational demand, and data requirements** on the other [@hawkes_2000_woody]. <!-- TODO Might need a better ref here -->
+On one side are relatively simple **"big leaf" models**---such as PNET, SiBCASA, and Biome-BGC---in which the vegetation at a particular location consists essentially of a single large "plant" whose characteristics are the weighted average of all the vegetation at that site <!-- TODO REFS -->
+On the other are **"individual-based" or "gap" models**---such as LANDIS [@mladenoff_2004_landis; @scheller_2007_design] and UVAFME [@shuman_2015_forest]---which explicitly simulate individuals competing for resources at a single site [@shugart_2015_computer].
+Because these models explicitly represent interspecific differences in plant productivity, resource allocation, and stress tolerance (among others), as well as the competition that emerges out of these differences, they may be better able to represent changes in ecosystem-scale processes, especially in no-analog conditions [@purves_2008_predictive].
+Between these two extremes are models that use approximations to attempt to capture the emergent biogeochemical and ecological outcomes of interactions between individuals without explicitly simulating each individual [@purves_2008_predictive].
+One example of this approach is the **Ecosystem Demography model** [ED2; @moorcroft_2001_method; @medvigy_2011_predicting; @longo_2019_ed1], which is the focus of this study.
 <!-- BBL: Perhaps mention ED2's influence in ESMs and LSMs -->
 
 **Regardless of vegetation model complexity, their projections are inherently uncertain.** 
-This uncertainty comes from many different sources, which can broadly be classified into the following categories:
-_Driver_ uncertainty refers to uncertainty in data about processes not represented by the model (e.g. weather and climate for vegetation models).
-_Initial condition_ uncertainty arises from the fact that models have to start somewhere, and the exact conditions at the place and time simulations begin are frequently unknown.
-_Process_ or _structural_ uncertainty arises because vegetation models necessarily only represent a subset of all processes involved in plant biology, and that the process that are included can usually be represented in multiple different ways (i.e. which processes are included, and how they are represented).
+This uncertainty comes from many different sources, which can broadly be classified as follows:
+_Driver_ uncertainty is uncertainty in data about processes not represented by the model (e.g. weather and climate for vegetation models).
+_Initial condition_ uncertainty arises from the fact that the exact conditions at the place and time simulations begin are frequently unknown.
+_Process_ or _structural_ uncertainty arises because models necessarily represent only a subset of all processes involved in plant biology, and that those processes that are included can usually be represented in multiple different ways (i.e. which processes are included, and how they are represented).
 Finally, _parameter_ uncertainty arises because of natural variability and imperfect calibration of the above process representations.
-**The relative importance of these sources of uncertainty in ecological forecasts is a key question because it is directly related to future research priorities**.
+**The relative importance of these sources of uncertainty in ecological forecasts is important as a driver of future research priorities**.
 
 **Many ecosystem modeling studies have looked at these categories of uncertainty independently.**
 <!-- TODO Consider cutting 50-75% of these next few sentences. Probably way too much detail. -->
@@ -129,7 +129,7 @@ Ben's notes:which of the last two categories--structural versus parameter uncert
 -->
 
 <!-- TODO This paragraph is janky as hell. Needs heavy revision. -->
-(Chris/Jeff: Help)
+{Chris/Jeff: Help!}
 Previous work found that an earlier version of ED had difficulty sustaining multiple plant functional types in long simulations [@fisher_2010_assessing].
 One of the primary drivers of successional change in temperate forests is competition for light (REF Bazzaz 19XX) <!-- TODO REF -- Bazaaz? -->, and differences in plants' strategies for light acquisition and utilization are a key driver of niche differentiation in these ecosystems <!-- TODO REF -->.
 Plants compete for light in three different ways:
@@ -141,12 +141,11 @@ Representation of horizontal competition;
 representation of canopy radiative transfer (especially of diffuse radiation);
 and trait plasticity with light level.
 
-**This study focuses on the interaction between parameter and structural uncertainty in the ED2 model.**
+**This study focuses on the interaction between parameter and structural uncertainty.**
 Our study is organized around the following guiding questions:
-(1) Which processes related to light utilization are most important to accurately modeling community succession and C cycle dynamics in temperate forests of the Upper Midwest?
-(2) What is the cost of considering these processes, in terms of additional parameter uncertainty?
-(3) What are the relative contributions of parameter uncertainty (data limitation) vs. structural uncertainty (theoretical limitation?)?
-We ran ED2 ensemble simulations with a factorial combination of submodels related to radiative transfer formulation, horizontal competition, and trait plasticity.
+(1) Which processes related to light utilization are most important to accurately model community succession and C cycling in Upper Midwest forests?
+(2) What are the relative contributions of parameter uncertainty (data limitation) vs. structural uncertainty (theoretical limitation)?
+We ran ensemble simulations of the Ecosystem Demography (ED-2.2) model with a factorial combination of submodels related to radiative transfer formulation, horizontal competition, and trait plasticity.
 We then used sensitivity and variance decomposition analyses to evaluate the contribution of parameter uncertainty for each model configuration, exploring the ecological implications of the results in the context of ongoing climate change.
 
 # Methods
@@ -158,8 +157,8 @@ The area surrounding the research station is 87% well-drained upland forest and 
 The landscape geography of the UMBS upland forest is 20.4% moraine, 37.8% high outwash plain, 31.3% low outwash plain, 5.7% lake-margin terrace, 3.6% ice-contact, and 1.2% lowland glacial lake [@bergen_2007_observing].
 Most of the UMBS upland forest canopy is dominated by temperate deciduous early-successional species, most importantly _Populus grandidentata_ (bigtooth aspen) and, to a lesser extent, _Betula papyrifera_ (paper birch), with _Acer saccharum_ (sugar maple), _Acer rubrum_ (red maple), _Fagus grandifolia_ (American beech), _Tilia americana_ (basswood), _Betula alleghaniensis_ (yellow birch), _Fraxinus americana_ (white ash), _Tsuga canadensis_ (eastern hemlock), _Quercus rubra_ (northern red oak), _Pinus strobus_ (white pine), and _Pinus resinosa_ (red pine) existing in various fractions in the understory (and, in patches, in the canopy).
 This composition is a legacy of the site's disturbance history:
-The site was intensively logged in the late 1800s and early 1900s, and experienced regularly recurring fires until the mid-1920s, at which point a regime of active fire suppression started that has persisted to the present day. <!-- TODO ref -->
-As a result, the average stand age in 2013 was 95 years. <!-- TODO ref -->
+The site was intensively logged in the late 1800s and early 1900s, and experienced regularly recurring fires until the mid-1920s, at which point a regime of active fire suppression started that has persisted to the present day (REF).
+As a result, the average stand age in 2013 was 95 years (REF).
 The majority of the forest that is aspen-dominated is undergoing succession to "northern hardwood" (maple, beech, basswood, birch, ash, hemlock), "upland conifer" (red and white pine), or "northern red-oak" ecotypes [@bergen_2007_observing].
 
 
@@ -179,7 +178,7 @@ The official ED2 source code is available at https://github.com/EDmodel/ED2, and
 
 ## Submodels
 
-In this study, we ran a factorial combination of the following ED-2.2 configurations: (1) two-stream vs. multiple-scatter canopy radiative transfer models (RTMs); (2) infinite vs. finite crown area (a.k.a. complete vs. partial shading); and (3) static vs. light-plastic traits.
+In this study, we ran a factorial combination of the following ED-2.2 configurations: (1) two-stream vs. multiple-scatter canopy radiative transfer models (RTMs); (2) closed canopy vs. finite crown area (a.k.a. complete vs. partial shading); and (3) static vs. light-plastic traits.
 
 Both canopy RTMs in ED-2.2 resolve the full vertical radiation profile within a patch as a function of canopy structure (leaf and wood area indices, crown area, leaf angle distribution) and incident solar radiation, following the definitions in CLM 4.5 [@clm45_note].
 Both models also use identical definitions for the optical properties of a single canopy layer as a function of leaf and wood optical properties, leaf angle distribution, canopy clumping, solar zenith angle, and leaf, wood, and crown area indices.
@@ -191,10 +190,10 @@ Meanwhile, the multiple-scatter model was derived from first principles by @zhao
 Both of these models are described in detail in the Supplementary Information. <!-- TODO Exact reference to Appendix -->
 
 The crown area submodel in ED-2.2 determines the nature of competition for light between cohorts.
-In the default configuration ("infinite crown area", or "complete shading"), the leaf area of a cohort is distributed across the entire horizontal area of a patch.
+In the default configuration ("closed canopy"), the leaf area of a cohort is distributed across the entire horizontal area of a patch.
 This means that taller cohorts always receive more incoming radiation than shorter cohorts, even when the height difference is small.
-This has been shown to excessively suppress competition from sub-dominant individuals and result in unrealistically homogeneous canopies [@fisher_2015_taking].
-In the alternate configuration ("finite crown area", or "partial shading"), canopies take up only a fraction of the available horizontal area, which generally exposes the understory to more light.
+Similar approaches have been shown to excessively suppress competition from sub-dominant individuals and result in unrealistically homogeneous forest patches [@fisher_2015_taking].
+In the alternate configuration ("finite crown area"), canopies take up only a fraction of the available horizontal area, which generally exposes the understory to more light.
 The horizontal area of crowns is determined by allometric equations from @dietze_2008_changing.
 
 The third submodel we evaluated was trait plasticity.
@@ -273,7 +272,7 @@ leaf _orientation factor_ describes the average distribution of leaf angles (-1 
 Four parameters control leaf optical properties, namely the fractions of light reflected or transmitted in visible and near-infrared wavelengths (`leaf_(reflect|trans)_(vis|nir)`).
 Details of how these parameters influence canopy radiative transfer are described in the Supplementary Information.
 
-Other parameters:
+Other parameters (TODO, briefly):
 
 - Fraction of litter carbon that enters the labile (fast) soil carbon pool (`f_labile`)
 - Minimum plant height for reproduction (`repro_min_h`)
@@ -305,15 +304,15 @@ Table: (\#tab:pft-species) Plant functional type-species mappings
 For each plant functional type, we generated a distribution of parameter values via the Predictive Ecosystem Analyzer (PEcAn) trait-meta analysis [@lebauer_2013_facilitating; see also @dietze_2014_quantitative; @raczka_2018_what].
 Prior distributions for this meta-analysis were largely adapted from previous ED2 parameter uncertainty studies [@dietze_2014_quantitative; @raczka_2018_what; @viskari_2019_influence], and are shown in detail in Supplementary Information X. <!-- TODO Priors supplement; maybe describe entire meta-analysis? -->
 Species trait data for this meta-analysis came from existing records in the BETY database [www.betydb.org, @lebauer_2017_betydb], as well as from publicly available records in the TRY database [www.try-db.org, @kattge_2011_try] and, specifically for leaf optical properties, from Shiklomanov (2019 {dissertation, chapter 3}).
-All parameters not described in this section were set to their ED-2.2 PFT-specific default values.
+All parameters not described in this section were set to their ED-2.2 PFT-specific default values for all simulations.
 
 ## Modeling workflow
 
 For each factorial combination of model configurations (described above), we ran ED-2.2 once with its default parameter values, once at the posterior median estimates from the meta-analysis, and 500 times with parameters sampled randomly from the meta-analysis posterior distributions.
 For the latter, the same 500 parameter samples were used for all model structures to allow us to independently evaluate the impacts of model structure at specific parameter values.
 Each ensemble member ran from January 1, 1902 through December 31, 1999 and was initialized from a "near-bare ground" condition: An equal number of seedlings of each plant functional type (see previous section) at the minimum resolvable size.
-Driving meteorological data was 6-hourly CRU-NCEP <!-- TODO ref. More here? --> combined with an annual atmospheric CO~2~ record from Law-Dome ice core [@etheridge_1998_historical] and Mauna Loa observatory [@thoning_1989_atmospheric] linearly interpolated to 3-hourly resolution.
-Soil texture was set to 92% sand, 7% silt, and 1% clay, per site-level observations in [@gough_2010_wood].
+Driving meteorological data was 6-hourly CRU-NCEP (REF) combined with an annual atmospheric CO~2~ record from Law-Dome ice core [@etheridge_1998_historical] and Mauna Loa observatory [@thoning_1989_atmospheric] linearly interpolated to 3-hourly resolution.
+Soil texture was set to 92% sand, 7% silt, and 1% clay, based on site-level observations [@gough_2010_wood].
 The initial soil moisture profile was set to the average soil moisture profile reported in the UMBS Ameriflux ancillary data (https://ameriflux.lbl.gov/sites/siteinfo/US-UMd).
 By using the same initial conditions and drivers, we do not consider initial condition and driver uncertainty, which are outside the scope of this study.
 
@@ -539,10 +538,9 @@ Similarly, parameters related to leaf optical properties had relatively higher i
 
 # Discussion
 
-The overarching objective of this study was to investigate how model structure and parameters interact in multidecadal simulations of forest ecosystem productivity and community assembly.
-
 ## ED-2.2 vs. reality
 
+The overarching objective of this study was to investigate how model structure and parameters interact in multidecadal simulations of forest ecosystem productivity and community assembly.
 Our first question was: To what extent can the model, under any configuration, reproduce the observed reality?
 **Ensemble average trajectory matches traditional understanding of succession**---rapid growth to peak productivity, followed by gradual decline [@odum_1969_strategy_ecosystem_development]---but **happens too quickly** (Figure \@ref(fig:summary-ts-plot));
 real ecosystems sustain peak productivity for longer [@gough_2016_disturbance].
@@ -607,13 +605,17 @@ Data from University of Michigan Biological Station (UMBS).
 Data from TRY (TODO: Specific TRY statement).
 
 <!-- The following line inserts a page break when the output is MS Word. For page breaks in PDF, use \newpage on its own line.  -->
-##### pagebreak
+<!-- ##### pagebreak -->
+
+\newpage
 
 # References
 <!-- The following line ensures the references appear here for the MS Word or HTML output files, rather than right at the end of the document (this will not work for PDF files):  -->
 <div id="refs"></div>
 
-##### pagebreak
+<!-- ##### pagebreak -->
+
+\newpage
 
 ### Colophon
 
