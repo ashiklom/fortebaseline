@@ -327,7 +327,7 @@ Here, we looked predictions of annual mean C fluxes (gross and net primary produ
 
 Third, we considered the full range of parameter uncertainty by looking at predictions across all parameter ensemble members.
 We begin with predictions annual mean NPP and summer mean total LAI across all parameters and structures and compare these results to contemporary (averaged over years TODO) observations of NPP and LAI at UMBS.
-We look at these variables independently as time series (Figure \@ref(fig:summary-ts-plot)) and as joint predictions in three years (Figure \@ref(fig:pairs-time)).
+We look at these variables independently as time series (Figure \@ref(fig:summary-ts-plot)) and as joint predictions in two periods (Figure \@ref(fig:pairs-time)).
 We then consider impacts on composition by looking at predicted PFT fractions of total aboveground biomass (AGB) at four different years in the simulation (Figure \@ref(fig:pft-jitterplot)) and at time series of LAI by PFT for five parameter combinations spanning the range of predicted ecological outcomes (Figure \@ref(fig:lai-pft-plot)).
 
 Finally, we assessed which parameters contributed the most to parameter uncertainty for each model structure.
@@ -460,12 +460,13 @@ Predictions of peak NPP (between 1910 and 1950 for most simulations) were closer
 ### Figure 7
 pairs_time_cap <- paste(
   htmlfig(),
-  "ED-2.2 predictions of annual mean NPP and growing-season LAI in 1925 and 1999",
+  "ED-2.2 predictions of annual mean NPP and growing-season LAI",
+  "averaged over 1925-1950 (left) and 1975-1999 (right)",
   "by model type.",
   "Each point indicates a single ensemble run with a different set of parameters.",
   "Solid line is the best-fit generalized additive model (GAM).",
   "Dashed lines indicate the error bounds of present-day observed NPP and LAI.",
-  "Text labels match the rows in Figure X below."
+  "Text labels match the rows in Figure 9 below."
 )
 fig("npp-lai-pairs.png")
 ```
@@ -545,7 +546,6 @@ The overarching objective of this study was to investigate how model structure a
 Our first question was: To what extent can the model, under any configuration, reproduce the observed reality?
 **Ensemble average trajectory matches traditional understanding of succession**---rapid growth to peak productivity, followed by gradual decline [@odum_1969_strategy_ecosystem_development]---but **happens too quickly** (Figure \@ref(fig:summary-ts-plot));
 real ecosystems sustain peak productivity for longer [@gough_2016_disturbance].
-Although ED-2.2 underestimates productivity after 100 years, model **predictions at peak productivity are close to reality**.
 One possible reason for the excessive pace of succession in ED-2.2 is **missing mechanisms for sustaining productivity through early succession**.
 In particular, recent evidence points to the **importance of low-severity, high-frequency disturbances** in sustaining ecosystem productivity [@gough_2016_disturbance].
 ED2.2 has a mortality scheme, and indeed, parameters related to mortality were often among the most important parameters for predictive uncertainty (Figure \@ref(fig:partial-variance-npp)).
@@ -555,12 +555,15 @@ However, although our simulations used real meteorology (which included occasion
 Future work will: (1) Calibrate ED2.2 disturbance response to experimental observations (FoRTE), and (2) run long-term simulations with prescribed disturbance frequencies and see how they affect ecological dynamics.
 
 Under all but a small minority of parameter combinations, **ED-2.2 was unable to create---let alone sustain---a forest with any appreciable functional diversity**.
-The large majority of runs tended towards 
+The large majority of runs produced dominance by a single PFT, though _which_ PFT dominated depended on parameter combination.
+This highlights the difficulty of representing plant functional diversity in vegetation models, which has been true in other models as well [@fisher_2015_taking].
+To the extent that ED-2.2 is "correct" in how it represents processes, this result also indicates that the plant functional trait space of realized niches is small---i.e. multiple different trees can co-exist only under very specific combinations of plant traits and environmental conditions (REFS).
 
-- Figure \@ref(fig:pairs-time):
-  - For the same LAI, closed canopy had higher productivity than finite. Why?
-    - Not zero-sum; finite canopy hurts dominant trees but doesn't improve subdominant species that much <!-- TODO Need support for this! -->
-  - Importance of using multiple observational constraints. Ecological equifinality is a real problem.
+Most ED-2.2 runs under-predicted both NPP and LAI, both in the peak period (1920-1950) and towards the end of the simulation (1975-1999) (Figures \@ref(fig:summary-ts-plot), \@ref(fig:pairs-time)).
+However, of our five selected representative runs, the two that most closely matched present day composition at UMBS (early hardwood-dominated; **C** and **D** in Figure \@ref(fig:lai-pft-plot)) also closely matched the observed NPP and LAI (Figure \@ref(fig:pairs-time)).
+This is encouraging because it suggests that it is possible to get both aggregate ecosystem C fluxes and PFT composition right.
+Moreover, given that many important ED-2.2 parameters were well-constrained in our analysis (\@ref(fig:param-dist)), this is possible without using physically unrealistic parameter values.
+We therefore suggest that for model calibration and validation, comparisons against multiple output variables---including variables related to composition---can yield maximum constraint and are not unreasonably strict.
 
 ## Drivers of uncertainty
 

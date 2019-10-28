@@ -31,6 +31,8 @@ plan <- plan <- bind_plans(plan, drake_plan(
                data = ed2_default_params, size = 2) +
     geom_point(aes(y = Median, color = "median", shape = "median"),
                data = trait_distribution, size = 2) +
+    # Parameter values
+    ## geom_text(aes(y = value, label = label), data = use_param_values) +
     facet_wrap(vars(trait), scales = "free_y") +
     scale_fill_manual(values = pfts("color")) +
     scale_color_manual(values = c("default" = "red1", "median" = "blue1")) +

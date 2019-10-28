@@ -7,6 +7,14 @@ plan <- bind_plans(plan, drake_plan(
     284, "D", "EH-dominated in 1999, high NPP",
     114, "E", "Pine-dominated in 1999, high NPP"
   ),
+  use_param_values = params %>%
+    inner_join(use_params, "param_id") %>%
+    inner_join(pfts(), c("name" = "bety_name")) %>%
+    select(-why, -name, -shortname, -num, -color) %>%
+    ## filter(label %in% c("C", "D")) %>%
+    pivot_longer(-c(param_id, label, pft),
+                 names_to = "trait",
+                 values_to = "value"),
   lai_pft_plot_gg = pft_data %>%
     mutate(param_id = as.numeric(substr(case, 0, 3))) %>%
     inner_join(use_params, "param_id") %>%

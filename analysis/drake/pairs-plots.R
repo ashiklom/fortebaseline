@@ -1,7 +1,10 @@
 ### Pairs plots
-npp_lai_pairs <- function(dat, year, labs) {
+npp_lai_pairs <- function(dat, start_year, end_year, labs) {
   dat_sub <- dat %>%
-    filter(!is.na(model), year == !!year)
+    filter(!is.na(model), year >= !!start_year, year <= !!end_year) %>%
+    group_by(param_id, model, color) %>%
+    summarize_at(vars(mmean_lai_py, mmean_npp_py), mean) %>%
+    ungroup()
   labs2 <- labs %>%
     inner_join(dat_sub, "param_id") %>%
     distinct(param_id, model, label, mmean_lai_py, mmean_npp_py)
@@ -19,10 +22,9 @@ npp_lai_pairs <- function(dat, year, labs) {
     scale_color_identity() +
     facet_wrap(vars(model), ncol = 2) +
     labs(x = "Total LAI", y = expression(NPP ~ (MgC ~ ha^-1 ~ year^-1))) +
-    ggtitle(year) +
+    ggtitle(sprintf("%d - %d", start_year, end_year)) +
     theme_cowplot() +
     theme(strip.text = element_text(size = 10))
-
 }
 
 plan <- bind_plans(plan, drake_plan(
@@ -48,8 +50,9 @@ plan <- bind_plans(plan, drake_plan(
     ) %>%
     left_join(models, c("model_id")),
   npp_lai_pairs_yr = target(
-    npp_lai_pairs(both_wide, .year, use_params),
-    transform = map(.year = c(1925, 1999))
+    npp_lai_pairs(both_wide, .ayear, .zyear, use_params),
+    transform = map(.ayear = c(1920, 1975),
+                    .zyear = c(1950, 1999))
   ),
   npp_lai_pairs_gg = target(
     plot_grid(npp_lai_pairs_yr, nrow = 1),
