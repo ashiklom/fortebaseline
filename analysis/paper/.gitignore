@@ -2,5 +2,9 @@
 /paper.md
 /paper.pdf
 /paper.tex
+/paper.docx
 /*.html
 paper_files/
+
+# Office temporary files
+/~$*

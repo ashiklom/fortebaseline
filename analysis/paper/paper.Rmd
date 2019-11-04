@@ -11,17 +11,19 @@ date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
     bookdown::html_document2:
       fig_caption: yes
-      reference_docx: "../templates/template.docx" # Insert path for the DOCX file
     bookdown::pdf_document2:
       latex_engine: xelatex
+    bookdown::word_document2:
+      reference_docx: "../templates/taylor-francis-article.docx" # Insert path for the DOCX file
+always_allow_html: true
 bibliography: references.bib
 csl: "../templates/ecology.csl"
 abstract: |
-  Forests in the US Upper Midwest have been a net C sink for a century, driven by their fast-growing, early successional species. 
-  However, the composition of these regrown forests has started to shift toward mid-successional species. 
-  Combined with changing climate and disturbance, this means that future biogeochemical and ecological dynamics in these forests are highly uncertain. 
-  Demographic vegetation models provide a tool for analyzing this uncertainty and its implications. 
-  Here, we evaluate the relative importance of model "structural" (which processes are represented, and how) and "parameter" (parameters used in those equations) uncertainty, asking: 
+  Forests in the US Upper Midwest have been a net C sink for a century, driven by their fast-growing, early successional species.
+  However, the composition of these regrown forests has started to shift toward mid-successional species.
+  Combined with changing climate and disturbance, this means that future biogeochemical and ecological dynamics in these forests are highly uncertain.
+  Demographic vegetation models provide a tool for analyzing this uncertainty and its implications.
+  Here, we evaluate the relative importance of model "structural" (which processes are represented, and how) and "parameter" (parameters used in those equations) uncertainty, asking:
   (1) Which processes are most important to accurately model community succession and C cycling in Upper Midwest forests?
   (2) What are the relative contributions of parameter vs. structural uncertainty?
   We ran ensembles of the Ecosystem Demography model v2.2 (sampling over parameter uncertainty) from 1900 to 2000 with different representations of key processes important to competition for light.
@@ -100,7 +102,7 @@ Between these two extremes are models that use approximations to attempt to capt
 One example of this approach is the **Ecosystem Demography model** [ED2; @moorcroft_2001_method; @medvigy_2011_predicting; @longo_2019_ed1], which is the focus of this study.
 <!-- BBL: Perhaps mention ED2's influence in ESMs and LSMs -->
 
-**Regardless of vegetation model complexity, their projections are inherently uncertain.** 
+**Regardless of vegetation model complexity, their projections are inherently uncertain.**
 This uncertainty comes from many different sources, which can broadly be classified as follows:
 _Driver_ uncertainty is uncertainty in data about processes not represented by the model (e.g. weather and climate for vegetation models).
 _Initial condition_ uncertainty arises from the fact that the exact conditions at the place and time simulations begin are frequently unknown.
@@ -122,7 +124,7 @@ In particular, @lovenduski_2017_reducing found that model structural uncertainty
 This structural uncertainty has been attributed to differences in model representations of key processes, including canopy radiative transfer [@fisher_2017_vegetation], soil biogeochemistry [@wieder_2017_carbon; @sulman_2018_multiple], stomatal conductance [@franks_2018_comparing], and photosynthesis [@rogers_2016_roadmap].
 **However, the extent to which specific processes contribute to model uncertainty is difficult to evaluate from model intercomparisons because different models are different from each other in too many different ways, meaning that structural effects are confounded with other uncertainty sources.**
 **Moreover, comparative analysis of contributions of different types of uncertainty to model projections are rare in the ecosystem modeling literature**.
-<!-- 
+<!--
 TODO Do we have any examples? Or are these studies entirely non-existent?
 
 Ben's notes:which of the last two categories--structural versus parameter uncertainty--is more important (Fisher et al. 2015, https://onlinelibrary.wiley.com/doi/full/10.1111/j.1523-1739.2003.00614.x, Ricciuto et al. 2008).
@@ -226,12 +228,22 @@ tbl <- readr::read_csv(here(
 ))
 tbl <- subset(tbl, Ran == "yes", select = c(-unit_parsed, -Ran))
 tbl[["ED Name"]] <- sprintf("`%s`", tbl[["ED Name"]])
-kable(tbl, escape = is_latex_output(), caption = paste0(
-  "Parameter descriptions. ",
-  "For additional information, see the ",
+cap <- paste(
+  "Parameter descriptions.",
+  "For additional information, see the",
   "[ED2 model wiki](https://github.com/EDmodel/ED2/wiki/PFT-parameters)."
-), booktabs = TRUE) %>%
-  kable_styling(latex_options = "scale_down")
+)
+if (is_latex_output() || is_html_output()) {
+  kable(tbl, escape = is_latex_output(), caption = cap, booktabs = TRUE) %>%
+    kable_styling(latex_options = "scale_down")
+} else {
+  # Probably DOCX output
+  cap <- paste("Table: (\\#tab:param-table)", cap)
+  flextable::flextable(tbl) %>%
+    flextable::autofit() %>%
+    flextable::fit_to_width(7.5) %>%
+    flextable::set_caption(cap)
+}
 ```
 
 The full list of parameters in ED-2.2 is large, with over 100 parameters per plant functional type.

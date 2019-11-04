@@ -1,11 +1,14 @@
 ---
-title: "My title"
+title: |
+  My title
 author:
-- author 1
-- other author
+- Author 1
+- Author 2
 date: '`r Sys.Date()`'
-output: word_document
-abstract: "My abstract \n"
+output:
+  bookdown::word_document2
+abstract: |
+  My abstract.
 ---
 
 ```{r setup, include=FALSE}
@@ -42,3 +45,14 @@ output:
 Don't forget line numbers for JAS! Headings are bold, underline, nothing. And Arial Narrow 10pt for tables.
 
 See here for more information: http://rmarkdown.rstudio.com/articles_docx.html
+
+```{r , fig.cap = "This is a figure caption"}
+plot(Sepal.Length ~ Sepal.Width, data = iris)
+```
+
+```{r}
+tab <- flextable::flextable(head(iris))
+tab <- flextable::autofit(tab)
+tab <- flextable::set_caption(tab, "Table: (\\#tab:table1) This is a table.")
+tab
+```
