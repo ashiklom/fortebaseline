@@ -26,23 +26,17 @@ Specific comments:
   - [ ] General structure and flow is very good, but it’s long for an introduction. You could combine and compress paragraphs 3, 4, 5.
   - [ ] First paragraph, starting with “Forests are…”. This is a well-written and articulated paragraph, but for GCB could be made more global in context. This region is really representative of changes that are, for the most part, occurring world-wide, re, increasing disturbance frequency, changing forest communities, etc. The upper Midwest (and UMBS) is a ‘model system’ or region in which to study these changes.
   - [X] Paragraph three is very compelling. Nice.
-  - [ ] Paragraph four: Should be “They found…”.
+  - [X] Paragraph four: Should be “They found…”.
   - [ ] Paragraph 5 retool: Will work on it.
 
 - Methods
 
-  - [ ] General: It’s not until the final section of the methods that you discuss which simulated ecosystem properties and processes are of interest. Consider adding a sentence with this information to section 2.2.
-
+  - [-] General: It’s not until the final section of the methods that you discuss which simulated ecosystem properties and processes are of interest. Consider adding a sentence with this information to section 2.2.
   - [ ] Site description: For site age, you could cite Gough et al. 2013: https://esajournals.onlinelibrary.wiley.com/doi/10.1890/12-1554.1
-
   - [ ] Submodels, general comment: To make this more broadly accessible, you might include in the opening paragraph of this section brief clarification that you chose to manipulate “model structural attributes of known ecological importance”. Overall, the section is excellent, but undersells the ecological context/significance of these structural components and why they were selected. Again, I can work on this.
-
   - [ ] Submodels, paragraph 1: What does “light-plastic” mean?
-
   - [ ] Submodels, paragraph 3: “In the alternate configuration, canopies…” Do you mean the upper canopy absorbs only a fraction of the direct beam light? In either case, this sentence isn’t clear.
-
   - [ ] Parameter descriptions: Again, maintain the thread and context. Consider reminding the reader in the first paragraph of the importance/sensitivity of these variables to change over successional time and also to disturbance, e.g., consider mortality parameters.
-
   - [ ] Analysis of results: Helpful, but could be about 2/3 the current length.
 
 - Results

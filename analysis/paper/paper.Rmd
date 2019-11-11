@@ -1,7 +1,7 @@
 ---
 title: |
   Structure and parameter uncertainty in centennial-scale projections
-  of community succession in an Upper Midwest temperate forest
+  of community-carbon cycling in a temperate forest
 author:
   - Alexey N. Shiklomanov
   - Ben Bond-Lamberty
@@ -26,14 +26,14 @@ abstract: |
   Here, we evaluate the relative importance of model "structural" (which processes are represented, and how) and "parameter" (parameters used in those equations) uncertainty, asking:
   (1) Which processes are most important to accurately model community succession and C cycling in Upper Midwest forests?
   (2) What are the relative contributions of parameter vs. structural uncertainty?
-  We ran ensembles of the Ecosystem Demography model v2.2 (sampling over parameter uncertainty) from 1900 to 2000 with different representations of key processes important to competition for light.
+  We ran ensembles of the Ecosystem Demography model v2.2 (sampling over parameter uncertainty) at the University of Michigan Biological Station (UMBS) from 1900 to 2000 with different representations of key processes important to competition for light.
   We then compared the magnitude of structural (across representations) and parameter (within each representation) uncertainty, and assessed which submodel-parameter combinations reproduced observed C fluxes and succession.
   On average, our simulations underestimated both net primary productivity (NPP) and leaf area index (LAI) after 100 simulation years, though NPP estimates at peak productivity (20-50 years into the simulations) were closer to observations.
   However, parameter uncertainty was large; at any given timestep, both NPP and LAI ranged from ~0 to >200% of their mean value.
   Although many simulations matched either the observed NPP or observed LAI at some point during the simulation, only a small minority of individual runs matched both.
-  The few runs that matched observed NPP and LAI also matched the present-day PFT mixture (early hardwood-dominated) at UMBS.
+  The few runs that matched observed NPP and LAI also matched the present-day composition (early hardwood-dominated).
   Structural uncertainty was less important than parameter uncertainty, but model configuration did influence the ecological dynamics within a given parameter set, and affected which parameters were most influential.
-  We conclude that: (1) targeted data collection to constrain vegetation model parameters should be a higher priority than model development; (2) parameter sensitivity analyses are not necessarily generalizable across model structures; and (3) robust model validation requires scrutiny of multiple different variables, including those related to vegetation productivity, structure, and composition.
+  We conclude that: (1) targeted data collection to constrain vegetation model parameters should be a higher priority than model development; (2) parameter sensitivity analyses are not necessarily generalizable across model structures; and (3) robust model validation requires scrutiny of multiple different variables, including those related to vegetation productivity and composition.
 keywords: |
   Dynamic vegetation modeling; carbon cycle; forest succession
 highlights: |
@@ -113,7 +113,7 @@ Finally, _parameter_ uncertainty arises because of natural variability and imper
 **Many ecosystem modeling studies have looked at these categories of uncertainty independently.**
 <!-- TODO Consider cutting 50-75% of these next few sentences. Probably way too much detail. -->
 @dietze_2014_quantitative investigated which parameters were most important to ED2 predictions of C sequestration across a diverse range of sites in North America.
-The found that the parameters contributing the most to overall predictive uncertainty were those related to growth respiration, mortality, stomatal conductance, and water uptake, and that parameter uncertainty varied with biome.
+They found that the parameters contributing the most to overall predictive uncertainty were those related to growth respiration, mortality, stomatal conductance, and water uptake, and that parameter uncertainty varied with biome.
 More recently, @raczka_2018_what evaluated parameter uncertainty over 100 year time scale at the Willow Creek Ameriflux site, and found that the most important parameters to model uncertainty were quantum efficiency of photosynthesis, leaf respiration, and soil-plant water transfer.
 Another study looked specifically at contributions to uncertainty from parameters related to canopy radiative transfer, and found that parameters related to both canopy structure and leaf optical properties had a large impact on predictions of net primary productivity [@viskari_2019_influence].
 {**Driver uncertainty** -- a few examples?}
@@ -159,14 +159,14 @@ The area surrounding the research station is 87% well-drained upland forest and 
 The landscape geography of the UMBS upland forest is 20.4% moraine, 37.8% high outwash plain, 31.3% low outwash plain, 5.7% lake-margin terrace, 3.6% ice-contact, and 1.2% lowland glacial lake [@bergen_2007_observing].
 Most of the UMBS upland forest canopy is dominated by temperate deciduous early-successional species, most importantly _Populus grandidentata_ (bigtooth aspen) and, to a lesser extent, _Betula papyrifera_ (paper birch), with _Acer saccharum_ (sugar maple), _Acer rubrum_ (red maple), _Fagus grandifolia_ (American beech), _Tilia americana_ (basswood), _Betula alleghaniensis_ (yellow birch), _Fraxinus americana_ (white ash), _Tsuga canadensis_ (eastern hemlock), _Quercus rubra_ (northern red oak), _Pinus strobus_ (white pine), and _Pinus resinosa_ (red pine) existing in various fractions in the understory (and, in patches, in the canopy).
 This composition is a legacy of the site's disturbance history:
-The site was intensively logged in the late 1800s and early 1900s, and experienced regularly recurring fires until the mid-1920s, at which point a regime of active fire suppression started that has persisted to the present day (REF).
-As a result, the average stand age in 2013 was 95 years (REF).
+The site was intensively logged and burned in the late 1800s and early 1900s, and experienced regularly recurring fires until the mid-1920s, at which point a regime of active fire suppression started that has persisted to the present day [@kilburn_1960_effects; @barnes_1981_michigan; @friedman_2005_regional_legacies_logging].
+As a result, the average stand age in 2013 was 95 years [@gough_2013_sustained].
 The majority of the forest that is aspen-dominated is undergoing succession to "northern hardwood" (maple, beech, basswood, birch, ash, hemlock), "upland conifer" (red and white pine), or "northern red-oak" ecotypes [@bergen_2007_observing].
 
 
 ## Ecosystem Demography Model (version 2.2)
 
-For this study, we used the Ecosystem Demography Model, version 2.2 (ED-2.2).
+For this study, we used the Ecosystem Demography Model, version 2.2 (ED-2.2) to simulate forest C cycling and plant functional type (PFT) composition.
 A full description of the default configuration of the model is provided by @longo_2019_ed1.
 Briefly, ED-2.2 solves the energy, water, and carbon cycles separately for each of multiple "cohorts" of trees of similar composition, size, and age sharing a micro-environment and disturbance history [@moorcroft_2001_method; @medvigy_2009_mechanistic; @longo_2019_ed1].
 Besides the cohort-based approximation of gap dynamics, a distinctive feature of ED-2.2 is that the equations for energy, water, and carbon fluxes are defined in terms of total energy, water, and carbon, which ensures excellent conservation of mass in long-running (multidecadal) simulations [@longo_2019_ed1].
@@ -611,8 +611,8 @@ It also reinforces our argument that changing model structure---particularly if 
 # Acknowledgements
 
 <!-- TODO Fill in Acknowledgements -->
-This project funded by NSF grant.
-Cyberinfrastructure provided by Pacific Northwest National Laboratory (PNNL).
+This project was supported by NSF Award 1655095.
+Cyberinfrastructure capabilities were provided by the Pacific Northwest National Laboratory (PNNL).
 Data from University of Michigan Biological Station (UMBS).
 Data from TRY (TODO: Specific TRY statement).
 
