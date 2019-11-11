@@ -133,7 +133,7 @@ Ben's notes:which of the last two categories--structural versus parameter uncert
 <!-- TODO This paragraph is janky as hell. Needs heavy revision. -->
 {Chris/Jeff: Help!}
 Previous work found that an earlier version of ED had difficulty sustaining multiple plant functional types in long simulations [@fisher_2010_assessing].
-One of the primary drivers of successional change in temperate forests is competition for light (REF Bazzaz 19XX) <!-- TODO REF -- Bazaaz? -->, and differences in plants' strategies for light acquisition and utilization are a key driver of niche differentiation in these ecosystems <!-- TODO REF -->.
+One of the primary drivers of successional change in temperate forests is competition for light [@canham_1990_light]  <!-- TODO REF -- Bazaaz? -->, and differences in plants' strategies for light acquisition and utilization are a key driver of niche differentiation in these ecosystems <!-- TODO REF -->.
 Plants compete for light in three different ways:
 Growing quickly (early successional, pioneer species),
 structural complexity / morphological change / filling in gaps in existing canopies,
@@ -310,7 +310,7 @@ We look at these variables independently as time series (Figure \@ref(fig:summar
 We then consider impacts on composition by looking at predicted PFT fractions of total aboveground biomass (AGB) at four different years in the simulation (Figure \@ref(fig:pft-jitterplot)) and at time series of LAI by PFT for five parameter combinations spanning the range of predicted ecological outcomes (Figure \@ref(fig:lai-pft-plot)).
 Finally, we assessed which parameters contributed the most to parameter uncertainty for each model structure.
 We did this by performing a sensitivity and variance decomposition analysis following @lebauer_2013_facilitating, @dietze_2014_quantitative, and @raczka_2018_what (Figure \@ref(fig:partial-variance-npp)).
-Briefly, this analysis contains uses a spline to estimate the relationship between individual parameters and output variables and then uses these splines to predict the variance in the output variable attributable to individual parameters ("partial variance").
+Briefly, this analysis uses a spline to estimate the relationship between individual parameters and output variables and then uses these splines to predict the variance in the output variable attributable to individual parameters ("partial variance").
 For more details, see @lebauer_2013_facilitating.
 
 All analyses for this work were performed using R 3.6 (see "Colophon" for full details).
@@ -332,7 +332,7 @@ fig("structure-compare-default.png")
 ```
 
 Different model structures agreed for the first half of the century-long simulation, at which point they started to diverge (Figure \@ref(fig:structure-compare-default)).
-Post 1950, the combination of two-stream RTM, finite canopy radius, and plastic traits had the highest productivity, followed by the same configuration with static traits, with the remaining configurations having very similar results.
+Post 1950, the combination of two-stream RTM, finite canopy radius, and plastic traits had the highest productivity, followed by the same configuration with static traits, with the remaining configurations having similar results.
 Interestingly, the effects of changing individual model configurations were not additive --- for example, enabling trait plasticity had a much stronger positive effect when paired with the two-stream canopy RTM than with the multiple-scatter canopy RTM.
 
 Differences in productivity across model structures were related to differences in composition and vertical canopy radiation profiles over the course of the simulation (Figure S1).
@@ -382,7 +382,7 @@ default_median_lai_cap <- paste(
 fig("default-median-lai.png")
 ```
 
-Third, even where NPP was similar between default and median runs, the underlying forest composition was very different (Figure \@ref(fig:default-median-lai)).
+Third, even where NPP was similar between default and median runs, the underlying forest composition was different (Figure \@ref(fig:default-median-lai)).
 With the default parameterization, ED-2.2 produces forests dominated by Early Hardwoods, with an understory of small mid- and even smaller late-hardwood trees that eventually die out.
 However, with the median parameterization, ED-2.2 starts out with forests dominated by _mid_-hardwood species that are quickly (pre-1910 to 1930, depending on configuration) replaced with pine, which remains the dominant canopy species throughout the rest of the simulation.
 Exploratory analyses (results not shown) show that the main parameters responsible for this compositional trajectory are SLA (especially the higher SLA of pine and mid-hardwood), V~cmax~, and growth respiration.
@@ -506,7 +506,7 @@ ED2.2 has a mortality scheme, and indeed, parameters related to mortality were o
 <!-- Maybe move this elsewhere? -->
 <!-- TODO Look at mortality across ED runs. Does it relate at all to results? -->
 However, although our simulations used real meteorology (which included occasional extreme weather events), **we did not consider other sources of disturbance** common to this region [such as harvests, insects and pathogens, and fire; @amiro_2010_ecosystem], which may contribute to sustaining productivity and dominance of early-successional forests [@gough_2016_disturbance].
-Future work will: (1) Calibrate ED2.2 disturbance response to experimental observations (FoRTE), and (2) run long-term simulations with prescribed disturbance frequencies and see how they affect ecological dynamics.
+Future work will: (1) Calibrate ED2.2 disturbance response to experimental observations (FoRTE), and (2) run long-term simulations with prescribed disturbance regimes and see how they affect ecological dynamics.
 
 Under all but a small minority of parameter combinations, **ED-2.2 was unable to create---let alone sustain---a forest with any appreciable functional diversity**.
 The large majority of runs produced dominance by a single PFT, though _which_ PFT dominated depended on parameter combination.
