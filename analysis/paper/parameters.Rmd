@@ -1,0 +1,43 @@
+
+Three parameters are related to leaf-level physiology:
+Following the enzyme-kinetic model of @farquhar_1980_biochemical, the rate of photosynthesis is the minimum of light-limited and enzyme-limited reactions.
+The former are controlled by the _quantum efficiency_ parameter---maximum efficiency with which absorbed photosynthetically active radiation is converted to CO~2~.
+The latter are controlled by _V~cmax~_, the maximum rate of carbon fixation by Rubisco.
+The water demand of photosynthesis is controlled by the _stomatal slope_, the sensitivity of stomatal conductance of CO~2~ as a function of CO~2~ concentration and humidity at the leaf surface [@leuning_1995_critical; @ball_1987_model].
+Three more parameters correspond to the respiration rates of _leaves_, _roots_, and "_growth maintenance_".
+
+Two more parameters control carbon allocation:
+One is the ratio of fine root to leaf biomass (`fineroot2leaf`, or `q`), and another is the ratio of "storage" carbon allocated to reproduction (`r_fract`).
+
+Three parameters control various aspects of adult tree mortality.
+The overall adult mortality rate in ED-2.2 ($M$) is the sum of density-independent mortality from aging ($M_I$, plants year^-1^), density-dependent mortality from C starvation ($M_D$), and mortality from cold/frost ($M_F$) (ED-2.2 technically also includes additional term for fire mortality, but we did not include fire in our simulations):
+
+$$
+M = M_I + M_D + M_F
+$$
+
+Density-independent mortality from aging ($M_I$) is a prescribed, PFT-specific parameter (`mort3`).
+Density-dependent mortality from C starvation is calculated as a function of a cohort's C balance limitation:
+
+$$
+M_D = \frac{y_1}{1 + \exp\left[y_2 \left( \frac{C_k}{C_k^*} \right)\right]}
+$$
+
+where $C_k$ is the 12 month running mean C balance of the cohort, $C_k^*$ is the running mean ideal C balance if there was no light or water limitation, and $y_1$ (`mort1`; plants year^-1^) and $y_2$ (`mort2`; unitless) are PFT-specific parameters.
+_Seedling mortality_ rate is prescribed as its own PFT-specific parameter.
+
+Several parameters are related to canopy structure and radiative transfer.
+_Specific leaf area_ (`SLA`) is used to convert leaf biomass to leaf area index, which in turn is used in a variety of calculations related to canopy radiative transfer and micrometeorology.
+Canopy _clumping factor_ describes how evenly leaf area is distributed in horizontal space (1 being perfectly evenly; 0 being a "black hole" where all leaves are concentrated in a single point); and
+leaf _orientation factor_ describes the average distribution of leaf angles (-1 being perfectly vertical, 1 being perfectly horizontal, and 0 being random).
+Four parameters control leaf optical properties, namely the fractions of light reflected or transmitted in visible and near-infrared wavelengths (`leaf_(reflect|trans)_(vis|nir)`).
+Details of how these parameters influence canopy radiative transfer are described in the Supplementary Information.
+
+Other parameters (TODO, briefly):
+
+- Fraction of litter carbon that enters the labile (fast) soil carbon pool (`f_labile`)
+- Minimum plant height for reproduction (`repro_min_h`)
+- Soil-plant water conductance, or "water availability factor" (`water_conductance`)
+- C:N ratio in fine roots (`c2n_fineroot`) and leaves (`c2n_leaf`)
+- Leaf turnover rate (evergreen-only; `leaf_turnover_rate`)
+- Proportion of dispersal that is "global" (`nonlocal_dispersal`) <!-- TODO What is this? Can I drop it from the analysis? -->
