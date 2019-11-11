@@ -63,7 +63,7 @@ Specific comments:
   - [X] Figure 6. Excellent and a clearly core result that should be retained. In the accompanying text, I’d also indicate that all configurations simulate a decline in NPP as the forest approaches a century in age.
     - /We do talk about declining NPP in the text./
   - [ ] Figure 7. Interesting, but not sure it’s essential. OR, you could recast and fold into Figure 6 as production efficiency, which is NPP/LAI, essentially what you are showing in Fig 7.
-    - /I'm inclined to keep this one because of its links to Figure 9, and/
+    - /I'm inclined to keep this one because of its links to Figure 9, and the /
   - [X] Pg 15, third paragraph: “…a handful of…”
   - [ ] Figure 8. Visually interesting and useful as a supplement to show degree of ensemble variation, but necessary given Fig. 9? Fig 9. is excellent.
     - /Maybe just revert to showing some metric of "diversity" in Figure 6, as I did in an earlier draft./
@@ -83,6 +83,5 @@ Specific comments:
   - [ ] JEFF: "PFT composition right". -- I'd rephrase this to say that it is capable to "approximate". Similar to your "correct" earlier...it just seems specious to really go into right or correct or any of that.
   - [ ] JEFF: "Importantly, efforts to reduce model uncertainty..." -- I think you could probably expand here as this is a really interesting area.
 
-
-- Acknowledgements:
+- Acknowledgments:
   - [X] Please make sure to acknowledge NSF Award 1655095
