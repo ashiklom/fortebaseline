@@ -445,7 +445,7 @@ fig("pft-jitterplot.png")
 ```
 
 The large parameter uncertainty in NPP and LAI also extended to species composition (Figure \@ref(fig:pft-jitterplot)).
-Under all configurations, at any moment in time, most ensemble members were dominated by a single PFT, and the sustained coexistence of more than two PFTs was limited to only a handful specific ensemble members across all configurations.
+Under all configurations, at any moment in time, most ensemble members were dominated by a single PFT, and the sustained coexistence of more than two PFTs was limited to a small set of specific ensemble members across all configurations.
 However, _which_ PFT was dominant depended strongly on parameter values, and any of the four PFTs became the dominant one in some subset of simulations.
 
 ```{r lai-pft-plot, fig.cap = lai_pft_cap}
@@ -467,7 +467,7 @@ In both of these simulations, peak productivity was higher and more sustained wh
 Trait plasticity had relatively little effect on most of these two simulations, though in parameter set **B**, under the combination of closed canopy, multiple-scatter RTM, and plastic traits, pine overtook the dominant late hardwood PFT starting around 1975.
 Both of these parameter sets also had the lowest LAI of the five selected here, with a peak LAI of 1 in **A** and 2 in **B**.
 Parameter set **C** showed much more variety in compositional dynamics with model structure:
-In all cases, mid-hardwoods began as the dominant species and were eventually overtaken by either pine (closed canopy and plastic traits) or early hardwood (all other cases; though with a closed canopy and static traits, the final LAI was low).
+In all cases, mid-hardwoods began as the dominant PFT and were eventually overtaken by either pine (closed canopy and plastic traits) or early hardwood (all other cases; though with a closed canopy and static traits, the final LAI was low).
 Parameter sets **D** and **E** had the highest productivity of these five sets, and were characterized by strong dominance of Early Hardwood and Pine, respectively.
 
 ```{r partial-variance-npp, fig.cap = partial_variance_npp_cap}
@@ -496,7 +496,7 @@ Similarly, parameters related to leaf optical properties had relatively higher i
 
 ## ED-2.2 vs. reality
 
-The overarching objective of this study was to investigate how model structure and parameters interact in multidecadal simulations of forest ecosystem productivity and community assembly.
+The overarching objective of this study was to investigate how model structure and parameters interact in multidecadal simulations of forest ecosystem productivity and community succession.
 Our first question was: To what extent can the model, under any configuration, reproduce the observed reality?
 **Ensemble average trajectory matches traditional understanding of succession**---rapid growth to peak productivity, followed by gradual decline [@odum_1969_strategy_ecosystem_development]---but **happens too quickly** (Figure \@ref(fig:summary-ts-plot));
 real ecosystems sustain peak productivity for longer [@gough_2016_disturbance].
