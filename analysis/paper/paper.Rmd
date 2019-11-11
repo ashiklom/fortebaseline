@@ -301,7 +301,7 @@ By using the same initial conditions and drivers, we do not consider initial con
 First, we evaluated the impact of model structure independent of any changes to parameters by comparing predictions of average annual net primary productivity (NPP) and summer (June, July, August) total leaf area index (LAI) across model structures while holding ED-2.2 parameters at their default values (Figure \@ref(fig:structure-compare-default)).
 To understand the physical and ecological mechanisms underlying these differences, we also compared the cohort-level composition, height, and canopy radiation profiles in these simulations in four stages of the simulation (Figure S1).
 
-Second, we compared simulations with ED-2.2 default parameters against simulations using median parameter estimates from a trait meta-analysis (Figure \@ref(fig:param-dist)).
+Second, we compared simulations with ED-2.2 default parameters against simulations using median parameter estimates from a trait meta-analysis (Figure S2).
 Here, we looked predictions of annual mean C fluxes (gross and net primary productivity, and autotrophic and heterotrophic respiration; Figure \@ref(fig:default-median-flux)) and of summer LAI by PFT (Figure \@ref(fig:default-median-lai)).
 
 Third, we considered the full range of parameter uncertainty by looking at predictions across all parameter ensemble members.
@@ -343,16 +343,7 @@ Despite these differences, by 1980 none of the configurations was able to sustai
 
 ## Default vs. median parameters
 
-```{r param-dist, fig.cap = param_dist_cap}
-### Figure 3
-param_dist_cap <- paste(
-  htmlfig(),
-  "Input parameter distributions from PEcAn trait meta-analysis."
-)
-fig("param-dist.png")
-```
-
-Parameter estimates from the trait meta-analysis were often substantially different from the ED-2.2 defaults (Figure \@ref(fig:param-dist)).
+Parameter estimates from the trait meta-analysis were often substantially different from the ED-2.2 defaults (Figure S2).
 In many cases, median parameter estimates were different entirely because of the choice of prior distributions.
 However, in several important cases, parameters well-constrained by data produced values substantially different from the ED2 defaults.
 For example, ED-2.2 default values for V~cmax~ were too low for all PFTs, and default values for SLA were too low for all PFTs except Early Hardwoods.
@@ -370,8 +361,8 @@ fig("default-median-fluxes.png")
 
 These differences in parameter values resulted in ED-2.2 runs that differed from the default runs in several important ways (Figures \@ref(fig:default-median-flux), \@ref(fig:default-median-lai)).
 First, in every model configuration (except finite canopy, two-stream RTM, and static traits), gross primary productivity (GPP) reached a higher peak, and did so earlier under median parameters (Figure \@ref(fig:default-median-flux)).
-This was driven primarily by higher V~cmax~ and SLA values for most PFTs (Figure \@ref(fig:param-dist)).
-However, this increase in GPP was offset by a large increase in autotrophic respiration (RA; Figure \@ref(fig:default-median-flux)), driven primarily by higher growth and leaf respiration rates across all PFTs (notably, the ED-2.2 default is _zero growth respiration_ for all temperate hardwood PFTs; Figure \@ref(fig:param-dist)).
+This was driven primarily by higher V~cmax~ and SLA values for most PFTs (Figure S2).
+However, this increase in GPP was offset by a large increase in autotrophic respiration (RA; Figure \@ref(fig:default-median-flux)), driven primarily by higher growth and leaf respiration rates across all PFTs (notably, the ED-2.2 default is _zero growth respiration_ for all temperate hardwood PFTs; Figure S2).
 The resulting net primary productivity (NPP) had similar peak values under default and median parameters, though the temporal patterns were quite different in most model configurations (Figure \@ref(fig:default-median-flux)).
 
 Second, the variation across model structures was much higher, with every change in model structure exerting a noticeable effect on flux variability (Figure \@ref(fig:default-median-flux)).
@@ -525,7 +516,7 @@ To the extent that ED-2.2 is "correct" in how it represents processes, this resu
 Most ED-2.2 runs under-predicted both NPP and LAI, both in the peak period (1920-1950) and towards the end of the simulation (1975-1999) (Figures \@ref(fig:summary-ts-plot), \@ref(fig:pairs-time)).
 However, of our five selected representative runs, the two that most closely matched present day composition at UMBS (early hardwood-dominated; **C** and **D** in Figure \@ref(fig:lai-pft-plot)) also closely matched the observed NPP and LAI (Figure \@ref(fig:pairs-time)).
 This is encouraging because it suggests that it is possible to get both aggregate ecosystem C fluxes and PFT composition right.
-Moreover, given that many important ED-2.2 parameters were well-constrained in our analysis (\@ref(fig:param-dist)), this is possible without using physically unrealistic parameter values.
+Moreover, given that many important ED-2.2 parameters were well-constrained in our analysis (Figure S2), this is possible without using physically unrealistic parameter values.
 We therefore suggest that for model calibration and validation, comparisons against multiple output variables---including variables related to composition---can yield maximum constraint and are not unreasonably strict.
 
 ## Drivers of uncertainty
@@ -545,8 +536,8 @@ In contrast, "growth respiration factor" is an empirical coefficient and not mea
 
 **Importantly, efforts to reduce model uncertainty are most effective when they target parameters that are poorly constrained and to which the model is most sensitive**.
 For parameters that are already well constrained by data, the marginal value of additional measurements may be limited.
-For example, ED-2.2 is highly sensitive to SLA [@dietze_2014_quantitative; @pandit_2018_optimizing], but thanks to the large number of SLA observations, we were able to estimate it very precisely (Figure \@ref(fig:param-dist)) and, as a result, it was not a significant source of uncertainty in our analysis (Figure \@ref(fig:partial-variance-npp)).
-At the same time, some poorly constrained parameters have relatively modest impacts on model outputs---for instance, nonlocal dispersal and background mortality rate in our study (Figure \@ref(fig:param-dist), \@ref(fig:partial-variance-npp))---and therefore, reducing their uncertainties is not an effective way to improve model predictions.
+For example, ED-2.2 is highly sensitive to SLA [@dietze_2014_quantitative; @pandit_2018_optimizing], but thanks to the large number of SLA observations, we were able to estimate it very precisely (Figure S2) and, as a result, it was not a significant source of uncertainty in our analysis (Figure \@ref(fig:partial-variance-npp)).
+At the same time, some poorly constrained parameters have relatively modest impacts on model outputs---for instance, nonlocal dispersal and background mortality rate in our study (Figure S2, \@ref(fig:partial-variance-npp))---and therefore, reducing their uncertainties is not an effective way to improve model predictions.
 Ultimately, this points to the value of model-data feedbacks [@dietze_2013_improving] in advancing ecological research and setting future research agendas.
 
 Although parameter uncertainty was larger in magnitude than structural uncertainty, model structure played an important role in shaping the nature of that uncertainty.

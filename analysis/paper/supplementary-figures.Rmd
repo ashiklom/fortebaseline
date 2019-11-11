@@ -20,3 +20,12 @@ structure_default_light_cap <- paste(
 )
 fig("default-light-levels.png")
 ```
+
+```{r param-dist, fig.cap = param_dist_cap}
+### Figure S2
+param_dist_cap <- paste(
+  htmlfig(),
+  "Input parameter distributions from PEcAn trait meta-analysis."
+)
+fig("param-dist.png")
+```
