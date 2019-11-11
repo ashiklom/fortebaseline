@@ -52,25 +52,25 @@ Specific comments:
 - Results
 
   - [X] Impacts of structure alone: Consider modifying first sentence to: “…for the first half of the century-long simulation…” for better context.
-  - [X] Figure 2. This is an interesting figure, but could probably be supplementary or simplified by showing only key contrasts highlighted in text.
-  - [X] Figure 3. Again interesting, but in this case an input rather than a key result, right? So, could probably also be a supplementary figure.
+  - [X] Figure 2 (Light availability, by cohort). This is an interesting figure, but could probably be supplementary or simplified by showing only key contrasts highlighted in text.
+  - [X] Figure 3 (Parameter distributions). Again interesting, but in this case an input rather than a key result, right? So, could probably also be a supplementary figure.
   - [-] Default vs median parameters: This IS REALLY interesting and revealing. I think it will be important then to cast the interpretation of the results in this critical context. The model sensitivity to parameters appears largely dependent on the starting point.
     - /Not quite. This figure is showing that model sensitivity to changes in _structure_ depends on choice of parameters, and all our initial conditions are the same./
-  - [ ] Figure 4 is definitely a keeper, but it’s busy. You could simplify by aggregating into closed and finite canopies.
-  - [-] Figure 5. Keeper. But, what the hell is going on? So fascinating but also perplexing that the default seems to more closely match reality.
+  - [ ] Figure 4 (Default vs. median: Fluxes) is definitely a keeper, but it’s busy. You could simplify by aggregating into closed and finite canopies.
+  - [-] Figure 5. (Default vs. median: PFT LAI) Keeper. But, what the hell is going on? So fascinating but also perplexing that the default seems to more closely match reality.
     - /I don't think this is all that perplexing or surprising. In the modeling world, it's common to tune parameters to get realistic outputs, even if the resulting parameters end up unrealistic; that's exactly what this is showing./
   - [ ] Default vs median parameters: Very cool results and well-presented. “Exploratory analysis” is interesting, but be careful – not sure it’s essential and often not well-received by reviewers.
-  - [X] Figure 6. Excellent and a clearly core result that should be retained. In the accompanying text, I’d also indicate that all configurations simulate a decline in NPP as the forest approaches a century in age.
+  - [X] Figure 6 (Uncertainty time series). Excellent and a clearly core result that should be retained. In the accompanying text, I’d also indicate that all configurations simulate a decline in NPP as the forest approaches a century in age.
     - /We do talk about declining NPP in the text./
-  - [ ] Figure 7. Interesting, but not sure it’s essential. OR, you could recast and fold into Figure 6 as production efficiency, which is NPP/LAI, essentially what you are showing in Fig 7.
+  - [ ] Figure 7 (NPP vs. LAI scatter). Interesting, but not sure it’s essential. OR, you could recast and fold into Figure 6 as production efficiency, which is NPP/LAI, essentially what you are showing in Fig 7.
     - /I'm inclined to keep this one because of its links to Figure 9, and the /
   - [X] Pg 15, third paragraph: “…a handful of…”
-  - [ ] Figure 8. Visually interesting and useful as a supplement to show degree of ensemble variation, but necessary given Fig. 9? Fig 9. is excellent.
+  - [ ] Figure 8 (AGB fractions). Visually interesting and useful as a supplement to show degree of ensemble variation, but necessary given Fig. 9? Fig 9. is excellent.
     - /Maybe just revert to showing some metric of "diversity" in Figure 6, as I did in an earlier draft./
-  - [ ] Figure 10. I like as a main figure, but to be useful you’ll want to spell out parms on axis.
+  - [ ] Figure 10 (Parameter variance decomposition). I like as a main figure, but to be useful you’ll want to spell out parms on axis.
   - [X] Pg 18, “mid-hardwood began as the dominant PFT” (not species).
-  - [ ] JEFF: Figure 9 -- The changing y-axis scale is bothersome and obfuscates the story I think.
-  - [ ] JEFF: Figure 10 -- This is a cool way to do these style plots. I could go w/ this in supplemental or as a table though.
+  - [ ] JEFF: Figure 9 (PFT LAI scenarios) -- The changing y-axis scale is bothersome and obfuscates the story I think.
+  - [ ] JEFF: Figure 10 (Parameter variance decomposition) -- This is a cool way to do these style plots. I could go w/ this in supplemental or as a table though.
   -
 - Discussion
 
