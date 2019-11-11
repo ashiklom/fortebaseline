@@ -180,12 +180,13 @@ The official ED2 source code is available at https://github.com/EDmodel/ED2, and
 
 ## Submodels
 
-In this study, we ran a factorial combination of the following ED-2.2 configurations: (1) two-stream vs. multiple-scatter canopy radiative transfer models (RTMs); (2) closed canopy vs. finite crown area (a.k.a. complete vs. partial shading); and (3) static vs. light-plastic traits.
+For our analysis of model structure, we chose to target processes of known ecological importance.
+Specifically, we ran ED-2.2 with a factorial combination of the following configurations: (1) two-stream vs. multiple-scatter canopy radiative transfer models (RTMs); (2) closed canopy vs. finite crown area (a.k.a. complete vs. partial shading); and (3) static vs. plastic (varying with light level) traits.
 
 Both canopy RTMs in ED-2.2 resolve the full vertical radiation profile within a patch as a function of canopy structure (leaf and wood area indices, crown area, leaf angle distribution) and incident solar radiation, following the definitions in CLM 4.5 [@clm45_note].
 Both models also use identical definitions for the optical properties of a single canopy layer as a function of leaf and wood optical properties, leaf angle distribution, canopy clumping, solar zenith angle, and leaf, wood, and crown area indices.
 Both models represent direct (a.k.a. "beam") radiation as an exponentially decaying process, and solve for the diffuse (a.k.a. "hemispherical", "isotropic") radiation at each layer using a linear matrix equation.
-Where the models differ is in the terms of this matrix equation.
+The models differ in the terms of this matrix equation.
 The two-stream model (default) uses the two-stream approximation originally derived for atmospheric radiative transfer [@meador_1980_two] and later adapted to vegetation canopies [@dickinson_1983_land; @sellers_1985_canopy].
 Meanwhile, the multiple-scatter model was derived from first principles by @zhao_2005_multiple specifically for vegetation canopies to address known biases and limitations of the two-stream approach [e.g. @wang_2003_comparison].
 **Compared to the default two-stream model, the multiple-scatter model slightly increases diffuse light levels in the understory.**
@@ -193,14 +194,14 @@ Both of these models are described in detail in the Supplementary Information. <
 
 The crown area submodel in ED-2.2 determines the nature of competition for light between cohorts.
 In the default configuration ("closed canopy"), the leaf area of a cohort is distributed across the entire horizontal area of a patch.
-This means that taller cohorts always receive more incoming radiation than shorter cohorts, even when the height difference is small.
+This means that taller cohorts always receive more incoming radiation---including 100% of the direct radiation---than shorter cohorts, even when the height difference is small.
 Similar approaches have been shown to excessively suppress competition from sub-dominant individuals and result in unrealistically homogeneous forest patches [@fisher_2015_taking].
-In the alternate configuration ("finite crown area"), canopies take up only a fraction of the available horizontal area, which generally exposes the understory to more light.
+In the alternate configuration ("finite crown area"), canopies take up only a fraction of the available horizontal area, which allows more light (including some direct radiation) to reach subdominant cohorts.
 The horizontal area of crowns is determined by allometric equations from @dietze_2008_changing.
 
 The third submodel we evaluated was trait plasticity.
 In the default configuration, all cohorts of a given plant functional type have the same parameters, regardless of environmental conditions.
-This ignores the globally-documented intraspecific trait variability as a function of light level [@niinemets_2010_review; @keenan_2016_global]. <!-- TODO Also, classical ecological succession theory bazzaz_1979_physiological? -->
+This ignores the globally-documented intraspecific trait variability as a function of light level [@niinemets_2010_review; @keenan_2016_global].
 In the alternate configuration, as light level decreases (trees become more shaded), specific leaf area increases and V~cmax~ decreases, following empirical relationships from the tropics [@lloyd_2010_optimisation].
 
 These sub-models are summarized in Table \@ref(tab:submodels).
