@@ -1,0 +1,71 @@
+Response to your specific questions:
+
+> The current target journal for this is Global Change Biology. Do you think this is a good choice, and that this paper has a chance there?
+
+I largely defer to Ben’s judgement and experience, but yes, I think it fits well within the scope and should meet the high standard of GCB. My primary suggestion, and I can help, is to cast some aspects of the intro and discussion more broadly (not just ecologically). There’s an immediate emphasis on the upper Midwest (in the title and intro), but really this is a region that is representative of many forests globally that are encountering more and different kinds of disturbance and which are dynamic in age and structure.
+
+> With (1) in mind, we have a pretty good handle on the modeling implications of this paper, but we were hoping you could help us flesh out / rebalance the ecological implications, particularly in the introduction, discussion, and (currently non-existent) conclusions.
+
+Yes, for sure. But, it would be helpful to me for you to consider whether the overall structure is as you’d like. See my detailed comments below and let’s revisit ASAP. Main thing is that I think the intro is already probably longer than it should be and parts of the Discussion maybe underdeveloped.
+
+> This paper currently has a (excessively?) long results section with 10 large and fairly complex figures. This is on the high end of acceptability at GCB and similar journals. Do you see any places where figures (and results text) could be condensed, combined, or eliminated altogether?
+
+Generally, the writing in some places can be condensed, agreed. It would be easier for me to help with an editable version of the ms. But, overall, I thought the results text was NOT excessive. I do think you can cut 2-4 figures and/or possibly simplify a figure or 2. See below.
+
+Specific comments:
+
+- [X] Title: Minor point perhaps, but “community succession” generally focuses on plant composition changes rather than NPP. Consider “community-carbon cycling…” and omitting “Upper Midwest”, the latter doesn’t sound very global.
+
+- Abstract:
+  - [ ] Not clear from the abstract why competition for light is the focus (though this is revealed later).
+  - [X] PFT and UMBS not defined in the abstract.
+  - [ ] From a ‘big-picture’ trying to grab the attention of modelers and empiricists, is it reasonable to conclude that accurate model representation of vegetation community structure appears important to simulating C cycling processes? This is an interesting finding (to me) and I think will be to others because it demonstrates the importance of structure-function linkages in a modeling context.
+  - [X] I think you’ll want to be careful about using “structure” to mean vegetation physical arrangement, etc, given the emphasis here on model structure.
+
+- Introduction:
+  - [ ] General structure and flow is very good, but it’s long for an introduction. You could combine and compress paragraphs 3, 4, 5.
+  - [ ] First paragraph, starting with “Forests are…”. This is a well-written and articulated paragraph, but for GCB could be made more global in context. This region is really representative of changes that are, for the most part, occurring world-wide, re, increasing disturbance frequency, changing forest communities, etc. The upper Midwest (and UMBS) is a ‘model system’ or region in which to study these changes.
+  - [X] Paragraph three is very compelling. Nice.
+  - [ ] Paragraph four: Should be “They found…”.
+  - [ ] Paragraph 5 retool: Will work on it.
+
+- Methods
+
+  - [ ] General: It’s not until the final section of the methods that you discuss which simulated ecosystem properties and processes are of interest. Consider adding a sentence with this information to section 2.2.
+
+  - [ ] Site description: For site age, you could cite Gough et al. 2013: https://esajournals.onlinelibrary.wiley.com/doi/10.1890/12-1554.1
+
+  - [ ] Submodels, general comment: To make this more broadly accessible, you might include in the opening paragraph of this section brief clarification that you chose to manipulate “model structural attributes of known ecological importance”. Overall, the section is excellent, but undersells the ecological context/significance of these structural components and why they were selected. Again, I can work on this.
+
+  - [ ] Submodels, paragraph 1: What does “light-plastic” mean?
+
+  - [ ] Submodels, paragraph 3: “In the alternate configuration, canopies…” Do you mean the upper canopy absorbs only a fraction of the direct beam light? In either case, this sentence isn’t clear.
+
+  - [ ] Parameter descriptions: Again, maintain the thread and context. Consider reminding the reader in the first paragraph of the importance/sensitivity of these variables to change over successional time and also to disturbance, e.g., consider mortality parameters.
+
+  - [ ] Analysis of results: Helpful, but could be about 2/3 the current length.
+
+- Results
+
+  - [ ] Impacts of structure alone: Consider modifying first sentence to: “…for the first half of the century-long simulation…” for better context.
+  - [ ] Figure 2. This is an interesting figure, but could probably be supplementary or simplified by showing only key contrasts highlighted in text.
+  - [ ] Figure 3. Again interesting, but in this case an input rather than a key result, right? So, could probably also be a supplementary figure.
+  - [ ] Default vs median parameters: This IS REALLY interesting and revealing. I think it will be important then to cast the interpretation of the results in this critical context. The model sensitivity to parameters appears largely dependent on the starting point.
+  - [ ] Figure 4 is definitely a keeper, but it’s busy. You could simplify by aggregating into closed and finite canopies.
+  - [ ] Figure 5. Keeper. But, what the hell is going on? So fascinating but also perplexing that the default seems to more closely match reality.
+  - [ ] Default vs median parameters: Very cool results and well-presented. “Exploratory analysis” is interesting, but be careful – not sure it’s essential and often not well-received by reviewers.
+  - [ ] Figure 6. Excellent and a clearly core result that should be retained. In the accompanying text, I’d also indicate that all configurations simulate a decline in NPP as the forest approaches a century in age.
+  - [ ] Figure 7. Interesting, but not sure it’s essential. OR, you could recast and fold into Figure 6 as production efficiency, which is NPP/LAI, essentially what you are showing in Fig 7.
+  - [ ] Pg 15, third paragraph: “…a handful of…”
+  - [ ] Figure 8. Visually interesting and useful as a supplement to show degree of ensemble variation, but necessary given Fig. 9? Fig 9. is excellent.
+  - [ ] Figure 10. I like as a main figure, but to be useful you’ll want to spell out parms on axis.
+  - [ ] Pg 18, “mid-hardwood began as the dominant PFT” (not species).
+
+- Discussion
+
+  - [ ] Pg 19, first sentence. Change “community assembly” to “community succession”.
+  - [ ] ED-2.2 vs. reality: great subheading title! General thoughts – I can help retool this section and generally like it, but think it can be more synthetic from the beginning. The last paragraph ties structure and function together, but I’d suggest a slight reordering in which you lead with structure (current 2nd paragraph) then discuss function (current 1st) and then synthesize, while weaving in the interdependency throughout. I think you are right and this is a result that stood out to me: To get function (i.e., NPP) right, the model also has to simulate structure correctly; thus, the interaction between structure and, e.g., disturbance is critical to represent correctly in demographic models. Sets up FoRTE nicely.
+  - [ ] Drivers of uncertainty: I followed the first paragraph until the last sentence. Are you building to the case that the accuracy of simulations has implications beyond simply academic purposes? If so, I can help with that, but it’s abrupt as stated/placed here.
+
+- Acknowledgements:
+  - [ ] Please make sure to acknowledge NSF Award 1655095
