@@ -1,0 +1,22 @@
+---
+title: "Supplementary figures"
+author:
+  - Alexey N. Shiklomanov
+  - Ben Bond-Lamberty
+  - Jeff Atkins
+  - Christopher M. Gough
+---
+
+```{r structure-compare-light, fig.cap = structure_default_light_cap}
+### Figure S1
+structure_default_light_cap <- paste(
+  htmlfig(),
+  "Radiation profiles of cohorts from ED2 runs with",
+  "default parameters, across different configurations.",
+  "Each point represents a single cohort of the given PFT,",
+  "position on the y-axis represents the height of that cohort,",
+  "and position on the x-axis represents the relative light level",
+  "received by that cohort."
+)
+fig("default-light-levels.png")
+```

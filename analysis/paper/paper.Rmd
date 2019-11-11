@@ -299,7 +299,7 @@ By using the same initial conditions and drivers, we do not consider initial con
 ## Analysis of results
 
 First, we evaluated the impact of model structure independent of any changes to parameters by comparing predictions of average annual net primary productivity (NPP) and summer (June, July, August) total leaf area index (LAI) across model structures while holding ED-2.2 parameters at their default values (Figure \@ref(fig:structure-compare-default)).
-To understand the physical and ecological mechanisms underlying these differences, we also compared the cohort-level composition, height, and canopy radiation profiles in these simulations in four stages of the simulation (Figure \@ref(fig:structure-compare-light)).
+To understand the physical and ecological mechanisms underlying these differences, we also compared the cohort-level composition, height, and canopy radiation profiles in these simulations in four stages of the simulation (Figure S1).
 
 Second, we compared simulations with ED-2.2 default parameters against simulations using median parameter estimates from a trait meta-analysis (Figure \@ref(fig:param-dist)).
 Here, we looked predictions of annual mean C fluxes (gross and net primary productivity, and autotrophic and heterotrophic respiration; Figure \@ref(fig:default-median-flux)) and of summer LAI by PFT (Figure \@ref(fig:default-median-lai)).
@@ -308,7 +308,6 @@ Third, we considered the full range of parameter uncertainty by looking at predi
 We begin with predictions annual mean NPP and summer mean total LAI across all parameters and structures and compare these results to contemporary (averaged over years TODO) observations of NPP and LAI at UMBS.
 We look at these variables independently as time series (Figure \@ref(fig:summary-ts-plot)) and as joint predictions in two periods (Figure \@ref(fig:pairs-time)).
 We then consider impacts on composition by looking at predicted PFT fractions of total aboveground biomass (AGB) at four different years in the simulation (Figure \@ref(fig:pft-jitterplot)) and at time series of LAI by PFT for five parameter combinations spanning the range of predicted ecological outcomes (Figure \@ref(fig:lai-pft-plot)).
-
 Finally, we assessed which parameters contributed the most to parameter uncertainty for each model structure.
 We did this by performing a sensitivity and variance decomposition analysis following @lebauer_2013_facilitating, @dietze_2014_quantitative, and @raczka_2018_what (Figure \@ref(fig:partial-variance-npp)).
 Briefly, this analysis contains uses a spline to estimate the relationship between individual parameters and output variables and then uses these splines to predict the variance in the output variable attributable to individual parameters ("partial variance").
@@ -332,25 +331,11 @@ structure_default_cap <- paste(
 fig("structure-compare-default.png")
 ```
 
-Different model structures agreed for the first half of the simulation, at which point they started to diverge (Figure \@ref(fig:structure-compare-default)).
+Different model structures agreed for the first half of the century-long simulation, at which point they started to diverge (Figure \@ref(fig:structure-compare-default)).
 Post 1950, the combination of two-stream RTM, finite canopy radius, and plastic traits had the highest productivity, followed by the same configuration with static traits, with the remaining configurations having very similar results.
 Interestingly, the effects of changing individual model configurations were not additive --- for example, enabling trait plasticity had a much stronger positive effect when paired with the two-stream canopy RTM than with the multiple-scatter canopy RTM.
 
-```{r structure-compare-light, fig.cap = structure_default_light_cap}
-### Figure 2
-structure_default_light_cap <- paste(
-  htmlfig(),
-  "Radiation profiles of cohorts from ED2 runs with",
-  "default parameters, across different configurations.",
-  "Each point represents a single cohort of the given PFT,",
-  "position on the y-axis represents the height of that cohort,",
-  "and position on the x-axis represents the relative light level",
-  "received by that cohort."
-)
-fig("default-light-levels.png")
-```
-
-Differences in productivity across model structures were related to differences in composition and vertical canopy radiation profiles over the course of the simulation (Figure \@ref(fig:structure-compare-light)).
+Differences in productivity across model structures were related to differences in composition and vertical canopy radiation profiles over the course of the simulation (Figure S1).
 Enabling the finite canopy radius increased the availability of light for understory cohorts throughout the simulation, particularly in the first half of the simulation.
 Again, however, the effects of model structures were not strictly additive:
 Switching from a two-stream to a multiple-scatter canopy RTM enhanced the understory light environment (albeit slightly) under a closed canopy, but the brightest understory occurred under the combination of the two-stream RTM and finite canopy.

@@ -42,8 +42,8 @@ Specific comments:
 
 - Results
 
-  - [ ] Impacts of structure alone: Consider modifying first sentence to: “…for the first half of the century-long simulation…” for better context.
-  - [ ] Figure 2. This is an interesting figure, but could probably be supplementary or simplified by showing only key contrasts highlighted in text.
+  - [X] Impacts of structure alone: Consider modifying first sentence to: “…for the first half of the century-long simulation…” for better context.
+  - [X] Figure 2. This is an interesting figure, but could probably be supplementary or simplified by showing only key contrasts highlighted in text.
   - [ ] Figure 3. Again interesting, but in this case an input rather than a key result, right? So, could probably also be a supplementary figure.
   - [ ] Default vs median parameters: This IS REALLY interesting and revealing. I think it will be important then to cast the interpretation of the results in this critical context. The model sensitivity to parameters appears largely dependent on the starting point.
   - [ ] Figure 4 is definitely a keeper, but it’s busy. You could simplify by aggregating into closed and finite canopies.
