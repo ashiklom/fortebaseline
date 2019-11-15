@@ -28,26 +28,20 @@ Specific comments:
   - [ ] First paragraph, starting with “Forests are…”. This is a well-written and articulated paragraph, but for GCB could be made more global in context. This region is really representative of changes that are, for the most part, occurring world-wide, re, increasing disturbance frequency, changing forest communities, etc. The upper Midwest (and UMBS) is a ‘model system’ or region in which to study these changes.
   - [X] Paragraph three is very compelling. Nice.
   - [X] Paragraph four: Should be “They found…”.
-  - [ ] Paragraph 5 retool: Will work on it.
-  - [ ] JEFF: Fisher et al. 2010 uses the plasticity approach right? It's that canopies have layers, but only 2 in that approach. The wonky part to me is how unconstrained the position (z) is for understory/canopy bifurcation based on height. totally variable. That said I think you just need to mention how horz. variation here plays into why the model fails to do this. You got the back end of this paragraph nailed down I think.
-    I can get you more sources on that if you want to why we think that:
-    (Stark, S. C., Leitold, V., Wu, J. L., Hunter, M. O., de Castilho, C. V., Costa, F. R., ... & Keller, M. (2012). Amazon forest carbon dynamics predicted by profiles of canopy leaf area and light environment. Ecology letters, 15(12), 1406-1414.)
-    (Seasonal and drought‐related changes in leaf area profiles depend on height and light environment in an Amazon forest
-    MN Smith, SC Stark, TC Taylor, ML Ferreira… - New Phytologist, 2019)
-    and mine and gough's jgr paper:
-    (Forest canopy structural complexity and light absorption relationships at the subcontinental scaleJW Atkins, RT Fahey, BS Hardiman, CM Gough - Journal of Geophysical Research: Biogeosciences, 2018)
+  - [X] Paragraph 5 retool: Will work on it.
+  - [X] JEFF: Fisher et al. 2010 uses the plasticity approach right? It's that canopies have layers, but only 2 in that approach. The wonky part to me is how unconstrained the position (z) is for understory/canopy bifurcation based on height. totally variable. That said I think you just need to mention how horz. variation here plays into why the model fails to do this. You got the back end of this paragraph nailed down I think. I can get you more sources on that if you want to why we think that: (Stark, S. C., Leitold, V., Wu, J. L., Hunter, M. O., de Castilho, C. V., Costa, F. R., ... & Keller, M. (2012). Amazon forest carbon dynamics predicted by profiles of canopy leaf area and light environment. Ecology letters, 15(12), 1406-1414.) (Seasonal and drought‐related changes in leaf area profiles depend on height and light environment in an Amazon forest MN Smith, SC Stark, TC Taylor, ML Ferreira… - New Phytologist, 2019) and mine and gough's jgr paper: (Forest canopy structural complexity and light absorption relationships at the subcontinental scaleJW Atkins, RT Fahey, BS Hardiman, CM Gough - Journal of Geophysical Research: Biogeosciences, 2018)
 
 - Methods
 
-  - [-] General: It’s not until the final section of the methods that you discuss which simulated ecosystem properties and processes are of interest. Consider adding a sentence with this information to section 2.2.
+  - [X] General: It’s not until the final section of the methods that you discuss which simulated ecosystem properties and processes are of interest. Consider adding a sentence with this information to section 2.2.
   - [X] Site description: For site age, you could cite Gough et al. 2013: https://esajournals.onlinelibrary.wiley.com/doi/10.1890/12-1554.1
-  - [-] Submodels, general comment: To make this more broadly accessible, you might include in the opening paragraph of this section brief clarification that you chose to manipulate “model structural attributes of known ecological importance”. Overall, the section is excellent, but undersells the ecological context/significance of these structural components and why they were selected. Again, I can work on this.
+  - [X] Submodels, general comment: To make this more broadly accessible, you might include in the opening paragraph of this section brief clarification that you chose to manipulate “model structural attributes of known ecological importance”. Overall, the section is excellent, but undersells the ecological context/significance of these structural components and why they were selected. Again, I can work on this.
   - [X] Submodels, paragraph 1: What does “light-plastic” mean?
   - [X] Submodels, paragraph 3: “In the alternate configuration, canopies…” Do you mean the upper canopy absorbs only a fraction of the direct beam light? In either case, this sentence isn’t clear.
   - [X] Parameter descriptions: Again, maintain the thread and context. Consider reminding the reader in the first paragraph of the importance/sensitivity of these variables to change over successional time and also to disturbance, e.g., consider mortality parameters.
     - /I eliminated most of this text in favor of a brief sentence on parameters with a pointer to the ED2 description paper./
   - [ ] Analysis of results: Helpful, but could be about 2/3 the current length.
-  - [ ] JEFF: Do we want to differentiate between canopy structure and canopy architecture? Is there even one? Leaf angle distribution often gets classified as canopy architecture. My heads been in the weeds here on this stuff and I don't know what is what anymore.
+  - [X] JEFF: Do we want to differentiate between canopy structure and canopy architecture? Is there even one? Leaf angle distribution often gets classified as canopy architecture. My heads been in the weeds here on this stuff and I don't know what is what anymore.
 
 - Results
 
@@ -69,19 +63,19 @@ Specific comments:
     - /Maybe just revert to showing some metric of "diversity" in Figure 6, as I did in an earlier draft./
   - [ ] Figure 10 (Parameter variance decomposition). I like as a main figure, but to be useful you’ll want to spell out parms on axis.
   - [X] Pg 18, “mid-hardwood began as the dominant PFT” (not species).
-  - [ ] JEFF: Figure 9 (PFT LAI scenarios) -- The changing y-axis scale is bothersome and obfuscates the story I think.
-  - [ ] JEFF: Figure 10 (Parameter variance decomposition) -- This is a cool way to do these style plots. I could go w/ this in supplemental or as a table though.
+  - [X] JEFF: Figure 9 (PFT LAI scenarios) -- The changing y-axis scale is bothersome and obfuscates the story I think.
+  - [X] JEFF: Figure 10 (Parameter variance decomposition) -- This is a cool way to do these style plots. I could go w/ this in supplemental or as a table though.
   -
 - Discussion
 
   - [X] Pg 19, first sentence. Change “community assembly” to “community succession”.
   - [ ] ED-2.2 vs. reality: great subheading title! General thoughts – I can help retool this section and generally like it, but think it can be more synthetic from the beginning. The last paragraph ties structure and function together, but I’d suggest a slight reordering in which you lead with structure (current 2nd paragraph) then discuss function (current 1st) and then synthesize, while weaving in the interdependency throughout. I think you are right and this is a result that stood out to me: To get function (i.e., NPP) right, the model also has to simulate structure correctly; thus, the interaction between structure and, e.g., disturbance is critical to represent correctly in demographic models. Sets up FoRTE nicely.
-  - [ ] Drivers of uncertainty: I followed the first paragraph until the last sentence. Are you building to the case that the accuracy of simulations has implications beyond simply academic purposes? If so, I can help with that, but it’s abrupt as stated/placed here.
+  - [X] Drivers of uncertainty: I followed the first paragraph until the last sentence. Are you building to the case that the accuracy of simulations has implications beyond simply academic purposes? If so, I can help with that, but it’s abrupt as stated/placed here.
     - /This is that we (in- and outside academia) value forests beyond their ability to sequester carbon. Many (most?) of the arguments about why we need demographic models relate to the fact that accounting for demography helps us predict C cycling, but I think this undersells the value of predicting composition and ecological dynamics for their own sake./
-  - [ ] JEFF: "Prescribed disturbance frequencies" -- Important to note and differentiate between "frequency" and "severity"
+  - [X] JEFF: "Prescribed disturbance frequencies" -- Important to note and differentiate between "frequency" and "severity"
     - /How about "regimes", which encompasses both?/
-  - [ ] JEFF: "PFT composition right". -- I'd rephrase this to say that it is capable to "approximate". Similar to your "correct" earlier...it just seems specious to really go into right or correct or any of that.
-  - [ ] JEFF: "Importantly, efforts to reduce model uncertainty..." -- I think you could probably expand here as this is a really interesting area.
+  - [-] JEFF: "PFT composition right". -- I'd rephrase this to say that it is capable to "approximate". Similar to your "correct" earlier...it just seems specious to really go into right or correct or any of that.
+  - [X] JEFF: "Importantly, efforts to reduce model uncertainty..." -- I think you could probably expand here as this is a really interesting area.
 
 - Acknowledgments:
   - [X] Please make sure to acknowledge NSF Award 1655095
