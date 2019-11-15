@@ -85,11 +85,13 @@ htmlfig <- function() {
 
 # Introduction
 
-Forests are a defining feature of the US North.
-This region is the most heavily forested region in the US, and these forests are an essential provider of employment and recreation opportunities and other ecosystem services for the region's people, and of habitat for the region's wildlife [@shividenko_2005_forest; @shifley_2012_forests].
-In addition, the forests of the Upper Midwest in particular have been a net carbon sink for most of the past century, as fast-growing early successional species established and thrived following near-complete deforestation around the end of the 19th Century [@birdsey_2006_forest; @williams_2012_carbon].
-However, the fate of these forests is highly uncertain.
-Many Upper Midwest forests are undergoing a shift in community composition from early-successional to mid-successional species, and the ecological and biogeochemical consequences of this transition are not well-established [@gough_2016_disturbance].
+Human land use patterns over the last 500 years, and particularly over the last century, have led to decline in primary forests across most of the Earth's surface [@hurtt_2011_harmonization].
+However, in many places, subsequent changes in land use (e.g. abandonment of agriculture and pasture) have caused much of this area to regrow as secondary forest [@hurtt_2011_harmonization].
+Understanding the drivers behind this regrowth, and the ability to predict its future course, are therefore essential to shaping global policy around climate, biodiversity, and natural resource management.
+
+The temperate forests of the Upper Midwest are a model system for studying secondary forest ecology and biogeochemistry.
+These have been a net carbon sink for most of the past century, as fast-growing early successional species established and thrived following near-complete deforestation around the end of the 19th Century [@birdsey_2006_forest; @williams_2012_carbon].
+More recently, many Upper Midwest forests are undergoing a shift in community composition from early-successional to mid-successional species, and the ecological and biogeochemical consequences of this transition are not well-established [@gough_2016_disturbance].
 In addition, these forests face a multitude of direct and indirect pressures from both biotic and abiotic sources [@shifley_2016_future], including longer and more severe droughts [@gustafson_2016_implications; @swanston_2017_vulnerability; @lienard_2016_us], non-native insects and pathogens [@lovett_2016_nonnative], and more. <!-- TODO More here? -->
 Collectively, these processes have culminated in forests that are different from their pre-settlement climax counterparts [@stearns_2002_one; @wolter_2002_recent; @thompson_2013_four], and our ability to make predictions about such non-analog environments based on the past is limited.
 
