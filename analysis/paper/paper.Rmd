@@ -117,7 +117,7 @@ While many modeling studies have looked at structural and parameter uncertainty 
 Ben's notes:which of the last two categories--structural versus parameter uncertainty--is more important (Fisher et al. 2015, https://onlinelibrary.wiley.com/doi/full/10.1111/j.1523-1739.2003.00614.x, Ricciuto et al. 2008).
 -->
 
-Resource---particularly light---availability and distribution drives demographic variation in plant C fixation and community structural changes through succession.
+Light availability and distribution drives demographic variation in plant C fixation and community structural changes through succession.
 Observations show that competition for light drives niche differentiation [@silvertown_2004_plant] and consequently successional change [@canham_1990_light; @bazzaz_1993_successional], particularly in closed canopies.
 Prior ED versions were limited in their capacity to sustain multiple plant functional types during stand development due in part to unrealistically aggressive shading of the understory and a lack of consideration for tree crown area, such that the marginal height advantage of a vegetation cohort resulted in a disproportionally large growth advantage [@fisher_2010_assessing].
 Alternative approaches that accommodate horizontal competition for light [e.g. perfect plasticity assumption, @strigul_2008_scaling; @weng_2015_scaling] reduce the relative impact of height on light availability and growth, and may therefore promote competition [@fisher_2017_vegetation].
@@ -174,7 +174,6 @@ The models differ in the terms of this matrix equation.
 The two-stream model (default) uses the two-stream approximation originally derived for atmospheric radiative transfer [@meador_1980_two] and later adapted to vegetation canopies [@dickinson_1983_land; @sellers_1985_canopy].
 Meanwhile, the multiple-scatter model was derived from first principles by @zhao_2005_multiple specifically for vegetation canopies to address known biases and limitations of the two-stream approach [e.g. @wang_2003_comparison].
 Compared to the default two-stream model, the multiple-scatter model slightly increases diffuse light levels in the understory.
-Both of these models are described in detail in the Supplementary Information. <!-- TODO Exact reference to Appendix -->
 
 The crown area submodel in ED-2.2 determines the nature of competition for light between cohorts.
 In the default configuration ("closed canopy"), the leaf area of a cohort is distributed across the entire horizontal area of a patch.
@@ -247,9 +246,9 @@ A full description of these parameters and their associated processes in ED-2.2 
 
 ## Plant functional types and parameterization
 
-By default, ED-2.2 supports 17 different plant functional types, which divide plant species according to photosynthetic pathway (C3 vs. C4), growth form (grass vs. tree), leaf phenology habit (deciduous vs. evergreen), biome (e.g. temperate vs. tropical), and successional status (e.g. early, mid, late).
+By default, ED-2.2 supports 17 different plant functional types, which divide plant species according to growth form (grass vs. tree), photosynthetic pathway (C3 vs. C4), leaf habit (deciduous vs. evergreen), biome (e.g. temperate vs. tropical), and successional status (e.g. early, mid, late).
 However, we limited our simulations to the four plant functional types that have any appreciable presence at UMBS: Early, mid, and late temperate deciduous trees and pines.
-The species comprising these plant functional types are shown in Table 3.
+The species comprising these plant functional types are shown in Table \@ref(tab:pft-species).
 
 Table: (\#tab:pft-species) Plant functional type-species mappings
 
@@ -275,27 +274,17 @@ All parameters not described in this section were set to their ED-2.2 PFT-specif
 For each factorial combination of model configurations (described above), we ran ED-2.2 once with its default parameter values, once at the posterior median estimates from the meta-analysis, and 500 times with parameters sampled randomly from the meta-analysis posterior distributions.
 For the latter, the same 500 parameter samples were used for all model structures to allow us to independently evaluate the impacts of model structure at specific parameter values.
 Each ensemble member ran from January 1, 1902 through December 31, 1999 and was initialized from a "near-bare ground" condition: An equal number of seedlings of each plant functional type (see previous section) at the minimum resolvable size.
-Driving meteorological data was 6-hourly CRU-NCEP <!-- REF --> combined with an annual atmospheric CO~2~ record from Law-Dome ice core [@etheridge_1998_historical] and Mauna Loa observatory [@thoning_1989_atmospheric] linearly interpolated to 3-hourly resolution.
+Driving meteorological data were 6-hourly CRU-NCEP [@cruncep_pecan] combined with an annual atmospheric CO~2~ record from Law-Dome ice core [@etheridge_1998_historical] and Mauna Loa observatory [@thoning_1989_atmospheric] linearly interpolated to 3-hourly resolution.
 Soil texture was set to 92% sand, 7% silt, and 1% clay, based on site-level observations [@gough_2010_wood].
 The initial soil moisture profile was set to the average soil moisture profile reported in the UMBS Ameriflux ancillary data (https://ameriflux.lbl.gov/sites/siteinfo/US-UMd).
-By using the same initial conditions and drivers, we do not consider initial condition and driver uncertainty, which are outside the scope of this study.
 
 ## Analysis of results
 
-First, we evaluated the impact of model structure independent of any changes to parameters by comparing predictions of average annual net primary productivity (NPP) and summer (June, July, August) total leaf area index (LAI) across model structures while holding ED-2.2 parameters at their default values (Figure \@ref(fig:structure-compare-default)).
-To understand the physical and ecological mechanisms underlying these differences, we also compared the cohort-level composition, height, and canopy radiation profiles in these simulations in four stages of the simulation (Figure S1).
-
-Second, we compared simulations with ED-2.2 default parameters against simulations using median parameter estimates from a trait meta-analysis (Figure S2).
-Here, we looked predictions of annual mean C fluxes (gross and net primary productivity, and autotrophic and heterotrophic respiration; Figure \@ref(fig:default-median-flux)) and of summer LAI by PFT (Figure \@ref(fig:default-median-lai)).
-
-Third, we considered the full range of parameter uncertainty by looking at predictions across all parameter ensemble members.
-We begin with predictions annual mean NPP and summer mean total LAI across all parameters and structures and compare these results to contemporary (averaged over years TODO) observations of NPP and LAI at UMBS.
-We look at these variables independently as time series (Figure \@ref(fig:summary-ts-plot)) and as joint predictions in two periods (Figure \@ref(fig:pairs-time)).
-We then consider impacts on composition by looking at predicted PFT fractions of total aboveground biomass (AGB) at four different years in the simulation (Figure \@ref(fig:pft-jitterplot)) and at time series of LAI by PFT for five parameter combinations spanning the range of predicted ecological outcomes (Figure \@ref(fig:lai-pft-plot)).
-Finally, we assessed which parameters contributed the most to parameter uncertainty for each model structure.
-We did this by performing a sensitivity and variance decomposition analysis following @lebauer_2013_facilitating, @dietze_2014_quantitative, and @raczka_2018_what (Figure \@ref(fig:partial-variance-npp)).
-Briefly, this analysis uses a spline to estimate the relationship between individual parameters and output variables and then uses these splines to predict the variance in the output variable attributable to individual parameters ("partial variance").
-For more details, see @lebauer_2013_facilitating.
+First, we evaluated the impact of model structure independent of any changes to parameters by comparing predictions of average annual net primary productivity (NPP) and summer (June, July, August) total leaf area index (LAI) across model structures while holding ED-2.2 parameters at their default values.
+Second, we then compared these default parameter simulations to simulations using median parameter estimates from a trait meta-analysis.
+Third, we considered the full range of parameter uncertainty by looking at predictions of NPP, LAI, and composition across all parameter ensemble members.
+Finally, we assessed which parameters contributed the most to parameter uncertainty for each model structure by performing a sensitivity and variance decomposition analysis following @lebauer_2013_facilitating, @dietze_2014_quantitative, and @raczka_2018_what.
+Briefly, this analysis uses a spline to estimate the relationship between individual parameters and output variables and then uses these splines to predict the variance in the output variable attributable to individual parameters ("partial variance"; see @lebauer_2013_facilitating for more details).
 
 All analyses for this work were performed using R 3.6 (see "Colophon" for full details).
 Code and supporting data for reproducing this analysis are publicly available on the Open Science Framework (OSF) at https://osf.io/dznuf/.
