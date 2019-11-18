@@ -32,10 +32,12 @@ plan <- plan <- bind_plans(plan, drake_plan(
 
 ### Summary plot
 plan <- bind_plans(plan, drake_plan(
-  observations = tribble(
+  observations =
+    tribble(
     ~variable, ~low, ~mean, ~hi,
     "npp", 6, 6.5, 7,
-    "lai", 3.97 - 1.96 * 0.423, 3.97, 3.97 + 1.96 * 0.423
+    "lai", 3.97 - 1.96 * 0.423, 3.97, 3.97 + 1.96 * 0.423,
+    "prod_eff", 6 / (3.97 - 1.96 * 0.423), 6.5 / 3.97, 7 / (3.97 + 1.96 * 0.423)
   ) %>%
     expand_grid(model = models$model),
   ts_both = bind_rows(scalar_data, pft_totals) %>%
@@ -45,31 +47,23 @@ plan <- bind_plans(plan, drake_plan(
         stringr::str_remove("_py$")
     ) %>%
     filter(variable %in% c("npp", "lai")),
-  ts_summary = ts_both %>%
+  ts_both2 = ts_both %>%
+    pivot_wider(names_from = "variable", values_from = "value") %>%
+    mutate(prod_eff = npp / lai) %>%
+    pivot_longer(c(npp, lai, prod_eff), names_to = "variable", values_to = "value") %>%
+    filter(!(variable == "prod_eff" & (abs(value) > 40 | value < -5))),
+  ts_summary = ts_both2 %>%
     group_by(model_id, year, variable) %>%
     summarize(
-      hi = quantile(value, 0.9),
-      lo = quantile(value, 0.1)
+      hi = quantile(value, 0.9, na.rm = TRUE),
+      lo = quantile(value, 0.1, na.rm = TRUE)
     ) %>%
     left_join(models, "model_id"),
-  summary_ts_plot_gg = ts_both %>%
+  summary_ts_plot_gg = ts_both2 %>%
     left_join(models, "model_id") %>%
     ggplot() +
     aes(x = year, color = color) +
     geom_line(aes(y = value, group = case), alpha = 0.1, size = 0.3) +
-    ## # ED2 default results.
-    ## geom_line(
-    ##   aes(y = value),
-    ##   data = rename(structure_default_data, variable = name),
-    ##   linetype = "solid", color = "black"
-    ## ) +
-    geom_ribbon(
-      aes(ymin = lo, ymax = hi),
-      data = ts_summary,
-      color = "black",
-      fill = NA,
-      linetype = "dashed"
-    ) +
     geom_pointrange(
       aes(x = 2000, y = mean, ymin = low, ymax = hi),
       data = observations,
@@ -84,7 +78,8 @@ plan <- bind_plans(plan, drake_plan(
       labeller = labeller(
         variable = as_labeller(c(
           "npp" = "NPP ~ (MgC ~ ha^{-1} ~ year^{-1})",
-          "lai" = "LAI"
+          "lai" = "LAI",
+          "prod_eff" = "'NPP / LAI'"
         ), default = label_parsed)
       )
     ) +

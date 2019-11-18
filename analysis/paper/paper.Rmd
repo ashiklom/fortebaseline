@@ -373,10 +373,10 @@ While the uncertainty in growth respiration is large, we emphasize that SLA and 
 summary_ts_cap <- paste(
   htmlfig(),
   "ED2 plot-level predictions of",
-  "net (NPP) primary productivity and",
+  "net (NPP) primary productivity,",
   "total leaf area index (LAI),",
+  "and production efficiency (NPP / LAI)",
   "by model configuration.",
-  "The dashed lines indicate the 10th and 90th quantiles of results.",
   "Black dot with error bars is the observed mean and min/max value."
   # TODO REF
 )
