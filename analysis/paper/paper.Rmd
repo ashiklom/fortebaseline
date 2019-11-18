@@ -326,8 +326,11 @@ For example, ED-2.2 default values for V~cmax~ were too low for all PFTs, and de
 ### Figure 4
 default_median_flux_cap <- paste(
   htmlfig(),
-  "Comparing results of ED2 with default parameters and",
-  "posterior median parameters from trait meta-analysis",
+  "ED-2.2 predictions of mean annual",
+  "gross (GPP) and net primary productivity (NPP)",
+  "and autotrophic respiration (RA) from simulations using",
+  "ED-2.2 defualt parameter values (red) and",
+  "posterior median parameters from trait meta-analysis (blue)",
   "across different strucures."
 )
 fig("default-median-fluxes.png")

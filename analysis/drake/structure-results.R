@@ -154,21 +154,35 @@ plan <- plan <- bind_plans(plan, drake_plan(
     pivot_longer(-c(casename:datetime)) %>%
     annual_mean(),
   default_median_fluxes_gg = both_long_s %>%
-    filter(grepl("mmean_(gpp|npp|plresp|rh)_py", name)) %>%
+    filter(grepl("mmean_(gpp|npp|plresp)_py", name)) %>%
     mutate(
       name = stringr::str_remove(name, "mmean_") %>%
         stringr::str_remove("_py") %>%
-        factor(c("gpp", "plresp", "npp", "rh"), c("GPP", "RA", "NPP", "RH")),
+        factor(c("gpp", "plresp", "npp"), c("GPP", "RA", "NPP")),
       # Unit conversion
       value = value * 10
     ) %>%
+    left_join(models, c("casename" = "model_id")) %>%
     ggplot() +
     aes(x = year, y = value, color = runtype) +
     geom_line() +
-    facet_grid(vars(name), vars(casename), scales = "free_y") +
+    facet_grid(
+      vars(name), vars(model),
+      scales = "free_y",
+      labeller = labeller(
+        .default = label_value,
+        model = function(labels) gsub(" ", "\n", labels)
+      ),
+      switch = "y"
+    ) +
     cowplot::theme_cowplot() +
-    theme(axis.text.x = element_text(angle = 90),
-          axis.title = element_blank()),
+    labs(y = expression("Flux" ~ ("MgC" ~ "ha"^-1 ~ "year"^-1)),
+         color = "Parameters") +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5),
+          axis.title.x = element_blank(),
+          legend.position = "bottom",
+          strip.background = element_blank(),
+          strip.placement = "outside"),
   default_median_fluxes_png = ggsave(
     file_out("analysis/figures/default-median-fluxes.png"),
     default_median_fluxes_gg,
