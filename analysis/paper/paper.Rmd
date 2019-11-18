@@ -13,6 +13,7 @@ output:
       fig_caption: yes
     bookdown::pdf_document2:
       latex_engine: xelatex
+      toc: no
     bookdown::word_document2:
       reference_docx: "../templates/taylor-francis-article.docx" # Insert path for the DOCX file
 always_allow_html: true
