@@ -329,7 +329,7 @@ default_median_flux_cap <- paste(
   "ED-2.2 predictions of mean annual",
   "gross (GPP) and net primary productivity (NPP)",
   "and autotrophic respiration (RA) from simulations using",
-  "ED-2.2 defualt parameter values (red) and",
+  "ED-2.2 default parameter values (red) and",
   "posterior median parameters from trait meta-analysis (blue)",
   "across different strucures."
 )
@@ -351,9 +351,10 @@ For example, under a closed canopy configuration, enabling trait plasticity caus
 ### Figure 5
 default_median_lai_cap <- paste(
   htmlfig(),
-  "Comparing results of ED2 PFT-level LAI",
-  "with default parameters",
-  "posterior median parameters from trait meta-analysis",
+  "ED-2.2 predictions of mean growing season leaf area index (LAI)",
+  "by plant functional type (PFT), using",
+  "ED-2.2 default parameter values (top) and",
+  "posterior median parameters from trait meta-analysis (bottom)",
   "across different strucures."
 )
 fig("default-median-lai.png")

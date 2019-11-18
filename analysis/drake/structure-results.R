@@ -193,7 +193,7 @@ plan <- plan <- bind_plans(plan, drake_plan(
   ))
 ))
 
-plan <- plan <- bind_plans(plan, drake_plan(
+plan <- bind_plans(plan, drake_plan(
   both_long_p = both_results %>%
     select(casename, runtype, pft_py) %>%
     unnest(pft_py) %>%
@@ -204,16 +204,26 @@ plan <- plan <- bind_plans(plan, drake_plan(
     annual_mean(),
   default_median_lai_gg = both_long_p %>%
     filter(name == "mmean_lai_py") %>%
+    left_join(models, c("casename" = "model_id")) %>%
     ggplot() +
     aes(x = year, y = value, color = pft, group = pft) +
     geom_line() +
-    facet_grid(vars(runtype), vars(casename)) +
+    facet_grid(
+      vars(runtype), vars(model),
+      labeller = labeller(
+        .default = label_value,
+        model = function(labels) gsub(" ", "\n", labels)
+      )
+    ) +
     scale_color_manual(values = pfts("color")) +
-    labs(y = "LAI") +
+    labs(y = "LAI", color = "Plant functional type") +
+    guides(color = guide_legend(override.aes = list(size = 2))) +
     cowplot::theme_cowplot() +
     theme(
       axis.title.x = element_blank(),
-      axis.text.x = element_text(angle = 90)
+      axis.text.x = element_text(angle = 90, vjust = 0.5),
+      legend.position = "bottom",
+      strip.background = element_blank()
     ),
   default_median_lai_png = ggsave(
     file_out("analysis/figures/default-median-lai.png"),
