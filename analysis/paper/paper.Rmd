@@ -351,9 +351,10 @@ For example, under a closed canopy configuration, enabling trait plasticity caus
 ### Figure 5
 default_median_lai_cap <- paste(
   htmlfig(),
-  "ED-2.2 predictions of mean growing season leaf area index (LAI)",
+  "ED-2.2 plot-level predictions of",
+  "mean growing season leaf area index (LAI)",
   "by plant functional type (PFT), using",
-  "ED-2.2 default parameter values (top) and",
+  "default parameter values (top) and",
   "posterior median parameters from trait meta-analysis (bottom)",
   "across different strucures."
 )
@@ -372,7 +373,7 @@ While the uncertainty in growth respiration is large, we emphasize that SLA and 
 ### Figure 6
 summary_ts_cap <- paste(
   htmlfig(),
-  "ED2 plot-level predictions of",
+  "ED-2.2 plot-level predictions of",
   "net primary productivity (NPP),",
   "total leaf area index (LAI),",
   "production efficiency (NPP / LAI)",
@@ -405,7 +406,7 @@ However, _which_ PFT was dominant depended strongly on parameter values, and any
 ### Figure 9
 lai_pft_cap <- paste(
   htmlfig(),
-  "PFT-level predictions of leaf area index (LAI) by model configuration and parameterization.",
+  "ED-2.2 PFT-level predictions of leaf area index (LAI) by model configuration and parameterization.",
   "Each row of plots is a simulation with the same set of parameters across model configurations.",
   "Letters correspond to the labels in Figure 7.",
   "Note that these are predictions of total leaf area index summed across all cohorts of the same PFT,",
@@ -428,7 +429,8 @@ Parameter sets **D** and **E** had the highest productivity of these five sets, 
 partial_variance_npp_cap <- paste(
   htmlfig(),
   "Contributions of individual parameters to predicted uncertainty in",
-  "average net primary productivity (NPP) over the period 1920-1950",
+  "ED-2.2 predictions of average net primary productivity (NPP)",
+  "over the period 1920-1950",
   "by model type.",
   "Each panel shows the top 8 parameter values by their fractional contribution",
   'to parameter uncertainty ("partial variance").',
@@ -466,8 +468,8 @@ The large majority of runs produced dominance by a single PFT, though _which_ PF
 This highlights the difficulty of representing plant functional diversity in vegetation models, which has been true in other models as well [@fisher_2015_taking].
 To the extent that ED-2.2 is "correct" in how it represents processes, this result also indicates that the plant functional trait space of realized niches is small---i.e. multiple different trees can co-exist only under very specific combinations of plant traits and environmental conditions. <!-- TODO REF -->
 
-Most ED-2.2 runs under-predicted both NPP and LAI, both in the peak period (1920-1950) and towards the end of the simulation (1975-1999) (Figures \@ref(fig:summary-ts-plot), \@ref(fig:pairs-time)).
-However, of our five selected representative runs, the two that most closely matched present day composition at UMBS (early hardwood-dominated; **C** and **D** in Figure \@ref(fig:lai-pft-plot)) also closely matched the observed NPP and LAI (Figure \@ref(fig:pairs-time)).
+Most ED-2.2 runs under-predicted both NPP and LAI, both in the peak period (1920-1950) and towards the end of the simulation (1975-1999) (Figures \@ref(fig:summary-ts-plot)).
+However, of our five selected representative runs, the two that most closely matched present day composition at UMBS (early hardwood-dominated; **C** and **D** in Figure \@ref(fig:lai-pft-plot)) also closely matched the observed NPP and LAI (Figure \@ref(fig:summary-ts-plot)).
 This is encouraging because it suggests that it is possible to get both aggregate ecosystem C fluxes and PFT composition right.
 Moreover, given that many important ED-2.2 parameters were well-constrained in our analysis (Figure S2), this is possible without using physically unrealistic parameter values.
 We therefore suggest that for model calibration and validation, comparisons against multiple output variables---including variables related to composition---can yield maximum constraint and are not unreasonably strict.
@@ -476,8 +478,8 @@ We therefore suggest that for model calibration and validation, comparisons agai
 
 Our second question was: What is the relative contribution of structural and parameter uncertainty to C cycling and ecological dynamics at UMBS?
 We found that parameter uncertainty was by far the dominant driver of uncertainty in our simulations.
-Different parameter combinations led to huge ranges in ensemble predictions of ensemble variables, with NPP and LAI ranging from zero to more than twice the ensemble mean estimates (Figures \@ref(fig:summary-ts-plot), \@ref(fig:pairs-time)).
-Moreover, different parameter combinations produced qualitatively different ecological narratives (Figures \@ref(fig:pft-jitterplot). \@ref(fig:lai-pft-plot)).
+Different parameter combinations led to huge ranges in ensemble predictions of ensemble variables, with NPP and LAI ranging from zero to more than twice the ensemble mean estimates (Figures \@ref(fig:summary-ts-plot)).
+Moreover, different parameter combinations produced qualitatively different ecological narratives (Figures \@ref(fig:lai-pft-plot)).
 Therefore, parameter uncertainty has implications beyond C cycling---differences in species composition and relative abundance have implications for forest management and wildlife conservation, among others. <!-- TODO REFS -->
 
 The dominance of parameter uncertainty over structural uncertainty in our results suggests that constraining parameter uncertainty should be a higher priority than model development.
