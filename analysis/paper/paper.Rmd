@@ -515,7 +515,7 @@ and changes to model structure in turn changed the relative importance of specif
 Collectively, this means that sensitivity and uncertainty analyses are not necessarily generalizable across models, and highlights the importance of model intercomparison studies.
 It also reinforces our argument that changing model structure---particularly if such changes increase model complexity---should be pursued with extreme caution.
 
-# Acknowledgements
+# Acknowledgments
 
 <!-- TODO Fill in Acknowledgements -->
 This project was supported by NSF Award 1655095.
