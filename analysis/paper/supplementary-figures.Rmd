@@ -38,6 +38,8 @@ structure_default_light_cap <- paste(
 fig("default-light-levels.png")
 ```
 
+\newpage
+
 ```{r param-dist, fig.cap = param_dist_cap}
 ### Figure S2
 param_dist_cap <- paste(
@@ -46,8 +48,26 @@ param_dist_cap <- paste(
 fig("param-dist.png")
 ```
 
-```{r pft-ts-plot, fig.cap = pft_ts_cap}
+\newpage
+
+```{r pairs-time, fig.cap = pairs_time_cap}
 ### Figure S3
+pairs_time_cap <- paste(
+  "ED-2.2 predictions of annual mean NPP and growing-season LAI",
+  "averaged over 1925-1950 (left) and 1975-1999 (right)",
+  "by model type.",
+  "Each point indicates a single ensemble run with a different set of parameters.",
+  "Solid line is the best-fit generalized additive model (GAM).",
+  "Dashed lines indicate the error bounds of present-day observed NPP and LAI.",
+  "Text labels match the rows in Figure 9 below."
+)
+fig("npp-lai-pairs.png")
+```
+
+\newpage
+
+```{r pft-ts-plot, fig.cap = pft_ts_cap}
+### Figure S4
 pft_ts_cap <- paste(
   "ED-2.2 ensemble predictions of PFT aboveground biomass fractions."
 )
