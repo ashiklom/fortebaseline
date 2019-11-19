@@ -33,7 +33,8 @@ plan <- bind_plans(plan, drake_plan(
     theme(
       axis.title.x = element_blank(),
       axis.text.x = element_text(angle = 90),
-      legend.position = "bottom"
+      legend.position = "bottom",
+      strip.background = element_blank()
     ),
   lai_pft_plot_png = ggsave(
     file_in("analysis/figures/lai-pft.png"),

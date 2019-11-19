@@ -115,7 +115,6 @@ sensplot <- function(dat, sgroup, metric, yvar) {
     facet_wrap(vars(model), scales = "free", drop = TRUE, ncol = 2,
                dir = "v") +
     scale_color_manual(values = pfts("color")) +
-    labs(color = "PFT") +
     cowplot::theme_cowplot() +
     theme(
       axis.title.y = element_blank(),
@@ -144,17 +143,33 @@ plan <- bind_plans(plan, drake_plan(
     mutate(
       shortname = factor(shortname, pfts("shortname")),
       model = factor(model_id, c("CTS", "CTP", "CMS", "CMP",
-                                 "FTS", "FTP", "FMS", "FMP"))
+                                 "FTS", "FTP", "FMS", "FMP")),
+      xvar = factor(xvar, ed2_param_table[["ED Name"]],
+                    ed2_param_table[["Display name"]])
     ),
   sensitivity_period1_gg =
     sensplot(sensitivity_sub, "1920-1950", fpvar, "mmean_npp_py") +
-    labs(y = "Partial variance") +
-    guides(color = FALSE),
+    labs(y = "Partial variance", color = "Plant functional type") +
+    guides(color = guide_legend(
+      nrow = 2, byrow = TRUE,
+      override.aes = list(size = 4, linetype = 0)
+    )) +
+    theme(strip.background = element_blank(),
+          legend.position = "bottom"),
   sensitivity_period1_png = cowplot::ggsave2(file_out(!!here(
     "analysis", "figures", "partial-variance-npp.png"
-  )), sensitivity_period1_gg, width = 16.3, height = 8.4
+  )), sensitivity_period1_gg, width = 7.6, height = 8.4
   )
 ))
+
+plan <- bind_plans(plan, drake_plan(
+  ed2_param_table = readr::read_csv(file_in(
+    "analysis/data/derived-data/parameter-table.csv"
+  )) %>%
+    filter(Ran == "yes")
+))
+
+dev.size()
 
 ### STOP HERE
 stop()
