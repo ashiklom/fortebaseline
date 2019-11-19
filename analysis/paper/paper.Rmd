@@ -486,13 +486,6 @@ These results are encouraging, demonstrating an ecologically realistic dependenc
 Moreover, we show that such realistic outcomes are possible without tuning important and directly observable parameters like SLA and V~cmax~ to unrealistic values (Figure S2).
 We therefore argue that, although challenging, it is not unreasonable to expect demographic vegetation models to accurately simulate both community composition and ecosystem biogeochemistry, and in fact, accuracy in the latter may depend on the former.
 
-OLD DISTURBANCE TEXT:
-One possible reason for the excessive pace of succession in ED-2.2 is missing mechanisms for sustaining productivity through early succession.
-In particular, recent evidence points to the importance of low-severity, high-frequency disturbances in sustaining ecosystem productivity [@gough_2016_disturbance].
-ED-2.2 has a mortality scheme, and indeed, parameters related to mortality were occasionally among the most important parameters for predictive uncertainty (Figure \@ref(fig:partial-variance-npp)).
-However, although our simulations used real meteorology (which included occasional extreme weather events), we did not consider other sources of disturbance common to this region [such as harvests, insects and pathogens, and fire; @amiro_2010_ecosystem], which may contribute to sustaining productivity and dominance of early-successional forests [@gough_2016_disturbance].
-Future work should evaluate the impacts of prescribed disturbance regimes on multidecadal predictions of ecological dynamics and biogeochemistry.
-
 ## Drivers of uncertainty
 
 Our second question was: What is the relative contribution of structural and parameter uncertainty to C cycling and ecological dynamics at UMBS?
