@@ -69,7 +69,7 @@ plan <- bind_plans(plan, drake_plan(
         "N['PFT,eff']"
       ))
     ),
-  summary_ts_plot_gg = ts_both2 %>%
+  summary_ts_data = ts_both2 %>%
     left_join(models, "model_id") %>%
     filter(variable %in% c("npp", "lai", "prod_eff", "d2")) %>%
     mutate(
@@ -79,10 +79,15 @@ plan <- bind_plans(plan, drake_plan(
         "'NPP / LAI'",
         "N['PFT,eff']"
       ))
-    ) %>%
-    ggplot() +
+    ),
+  summary_ts_plot_gg = ggplot(summary_ts_data) +
     aes(x = year, color = color) +
     geom_line(aes(y = value, group = case), alpha = 0.1, size = 0.3) +
+    geom_line(
+      aes(y = value, group = case, linetype = label),
+      color = "black",
+      data = ts_params
+    ) +
     geom_pointrange(
       aes(x = 2000, y = mean, ymin = low, ymax = hi),
       data = obs_plot,
@@ -97,6 +102,14 @@ plan <- bind_plans(plan, drake_plan(
       labeller = label_parsed
     ) +
     scale_color_identity() +
+    scale_linetype_manual(values = c(
+      A = "solid",
+      B = "longdash",
+      C = "dotted",
+      D = "twodash",
+      E = "dotdash"
+    )) +
+    labs(linetype = "Param. set") +
     theme_cowplot() +
     theme(
       axis.title = element_blank(),
@@ -114,8 +127,16 @@ plan <- bind_plans(plan, drake_plan(
   ))
 ))
 
+plan <- bind_plans(plan, drake_plan(
+  ts_params = summary_ts_data %>%
+    mutate(param_id = as.numeric(substr(case, 0, 3))) %>%
+    inner_join(use_params, "param_id") %>%
+    mutate(label = fct_rev(label))
+))
+
 ### STOP HERE
 stop()
+
 ### Download files
 cohort_osf <- "..."
 pft_osf <- "..."

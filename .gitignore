@@ -27,3 +27,4 @@ analysis/figures/
 .drake_history
 /analysis/data/retrieved
 /analysis/paper/supplementary-figures.pdf
+/analysis/paper/*.log

@@ -381,6 +381,8 @@ summary_ts_cap <- paste(
   "Effective number of PFTs was calculated as the inverse",
   "of the Simpson diversity index with proportions expressed as",
   "fraction of aboveground biomass.",
+  "Each black line represents the same set of parameters across all configurations,",
+  "and corresponds to the letters in Figure 5.",
   "Black dot with error bars is the observed mean and min/max value."
   # TODO REF
 )
