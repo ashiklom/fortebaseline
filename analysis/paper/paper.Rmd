@@ -460,17 +460,32 @@ Similarly, parameters related to leaf optical properties had relatively higher i
 
 ## ED-2.2 vs. reality
 
-The overarching objective of this study was to investigate how model structure and parameters interact in multidecadal simulations of forest ecosystem productivity and community succession.
-Our first question was: To what extent can the model, under any configuration, reproduce the observed reality?
-Ensemble average trajectory matches traditional understanding of succession---rapid growth to peak productivity, followed by gradual decline [@odum_1969_strategy_ecosystem_development]---but happens too quickly (Figure \@ref(fig:summary-ts-plot));
-real ecosystems sustain peak productivity for longer [@gough_2016_disturbance].
+Our overarching objective was to investigate how model structure and parameters interact in multidecadal simulations of forest ecosystem productivity and community succession.
+Our first question was: 
+Which model structural and parameter configurations reproduce observed NPP and community compositional changes?
+We found that model-observation fidelity was variable, with modelled community succession generally departing from observations and modelled NPP more comparable to observed values and trends.
+
+Modelled community succession, which was variable across model structural and parameter configurations, poorly predicted the observed transition of dominance from early to mixed successional hardwoods during the first century of regrowth.
+<!-- TODO Highlight the large variability! -->
+The community successional dynamics observed at our study site are representative of temperate forests globally, with short-lived early hardwoods initially occupying a majority of the canopy and over time gradually declining as longer-lived mid- and late-hardwood species emerge as dominant [@wolter_2002_recent; @gough_2007_legacy; @sommerfeld_2018_???].
+At our site, _Populus_, a genus of early hardwoods, is abundant in the canopy during the first 50 to 75 years of succession and, upon peak maturity, declines precipitously at a rate of 40% per decade [@gough_2010_wood].
+Filling this canopy void over time are mid-successional _Quercus_ and _Acer_, and later successional _Pinus_ [@scheuermann_2018_???].
+However, with the exception of a select few parameter combinations (e.g. C and D in Figure \@ref(fig:lai-pft-plot)), modelled community succession exhibited only modest changes in functional diversity over time.
+<!-- TODO Fix from here on -->
+Moreover, a single PFT emerged as dominant in a majority of runs, though _which_ PFT dominated depended on parameter combination.
+This mismatch between observations and simulations reinforces the difficulty of accurately representing plant functional diversity in vegetation models [@fisher_2015_taking].
+Specific to our analysis, our results indicate that ED-2.2 perceives limited niche overlap among PFTs, resulting in an unrealistically low level of PFT coexistence. <!-- TODO REFS -->
+
+Unlike community succession, most model configurations produced similarly realistic C flux successional trajectories.
+In particular, the use of median parameter values resulted in century-long C flux dynamics that mirror the trajectory of site-level observations [@gough_2007_legacy] and, more broadly, those from other temperate forests [@law_2001_carbon; @law_2003_changes; @irvine_2004_age; @tang_2009_soil; @kashian_2013_postfire].
+In our study, modelled and observed C fluxes generally increased rapidly in the first quarter century before gradually declining, a pattern that is consistent with ecological theory [@odum_1969_strategy_ecosystem_development] and global observations [@pregitzer_2004_carbon; @luyssaert_2008_old; @gough_2016_disturbance].
+At odd with site-level observations, however, is the extent of simulated declines in production over time.
+Rather than decreasing, long-term meteorological flux tower observations indicate net ecosystem production increased two-fold over a period of 15 years in the century-old UMBS forest, possibly because the decline of senscent early hardwoods released mid and late hardwoods poised for rapid growth [@gough_2016_disturbance; @curtis_2018_forest].
 One possible reason for the excessive pace of succession in ED-2.2 is missing mechanisms for sustaining productivity through early succession.
 In particular, recent evidence points to the importance of low-severity, high-frequency disturbances in sustaining ecosystem productivity [@gough_2016_disturbance].
-ED2.2 has a mortality scheme, and indeed, parameters related to mortality were often among the most important parameters for predictive uncertainty (Figure \@ref(fig:partial-variance-npp)).
-<!-- Maybe move this elsewhere? -->
-<!-- TODO Look at mortality across ED runs. Does it relate at all to results? -->
+ED-2.2 has a mortality scheme, and indeed, parameters related to mortality were occasionally among the most important parameters for predictive uncertainty (Figure \@ref(fig:partial-variance-npp)).
 However, although our simulations used real meteorology (which included occasional extreme weather events), we did not consider other sources of disturbance common to this region [such as harvests, insects and pathogens, and fire; @amiro_2010_ecosystem], which may contribute to sustaining productivity and dominance of early-successional forests [@gough_2016_disturbance].
-Future work will: (1) Calibrate ED2.2 disturbance response to experimental observations (FoRTE), and (2) run long-term simulations with prescribed disturbance regimes and see how they affect ecological dynamics.
+Future work should evaluate the impacts of prescribed disturbance regimes on multidecadal predictions of ecological dynamics and biogeochemistry.
 
 Under all but a small minority of parameter combinations, ED-2.2 was unable to create---let alone sustain---a forest with any appreciable functional diversity.
 The large majority of runs produced dominance by a single PFT, though _which_ PFT dominated depended on parameter combination.
