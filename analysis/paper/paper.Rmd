@@ -310,7 +310,7 @@ fig("structure-compare-default.png")
 
 Different model structures agreed for the first half of the century-long simulation, at which point they started to diverge (Figure \@ref(fig:structure-compare-default)).
 Post 1950, the combination of two-stream RTM, finite canopy radius, and plastic traits had the highest productivity, followed by the same configuration with static traits, with the remaining configurations having similar results.
-Interestingly, the effects of changing individual model configurations were not additive --- for example, enabling trait plasticity had a much stronger positive effect when paired with the two-stream canopy RTM than with the multiple-scatter canopy RTM.
+The effects of changing individual model configurations were not additive---for example, enabling trait plasticity had a much stronger positive effect when paired with the two-stream canopy RTM than with the multiple-scatter canopy RTM.
 
 Differences in productivity across model structures were related to differences in composition and vertical canopy radiation profiles over the course of the simulation (Figure S1).
 Enabling the finite canopy radius increased the availability of light for understory cohorts throughout the simulation, particularly in the first half of the simulation.
@@ -322,8 +322,8 @@ Despite these differences, by 1980 none of the configurations was able to sustai
 
 Parameter estimates from the trait meta-analysis were often substantially different from the ED-2.2 defaults (Figure S2).
 In many cases, median parameter estimates were different entirely because of the choice of prior distributions.
-However, in several important cases, parameters well-constrained by data produced values substantially different from the ED2 defaults.
-For example, ED-2.2 default values for V~cmax~ were too low for all PFTs, and default values for SLA were too low for all PFTs except Early Hardwoods.
+However, in several important cases, parameters well-constrained by data produced values substantially different from the model defaults.
+For example, default values for V~cmax~ were too low for all PFTs, and default values for SLA were too low for all PFTs except Early Hardwoods.
 
 ```{r default-median-flux, fig.cap = default_median_flux_cap}
 ### Figure 4
@@ -332,23 +332,13 @@ default_median_flux_cap <- paste(
   "ED-2.2 predictions of mean annual",
   "gross (GPP) and net primary productivity (NPP)",
   "and autotrophic respiration (RA) from simulations using",
-  "ED-2.2 default parameter values (red) and",
+  "default parameter values (red) and",
   "posterior median parameters from trait meta-analysis (blue)",
-  "across different strucures."
+  "across different strucures.",
+  "Median and default parameter values are shown in Figure S2."
 )
 fig("default-median-fluxes.png")
 ```
-
-These differences in parameter values resulted in ED-2.2 runs that differed from the default runs in several important ways (Figures \@ref(fig:default-median-flux), \@ref(fig:default-median-lai)).
-First, in every model configuration (except finite canopy, two-stream RTM, and static traits), gross primary productivity (GPP) reached a higher peak, and did so earlier under median parameters (Figure \@ref(fig:default-median-flux)).
-This was driven primarily by higher V~cmax~ and SLA values for most PFTs (Figure S2).
-However, this increase in GPP was offset by a large increase in autotrophic respiration (RA; Figure \@ref(fig:default-median-flux)), driven primarily by higher growth and leaf respiration rates across all PFTs (notably, the ED-2.2 default is _zero growth respiration_ for all temperate hardwood PFTs; Figure S2).
-The resulting net primary productivity (NPP) had similar peak values under default and median parameters, though the temporal patterns were quite different in most model configurations (Figure \@ref(fig:default-median-flux)).
-
-Second, the variation across model structures was much higher, with every change in model structure exerting a noticeable effect on flux variability (Figure \@ref(fig:default-median-flux)).
-The most dramatic example is that, with median parameter values, simulations with the finite canopy radius produced much lower net productivity and heterotrophic respiration than simulations with a closed canopy in the second half of the simulation.
-Yet again, interactions between configurations were significant.
-For example, under a closed canopy configuration, enabling trait plasticity caused interannual variability in NPP to decrease with a two-stream RTM and increase with a multiple-scatter RTM.
 
 ```{r default-median-lai, fig.cap = default_median_lai_cap}
 ### Figure 5
@@ -364,10 +354,21 @@ default_median_lai_cap <- paste(
 fig("default-median-lai.png")
 ```
 
+
+These differences in parameter values resulted in ED-2.2 runs that differed from the default runs in several important ways (Figures \@ref(fig:default-median-flux), \@ref(fig:default-median-lai)).
+First, in every model configuration (except finite canopy, two-stream RTM, and static traits), gross primary productivity (GPP) reached a higher peak, and did so earlier, under median parameters (Figure \@ref(fig:default-median-flux)).
+This was driven primarily by higher V~cmax~ and SLA values for most PFTs (Figure S2).
+However, this increase in GPP was offset by a large increase in autotrophic respiration (RA; Figure \@ref(fig:default-median-flux)), driven primarily by higher growth and leaf respiration rates across all PFTs (notably, the ED-2.2 default is _zero growth respiration_ for all temperate hardwood PFTs; Figure S2).
+The resulting net primary productivity (NPP) had similar peak values under default and median parameters, though the temporal patterns were quite different in most model configurations (Figure \@ref(fig:default-median-flux)).
+
+Second, the variation across model structures was much higher, with every change in model structure exerting a noticeable effect on flux variability (Figure \@ref(fig:default-median-flux)).
+The most dramatic example is that, with median parameter values, simulations with the finite canopy radius produced much lower net productivity than simulations with a closed canopy in the second half of the simulation.
+Again, interactions between configurations were significant; for example, under a closed canopy configuration, enabling trait plasticity caused interannual variability in NPP to decrease with a two-stream RTM and increase with a multiple-scatter RTM.
+
 Third, even where NPP was similar between default and median runs, the underlying forest composition was different (Figure \@ref(fig:default-median-lai)).
-With the default parameterization, ED-2.2 produces forests dominated by Early Hardwoods, with an understory of small mid- and even smaller late-hardwood trees that eventually die out.
-However, with the median parameterization, ED-2.2 starts out with forests dominated by _mid_-hardwood species that are quickly (pre-1910 to 1930, depending on configuration) replaced with pine, which remains the dominant canopy species throughout the rest of the simulation.
-Exploratory analyses (results not shown) show that the main parameters responsible for this compositional trajectory are SLA (especially the higher SLA of pine and mid-hardwood), V~cmax~, and growth respiration.
+With the default parameterization, ED-2.2 produced forests dominated by Early Hardwoods, with an understory of small mid- and even smaller late-hardwood trees that eventually died out.
+However, with the median parameterization, ED-2.2 started out with forests dominated by _mid_-hardwood species that were quickly (pre-1910 to 1930, depending on configuration) replaced with pine, which remained the dominant canopy species throughout the rest of the simulation.
+Exploratory analyses (results not shown) showed that the main parameters responsible for this compositional trajectory were SLA (especially the higher SLA of pine and mid-hardwood), V~cmax~, and growth respiration.
 While the uncertainty in growth respiration is large, we emphasize that SLA and V~cmax~ are well constrained by data for all PFTs considered in this analysis.
 
 ## Structure vs. parameter uncertainty
