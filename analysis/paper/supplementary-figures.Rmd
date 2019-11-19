@@ -53,3 +53,54 @@ pft_ts_cap <- paste(
 )
 fig("pft-ts-plot.png")
 ```
+
+\newpage
+
+Table: Prior distributions for trait meta-analysis. Trait descriptions and units are given in Table 2 (main text).
+
+| Parameter          | Plant Functional Type     | Distribution         |
+|--------------------|---------------------------|----------------------|
+| Specific leaf area | Early, Mid, Late hardwood | Gamma(5.13, 0.234)   |
+| ''                 | Pine                      | Gamma(2, 0.2)        |
+| Vcmax              | All                       | Weibull(1.7, 80)     |
+| C:N leaf           | Early, Mid, Late hardwood | Gamma(15.53, 0.87)   |
+| ''                 | Pine                      | Uniform(3, 300)      |
+| Clumping           | All                       | Beta(3, 1.5)         |
+| F. labile          | All                       | Beta(1.5, 1.5)       |
+| Root:leaf          | Early, Mid, Late hardwood | LogNormal(0.21, 0.6) |
+| ''                 | Pine                      | LogNormal(-0.25, 1)  |
+| Growth resp.       | Early, Mid, Late hardwood | Beta(4.06, 7.2)      |
+| ''                 | Pine                      | Beta(3, 3.6)         |
+| Refl. (NIR)        | Early hardwood            | Beta(561.2, 776.7)   |
+| ''                 | Mid hardwood              | Beta(34.8, 56.0)     |
+|                    | Late hardwood             | Beta(393.2, 595.0)   |
+|                    | Pine                      | Beta(35.0, 34.6)     |
+| Refl. (VIS)        | Early hardwood            | Beta(258.9, 4463.9)  |
+| ''                 | Mid hardwood              | Beta(10.1, 157.5)    |
+|                    | Late hardwood             | Beta(72.4, 1282.6)   |
+|                    | Pine                      | Beta(5.5, 53.0)      |
+| Leaf resp.         | All                       | Gamma(1.5, 0.4)      |
+| Trans. (NIR)       | Early hardwood            | Beta(173.2, 199.2)   |
+| ''                 | Mid hardwood              | Beta(16.5, 17.3)     |
+|                    | Late hardwood             | Beta(95.6, 85.6)     |
+|                    | Pine                      | Beta(5.52, 13.8)     |
+| Trans. (VIS)       | Early hardwood            | Beta(15.4, 561.1)    |
+| ''                 | Mid hardwood              | Beta(2.1, 37.9)      |
+|                    | Late hardwood             | Beta(8.8, 189.0)     |
+|                    | Pine                      | Beta(1.1, 73.8)      |
+| Leaf turnover      | Pine                      | Gamma(4, 8)          |
+| Mort. C rate       | All                       | Gamma(1, 0.05)       |
+| Mort. C bal.       | All                       | Gamma(1.47, 0.0578)  |
+| Mort. bg. rate     | All                       | Uniform(0, 0.02)     |
+| Dispersal          | All                       | Beta(1.1, 1.5)       |
+| Leaf orient.       | All                       | Uniform(-0.5, 0.5)   |
+| Quant. eff.        | Early, Mid hardwood, Pine | Weibull(3.32, 0.08)  |
+| ''                 | Late hardwood             | Gamma(2, 22)         |
+| Repro. C frac.     | All                       | Beta(2, 4)           |
+| Min. height        | All                       | Gamma(1.5, 0.2)      |
+| Root resp.         | All                       | Weibull(2, 10)       |
+| Root turnover      | Early, Mid hardwood, Pine | Weibull(1.55, 1.5)   |
+| ''                 | Late hardwood             | Weibull(1.55, 0.862) |
+| Mort. seedlng      | All                       | Beta(3.61, 0.433)    |
+| Stomatal slope     | All                       | LogNormal(2.3, 1)    |
+| Water cond.        | All                       | LogNormal(2e-5, 3.5) |
