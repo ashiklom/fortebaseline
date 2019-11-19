@@ -56,66 +56,55 @@ plan <- bind_plans(plan, drake_plan(
   ts_summary = ts_both2 %>%
     group_by(model_id, year, variable) %>%
     summarize(
-      hi = quantile(value, 0.9, na.rm = TRUE),
-      lo = quantile(value, 0.1, na.rm = TRUE)
+      max = max(value, na.rm = TRUE),
+      hi2 = quantile(value, 0.95, na.rm = TRUE),
+      hi1 = quantile(value, 0.75, na.rm = TRUE),
+      lo1 = quantile(value, 0.25, na.rm = TRUE),
+      lo2 = quantile(value, 0.05, na.rm = TRUE),
+      min = min(value, na.rm = TRUE)
     ) %>%
-    left_join(models, "model_id"),
-  obs_plot = observations %>%
-    mutate(
-      variable = factor(variable, c("npp", "lai", "prod_eff", "d2"), c(
-        "atop(NPP, (MgC ~ ha^{-1} ~ year^{-1}))",
-        "LAI",
-        "'NPP / LAI'",
-        "N['PFT,eff']"
-      ))
-    ),
+    left_join(models, "model_id") %>%
+    filter(variable %in% c("npp", "lai", "prod_eff", "d2")),
   summary_ts_data = ts_both2 %>%
     left_join(models, "model_id") %>%
-    filter(variable %in% c("npp", "lai", "prod_eff", "d2")) %>%
-    mutate(
-      variable = factor(variable, c("npp", "lai", "prod_eff", "d2"), c(
-        "atop(NPP, (MgC ~ ha^{-1} ~ year^{-1}))",
-        "LAI",
-        "'NPP / LAI'",
-        "N['PFT,eff']"
-      ))
-    ),
-  summary_ts_plot_gg = ggplot(summary_ts_data) +
-    aes(x = year, color = color) +
-    geom_line(aes(y = value, group = case), alpha = 0.1, size = 0.3) +
+    filter(variable %in% c("npp", "lai", "prod_eff", "d2")),
+  summary_ts_plot_gg = ggplot(ts_summary) +
+    aes(x = year) +
+    geom_ribbon(aes(ymin = min, ymax = max), fill = "gray90") +
+    geom_ribbon(aes(ymin = lo2, ymax = hi2), fill = "gray70") +
+    geom_ribbon(aes(ymin = lo1, ymax = hi1), fill = "gray40") +
     geom_line(
-      aes(y = value, group = case, linetype = label),
-      color = "black",
+      aes(y = value, group = case, color = label),
       data = ts_params
     ) +
     geom_pointrange(
       aes(x = 2000, y = mean, ymin = low, ymax = hi),
-      data = obs_plot,
+      data = observations,
       color = "black",
       inherit.aes = FALSE
     ) +
     facet_grid(
-      vars(variable),
-      vars(fct_relabel(model, ~gsub(" ", "\n", .))),
+      vars(
+        variable = factor(variable, c("npp", "lai", "prod_eff", "d2"), c(
+          "atop(NPP, (MgC ~ ha^{-1} ~ year^{-1}))",
+          "LAI",
+          "'NPP / LAI'",
+          "N['PFT,eff']"
+        ))),
+      vars(model = fct_relabel(model, ~gsub(" ", "\n", .))),
       scales = "free_y",
       switch = "y",
-      labeller = label_parsed
+      labeller = labeller(variable = label_parsed, model = label_value)
     ) +
-    scale_color_identity() +
-    scale_linetype_manual(values = c(
-      A = "solid",
-      B = "longdash",
-      C = "dotted",
-      D = "twodash",
-      E = "dotdash"
-    )) +
-    labs(linetype = "Param. set") +
+    scale_color_brewer(palette = "Set1") +
+    labs(color = "Param. set") +
     theme_cowplot() +
     theme(
       axis.title = element_blank(),
       axis.text.x = element_text(angle = 90, vjust = 0.5),
       strip.background = element_blank(),
-      strip.placement = "outside"
+      strip.placement = "outside",
+      strip.text.y = element_text(size = rel(0.78))
     ),
   summary_ts_plot_png = ggsave(
     file_out("analysis/figures/summary-ts-plot.png"),

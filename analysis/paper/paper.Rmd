@@ -373,16 +373,21 @@ While the uncertainty in growth respiration is large, we emphasize that SLA and 
 ### Figure 6
 summary_ts_cap <- paste(
   htmlfig(),
-  "ED-2.2 plot-level predictions of",
+  "ED-2.2 ensemble plot-level predictions of",
   "net primary productivity (NPP),",
   "total leaf area index (LAI),",
   "production efficiency (NPP / LAI)",
   "and effective number of PFTs (N~PFT,eff~)",
   "by model configuration.",
+  "Shading indicates the middle 50\\% (dark), middle 95\\% (medium),",
+  "and entire range (light) of ensemble simulations",
+  "(NPP/LAI results are clipped to (-5, 40) for readability,",
+  "as a few isolated ensemble members produced extreme values at specific",
+  "time points).",
   "Effective number of PFTs was calculated as the inverse",
   "of the Simpson diversity index with proportions expressed as",
   "fraction of aboveground biomass.",
-  "Each black line represents the same set of parameters across all configurations,",
+  "Each colored line represents the same set of parameters across all configurations,",
   "and corresponds to the letters in Figure 5.",
   "Black dot with error bars is the observed mean and min/max value."
   # TODO REF

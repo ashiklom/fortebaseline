@@ -63,28 +63,31 @@ plan <- bind_plans(plan, drake_plan(
     mutate(npp = npp * 10) %>%
     pivot_longer(c(npp, lai)),
   structure_compare_default_gg = ggplot(structure_default_data) +
-    aes(x = year, y = value, color = model) +
+    aes(x = year, y = value, linetype = crown, color = traits, group = model) +
     geom_line() +
-    guides(color = guide_legend(title = "Model",
-                                override.aes = list(size = 2))) +
+    labs(linetype = "Crown model", color = "Trait plasticity") +
     facet_grid(
-      vars(name), vars(rtm),
+      vars(name = factor(name, c("npp", "lai"))), vars(rtm),
       scales = "free_y",
       switch = "y",
-      labeller = labeller(name = as_labeller(c(
-        "npp" = "NPP ~ (MgC ~ ha^-1 ~ yr^-1)",
-        "lai" = "LAI"
-      ), default = label_parsed))
+      labeller = labeller(
+        name = as_labeller(c(
+          "npp" = "atop(NPP, (MgC ~ ha^-1 ~ yr^-1))",
+          "lai" = "LAI"
+        ), default = label_parsed),
+        rtm = function(labels) paste0("Canopy RTM: ", labels)
+      )
     ) +
-    scale_color_manual(values = model_colors) +
+    scale_color_manual(values = c("#F5793A", "#0F2080")) +
     cowplot::theme_cowplot() +
     theme(axis.title = element_blank(),
+          axis.text.x = element_text(angle = 90, vjust = 0.5),
           strip.background = element_blank(),
           strip.placement = "outside"),
   structure_compare_default_png = ggsave(
     file_out("analysis/figures/structure-compare-default.png"),
     structure_compare_default_gg,
-    width = 10.1, height = 7
+    width = 6.5, height = 4.2
   ),
   structure_compare_default_knit = knitr::include_graphics(file_in(
     "analysis/figures/structure-compare-default.png"
