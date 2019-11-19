@@ -139,12 +139,11 @@ We then used sensitivity and variance decomposition analyses to evaluate the con
 We performed this study at the University of Michigan Biological Station (UMBS; Ameriflux site US-UMd, 45.5625$^{\circ}$, -84.6975$^{\circ}$), located in Northern Lower Michigan, USA.
 The area surrounding the research station is 87% well-drained upland forest and 13% wetland [@bergen_2007_observing]; the focus of this study is on the former.
 The landscape geography of the UMBS upland forest is 20.4% moraine, 37.8% high outwash plain, 31.3% low outwash plain, 5.7% lake-margin terrace, 3.6% ice-contact, and 1.2% lowland glacial lake [@bergen_2007_observing].
-Most of the UMBS upland forest canopy is dominated by temperate deciduous early-successional species, most importantly _Populus grandidentata_ (bigtooth aspen) and, to a lesser extent, _Betula papyrifera_ (paper birch), with _Acer saccharum_ (sugar maple), _Acer rubrum_ (red maple), _Fagus grandifolia_ (American beech), _Tilia americana_ (basswood), _Betula alleghaniensis_ (yellow birch), _Fraxinus americana_ (white ash), _Tsuga canadensis_ (eastern hemlock), _Quercus rubra_ (northern red oak), _Pinus strobus_ (white pine), and _Pinus resinosa_ (red pine) existing in various fractions in the understory (and, in patches, in the canopy).
+The UMBS upland forest canopy is dominated by temperate deciduous early-successional species, most importantly _Populus grandidentata_ (bigtooth aspen) and, to a lesser extent, _Betula papyrifera_ (paper birch), with _Acer saccharum_ (sugar maple), _Acer rubrum_ (red maple), _Fagus grandifolia_ (American beech), _Tilia americana_ (basswood), _Betula alleghaniensis_ (yellow birch), _Fraxinus americana_ (white ash), _Tsuga canadensis_ (eastern hemlock), _Quercus rubra_ (northern red oak), _Pinus strobus_ (white pine), and _Pinus resinosa_ (red pine) existing in various fractions in the understory (and, in patches, in the canopy).
 This composition is a legacy of the site's disturbance history:
 The site was intensively logged and burned in the late 1800s and early 1900s, and experienced regularly recurring fires until the mid-1920s, at which point a regime of active fire suppression started that has persisted to the present day [@kilburn_1960_effects; @barnes_1981_michigan; @friedman_2005_regional_legacies_logging].
 As a result, the average stand age in 2013 was 95 years [@gough_2013_sustained].
 The majority of the forest that is aspen-dominated is undergoing succession to "northern hardwood" (maple, beech, basswood, birch, ash, hemlock), "upland conifer" (red and white pine), or "northern red-oak" ecotypes [@bergen_2007_observing].
-
 
 ## Ecosystem Demography Model (version 2.2)
 
@@ -158,34 +157,33 @@ free-air CO~2~ enrichment studies [@dekauwe_2013_forest; @miller_2015_alteration
 estimation of potential carbon stocks [@hurtt_2004_beyond_potential_vegetation],
 and analyses of regional vegetation-climate feedbacks [@swann_2015_future].
 
-The official ED2 source code is available at https://github.com/EDmodel/ED2, and the exact version used in this study (which includes minor revisions to accommodate the requirements of this study) can be obtained at https://github.com/ashiklom/ED2/tree/b048950971e91699b78fc566df133caf977fda32.
+The official ED-2.2 source code is available at https://github.com/EDmodel/ED2, and the exact version used in this study (which includes minor revisions to accommodate the requirements of this study) can be obtained at https://github.com/ashiklom/ED2/tree/b048950971e91699b78fc566df133caf977fda32.
 
 ## Submodels
 
 For our analysis of model structure, we chose to target processes of known ecological importance.
 Specifically, we ran ED-2.2 with a factorial combination of the following configurations: (1) two-stream vs. multiple-scatter canopy radiative transfer models (RTMs); (2) closed canopy vs. finite crown area (a.k.a. complete vs. partial shading); and (3) static vs. plastic (varying with light level) traits.
+These sub-models are summarized in Table \@ref(tab:submodels).
 
 Both canopy RTMs in ED-2.2 resolve the full vertical radiation profile within a patch as a function of canopy structure (leaf and wood area indices, crown area, leaf angle distribution) and incident solar radiation, following the definitions in CLM 4.5 [@clm45_note].
 Both models also use identical definitions for the optical properties of a single canopy layer as a function of leaf and wood optical properties, leaf angle distribution, canopy clumping, solar zenith angle, and leaf, wood, and crown area indices.
 Both models represent direct (a.k.a. "beam") radiation as an exponentially decaying process, and solve for the diffuse (a.k.a. "hemispherical", "isotropic") radiation at each layer using a linear matrix equation.
 The models differ in the terms of this matrix equation.
-The two-stream model (default) uses the two-stream approximation originally derived for atmospheric radiative transfer [@meador_1980_two] and later adapted to vegetation canopies [@dickinson_1983_land; @sellers_1985_canopy].
-Meanwhile, the multiple-scatter model was derived from first principles by @zhao_2005_multiple specifically for vegetation canopies to address known biases and limitations of the two-stream approach [e.g. @wang_2003_comparison].
+The default model (_two-stream_) uses a special multi-canopy solution [derived in @longo_2019_ed1] of the two-stream approximation for vegetation canopies [@dickinson_1983_land; @sellers_1985_canopy].
+Meanwhile, the _multiple-scatter_ model was derived from first principles by @zhao_2005_multiple specifically for vegetation canopies to address known biases and limitations of the two-stream approach [e.g. @wang_2003_comparison].
 Compared to the default two-stream model, the multiple-scatter model slightly increases diffuse light levels in the understory.
 
 The crown area submodel in ED-2.2 determines the nature of competition for light between cohorts.
-In the default configuration ("closed canopy"), the leaf area of a cohort is distributed across the entire horizontal area of a patch.
+In the default configuration (_closed_), the leaf area of a cohort is distributed across the entire horizontal area of a patch.
 This means that taller cohorts always receive more incoming radiation---including 100% of the direct radiation---than shorter cohorts, even when the height difference is small.
 Similar approaches have been shown to excessively suppress competition from sub-dominant individuals and result in unrealistically homogeneous forest patches [@fisher_2015_taking].
-In the alternate configuration ("finite crown area"), canopies take up only a fraction of the available horizontal area, which allows more light (including some direct radiation) to reach subdominant cohorts.
+In the alternate configuration (_finite_), canopies take up only a fraction of the available horizontal area, which allows more light (including some direct radiation) to reach subdominant cohorts.
 The horizontal area of crowns is determined by allometric equations from @dietze_2008_changing.
 
 The third submodel we evaluated was trait plasticity.
-In the default configuration, all cohorts of a given plant functional type have the same parameters, regardless of environmental conditions.
-This ignores the globally-documented intraspecific trait variability as a function of light level [@niinemets_2010_review; @keenan_2016_global].
-In the alternate configuration, as light level decreases (trees become more shaded), specific leaf area increases and V~cmax~ decreases, following empirical relationships from the tropics [@lloyd_2010_optimisation].
-
-These sub-models are summarized in Table \@ref(tab:submodels).
+In the default configuration (_static_), all cohorts of a given PFT have the same parameters, regardless of environmental conditions.
+This ignores globally-documented intraspecific trait variability with light level and relative canopy position [@niinemets_2010_review; @keenan_2016_global].
+In the alternate configuration (_plastic_), cohorts that receive less light increase their specific leaf area and decrease their V~cmax~, following empirical relationships from the tropics [@lloyd_2010_optimisation].
 
 Table: (\#tab:submodels) ED-2.2 submodel descriptions
 
@@ -228,7 +226,7 @@ if (is_latex_output() || is_html_output()) {
 }
 ```
 
-The full list of parameters in ED-2.2 is large, with over 100 parameters per plant functional type.
+The full list of parameters in ED-2.2 is large, with over 100 parameters per PFT.
 A full sensitivity and uncertainty analysis across all of these parameters is outside the scope of this study.
 Instead, we selected a subset of parameters (Table \@ref(tab:param-table)) guided by (but expanding upon) previous ED-2.2 sensitivity studies [@dietze_2014_quantitative; @raczka_2018_what; @viskari_2019_influence].
 Collectively, these parameters cover a range of physiological and ecological processes relevant to C cycling and plant community composition, including 
@@ -244,9 +242,9 @@ A full description of these parameters and their associated processes in ED-2.2 
 
 ## Plant functional types and parameterization
 
-By default, ED-2.2 supports 17 different plant functional types, which divide plant species according to growth form (grass vs. tree), photosynthetic pathway (C3 vs. C4), leaf habit (deciduous vs. evergreen), biome (e.g. temperate vs. tropical), and successional status (e.g. early, mid, late).
-However, we limited our simulations to the four plant functional types that have any appreciable presence at UMBS: Early, mid, and late temperate deciduous trees and pines.
-The species comprising these plant functional types are shown in Table \@ref(tab:pft-species).
+By default, ED-2.2 supports 17 different PFTs, which divide plant species according to growth form, photosynthetic pathway, leaf habit, biome, and successional status.
+However, we limited our simulations to the four PFTs that have any appreciable presence at UMBS: Early-, mid-, and late-successional temperate deciduous ("hardwood") trees and pines.
+The species comprising these PFTs are shown in Table \@ref(tab:pft-species).
 
 Table: (\#tab:pft-species) Plant functional type-species mappings
 
@@ -263,28 +261,36 @@ Table: (\#tab:pft-species) Plant functional type-species mappings
 | Pine                  | _Pinus strobus_         | Yellow |
 
 For each plant functional type, we generated a distribution of parameter values via the Predictive Ecosystem Analyzer (PEcAn) trait-meta analysis [@lebauer_2013_facilitating; see also @dietze_2014_quantitative; @raczka_2018_what].
-Prior distributions for this meta-analysis were largely adapted from previous ED2 parameter uncertainty studies [@dietze_2014_quantitative; @raczka_2018_what; @viskari_2019_influence], and are shown in detail in Supplementary Information X. <!-- TODO Priors supplement; maybe describe entire meta-analysis? -->
-Species trait data for this meta-analysis came from existing records in the BETY database [www.betydb.org, @lebauer_2017_betydb], as well as from publicly available records in the TRY database [www.try-db.org, @kattge_2011_try] and, specifically for leaf optical properties, from Shiklomanov (2019 {dissertation, chapter 3}).
+Prior distributions for this meta-analysis were largely adapted from previous ED parameter uncertainty studies [@dietze_2014_quantitative; @raczka_2018_what; @viskari_2019_influence], and are shown in detail in Supplementary Table S1.
+Species trait data for this meta-analysis came from existing records in the BETY database [www.betydb.org, @lebauer_2017_betydb], as well as from publicly available records in the TRY database [www.try-db.org, @kattge_2011_try] and, specifically for leaf optical properties, from @shiklomanov_dissertation.
 All parameters not described in this section were set to their ED-2.2 PFT-specific default values for all simulations.
 
 ## Modeling workflow
 
 For each factorial combination of model configurations (described above), we ran ED-2.2 once with its default parameter values, once at the posterior median estimates from the meta-analysis, and 500 times with parameters sampled randomly from the meta-analysis posterior distributions.
-For the latter, the same 500 parameter samples were used for all model structures to allow us to independently evaluate the impacts of model structure at specific parameter values.
-Each ensemble member ran from January 1, 1902 through December 31, 1999 and was initialized from a "near-bare ground" condition: An equal number of seedlings of each plant functional type (see previous section) at the minimum resolvable size.
+For the latter, the same parameter samples were used for all model structures to allow us to independently evaluate the impacts of model structure at specific parameter values.
+We ran each ensemble member from January 1, 1902 through December 31, 1999 and initialized them from a "near-bare ground" condition: An equal number of seedlings of each included PFT at the minimum resolvable size.
 Driving meteorological data were 6-hourly CRU-NCEP [@cruncep_pecan] combined with an annual atmospheric CO~2~ record from Law-Dome ice core [@etheridge_1998_historical] and Mauna Loa observatory [@thoning_1989_atmospheric] linearly interpolated to 3-hourly resolution.
 Soil texture was set to 92% sand, 7% silt, and 1% clay, based on site-level observations [@gough_2010_wood].
 The initial soil moisture profile was set to the average soil moisture profile reported in the UMBS Ameriflux ancillary data (https://ameriflux.lbl.gov/sites/siteinfo/US-UMd).
 
 ## Analysis of results
 
-First, we evaluated the impact of model structure independent of any changes to parameters by comparing predictions of average annual net primary productivity (NPP) and summer (June, July, August) total leaf area index (LAI) across model structures while holding ED-2.2 parameters at their default values.
-Second, we then compared these default parameter simulations to simulations using median parameter estimates from a trait meta-analysis.
+First, we evaluated the impact of model structure independent of any changes to parameters by comparing predictions of average annual net primary productivity (NPP) summer (June, July, August) total leaf area index (LAI), the NPP:LAI ratio, and the effective number of PFTs across model structures while holding ED-2.2 parameters at their default values.
+We calculated the effective number of PFTs ($N_{\text{PFT,eff}}$) as the inverse of the Simpson diversity index:
+
+$$
+N_{\text{PFT,eff}} = \left( \sum_i {{f_{\text{AGB,i}}}^2} \right) ^ {-1}
+$$
+
+where $f_{\text{AGB,i}}$ is the fraction of aboveground biomass for PFT $i$ at a particular time.
+
+Second, we compared these default parameter simulations to simulations using median parameter estimates from a trait meta-analysis.
 Third, we considered the full range of parameter uncertainty by looking at predictions of NPP, LAI, and composition across all parameter ensemble members.
 Finally, we assessed which parameters contributed the most to parameter uncertainty for each model structure by performing a sensitivity and variance decomposition analysis following @lebauer_2013_facilitating, @dietze_2014_quantitative, and @raczka_2018_what.
-Briefly, this analysis uses a spline to estimate the relationship between individual parameters and output variables and then uses these splines to predict the variance in the output variable attributable to individual parameters ("partial variance"; see @lebauer_2013_facilitating for more details).
+Briefly, this analysis uses a spline to estimate the relationship between individual parameters and output variables and then uses these splines to predict the variance in the output variable attributable to individual parameters ["partial variance"; see @lebauer_2013_facilitating for more details].
 
-All analyses for this work were performed using R 3.6 (see "Colophon" for full details).
+All analyses for this work were performed using R 3.6 [@r_361].
 Code and supporting data for reproducing this analysis are publicly available on the Open Science Framework (OSF) at https://osf.io/dznuf/.
 
 # Results
