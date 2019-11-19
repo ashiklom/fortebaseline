@@ -51,7 +51,8 @@ plan <- bind_plans(plan, drake_plan(
     pivot_wider(names_from = "variable", values_from = "value") %>%
     mutate(prod_eff = npp / lai) %>%
     pivot_longer(c(npp, lai, prod_eff), names_to = "variable", values_to = "value") %>%
-    filter(!(variable == "prod_eff" & (abs(value) > 40 | value < -5))),
+    filter(!(variable == "prod_eff" & (abs(value) > 40 | value < -5))) %>%
+    bind_rows(pft_n_effective %>% mutate(model_id = substr(case, 4, 6))),
   ts_summary = ts_both2 %>%
     group_by(model_id, year, variable) %>%
     summarize(
@@ -59,14 +60,32 @@ plan <- bind_plans(plan, drake_plan(
       lo = quantile(value, 0.1, na.rm = TRUE)
     ) %>%
     left_join(models, "model_id"),
+  obs_plot = observations %>%
+    mutate(
+      variable = factor(variable, c("npp", "lai", "prod_eff", "d2"), c(
+        "atop(NPP, (MgC ~ ha^{-1} ~ year^{-1}))",
+        "LAI",
+        "'NPP / LAI'",
+        "N['PFT,eff']"
+      ))
+    ),
   summary_ts_plot_gg = ts_both2 %>%
     left_join(models, "model_id") %>%
+    filter(variable %in% c("npp", "lai", "prod_eff", "d2")) %>%
+    mutate(
+      variable = factor(variable, c("npp", "lai", "prod_eff", "d2"), c(
+        "atop(NPP, (MgC ~ ha^{-1} ~ year^{-1}))",
+        "LAI",
+        "'NPP / LAI'",
+        "N['PFT,eff']"
+      ))
+    ) %>%
     ggplot() +
     aes(x = year, color = color) +
     geom_line(aes(y = value, group = case), alpha = 0.1, size = 0.3) +
     geom_pointrange(
       aes(x = 2000, y = mean, ymin = low, ymax = hi),
-      data = observations,
+      data = obs_plot,
       color = "black",
       inherit.aes = FALSE
     ) +
@@ -75,19 +94,13 @@ plan <- bind_plans(plan, drake_plan(
       vars(fct_relabel(model, ~gsub(" ", "\n", .))),
       scales = "free_y",
       switch = "y",
-      labeller = labeller(
-        variable = as_labeller(c(
-          "npp" = "NPP ~ (MgC ~ ha^{-1} ~ year^{-1})",
-          "lai" = "LAI",
-          "prod_eff" = "'NPP / LAI'"
-        ), default = label_parsed)
-      )
+      labeller = label_parsed
     ) +
     scale_color_identity() +
     theme_cowplot() +
     theme(
       axis.title = element_blank(),
-      axis.text.x = element_text(angle = 90),
+      axis.text.x = element_text(angle = 90, vjust = 0.5),
       strip.background = element_blank(),
       strip.placement = "outside"
     ),

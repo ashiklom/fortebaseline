@@ -63,4 +63,50 @@ plan <- bind_plans(plan, drake_plan(
   ))
 ))
 
+### Effective number of PFTs
+plan <- bind_plans(plan, drake_plan(
+  pft_n_effective = pft_data %>%
+    group_by(case, year) %>%
+    summarize(
+      simpson = sum(agb_frac ^ 2),
+      d2 = 1 / simpson
+    ) %>%
+    ungroup() %>%
+    pivot_longer(
+      c(simpson, d2),
+      names_to = "variable",
+      values_to = "value"
+    )
+))
+
+### PFT AGB fraction time series
+plan <- bind_plans(plan, drake_plan(
+  pft_ts_plot = pft_data %>%
+    mutate(model_id = substr(case, 4, 6)) %>%
+    left_join(models, "model_id") %>%
+    ggplot() +
+    aes(x = year, y = agb_frac, group = case, color = color) +
+    geom_line(alpha = 0.1, size = 0.3) +
+    facet_grid(
+      vars(pft), vars(model),
+      labeller = labeller(
+        model = function(labels) gsub(" ", "\n", labels),
+        pft = label_value
+      )
+    ) +
+    ylab("AGB fraction") +
+    scale_color_identity() +
+    theme_cowplot() +
+    theme(
+      axis.text.x = element_text(angle = 90, vjust = 0.5),
+      axis.title.x = element_blank(),
+      strip.background = element_blank()
+    ),
+  pft_ts_plot_png = ggsave(
+    file_out("analysis/figures/pft-ts-plot.png"),
+    pft_ts_plot,
+    width = 10, height = 6
+  )
+))
+
 stop()

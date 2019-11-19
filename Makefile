@@ -34,3 +34,7 @@ submodel: ./analysis/paper/submodel-rtm.Rmd
 
 template:
 	Rscript -e "rmarkdown::render('analysis/templates/template.Rmd')"
+
+supplement: analysis/paper/supplementary-figures.pdf
+analysis/paper/supplementary-figures.pdf: analysis/paper/supplementary-figures.Rmd
+	Rscript -e "rmarkdown::render('analysis/paper/supplementary-figures.Rmd')"

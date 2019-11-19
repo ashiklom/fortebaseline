@@ -373,58 +373,31 @@ While the uncertainty in growth respiration is large, we emphasize that SLA and 
 summary_ts_cap <- paste(
   htmlfig(),
   "ED2 plot-level predictions of",
-  "net (NPP) primary productivity,",
+  "net primary productivity (NPP),",
   "total leaf area index (LAI),",
-  "and production efficiency (NPP / LAI)",
+  "production efficiency (NPP / LAI)",
+  "and effective number of PFTs (N~PFT,eff~)",
   "by model configuration.",
+  "Effective number of PFTs was calculated as the inverse",
+  "of the Simpson diversity index with proportions expressed as",
+  "fraction of aboveground biomass.",
   "Black dot with error bars is the observed mean and min/max value."
   # TODO REF
 )
 fig("summary-ts-plot.png")
 ```
 
-Net primary productivity (NPP) and total leaf area index (LAI) varied with both parameter value and model structure (Figure \@ref(fig:summary-ts-plot)).
+Net primary productivity (NPP), total leaf area index (LAI), their ratio, and PFT diversity varied with both parameter value and model structure (Figure \@ref(fig:summary-ts-plot)).
 All model configurations exhibited a similar mean trajectory of rapid growth in the first 15-20 years followed by a gradual decline to a lower, stable value around 1975 (with individual ensemble members sometimes undergoing sudden collapse in specific years).
 The ensemble spread within any single configuration---i.e. the parameter uncertainty---was similar and large across all configurations; both NPP and LAI varied from close to zero to more than twice the mean value at any given timestep.
 Within all configurations, most (>90%) ensemble members under-predicted observed present-day NPP and LAI by year 2000, though individual ensemble members from some configurations over-predicted one or both variables.
 Predictions of peak NPP (between 1910 and 1950 for most simulations) were closer to the observed present-day NPP (though also with large ensemble spread), but predictions of LAI during this period were still too low.
-
-```{r pairs-time, fig.cap = pairs_time_cap}
-### Figure 7
-pairs_time_cap <- paste(
-  htmlfig(),
-  "ED-2.2 predictions of annual mean NPP and growing-season LAI",
-  "averaged over 1925-1950 (left) and 1975-1999 (right)",
-  "by model type.",
-  "Each point indicates a single ensemble run with a different set of parameters.",
-  "Solid line is the best-fit generalized additive model (GAM).",
-  "Dashed lines indicate the error bounds of present-day observed NPP and LAI.",
-  "Text labels match the rows in Figure 9 below."
-)
-fig("npp-lai-pairs.png")
-```
-
-The emergent relationship between NPP and LAI was similar across model configurations early in the runs, but became more sensitive to model configuration later into the runs (Figure \@ref(fig:pairs-time)).
-Compared to runs with a closed canopy, runs with a finite canopy usually had higher LAI for the same NPP, especially later into the simulation.
+The closed canopy configuration usually had a higher NPP for the same LAI than the finite canopy configuration, especially later into the simulation.
 Although many simulations matched _either_ the observed NPP or the observed LAI, only a small minority of individual runs matched _both_.
 
-```{r pft-jitterplot, fig.cap = pft_jitterplot_cap}
-### Figure 8
-pft_jitterplot_cap <- paste(
-  htmlfig(),
-  "Fraction of total aboveground biomass (AGB)",
-  "of each plant functional type (PFT)",
-  "predicted by different parameter-configuration combinations",
-  "of ED2.",
-  "Each point represents the AGB fraction of a single PFT",
-  "in a single ensemble member at the given point in time."
-)
-fig("pft-jitterplot.png")
-```
-
-The large parameter uncertainty in NPP and LAI also extended to species composition (Figure \@ref(fig:pft-jitterplot)).
+The large parameter uncertainty in NPP and LAI also extended to species composition (Figure \@ref(fig:summary-ts-plot)).
 Under all configurations, at any moment in time, most ensemble members were dominated by a single PFT, and the sustained coexistence of more than two PFTs was limited to a small set of specific ensemble members across all configurations.
-However, _which_ PFT was dominant depended strongly on parameter values, and any of the four PFTs became the dominant one in some subset of simulations.
+However, _which_ PFT was dominant depended strongly on parameter values, and any of the four PFTs became the dominant one in some subset of simulations (Figure S3).
 
 ```{r lai-pft-plot, fig.cap = lai_pft_cap}
 ### Figure 9

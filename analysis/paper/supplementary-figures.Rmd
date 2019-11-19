@@ -5,12 +5,29 @@ author:
   - Ben Bond-Lamberty
   - Jeff Atkins
   - Christopher M. Gough
+output:
+  bookdown::pdf_document2:
+    latex_engine: xelatex
+    toc: no
 ---
+
+```{r setup, include = FALSE}
+fig <- function(...) {
+  knitr::include_graphics(here::here("analysis", "figures", ...))
+}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  echo = FALSE,
+  comment = "#>",
+  out.width = "\\linewidth"
+)
+```
 
 ```{r structure-compare-light, fig.cap = structure_default_light_cap}
 ### Figure S1
 structure_default_light_cap <- paste(
-  htmlfig(),
   "Radiation profiles of cohorts from ED2 runs with",
   "default parameters, across different configurations.",
   "Each point represents a single cohort of the given PFT,",
@@ -24,8 +41,15 @@ fig("default-light-levels.png")
 ```{r param-dist, fig.cap = param_dist_cap}
 ### Figure S2
 param_dist_cap <- paste(
-  htmlfig(),
   "Input parameter distributions from PEcAn trait meta-analysis."
 )
 fig("param-dist.png")
+```
+
+```{r pft-ts-plot, fig.cap = pft_ts_cap}
+### Figure S3
+pft_ts_cap <- paste(
+  "ED-2.2 ensemble predictions of PFT aboveground biomass fractions."
+)
+fig("pft-ts-plot.png")
 ```
