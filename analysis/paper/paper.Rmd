@@ -381,7 +381,7 @@ summary_ts_cap <- paste(
   "net primary productivity (NPP),",
   "total leaf area index (LAI),",
   "production efficiency (NPP / LAI)",
-  "and effective number of PFTs (N~PFT,eff~)",
+  "and effective number of PFTs ($N_{\\text{PFT,eff}}$)",
   "by model configuration.",
   "Shading indicates the middle 50\\% (dark), middle 95\\% (medium),",
   "and entire range (light) of ensemble simulations",
@@ -460,43 +460,38 @@ Similarly, parameters related to leaf optical properties had relatively higher i
 
 ## ED-2.2 vs. reality
 
-Our overarching objective was to investigate how model structure and parameters interact in multidecadal simulations of forest ecosystem productivity and community succession.
-Our first question was: 
+Our overarching objective was to investigate how model structure and parameters interact in multidecadal simulations of forest ecosystem production and community succession.
+Our first question was:
 Which model structural and parameter configurations reproduce observed NPP and community compositional changes?
 We found that model-observation fidelity was variable, with modelled community succession generally departing from observations and modelled NPP more comparable to observed values and trends.
 
-Modelled community succession, which was variable across model structural and parameter configurations, poorly predicted the observed transition of dominance from early to mixed successional hardwoods during the first century of regrowth.
-<!-- TODO Highlight the large variability! -->
-The community successional dynamics observed at our study site are representative of temperate forests globally, with short-lived early hardwoods initially occupying a majority of the canopy and over time gradually declining as longer-lived mid- and late-hardwood species emerge as dominant [@wolter_2002_recent; @gough_2007_legacy; @sommerfeld_2018_???].
+The community successional dynamics observed at our study site are representative of temperate forests globally, with short-lived early hardwoods initially occupying a majority of the canopy and over time gradually declining as longer-lived mid- and late-hardwood species emerge as dominant [@wolter_2002_recent; @gough_2007_legacy; @sommerfeld_2018_patterns].
 At our site, _Populus_, a genus of early hardwoods, is abundant in the canopy during the first 50 to 75 years of succession and, upon peak maturity, declines precipitously at a rate of 40% per decade [@gough_2010_wood].
-Filling this canopy void over time are mid-successional _Quercus_ and _Acer_, and later successional _Pinus_ [@scheuermann_2018_???].
-However, with the exception of a select few parameter combinations (e.g. C and D in Figure \@ref(fig:lai-pft-plot)), modelled community succession exhibited only modest changes in functional diversity over time.
-<!-- TODO Fix from here on -->
-Moreover, a single PFT emerged as dominant in a majority of runs, though _which_ PFT dominated depended on parameter combination.
-This mismatch between observations and simulations reinforces the difficulty of accurately representing plant functional diversity in vegetation models [@fisher_2015_taking].
-Specific to our analysis, our results indicate that ED-2.2 perceives limited niche overlap among PFTs, resulting in an unrealistically low level of PFT coexistence. <!-- TODO REFS -->
+Filling this canopy void over time are mid-successional _Quercus_ and _Acer_, and later successional _Pinus_ [@scheuermann_2018_effects].
+However, modelled community composition, while highly variable, overwhelmingly favored dominance by a single PFT (Figure \@ref(fig:summary-ts-plot)), with only a few parameter combinations exhibiting more realistic ecological dynamics (Figure \@ref(fig:lai-pft-plot)).
+This tendency towards mono-dominance reinforces the difficulty of accurately representing plant functional diversity in vegetation models [@fisher_2015_taking].
+Specific to our analysis, our results indicate that environmental filtering and competitive exclusion are potent forces in ED-2.2, and that realistic levels of coexistence and competition can only be achieved under precise combinations of the multivariate parameter space.
 
-Unlike community succession, most model configurations produced similarly realistic C flux successional trajectories.
-In particular, the use of median parameter values resulted in century-long C flux dynamics that mirror the trajectory of site-level observations [@gough_2007_legacy] and, more broadly, those from other temperate forests [@law_2001_carbon; @law_2003_changes; @irvine_2004_age; @tang_2009_soil; @kashian_2013_postfire].
-In our study, modelled and observed C fluxes generally increased rapidly in the first quarter century before gradually declining, a pattern that is consistent with ecological theory [@odum_1969_strategy_ecosystem_development] and global observations [@pregitzer_2004_carbon; @luyssaert_2008_old; @gough_2016_disturbance].
-At odd with site-level observations, however, is the extent of simulated declines in production over time.
+Unlike community succession, most model configurations produced more realistic C flux successional trajectories.
+In particular, the use of median parameter values resulted in century-long C flux dynamics (Figure \@ref(fig:default-median-flux)) that mirror the trajectory of site-level observations [@gough_2007_legacy] and, more broadly, those from other temperate forests [@law_2001_carbon; @law_2003_changes; @irvine_2004_age; @tang_2009_soil; @kashian_2013_postfire].
+In our study, modelled and observed C fluxes generally increased rapidly in the first quarter century before gradually declining (Figures \@ref(fig:default-median-flux) and \@ref(fig:summary-ts-plot)), a pattern that is consistent with ecological theory [@odum_1969_strategy_ecosystem_development] and global observations [@pregitzer_2004_carbon; @luyssaert_2008_old; @gough_2016_disturbance].
+At odds with site-level observations, however, is the extent of simulated declines in production over time.
 Rather than decreasing, long-term meteorological flux tower observations indicate net ecosystem production increased two-fold over a period of 15 years in the century-old UMBS forest, possibly because the decline of senscent early hardwoods released mid and late hardwoods poised for rapid growth [@gough_2016_disturbance; @curtis_2018_forest].
+This mismatch may be driven by the aforementioned tendency of ED-2.2 towards monodominance; in the absence of an understory, there is nothing to compensate declining production among dominant trees.
+
+When considering the coupling of composition and C fluxes, we found that the successional arc of production was similar among model configurations but improved when simulations more closely represented observed forest composition.
+Most ED-2.2 runs under-predicted NPP and LAI during the peak period (1920-1950) and towards the end of the simulation (1975-1999) (Figure \@ref(fig:summary-ts-plot)).
+However, of five representative runs, the two that most closely matched present-day composition at UMBS (early hardwood dominated; **C** and **D** in Figure \@ref(fig:lai-pft-plot)) also exhibited the greatest fidelity with observed NPP and LAI (Figure \@ref(fig:summary-ts-plot) and S3).
+These results are encouraging, demonstrating an ecologically realistic dependency of C fluxes on canopy structure and composition [@pan_2011_large; @he_2012_relationships; @reich_2012_key].
+Moreover, we show that such realistic outcomes are possible without tuning important and directly observable parameters like SLA and V~cmax~ to unrealistic values (Figure S2).
+We therefore argue that, although challenging, it is not unreasonable to expect demographic vegetation models to accurately simulate both community composition and ecosystem biogeochemistry, and in fact, accuracy in the latter may depend on the former.
+
+OLD DISTURBANCE TEXT:
 One possible reason for the excessive pace of succession in ED-2.2 is missing mechanisms for sustaining productivity through early succession.
 In particular, recent evidence points to the importance of low-severity, high-frequency disturbances in sustaining ecosystem productivity [@gough_2016_disturbance].
 ED-2.2 has a mortality scheme, and indeed, parameters related to mortality were occasionally among the most important parameters for predictive uncertainty (Figure \@ref(fig:partial-variance-npp)).
 However, although our simulations used real meteorology (which included occasional extreme weather events), we did not consider other sources of disturbance common to this region [such as harvests, insects and pathogens, and fire; @amiro_2010_ecosystem], which may contribute to sustaining productivity and dominance of early-successional forests [@gough_2016_disturbance].
 Future work should evaluate the impacts of prescribed disturbance regimes on multidecadal predictions of ecological dynamics and biogeochemistry.
-
-Under all but a small minority of parameter combinations, ED-2.2 was unable to create---let alone sustain---a forest with any appreciable functional diversity.
-The large majority of runs produced dominance by a single PFT, though _which_ PFT dominated depended on parameter combination.
-This highlights the difficulty of representing plant functional diversity in vegetation models, which has been true in other models as well [@fisher_2015_taking].
-To the extent that ED-2.2 is "correct" in how it represents processes, this result also indicates that the plant functional trait space of realized niches is small---i.e. multiple different trees can co-exist only under very specific combinations of plant traits and environmental conditions. <!-- TODO REF -->
-
-Most ED-2.2 runs under-predicted both NPP and LAI, both in the peak period (1920-1950) and towards the end of the simulation (1975-1999) (Figures \@ref(fig:summary-ts-plot)).
-However, of our five selected representative runs, the two that most closely matched present day composition at UMBS (early hardwood-dominated; **C** and **D** in Figure \@ref(fig:lai-pft-plot)) also closely matched the observed NPP and LAI (Figure \@ref(fig:summary-ts-plot)).
-This is encouraging because it suggests that it is possible to get both aggregate ecosystem C fluxes and PFT composition right.
-Moreover, given that many important ED-2.2 parameters were well-constrained in our analysis (Figure S2), this is possible without using physically unrealistic parameter values.
-We therefore suggest that for model calibration and validation, comparisons against multiple output variables---including variables related to composition---can yield maximum constraint and are not unreasonably strict.
 
 ## Drivers of uncertainty
 
