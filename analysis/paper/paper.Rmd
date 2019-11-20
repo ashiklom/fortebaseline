@@ -20,21 +20,24 @@ always_allow_html: true
 bibliography: references.bib
 csl: "../templates/ecology.csl"
 abstract: |
-  Forests in the US Upper Midwest have been a net C sink for a century, driven by their fast-growing, early successional species.
-  However, the composition of these regrown forests has started to shift toward mid-successional species.
-  Combined with changing climate and disturbance, this means that future biogeochemical and ecological dynamics in these forests are highly uncertain.
-  Demographic vegetation models provide a tool for analyzing this uncertainty and its implications.
-  Here, we evaluate the relative importance of model "structural" (which processes are represented, and how) and "parameter" (parameters used in those equations) uncertainty, asking:
-  (1) Which processes are most important to accurately model community succession and C cycling in Upper Midwest forests?
-  (2) What are the relative contributions of parameter vs. structural uncertainty?
-  We ran ensembles of the Ecosystem Demography model v2.2 (sampling over parameter uncertainty) at the University of Michigan Biological Station (UMBS) from 1900 to 2000 with different representations of key processes important to competition for light.
-  We then compared the magnitude of structural (across representations) and parameter (within each representation) uncertainty, and assessed which submodel-parameter combinations reproduced observed C fluxes and succession.
-  On average, our simulations underestimated both net primary productivity (NPP) and leaf area index (LAI) after 100 simulation years, though NPP estimates at peak productivity (20-50 years into the simulations) were closer to observations.
-  However, parameter uncertainty was large; at any given timestep, both NPP and LAI ranged from ~0 to >200% of their mean value.
-  Although many simulations matched either the observed NPP or observed LAI at some point during the simulation, only a small minority of individual runs matched both.
-  The few runs that matched observed NPP and LAI also matched the present-day composition (early hardwood-dominated).
-  Structural uncertainty was less important than parameter uncertainty, but model configuration did influence the ecological dynamics within a given parameter set, and affected which parameters were most influential.
-  We conclude that: (1) targeted data collection to constrain vegetation model parameters should be a higher priority than model development; (2) parameter sensitivity analyses are not necessarily generalizable across model structures; and (3) robust model validation requires scrutiny of multiple different variables, including those related to vegetation productivity and composition.
+  Regrowth of secondary forests following changes in human land-use patterns is a widespread phenomenon globally.
+  The land-use and disturbance history of the US Upper Midwest makes the temperate forests of this region a model system for studying the ecology and biogeochemistry of secondary forests.
+  Demographic vegetation models encapsulate our best understanding of forest function, and whether or not these models can accurately reproduce observed multidecadal patterns of forest succession is an important indication of our ability to predict the responses of terrestrial ecosystems to future global change.
+  In this study, we test the accuracy and precision with which a demographic vegetation model---ED-2.2---can simulate C cycling and community composition in 100 years of temperate forest regrowth following stand-replacing disturbance, asking:
+  (1) Which processes and parameters are most important to accurately model community composition and C cycling in Upper Midwest temperate forests?
+  (2) What is the relative importance of model structure (which processes are represented and how) versus model parameter values to these predictions?
+  Previous work has shown that demographic model predictions of ecological dynamics are highly sensitive to how these models represent competition for light, echoing a large body of ecological research on the importance of this process to forest succession.
+  Therefore, we ran ensembles of the Ecosystem Demography model v2.2 (sampling over parameter uncertainty) at the University of Michigan Biological Station (UMBS) from 1900 to 2000 with different representations of key processes important to competition for light.
+  We then compared the magnitude of structural (across representations) and parameter (within each representation) uncertainty, and assessed which submodel-parameter combinations best reproduced observed C fluxes and succession.
+  On average, our simulations underestimated both net primary production (NPP) and leaf area index (LAI) after 100 simulation years, though NPP estimates at peak production (20-50 years into the simulations) were closer to observations.
+  In addition, most simulations failed to capture observed competitive interactions, predicting persistent dominance by a single plant functional type (PFT).
+  However, parameter uncertainty was large; at any given timestep, both NPP and LAI ranged from ~0 to >200% of their mean value, and depending on parameter value, stands could end up dominated by any one of the four PFTs we considered.
+  Encouragingly, representative runs that best matched present-day composition (early hardwood-dominated) also exhibited the greatest fidelity with present-day observed NPP and LAI, demonstrating an ecologically realistic dependency of C fluxes on canopy structure and composition. 
+  Structural uncertainty was less important than parameter uncertainty, but model structure did influence the ecological dynamics within a given parameter set, and affected which parameters were most important to predictive uncertainty.
+  We conclude that:
+  (1) targeted data collection to constrain vegetation model parameters should be a higher priority than model development;
+  (2) parameter sensitivity analyses are not necessarily generalizable across model structures; and
+  (3) it is challenging but not unreasonable to expect demographic vegetation models to accurately simulate both community composition and ecosystem biogeochemistry, and in fact, accuracy in the latter may depend on the former.
 keywords: |
   Dynamic vegetation modeling; carbon cycle; forest succession
 highlights: |

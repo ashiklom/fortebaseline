@@ -17,9 +17,9 @@ Specific comments:
 - [X] Title: Minor point perhaps, but “community succession” generally focuses on plant composition changes rather than NPP. Consider “community-carbon cycling…” and omitting “Upper Midwest”, the latter doesn’t sound very global.
 
 - Abstract:
-  - [ ] Not clear from the abstract why competition for light is the focus (though this is revealed later).
+  - [X] Not clear from the abstract why competition for light is the focus (though this is revealed later).
   - [X] PFT and UMBS not defined in the abstract.
-  - [ ] From a ‘big-picture’ trying to grab the attention of modelers and empiricists, is it reasonable to conclude that accurate model representation of vegetation community structure appears important to simulating C cycling processes? This is an interesting finding (to me) and I think will be to others because it demonstrates the importance of structure-function linkages in a modeling context.
+  - [X] From a ‘big-picture’ trying to grab the attention of modelers and empiricists, is it reasonable to conclude that accurate model representation of vegetation community structure appears important to simulating C cycling processes? This is an interesting finding (to me) and I think will be to others because it demonstrates the importance of structure-function linkages in a modeling context.
   - [X] I think you’ll want to be careful about using “structure” to mean vegetation physical arrangement, etc, given the emphasis here on model structure.
 
 - Introduction:
