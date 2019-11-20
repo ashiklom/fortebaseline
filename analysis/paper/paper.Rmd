@@ -3,11 +3,9 @@ title: |
   Structure and parameter uncertainty in centennial-scale projections
   of community-carbon cycling in a temperate forest
 author:
-  - Alexey N. Shiklomanov
-  - Ben Bond-Lamberty
-  - Jeff Atkins
-  - Christopher M. Gough
-date: "`r format(Sys.time(), '%d %B, %Y')`"
+  - Alexey N. Shiklomanov$^{a *}$, Ben Bond-Lamberty$^a$, Jeffrey Atkins$^b$, Christopher M. Gough$^b$
+  - $^a$ *Joint Global Change Research Institute, Pacific Northwest National Laboratory, College Park, MD, USA*; $^b$ *Department of Biology, Virginia Commonwealth University, Richmond, VA, USA*
+  - "* Corresponding author: alexey.shiklomanov@pnnl.gov, (301) 314-6713; 5825 University Research Ct, Suite 3500, College Park, MD 20740"
 output:
     bookdown::html_document2:
       fig_caption: yes
@@ -20,6 +18,7 @@ always_allow_html: true
 bibliography: references.bib
 csl: "../templates/ecology.csl"
 abstract: |
+  **Abstract**:
   Regrowth of secondary forests following changes in human land-use patterns is a widespread phenomenon globally.
   The land-use and disturbance history of the US Upper Midwest makes the temperate forests of this region a model system for studying the ecology and biogeochemistry of secondary forests.
   Demographic vegetation models encapsulate our best understanding of forest function, and whether or not these models can accurately reproduce observed multidecadal patterns of forest succession is an important indication of our ability to predict the responses of terrestrial ecosystems to future global change.
@@ -170,7 +169,7 @@ free-air CO~2~ enrichment studies [@dekauwe_2013_forest; @miller_2015_alteration
 estimation of potential carbon stocks [@hurtt_2004_beyond_potential_vegetation],
 and analyses of regional vegetation-climate feedbacks [@swann_2015_future].
 
-The official ED-2.2 source code is available at https://github.com/EDmodel/ED2, and the exact version used in this study (which includes minor revisions to accommodate the requirements of this study) can be obtained at https://github.com/ashiklom/ED2/tree/b048950971e91699b78fc566df133caf977fda32.
+The official ED-2.2 source code is available at https://github.com/EDmodel/ED2, and the exact version used in this study (which includes minor revisions to accommodate the requirements of this study) can be obtained at https://github.com/ashiklom/ED2/tree/b048950.
 
 ## Submodels
 
@@ -561,24 +560,3 @@ fig("partial-variance-npp.png")
 ```
 
 `r pgbreak()`
-
-### Colophon
-
-This report was generated on `r Sys.time()` using the following computational environment and dependencies:
-
-```{r colophon, cache = FALSE}
-# which R packages and versions?
-devtools::session_info()
-```
-
-The current Git commit details are:
-
-```{r}
-# what commit is this file at? You may need to change the path value
-# if your Rmd is not in analysis/paper/
-git2r::repository(here::here())
-```
-
-View this project on GitHub in repository [ashiklom/fortebaseline](https://github.com/ashiklom/fortebaseline)
-(this manuscript file is in [`analysis/paper/paper.Rmd`](https://github.com/ashiklom/fortebaseline/blob/master/analysis/paper/paper.Rmd))
-and in Open Science Framework (OSF) at https://osf.io/dznuf/ .
