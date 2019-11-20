@@ -1,0 +1,20 @@
+What scientific question is addressed in this manuscript?
+
+Which processes and parameters are most important to accurately model community composition and C cycling in Upper Midwest temperate forests?
+And, what is the relative importance of model structure (which processes are represented and how) versus model parameter values to these predictions?
+
+What is/are the key finding(s) that answer this question?
+
+Simulations that best matched present-day composition also most closely matched observed NPP and LAI, demonstrating the dependency of C fluxes on community composition. Parameter uncertainty was larger than structural uncertainty, but structure influenced the ecological dynamics within a given parameter set and affected which parameters were most influential.
+
+Why is this work important and timely?
+
+
+
+Describe how your paper fits within the scope of GCB; What biological AND global change aspects does it address?
+
+
+
+What are the three most recently published papers that are relevant to this manuscript?
+
+Raczka et al. (2018; https://doi.org/10.1029/2018jg004504) is the most recent investigation of parameter uncertainty in the ED2 model. Longo et al. (2019; https://doi.org/10.5194/gmd-2019-71) evaluate the ED-2.2 model in the Amazon. Pugh et al. (2019; https://doi.org/10.1073/pnas.1810512116) summarize the role of secondary forest regrowth in global C cycling.
