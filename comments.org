@@ -24,8 +24,8 @@ Specific comments:
 
 - Introduction:
  
-  - [ ] General structure and flow is very good, but it’s long for an introduction. You could combine and compress paragraphs 3, 4, 5.
-  - [ ] First paragraph, starting with “Forests are…”. This is a well-written and articulated paragraph, but for GCB could be made more global in context. This region is really representative of changes that are, for the most part, occurring world-wide, re, increasing disturbance frequency, changing forest communities, etc. The upper Midwest (and UMBS) is a ‘model system’ or region in which to study these changes.
+  - [X] General structure and flow is very good, but it’s long for an introduction. You could combine and compress paragraphs 3, 4, 5.
+  - [X] First paragraph, starting with “Forests are…”. This is a well-written and articulated paragraph, but for GCB could be made more global in context. This region is really representative of changes that are, for the most part, occurring world-wide, re, increasing disturbance frequency, changing forest communities, etc. The upper Midwest (and UMBS) is a ‘model system’ or region in which to study these changes.
   - [X] Paragraph three is very compelling. Nice.
   - [X] Paragraph four: Should be “They found…”.
   - [X] Paragraph 5 retool: Will work on it.
@@ -48,20 +48,20 @@ Specific comments:
   - [X] Impacts of structure alone: Consider modifying first sentence to: “…for the first half of the century-long simulation…” for better context.
   - [X] Figure 2 (Light availability, by cohort). This is an interesting figure, but could probably be supplementary or simplified by showing only key contrasts highlighted in text.
   - [X] Figure 3 (Parameter distributions). Again interesting, but in this case an input rather than a key result, right? So, could probably also be a supplementary figure.
-  - [-] Default vs median parameters: This IS REALLY interesting and revealing. I think it will be important then to cast the interpretation of the results in this critical context. The model sensitivity to parameters appears largely dependent on the starting point.
+  - [X] Default vs median parameters: This IS REALLY interesting and revealing. I think it will be important then to cast the interpretation of the results in this critical context. The model sensitivity to parameters appears largely dependent on the starting point.
     - /Not quite. This figure is showing that model sensitivity to changes in _structure_ depends on choice of parameters, and all our initial conditions are the same./
-  - [ ] Figure 4 (Default vs. median: Fluxes) is definitely a keeper, but it’s busy. You could simplify by aggregating into closed and finite canopies.
-  - [-] Figure 5. (Default vs. median: PFT LAI) Keeper. But, what the hell is going on? So fascinating but also perplexing that the default seems to more closely match reality.
+  - [X] Figure 4 (Default vs. median: Fluxes) is definitely a keeper, but it’s busy. You could simplify by aggregating into closed and finite canopies.
+  - [X] Figure 5. (Default vs. median: PFT LAI) Keeper. But, what the hell is going on? So fascinating but also perplexing that the default seems to more closely match reality.
     - /I don't think this is all that perplexing or surprising. In the modeling world, it's common to tune parameters to get realistic outputs, even if the resulting parameters end up unrealistic; that's exactly what this is showing./
-  - [ ] Default vs median parameters: Very cool results and well-presented. “Exploratory analysis” is interesting, but be careful – not sure it’s essential and often not well-received by reviewers.
+  - [X] Default vs median parameters: Very cool results and well-presented. “Exploratory analysis” is interesting, but be careful – not sure it’s essential and often not well-received by reviewers.
   - [X] Figure 6 (Uncertainty time series). Excellent and a clearly core result that should be retained. In the accompanying text, I’d also indicate that all configurations simulate a decline in NPP as the forest approaches a century in age.
     - /We do talk about declining NPP in the text./
-  - [ ] Figure 7 (NPP vs. LAI scatter). Interesting, but not sure it’s essential. OR, you could recast and fold into Figure 6 as production efficiency, which is NPP/LAI, essentially what you are showing in Fig 7.
+  - [X] Figure 7 (NPP vs. LAI scatter). Interesting, but not sure it’s essential. OR, you could recast and fold into Figure 6 as production efficiency, which is NPP/LAI, essentially what you are showing in Fig 7.
     - /I'm inclined to keep this one because of its links to Figure 9, and the /
   - [X] Pg 15, third paragraph: “…a handful of…”
-  - [ ] Figure 8 (AGB fractions). Visually interesting and useful as a supplement to show degree of ensemble variation, but necessary given Fig. 9? Fig 9. is excellent.
+  - [X] Figure 8 (AGB fractions). Visually interesting and useful as a supplement to show degree of ensemble variation, but necessary given Fig. 9? Fig 9. is excellent.
     - /Maybe just revert to showing some metric of "diversity" in Figure 6, as I did in an earlier draft./
-  - [ ] Figure 10 (Parameter variance decomposition). I like as a main figure, but to be useful you’ll want to spell out parms on axis.
+  - [X] Figure 10 (Parameter variance decomposition). I like as a main figure, but to be useful you’ll want to spell out parms on axis.
   - [X] Pg 18, “mid-hardwood began as the dominant PFT” (not species).
   - [X] JEFF: Figure 9 (PFT LAI scenarios) -- The changing y-axis scale is bothersome and obfuscates the story I think.
   - [X] JEFF: Figure 10 (Parameter variance decomposition) -- This is a cool way to do these style plots. I could go w/ this in supplemental or as a table though.
@@ -69,7 +69,7 @@ Specific comments:
 - Discussion
 
   - [X] Pg 19, first sentence. Change “community assembly” to “community succession”.
-  - [ ] ED-2.2 vs. reality: great subheading title! General thoughts – I can help retool this section and generally like it, but think it can be more synthetic from the beginning. The last paragraph ties structure and function together, but I’d suggest a slight reordering in which you lead with structure (current 2nd paragraph) then discuss function (current 1st) and then synthesize, while weaving in the interdependency throughout. I think you are right and this is a result that stood out to me: To get function (i.e., NPP) right, the model also has to simulate structure correctly; thus, the interaction between structure and, e.g., disturbance is critical to represent correctly in demographic models. Sets up FoRTE nicely.
+  - [X] ED-2.2 vs. reality: great subheading title! General thoughts – I can help retool this section and generally like it, but think it can be more synthetic from the beginning. The last paragraph ties structure and function together, but I’d suggest a slight reordering in which you lead with structure (current 2nd paragraph) then discuss function (current 1st) and then synthesize, while weaving in the interdependency throughout. I think you are right and this is a result that stood out to me: To get function (i.e., NPP) right, the model also has to simulate structure correctly; thus, the interaction between structure and, e.g., disturbance is critical to represent correctly in demographic models. Sets up FoRTE nicely.
   - [X] Drivers of uncertainty: I followed the first paragraph until the last sentence. Are you building to the case that the accuracy of simulations has implications beyond simply academic purposes? If so, I can help with that, but it’s abrupt as stated/placed here.
     - /This is that we (in- and outside academia) value forests beyond their ability to sequester carbon. Many (most?) of the arguments about why we need demographic models relate to the fact that accounting for demography helps us predict C cycling, but I think this undersells the value of predicting composition and ecological dynamics for their own sake./
   - [X] JEFF: "Prescribed disturbance frequencies" -- Important to note and differentiate between "frequency" and "severity"
