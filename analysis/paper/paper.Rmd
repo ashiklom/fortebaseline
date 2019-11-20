@@ -490,9 +490,8 @@ We therefore argue that, although challenging, it is not unreasonable to expect 
 
 Our second question was: What is the relative contribution of structural and parameter uncertainty to C cycling and ecological dynamics at UMBS?
 We found that parameter uncertainty was by far the dominant driver of uncertainty in our simulations.
-Different parameter combinations led to huge ranges in ensemble predictions of ensemble variables, with NPP and LAI ranging from zero to more than twice the ensemble mean estimates (Figures \@ref(fig:summary-ts-plot)).
-Moreover, different parameter combinations produced qualitatively different ecological narratives (Figures \@ref(fig:lai-pft-plot)).
-Therefore, parameter uncertainty has implications beyond C cycling---differences in species composition and relative abundance have implications for forest management and wildlife conservation, among others. <!-- TODO REFS -->
+Different parameter combinations led to not only huge ranges in ensemble predictions of stand-level NPP and LAI, but also a multitude of qualitatively different ecological narratives (Figures \@ref(fig:summary-ts-plot), \@ref(fig:lai-pft-plot)).
+Parameter uncertainty in demographic models therefore has broad implications for C cycle science, community ecology, and forest management.
 
 The dominance of parameter uncertainty over structural uncertainty in our results suggests that constraining parameter uncertainty should be a higher priority than model development.
 Parameter uncertainty can be reduced in two different ways:
@@ -504,7 +503,7 @@ In contrast, "growth respiration factor" is an empirical coefficient and not mea
 Importantly, efforts to reduce model uncertainty are most effective when they target parameters that are poorly constrained and to which the model is most sensitive.
 For parameters that are already well constrained by data, the marginal value of additional measurements may be limited.
 For example, ED-2.2 is highly sensitive to SLA [@dietze_2014_quantitative; @pandit_2018_optimizing], but thanks to the large number of SLA observations, we were able to estimate it very precisely (Figure S2) and, as a result, it was not a significant source of uncertainty in our analysis (Figure \@ref(fig:partial-variance-npp)).
-At the same time, some poorly constrained parameters have relatively modest impacts on model outputs---for instance, nonlocal dispersal and background mortality rate in our study (Figure S2, \@ref(fig:partial-variance-npp))---and therefore, reducing their uncertainties is not an effective way to improve model predictions.
+At the same time, some poorly constrained parameters have relatively modest impacts on model outputs---for instance, rates of nonlocal dispersal and background mortality in our study (Figure S2, \@ref(fig:partial-variance-npp))---and therefore, reducing their uncertainties is not an effective way to improve model predictions.
 Ultimately, this points to the value of model-data feedbacks [@dietze_2013_improving] in advancing ecological research and setting future research agendas.
 
 Although parameter uncertainty was larger in magnitude than structural uncertainty, model structure played an important role in shaping the nature of that uncertainty.
@@ -512,7 +511,7 @@ The consequences of individual model structure changes were *usually* modest, bu
 Moreover, we found bi-directional interactions between structural and parameter uncertainty:
 Different parameter values (especially ones far removed from ED-2.2 defaults) influenced ED-2.2 sensitivity to structural changes (Figures \@ref(fig:default-median-flux), \@ref(fig:default-median-lai)),
 and changes to model structure in turn changed the relative importance of specific parameters to overall uncertainty (Figure \@ref(fig:partial-variance-npp)).
-Collectively, this means that sensitivity and uncertainty analyses are not necessarily generalizable across models, and highlights the importance of model intercomparison studies.
+Collectively, this means that sensitivity and uncertainty analyses may not necessarily be generalizable across models, and highlights the importance of model intercomparison studies.
 It also reinforces our argument that changing model structure---particularly if such changes increase model complexity---should be pursued with extreme caution.
 
 # Acknowledgments
