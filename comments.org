@@ -40,7 +40,7 @@ Specific comments:
   - [X] Submodels, paragraph 3: “In the alternate configuration, canopies…” Do you mean the upper canopy absorbs only a fraction of the direct beam light? In either case, this sentence isn’t clear.
   - [X] Parameter descriptions: Again, maintain the thread and context. Consider reminding the reader in the first paragraph of the importance/sensitivity of these variables to change over successional time and also to disturbance, e.g., consider mortality parameters.
     - /I eliminated most of this text in favor of a brief sentence on parameters with a pointer to the ED2 description paper./
-  - [ ] Analysis of results: Helpful, but could be about 2/3 the current length.
+  - [X] Analysis of results: Helpful, but could be about 2/3 the current length.
   - [X] JEFF: Do we want to differentiate between canopy structure and canopy architecture? Is there even one? Leaf angle distribution often gets classified as canopy architecture. My heads been in the weeds here on this stuff and I don't know what is what anymore.
 
 - Results
@@ -74,7 +74,7 @@ Specific comments:
     - /This is that we (in- and outside academia) value forests beyond their ability to sequester carbon. Many (most?) of the arguments about why we need demographic models relate to the fact that accounting for demography helps us predict C cycling, but I think this undersells the value of predicting composition and ecological dynamics for their own sake./
   - [X] JEFF: "Prescribed disturbance frequencies" -- Important to note and differentiate between "frequency" and "severity"
     - /How about "regimes", which encompasses both?/
-  - [-] JEFF: "PFT composition right". -- I'd rephrase this to say that it is capable to "approximate". Similar to your "correct" earlier...it just seems specious to really go into right or correct or any of that.
+  - [X] JEFF: "PFT composition right". -- I'd rephrase this to say that it is capable to "approximate". Similar to your "correct" earlier...it just seems specious to really go into right or correct or any of that.
   - [X] JEFF: "Importantly, efforts to reduce model uncertainty..." -- I think you could probably expand here as this is a really interesting area.
 
 - Acknowledgments:

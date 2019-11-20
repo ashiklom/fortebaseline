@@ -54,6 +54,16 @@ fig <- function(...) {
   knitr::include_graphics(here::here("analysis", "figures", ...))
 }
 
+out_format <- knitr::opts_knit$get("rmarkdown.pandoc.to")
+
+pgbreak <- function() {
+  if (grepl("docx", out_format)) {
+    return("##### pagebreak")
+  } else if (is_latex_output()) {
+    return("\\newline")
+  }
+}
+
 opts_chunk$set(
   collapse = TRUE,
   warning = FALSE,
@@ -69,7 +79,7 @@ n <- 0
 mdcap <- function(text) {
   n <<- n + 1
   out <- sprintf("**Figure %d**: %s", n, text)
-  if (grepl("gfm", knitr::opts_knit$get("rmarkdown.pandoc.to"), ignore.case = TRUE)) {
+  if (grepl("gfm", out_format, ignore.case = TRUE)) {
     out
   } else {
     invisible(NULL)
@@ -188,46 +198,7 @@ In the default configuration (_static_), all cohorts of a given PFT have the sam
 This ignores globally-documented intraspecific trait variability with light level and relative canopy position [@niinemets_2010_review; @keenan_2016_global].
 In the alternate configuration (_plastic_), cohorts that receive less light increase their specific leaf area and decrease their V~cmax~, following empirical relationships from the tropics [@lloyd_2010_optimisation].
 
-Table: (\#tab:submodels) ED-2.2 submodel descriptions
-
-| Name | Description | Color |
-|------|-------------|-------|
-| **Crown model** |||
-| **C**losed (default) | Cohort crowns take up entire patch area. Competition for light based only on height. | Light |
-| **F**inite | Cohort crown area is proportional to DBH according to PFT-specific allometry. | Dark |
-| **Radiative transfer model (RTM)** |||
-| **T**wo-stream (default) | Two-stream approximation [@sellers_1985_canopy; @clm45_note] | Primary (red, blue) |
-| **M**ulti-scatter | Multiple-scatter approximation, following [@zhao_2005_multiple] | Secondary (green, orange) |
-| **Trait plasticity** |||
-| **S**tatic (default) | SLA and V~c,max~ are constant | Cool (blue, green) |
-| **P**lastic | SLA increases, and V~c,max~ decreases, with light level | Warm (red, orange) |
-
-
 ## Parameter descriptions
-
-```{r param-table}
-tbl <- readr::read_csv(here(
-  "analysis", "data", "derived-data", "parameter-table.csv"
-))
-tbl <- subset(tbl, Ran == "yes", select = c(-unit_parsed, -Ran))
-tbl[["ED Name"]] <- sprintf("`%s`", tbl[["ED Name"]])
-cap <- paste(
-  "Parameter descriptions.",
-  "For additional information, see the",
-  "[ED2 model wiki](https://github.com/EDmodel/ED2/wiki/PFT-parameters)."
-)
-if (is_latex_output() || is_html_output()) {
-  kable(tbl, escape = is_latex_output(), caption = cap, booktabs = TRUE) %>%
-    kable_styling(latex_options = "scale_down")
-} else {
-  # Probably DOCX output
-  cap <- paste("Table: (\\#tab:param-table)", cap)
-  flextable::flextable(tbl) %>%
-    flextable::autofit() %>%
-    flextable::fit_to_width(7.5) %>%
-    flextable::set_caption(cap)
-}
-```
 
 The full list of parameters in ED-2.2 is large, with over 100 parameters per PFT.
 A full sensitivity and uncertainty analysis across all of these parameters is outside the scope of this study.
@@ -248,20 +219,6 @@ A full description of these parameters and their associated processes in ED-2.2 
 By default, ED-2.2 supports 17 different PFTs, which divide plant species according to growth form, photosynthetic pathway, leaf habit, biome, and successional status.
 However, we limited our simulations to the four PFTs that have any appreciable presence at UMBS: Early-, mid-, and late-successional temperate deciduous ("hardwood") trees and pines.
 The species comprising these PFTs are shown in Table \@ref(tab:pft-species).
-
-Table: (\#tab:pft-species) Plant functional type-species mappings
-
-| Plant functional type | Species                 | Color  |
-|-----------------------|-------------------------|--------|
-| Early hardwood        | _Betula papyrifera_     | Violet |
-|                       | _Populus grandidentata_ |        |
-|                       | _Populus tremuloides_   |        |
-| Mid hardwood          | _Quercus rubra_         | Blue   |
-|                       | _Acer rubrum_           |        |
-|                       | _Acer pensylvaticum_    |        |
-| Late hardwood         | _Acer saccharum_        | Green  |
-|                       | _Fagus grandifolia_     |        |
-| Pine                  | _Pinus strobus_         | Yellow |
 
 For each plant functional type, we generated a distribution of parameter values via the Predictive Ecosystem Analyzer (PEcAn) trait-meta analysis [@lebauer_2013_facilitating; see also @dietze_2014_quantitative; @raczka_2018_what].
 Prior distributions for this meta-analysis were largely adapted from previous ED parameter uncertainty studies [@dietze_2014_quantitative; @raczka_2018_what; @viskari_2019_influence], and are shown in detail in Supplementary Table S1.
@@ -300,17 +257,6 @@ Code and supporting data for reproducing this analysis are publicly available on
 
 ## Impacts of structure alone
 
-```{r structure-compare-default, fig.cap = structure_default_cap}
-### Figure 1
-structure_default_cap <- paste(
-  htmlfig(),
-  "Annual NPP and LAI from ED2 runs",
-  "with default parameters",
-  "across different configurations."
-)
-fig("structure-compare-default.png")
-```
-
 Different model structures agreed for the first half of the century-long simulation, at which point they started to diverge (Figure \@ref(fig:structure-compare-default)).
 Post 1950, the combination of two-stream RTM, finite canopy radius, and plastic traits had the highest productivity, followed by the same configuration with static traits, with the remaining configurations having similar results.
 The effects of changing individual model configurations were not additive---for example, enabling trait plasticity had a much stronger positive effect when paired with the two-stream canopy RTM than with the multiple-scatter canopy RTM.
@@ -327,36 +273,6 @@ Parameter estimates from the trait meta-analysis were often substantially differ
 In many cases, median parameter estimates were different entirely because of the choice of prior distributions.
 However, in several important cases, parameters well-constrained by data produced values substantially different from the model defaults.
 For example, default values for V~cmax~ were too low for all PFTs, and default values for SLA were too low for all PFTs except early hardwoods.
-
-```{r default-median-flux, fig.cap = default_median_flux_cap}
-### Figure 4
-default_median_flux_cap <- paste(
-  htmlfig(),
-  "ED-2.2 predictions of mean annual",
-  "gross (GPP) and net primary productivity (NPP)",
-  "and autotrophic respiration (RA) from simulations using",
-  "default parameter values (red) and",
-  "posterior median parameters from trait meta-analysis (blue)",
-  "across different strucures.",
-  "Median and default parameter values are shown in Figure S2."
-)
-fig("default-median-fluxes.png")
-```
-
-```{r default-median-lai, fig.cap = default_median_lai_cap}
-### Figure 5
-default_median_lai_cap <- paste(
-  htmlfig(),
-  "ED-2.2 plot-level predictions of",
-  "mean growing season leaf area index (LAI)",
-  "by plant functional type (PFT), using",
-  "default parameter values (top) and",
-  "posterior median parameters from trait meta-analysis (bottom)",
-  "across different strucures."
-)
-fig("default-median-lai.png")
-```
-
 
 These differences in parameter values resulted in ED-2.2 runs that differed from the default runs in several important ways (Figures \@ref(fig:default-median-flux), \@ref(fig:default-median-lai)).
 First, in every model configuration (except finite canopy, two-stream RTM, and static traits), gross primary productivity (GPP) reached a higher peak, and did so earlier, under median parameters (Figure \@ref(fig:default-median-flux)).
@@ -376,32 +292,6 @@ While the uncertainty in growth respiration is large, we emphasize that SLA and 
 
 ## Structure vs. parameter uncertainty
 
-```{r summary-ts-plot, fig.cap = summary_ts_cap}
-### Figure 6
-summary_ts_cap <- paste(
-  htmlfig(),
-  "ED-2.2 ensemble plot-level predictions of",
-  "net primary productivity (NPP),",
-  "total leaf area index (LAI),",
-  "production efficiency (NPP / LAI)",
-  "and effective number of PFTs ($N_{\\text{PFT,eff}}$)",
-  "by model configuration.",
-  "Shading indicates the middle 50\\% (dark), middle 95\\% (medium),",
-  "and entire range (light) of ensemble simulations",
-  "(NPP/LAI results are clipped to (-5, 40) for readability,",
-  "as a few isolated ensemble members produced extreme values at specific",
-  "time points).",
-  "Effective number of PFTs was calculated as the inverse",
-  "of the Simpson diversity index with proportions expressed as",
-  "fraction of aboveground biomass.",
-  "Each colored line represents the same set of parameters across all configurations,",
-  "and corresponds to the letters in Figure 5.",
-  "Black dot with error bars is the observed mean and min/max value."
-  # TODO REF
-)
-fig("summary-ts-plot.png")
-```
-
 Net primary productivity (NPP), total leaf area index (LAI), their ratio, and PFT diversity varied with both parameter value and model structure (Figure \@ref(fig:summary-ts-plot)).
 All model configurations exhibited a similar mean trajectory of rapid growth in the first 15-20 years followed by a gradual decline to a lower, stable value around 1975.
 The ensemble spread within any single configuration---i.e. parameter uncertainty---was similar and large across all configurations; both NPP and LAI varied from close to zero to more than twice the mean value at any given timestep.
@@ -414,19 +304,6 @@ The large parameter uncertainty in NPP and LAI also extended to species composit
 Under all configurations, at any moment in time, most ensemble members were dominated by a single PFT, and the sustained coexistence of more than two PFTs was limited to a small set of specific ensemble members across all configurations.
 However, _which_ PFT was dominant depended strongly on parameter values, and any of the four PFTs became the dominant one in some subset of simulations (Figure S4).
 
-```{r lai-pft-plot, fig.cap = lai_pft_cap}
-### Figure 9
-lai_pft_cap <- paste(
-  htmlfig(),
-  "ED-2.2 PFT-level predictions of leaf area index (LAI) by model configuration and parameterization.",
-  "Each row of plots is a simulation with the same set of parameters across model configurations.",
-  "Letters correspond to the labels in Figure 7.",
-  "Note that these are predictions of total leaf area index summed across all cohorts of the same PFT,",
-  "meaning that higher LAI in one PFT does not necessarily indicate dominance, size, etc."
-)
-fig("lai-pft.png")
-```
-
 Model structure and parameters interacted to determine the community assembly and dynamics of each simulation, with consequences for overall ecosystem productivity that varied by model structure (Figure \@ref(fig:lai-pft-plot)).
 Parameter sets **A** and **B** both resulted in similar patterns of immediate and complete dominance by mid- and late-hardwood, respectively, followed by gradual decline to near-zero LAI.
 In both of these simulations, peak productivity was higher and more sustained when the canopy was closed rather than finite, and this difference was larger under a two-stream rather than a multiple-scatter RTM.
@@ -435,22 +312,6 @@ Both of these parameter sets also had the lowest LAI of the five selected here, 
 Parameter set **C** showed much more variety in compositional dynamics with model structure:
 In all cases, mid-hardwoods began as the dominant PFT and were eventually overtaken by either pine (closed canopy and plastic traits) or early hardwood (all other cases; though with a closed canopy and static traits, the final LAI was low).
 Parameter sets **D** and **E** had the highest productivity of these five sets, and were characterized by strong dominance of early hardwood and Pine, respectively.
-
-```{r partial-variance-npp, fig.cap = partial_variance_npp_cap}
-### Figure 10
-partial_variance_npp_cap <- paste(
-  htmlfig(),
-  "Contributions of individual parameters to predicted uncertainty in",
-  "ED-2.2 predictions of average net primary productivity (NPP)",
-  "over the period 1920-1950",
-  "by model type.",
-  "Each panel shows the top 8 parameter values by their fractional contribution",
-  'to parameter uncertainty ("partial variance").',
-  "Input parameter distributions are shown in Figure 3.",
-  "Note that x-axis scales vary across panels."
-)
-fig("partial-variance-npp.png")
-```
 
 The parameters that contributed most to predictive uncertainty in NPP during the "peak" period (1920-1950) ("partial variance") varied with model structure (Figure \@ref(fig:partial-variance-npp)).
 The plant-soil water conductance (a.k.a. "water availability factor") for early hardwoods was the most or second-most important parameter for all but one model configuration (the ED-2.2 default---closed canopy, two-stream RTM, static traits---where it was not even in the top 8), and was particularly important in simulations with a finite canopy.
@@ -524,18 +385,182 @@ This project was supported by NSF Award 1655095.
 Cyberinfrastructure capabilities were provided by the Pacific Northwest National Laboratory (PNNL).
 Additional data were provided by the University of Michigan Biological Station (UMBS) and the TRY project.
 
-<!-- The following line inserts a page break when the output is MS Word. For page breaks in PDF, use \newpage on its own line.  -->
-<!-- ##### pagebreak -->
-
-\newpage
+`r pgbreak()`
 
 # References
 <!-- The following line ensures the references appear here for the MS Word or HTML output files, rather than right at the end of the document (this will not work for PDF files):  -->
 <div id="refs"></div>
 
-<!-- ##### pagebreak -->
+`r pgbreak()`
 
-\newpage
+# Tables
+
+Table: (\#tab:submodels) ED-2.2 submodel descriptions
+
+| Name | Description | Color |
+|------|-------------|-------|
+| **Crown model** |||
+| **C**losed (default) | Cohort crowns take up entire patch area. Competition for light based only on height. | Light |
+| **F**inite | Cohort crown area is proportional to DBH according to PFT-specific allometry. | Dark |
+| **Radiative transfer model (RTM)** |||
+| **T**wo-stream (default) | Two-stream approximation [@sellers_1985_canopy; @clm45_note] | Primary (red, blue) |
+| **M**ulti-scatter | Multiple-scatter approximation, following [@zhao_2005_multiple] | Secondary (green, orange) |
+| **Trait plasticity** |||
+| **S**tatic (default) | SLA and V~c,max~ are constant | Cool (blue, green) |
+| **P**lastic | SLA increases, and V~c,max~ decreases, with light level | Warm (red, orange) |
+
+`r pgbreak()`
+
+```{r param-table}
+tbl <- readr::read_csv(here(
+  "analysis", "data", "derived-data", "parameter-table.csv"
+))
+tbl <- subset(tbl, Ran == "yes", select = c(-unit_parsed, -Ran))
+tbl[["ED Name"]] <- sprintf("`%s`", tbl[["ED Name"]])
+cap <- paste(
+  "Parameter descriptions.",
+  "For additional information, see the",
+  "[ED2 model wiki](https://github.com/EDmodel/ED2/wiki/PFT-parameters)."
+)
+if (is_latex_output() || is_html_output()) {
+  kable(tbl, escape = is_latex_output(), caption = cap, booktabs = TRUE) %>%
+    kable_styling(latex_options = "scale_down")
+} else {
+  # Probably DOCX output
+  cap <- paste("Table: (\\#tab:param-table)", cap)
+  flextable::flextable(tbl) %>%
+    flextable::autofit() %>%
+    flextable::fit_to_width(7.5) %>%
+    flextable::set_caption(cap)
+}
+```
+
+`r pgbreak()`
+
+Table: (\#tab:pft-species) Plant functional type-species mappings
+
+| Plant functional type | Species                 | Color  |
+|-----------------------|-------------------------|--------|
+| Early hardwood        | _Betula papyrifera_     | Violet |
+|                       | _Populus grandidentata_ |        |
+|                       | _Populus tremuloides_   |        |
+| Mid hardwood          | _Quercus rubra_         | Blue   |
+|                       | _Acer rubrum_           |        |
+|                       | _Acer pensylvaticum_    |        |
+| Late hardwood         | _Acer saccharum_        | Green  |
+|                       | _Fagus grandifolia_     |        |
+| Pine                  | _Pinus strobus_         | Yellow |
+
+`r pgbreak()`
+
+# Figures
+
+```{r structure-compare-default, fig.cap = structure_default_cap}
+### Figure 1
+structure_default_cap <- paste(
+  htmlfig(),
+  "Annual NPP and LAI from ED2 runs",
+  "with default parameters",
+  "across different configurations."
+)
+fig("structure-compare-default.png")
+```
+
+`r pgbreak()`
+
+```{r default-median-flux, fig.cap = default_median_flux_cap}
+### Figure 4
+default_median_flux_cap <- paste(
+  htmlfig(),
+  "ED-2.2 predictions of mean annual",
+  "gross (GPP) and net primary productivity (NPP)",
+  "and autotrophic respiration (RA) from simulations using",
+  "default parameter values (red) and",
+  "posterior median parameters from trait meta-analysis (blue)",
+  "across different strucures.",
+  "Median and default parameter values are shown in Figure S2."
+)
+fig("default-median-fluxes.png")
+```
+
+`r pgbreak()`
+
+```{r default-median-lai, fig.cap = default_median_lai_cap}
+### Figure 5
+default_median_lai_cap <- paste(
+  htmlfig(),
+  "ED-2.2 plot-level predictions of",
+  "mean growing season leaf area index (LAI)",
+  "by plant functional type (PFT), using",
+  "default parameter values (top) and",
+  "posterior median parameters from trait meta-analysis (bottom)",
+  "across different strucures."
+)
+fig("default-median-lai.png")
+```
+
+`r pgbreak()`
+
+```{r summary-ts-plot, fig.cap = summary_ts_cap}
+### Figure 6
+summary_ts_cap <- paste(
+  htmlfig(),
+  "ED-2.2 ensemble plot-level predictions of",
+  "net primary productivity (NPP),",
+  "total leaf area index (LAI),",
+  "production efficiency (NPP / LAI)",
+  "and effective number of PFTs ($N_{\\text{PFT,eff}}$)",
+  "by model configuration.",
+  "Shading indicates the middle 50\\% (dark), middle 95\\% (medium),",
+  "and entire range (light) of ensemble simulations",
+  "(NPP/LAI results are clipped to (-5, 40) for readability,",
+  "as a few isolated ensemble members produced extreme values at specific",
+  "time points).",
+  "Effective number of PFTs was calculated as the inverse",
+  "of the Simpson diversity index with proportions expressed as",
+  "fraction of aboveground biomass.",
+  "Each colored line represents the same set of parameters across all configurations,",
+  "and corresponds to the letters in Figure 5.",
+  "Black dot with error bars is the observed mean and min/max value."
+  # TODO REF
+)
+fig("summary-ts-plot.png")
+```
+
+`r pgbreak()`
+
+```{r lai-pft-plot, fig.cap = lai_pft_cap}
+### Figure 9
+lai_pft_cap <- paste(
+  htmlfig(),
+  "ED-2.2 PFT-level predictions of leaf area index (LAI) by model configuration and parameterization.",
+  "Each row of plots is a simulation with the same set of parameters across model configurations.",
+  "Letters correspond to the labels in Figure 7.",
+  "Note that these are predictions of total leaf area index summed across all cohorts of the same PFT,",
+  "meaning that higher LAI in one PFT does not necessarily indicate dominance, size, etc."
+)
+fig("lai-pft.png")
+```
+
+`r pgbreak()`
+
+```{r partial-variance-npp, fig.cap = partial_variance_npp_cap}
+### Figure 10
+partial_variance_npp_cap <- paste(
+  htmlfig(),
+  "Contributions of individual parameters to predicted uncertainty in",
+  "ED-2.2 predictions of average net primary productivity (NPP)",
+  "over the period 1920-1950",
+  "by model type.",
+  "Each panel shows the top 8 parameter values by their fractional contribution",
+  'to parameter uncertainty ("partial variance").',
+  "Input parameter distributions are shown in Figure 3.",
+  "Note that x-axis scales vary across panels."
+)
+fig("partial-variance-npp.png")
+```
+
+`r pgbreak()`
 
 ### Colophon
 
