@@ -1,5 +1,8 @@
 ---
-title: "Supplementary figures"
+title: |
+  Structure and parameter uncertainty in centennial-scale projections
+  of community-carbon cycling in a temperate forest
+subtitle: Supplementary information
 author:
   - Alexey N. Shiklomanov
   - Ben Bond-Lamberty
@@ -9,6 +12,9 @@ output:
   bookdown::pdf_document2:
     latex_engine: xelatex
     toc: no
+header-includes:
+  \renewcommand{\thetable}{S\arabic{table}}
+  \renewcommand{\thefigure}{S\arabic{figure}}
 ---
 
 ```{r setup, include = FALSE}
@@ -38,7 +44,7 @@ structure_default_light_cap <- paste(
 fig("default-light-levels.png")
 ```
 
-\newpage
+\clearpage
 
 ```{r param-dist, fig.cap = param_dist_cap}
 ### Figure S2
@@ -48,7 +54,7 @@ param_dist_cap <- paste(
 fig("param-dist.png")
 ```
 
-\newpage
+\clearpage
 
 ```{r pairs-time, fig.cap = pairs_time_cap}
 ### Figure S3
@@ -64,7 +70,7 @@ pairs_time_cap <- paste(
 fig("npp-lai-pairs.png")
 ```
 
-\newpage
+\clearpage
 
 ```{r pft-ts-plot, fig.cap = pft_ts_cap}
 ### Figure S4
@@ -74,7 +80,7 @@ pft_ts_cap <- paste(
 fig("pft-ts-plot.png")
 ```
 
-\newpage
+\clearpage
 
 Table: Prior distributions for trait meta-analysis. Trait descriptions and units are given in Table 2 (main text).
 
