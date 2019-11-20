@@ -141,9 +141,8 @@ plan <- bind_plans(plan, drake_plan(
     ungroup() %>%
     separate(xvar, c("shortname", "xvar"), extra = "merge") %>%
     mutate(
-      shortname = factor(shortname, pfts("shortname")),
-      model = factor(model_id, c("CTS", "CTP", "CMS", "CMP",
-                                 "FTS", "FTP", "FMS", "FMP")),
+      shortname = factor(shortname, pfts("shortname"), pfts("pft")),
+      model = factor(model_id, levels(models$model_id), levels(models$model)),
       xvar = factor(xvar, ed2_param_table[["ED Name"]],
                     ed2_param_table[["Display name"]])
     ),

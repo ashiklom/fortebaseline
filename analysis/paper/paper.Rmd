@@ -60,7 +60,7 @@ pgbreak <- function() {
   if (grepl("docx", out_format)) {
     return("##### pagebreak")
   } else if (is_latex_output()) {
-    return("\\newline")
+    return("\\newpage")
   }
 }
 
