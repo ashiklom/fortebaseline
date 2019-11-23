@@ -18,3 +18,14 @@ Describe how your paper fits within the scope of GCB; What biological AND global
 What are the three most recently published papers that are relevant to this manuscript?
 
 Raczka et al. (2018; https://doi.org/10.1029/2018jg004504) is the most recent investigation of parameter uncertainty in the ED2 model. Longo et al. (2019; https://doi.org/10.5194/gmd-2019-71) evaluate the ED-2.2 model in the Amazon. Pugh et al. (2019; https://doi.org/10.1073/pnas.1810512116) summarize the role of secondary forest regrowth in global C cycling.
+
+--------------------------------------------------
+Word counts
+
+Abstract: 502
+Introduction: 1028
+Methods: 1843
+Results: 1467
+Discussion: 1257
+
+Total: 5595
