@@ -13,7 +13,6 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     bookdown,
-    pecanapi,
     purrr,
     ncdf4,
     stringr,
@@ -29,9 +28,7 @@ Imports:
     lubridate,
     here,
     fst,
-    PEcAn.ED2,
     processx,
-    PEcAn.utils
 Remotes:
   pecanproject/pecan/api@develop
 Suggests: 
