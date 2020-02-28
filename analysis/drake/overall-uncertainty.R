@@ -1,10 +1,32 @@
-cohort_file <- path(download_dir, "all-output-monthly-cohort.fst")
-pft_file <- path(download_dir, "all-output-monthly-pft.fst")
-scalar_file <- path(download_dir, "all-output-monthly-scalar.fst")
-soil_file <- path(download_dir, "all-output-monthly-soil.fst")
+plan <- bind_plans(plan, drake_plan(
+  cohort_file_dl = target(
+    download.file(osf_url(cohort_osf), file_out(!!cohort_file)),
+    trigger = trigger(change = get_timestamp(cohort_osf),
+                      condition = !file.exists(cohort_file)),
+    hpc = FALSE
+  ),
+  pft_file_dl = target(
+    download.file(osf_url(pft_osf), file_out(!!pft_file)),
+    trigger = trigger(change = get_timestamp(pft_osf),
+                      condition = !file.exists(pft_file)),
+    hpc =  FALSE
+  ),
+  scalar_file_dl = target(
+    download.file(osf_url(scalar_osf), file_out(!!scalar_file)),
+    trigger = trigger(change = get_timestamp(scalar_osf),
+                      condition = !file.exists(scalar_file)),
+    hpc = FALSE
+  ),
+  soil_file_dl = target(
+    download.file(osf_url(soil_osf), file_out(!!soil_file)),
+    trigger = trigger(change = get_timestamp(soil_osf),
+                      condition = !file.exists(soil_file)),
+    hpc = FALSE
+  )
+))
 
 ### Read files
-plan <- plan <- bind_plans(plan, drake_plan(
+plan <- bind_plans(plan, drake_plan(
   scalar_vars = sprintf("mmean_%s_py", c("gpp", "plresp", "npp")),
   scalar_cols = c("case", "datetime", scalar_vars),
   scalar_data = setDT(fst(file_in(!!scalar_file))[, scalar_cols]) %>%
@@ -32,14 +54,16 @@ plan <- plan <- bind_plans(plan, drake_plan(
 
 ### Summary plot
 plan <- bind_plans(plan, drake_plan(
-  observations =
+  models_model = models[["model"]],
+  observations = expand_grid(
     tribble(
-    ~variable, ~low, ~mean, ~hi,
-    "npp", 6, 6.5, 7,
-    "lai", 3.97 - 1.96 * 0.423, 3.97, 3.97 + 1.96 * 0.423,
-    "prod_eff", 6 / (3.97 - 1.96 * 0.423), 6.5 / 3.97, 7 / (3.97 + 1.96 * 0.423)
-  ) %>%
-    expand_grid(model = models$model),
+      ~variable, ~low, ~mean, ~hi,
+      "npp", 6, 6.5, 7,
+      "lai", 3.97 - 1.96 * 0.423, 3.97, 3.97 + 1.96 * 0.423,
+      "prod_eff", 6 / (3.97 - 1.96 * 0.423), 6.5 / 3.97, 7 / (3.97 + 1.96 * 0.423)
+    ),
+    model = !!models_model
+  ),
   ts_both = bind_rows(scalar_data, pft_totals) %>%
     mutate(
       model_id = substr(case, 4, 6),
@@ -123,19 +147,3 @@ plan <- bind_plans(plan, drake_plan(
     mutate(label = fct_rev(label))
 ))
 
-### STOP HERE
-stop()
-
-### Download files
-cohort_osf <- "..."
-pft_osf <- "..."
-scalar_osf <- "..."
-soil_osf <- "..."
-
-plan <- bind_plans(plan, drake_plan(
-  cohort_file_dl = target(
-    download.file(osf_url(cohort_osf), file_out(!!cohort_file)),
-    trigger = trigger(change = get_timestamp(cohort_osf),
-                      condition = !file.exists(cohort_file))
-  ),
-))

@@ -43,8 +43,10 @@ suppressPackageStartupMessages({
   library(ggplot2)
   library(ggrepel)
   library(cowplot)
-  library(fortebaseline)
 })
+
+pkgload::load_all(here::here(), attach_testthat = FALSE)
+expose_imports(fortebaseline)
 
 cmdargs <- commandArgs(trailingOnly = TRUE)
 

@@ -1,5 +1,5 @@
 plan <- bind_plans(plan, drake_plan(
-  params = read_csv(file_in(ensemble_params_file),
+  params = read_csv(file_in(!!ensemble_params_file),
                     col_types = c(name = "c", .default = "d")),
   model_ids = c("CTS", "CTP", "CMS", "CMP",
                  "FTS", "FTP", "FMS", "FMP"),

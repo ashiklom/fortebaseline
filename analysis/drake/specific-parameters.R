@@ -37,7 +37,7 @@ plan <- bind_plans(plan, drake_plan(
       strip.background = element_blank()
     ),
   lai_pft_plot_png = ggsave(
-    file_in("analysis/figures/lai-pft.png"),
+    file_out("analysis/figures/lai-pft.png"),
     lai_pft_plot_gg,
     width = 9.7, height = 6.1
   ),

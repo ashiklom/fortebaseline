@@ -1,23 +1,21 @@
 ### Download input files
-ensemble_params_file <- path(download_dir, "input-parameters.csv")
-params_osf <- "87ku4"
-
-trait_distribution_file <- path(download_dir, "trait-distribution.rds")
-td_osf <- "bfyuh"
-
 plan <- bind_plans(plan, drake_plan(
   run_params_dl = target(
     download.file(osf_url(params_osf), file_out(!!ensemble_params_file)),
-    trigger = trigger(change = get_timestamp(params_osf))
+    trigger = trigger(change = get_timestamp(params_osf),
+                      condition = !file.exists(ensemble_params_file)),
+    hpc = FALSE
   ),
   trait_distribution_dl = target(
     download.file(osf_url(td_osf), file_out(!!trait_distribution_file)),
-    trigger = trigger(change = get_timestamp(td_osf))
+    trigger = trigger(change = get_timestamp(td_osf),
+                      condition = !file.exists(trait_distribution_file)),
+    hpc = FALSE
   )
 ))
 
 ### Trait distribution figures
-plan <- plan <- bind_plans(plan, drake_plan(
+plan <- bind_plans(plan, drake_plan(
   trait_distribution = readRDS(file_in(!!trait_distribution_file)) %>%
     mutate(pft = factor(pft, pfts("pft"))),
   ed2_default_params = ed_default_params() %>%

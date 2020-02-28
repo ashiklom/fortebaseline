@@ -5,16 +5,14 @@ fix_cases <- function(x) {
   factor(x2, mod_levels)
 }
 
-default_results_file <- here::here("analysis", "data",
-                                     "retrieved", "structure-default.rds")
-
 ### Download files from OSF
-default_results_osf <- "q9cpf"
 plan <- bind_plans(plan, drake_plan(
   default_results_dl = target(
     download.file(osf_url(default_results_osf),
                   file_out(!!default_results_file)),
-    trigger = trigger(change = get_timestamp(default_results_osf))
+    trigger = trigger(change = get_timestamp(default_results_osf),
+                      condition = !file.exists(default_results_file)),
+    hpc = FALSE
   )
 ))
 
@@ -140,9 +138,13 @@ annual_mean <- function(dat) {
     ungroup()
 }
 
-plan <- plan <- bind_plans(plan, drake_plan(
-  median_results = here("analysis", "data", "retrieved",
-                        "structure-median.rds") %>%
+plan <- bind_plans(plan, drake_plan(
+  median_results_dl = target(
+    download.file(osf_url(median_results_osf), file_out(!!median_results_file)),
+    trigger = trigger(change = get_timestamp(median_results_osf),
+                      condition = !file.exists(median_results_file))
+  ),
+  median_results = file_in(!!median_results_file) %>%
     readRDS() %>%
     mutate(
       runtype = "median",

@@ -5,4 +5,4 @@ get_timestamp <- function(osf_id) {
     purrr::pluck(1, "attributes", "date_modified")
 }
 
-osf_url <- function(osf_id) file.path("https://osf.io/download/", osf_id)
+osf_url <- function(osf_id) file.path("https://osf.io/download", osf_id)
