@@ -4,12 +4,19 @@
 \alias{run_ed}
 \title{Start an ED2 model run using `processx`}
 \usage{
-run_ed(casename, trait_values = list(), start_date = "1902-06-01",
-  end_date = "1920-01-01", trait_plasticity = FALSE,
-  multiple_scatter = FALSE, crown_model = FALSE, water_lim = TRUE,
+run_ed(
+  casename,
+  trait_values = list(),
+  start_date = "1902-06-01",
+  end_date = "1920-01-01",
+  trait_plasticity = FALSE,
+  multiple_scatter = FALSE,
+  crown_model = FALSE,
+  water_lim = TRUE,
   out_root = getOption("fortebaseline.ed_root"),
-  ed_exe = fs::path(getOption("fortebaseline.ed_src_dir"), "ED", "build",
-  "ed_2.1-opt"), ...)
+  ed_exe = fs::path(getOption("fortebaseline.ed_src_dir"), "ED", "build", "ed_2.1-opt"),
+  ...
+)
 }
 \arguments{
 \item{casename}{Name}

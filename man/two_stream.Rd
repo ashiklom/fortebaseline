@@ -4,9 +4,18 @@
 \alias{two_stream}
 \title{R implementation of ED2 two-stream radiation model}
 \usage{
-two_stream(ipft, L, lr, lt, orient, cai = rep(1, length(L)),
-  theta = 15, S0_beam = 0.8, S0_diff = 1 - S0_beam,
-  alb_ground = 0.1)
+two_stream(
+  ipft,
+  L,
+  lr,
+  lt,
+  orient,
+  cai = rep(1, length(L)),
+  theta = 15,
+  S0_beam = 0.8,
+  S0_diff = 1 - S0_beam,
+  alb_ground = 0.1
+)
 }
 \arguments{
 \item{cai}{Crown area of each cohort (ncoh)}

@@ -6,6 +6,9 @@
 \usage{
 write_ed2_xml(trait_values)
 }
+\value{
+
+}
 \description{
 Write ED2 XML file
 }

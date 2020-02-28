@@ -13,6 +13,8 @@ pfts(col = NULL)
 If `is.null(col)`, `data.frame` containing PEcAn PFT name
   (`bety_name`), formatted name (`pft`), short name (`shortname`),
   ED PFT number (`num`), and color (`color`).
+
+
 }
 \description{
 PFT information

@@ -13,6 +13,9 @@ ts_mubar_star(orient_factor, lai, cai = 1)
 
 \item{cai}{Crown area of each cohort (ncoh)}
 }
+\value{
+
+}
 \description{
 With correction for finite crown area.
 }

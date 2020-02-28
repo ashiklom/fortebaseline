@@ -4,8 +4,7 @@
 \alias{bety}
 \title{Shortcut to open a BETY connection}
 \usage{
-bety(user = "bety", password = "bety", host = "localhost",
-  port = 7990)
+bety(user = "bety", password = "bety", host = "localhost", port = 7990)
 }
 \arguments{
 \item{user, password, host, port}{Configuration options for BETY

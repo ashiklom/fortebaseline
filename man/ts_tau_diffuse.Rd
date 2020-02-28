@@ -13,6 +13,9 @@ ts_tau_diffuse(lai, orient_factor, lr, lt, cai)
 
 \item{cai}{Crown area of each cohort (ncoh)}
 }
+\value{
+
+}
 \description{
 Transmissivity of diffuse radiation: Two-stream
 }

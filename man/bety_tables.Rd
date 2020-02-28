@@ -6,11 +6,9 @@
 \alias{pfts_species}
 \title{Shortcut access functions for BETY table joins}
 \usage{
-pfts_priors(pft_names = pfts("bety_name"), con = bety(),
-  collect = TRUE)
+pfts_priors(pft_names = pfts("bety_name"), con = bety(), collect = TRUE)
 
-pfts_species(pft_names = pfts("bety_name"), con = bety(),
-  collect = TRUE)
+pfts_species(pft_names = pfts("bety_name"), con = bety(), collect = TRUE)
 }
 \arguments{
 \item{pft_names}{Character vector of PFT names. Defaults to

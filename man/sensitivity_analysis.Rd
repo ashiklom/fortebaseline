@@ -4,8 +4,13 @@
 \alias{sensitivity_analysis}
 \title{One-at-a-time PEcAn sensitivity analysis}
 \usage{
-sensitivity_analysis(y, x, ymedian = median(y), xmedian = median(x),
-  alpha = 0.05)
+sensitivity_analysis(
+  y,
+  x,
+  ymedian = median(y),
+  xmedian = median(x),
+  alpha = 0.05
+)
 }
 \arguments{
 \item{y}{Response variable}

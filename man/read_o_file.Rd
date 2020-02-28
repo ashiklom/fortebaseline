@@ -11,6 +11,9 @@ read_o_file(fname, .pb = NULL)
 
 \item{.pb}{Optional progress bar object}
 }
+\value{
+
+}
 \description{
 Read observed (-O-) file
 }

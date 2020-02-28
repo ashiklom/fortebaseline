@@ -4,8 +4,7 @@
 \alias{tail_ed_output}
 \title{View the end of the ED2 output log file}
 \usage{
-tail_ed_output(casename, out_root = getOption("fortebaseline.ed_root"),
-  ...)
+tail_ed_output(casename, out_root = getOption("fortebaseline.ed_root"), ...)
 }
 \arguments{
 \item{casename}{Name}

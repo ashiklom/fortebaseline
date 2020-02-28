@@ -4,8 +4,7 @@
 \alias{qdate}
 \title{Create datetime object from isolated pieces}
 \usage{
-qdate(year, month = 1, day = 1, hour = 0, minute = 0, second = 0,
-  tz = "UTC")
+qdate(year, month = 1, day = 1, hour = 0, minute = 0, second = 0, tz = "UTC")
 }
 \arguments{
 \item{year}{Year (numeric)}
@@ -23,7 +22,7 @@ qdate(year, month = 1, day = 1, hour = 0, minute = 0, second = 0,
 \item{tz}{Time zone (character, default = "UTC")}
 }
 \value{
-An object of class \code{"\link{POSIXct}"}.
+An object of class \code{"\link[base]{POSIXct}"}.
 }
 \description{
 Thin wrapper around [base::ISOdatetime()] that provides default

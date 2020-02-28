@@ -4,8 +4,13 @@
 \alias{top_n_sensitivity_plot}
 \title{Plot the top N sensitivity values}
 \usage{
-top_n_sensitivity_plot(sensitivity_plot_data, y_var, metric, n = 10,
-  scales = "free_y")
+top_n_sensitivity_plot(
+  sensitivity_plot_data,
+  y_var,
+  metric,
+  n = 10,
+  scales = "free_y"
+)
 }
 \arguments{
 \item{sensitivity_plot_data}{Formatted sensitivity results}

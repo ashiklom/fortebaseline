@@ -4,8 +4,12 @@
 \alias{run_ed_maybe}
 \title{Run ED2, but only if there isn't a run there already}
 \usage{
-run_ed_maybe(casename, overwrite = FALSE,
-  out_root = getOption("fortebaseline.ed_root"), ...)
+run_ed_maybe(
+  casename,
+  overwrite = FALSE,
+  out_root = getOption("fortebaseline.ed_root"),
+  ...
+)
 }
 \arguments{
 \item{casename}{Name}
