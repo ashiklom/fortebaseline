@@ -54,7 +54,6 @@ plan <- bind_plans(plan, drake_plan(
 
 ### Summary plot
 plan <- bind_plans(plan, drake_plan(
-  models_model = models[["model"]],
   observations = expand_grid(
     tribble(
       ~variable, ~low, ~mean, ~hi,
@@ -62,7 +61,7 @@ plan <- bind_plans(plan, drake_plan(
       "lai", 3.97 - 1.96 * 0.423, 3.97, 3.97 + 1.96 * 0.423,
       "prod_eff", 6 / (3.97 - 1.96 * 0.423), 6.5 / 3.97, 7 / (3.97 + 1.96 * 0.423)
     ),
-    model = !!models_model
+    model = models[["model"]]
   ),
   ts_both = bind_rows(scalar_data, pft_totals) %>%
     mutate(
@@ -146,4 +145,3 @@ plan <- bind_plans(plan, drake_plan(
     inner_join(use_params, "param_id") %>%
     mutate(label = fct_rev(label))
 ))
-
