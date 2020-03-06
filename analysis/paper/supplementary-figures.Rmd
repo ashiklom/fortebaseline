@@ -130,3 +130,60 @@ Table: Prior distributions for trait meta-analysis. Trait descriptions and units
 | Mort. seedlng      | All                       | Beta(3.61, 0.433)    |
 | Stomatal slope     | All                       | LogNormal(2.3, 1)    |
 | Water cond.        | All                       | LogNormal(2e-5, 3.5) |
+
+\clearpage
+
+Table: ED-2.2 default parameter values
+
+| Parameter                | Unit                                  | Plant functional type     | Value                |
+|--------------------------|---------------------------------------|---------------------------|----------------------|
+| Specific leaf area (SLA) | m$^2$ kgC$^{-1}$                      | Early hardwood            | 14.4                 |
+|                          |                                       | Mid hardwood              | 11.616               |
+|                          |                                       | Late hardwood             | 28.8                 |
+|                          |                                       | Pine                      | 2.88                 |
+| V$_{c,\max}$             | $\mu$mol m$^{-2}$ s$^{-1}$            | Early hardwood            | 28.9                 |
+|                          |                                       | Mid hardwood              | 24.7                 |
+|                          |                                       | Late hardwood             | 9.90                 |
+|                          |                                       | Pine                      | 16.1                 |
+| C:N leaf                 | Unitless                              | Early hardwood            | 13.5                 |
+|                          |                                       | Mid hardwood              | 19.3                 |
+|                          |                                       | Late hardwood             | 18.1                 |
+|                          |                                       | Pine                      | 78.0                 |
+| Clumping factor          | Unitless (0 - 1)                      | Early, Mid, Late hardwood | 0.84                 |
+|                          |                                       | Pine                      | 0.735                |
+| Leaf orientation factor  | Unitless (-1 - 1)                     | All                       | 0                    |
+| Refl. (VIS)              | Unitless (0 - 1)                      | All                       | 0.11                 |
+| Refl. (NIR)              | Unitless (0 - 1)                      | All                       | 0.11                 |
+| Trans. (VIS)             | Unitless (0 - 1)                      | All                       | 0.11                 |
+| Trans. (NIR)             | Unitless (0 - 1)                      | All                       | 0.11                 |
+| Quant. eff.              | mol CO$_2$ (mol photons)$^{-1}$       | All                       | 0.08                 |
+| Stomatal slope           | Unitless                              | All                       | 7.20                 |
+| Water cond.              | m$^2$ a$^{-1}$ (kgC root)$^{-1}$      | All                       | $1.9 \times 10^{-5}$ |
+| Growth resp.             | Unitless (0 - 1)                      | Early, Mid, Late hardwood | 0                    |
+|                          |                                       | Pine                      | 0.45                 |
+| Leaf turnover            | year$^{-1}$                           | Pine                      | 0.333                |
+| Root turnover            | year$^{-1}$                           | Early hardwood            | 5.77                 |
+|                          |                                       | Mid hardwood              | 5.08                 |
+|                          |                                       | Late hardwood             | 5.07                 |
+|                          |                                       | Pine                      | 3.93                 |
+| F. labile                | Unitless (0 - 1)                      | All                       | 0.79                 |
+| Mort. C rate             | year$^{-1}$                           | All                       | 1                    |
+| Mort. C bal.             | Unitless                              | All                       | 20                   |
+| Mort. bg. rate.          | year$^{-1}$                           | Early hardwood            | 0.00614              |
+|                          |                                       | Mid hardwood              | 0.00381              |
+|                          |                                       | Late hardwood             | 0.00428              |
+|                          |                                       | Pine                      | 0.00339              |
+| Mort. seedling           | Unitless (0 - 1)                      | All                       | 0.95                 |
+| Repro. C frac.           | Unitless                              | All                       | 0.3                  |
+| Dispersal                | Unitless (0 - 1)                      | Early hardwood            | 1                    |
+|                          |                                       | Mid hardwood              | 0.325                |
+|                          |                                       | Late hardwood             | 0.074                |
+|                          |                                       | Pine                      | 0.766                |
+| Min. height              | m                                     | All                       | 18                   |
+| Root:leaf                | Unitless                              | Early, Mid, Late hardwood | 1.13                 |
+|                          |                                       | Pine                      | 0.346                |
+| Leaf resp.               | $\mu$mol m$^2$ s$^{-1}$               | Early hardwood            | 0.419                |
+|                          |                                       | Mid hardwood              | 0.359                |
+|                          |                                       | Late hardwood             | 0.144                |
+|                          |                                       | Pine                      | 0.233                |
+| Root resp.               | $\mu$mol CO$_2$ (kg fine root)$^{-1}$ | All                       | 0.794                |
