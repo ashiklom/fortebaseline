@@ -10,16 +10,25 @@ options(
   fortebaseline.ed_root = fs::dir_create(here::here(
     "analysis", "data", "retrieved", "ed-tests"
   )),
+  ## fortebaseline.ed_input_dir = fs::path_home(
+  ##   "forte-data", "ed"
+  ## ),
   fortebaseline.ed_input_dir = fs::path_home(
-    "forte-data", "ed"
+    "projects", "pnnl", "forte-gcb", "forte_project",
+    "umbs-ed-inputs"
   ),
-  fortebaseline.ed_src_dir = fs::path_home("ed2")
+  ## fortebaseline.ed_src_dir = fs::path_home("ed2")
+  fortebaseline.ed_src_dir = fs::path_home(
+    "projects", "models", "forte-ed2"
+  )
 )
 
 p <- run_ed_maybe(
-  "pic-test",
+  ## "pic-test",
+  "macos-test",
   end_date = "1908-01-01",
   overwrite = TRUE
 )
 p$p$wait()
-read_efile_dir(p$outdir)
+result <- read_efile_dir(p$outdir)
+result
