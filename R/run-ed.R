@@ -78,7 +78,7 @@ run_ed <- function(casename,
     )
   )
 
-  PEcAn.ED2::write_ed2in(ed2in, ed2infile, barebones = TRUE)
+  ed4forte::write_ed2in(ed2in, ed2infile)
 
   # Run ED
   std_out <- fs::path(outdir, "stdout.log")
@@ -148,7 +148,7 @@ ed_input_dir <- function() {
 ed2in_common <- function() {
   soil_data <- umbs_soil()
   system.file("ED2IN", package = "fortebaseline") %>%
-    PEcAn.ED2::read_ed2in() %>%
+    ed4forte::read_ed2in() %>%
     modifyList(list(
       # Start and end date
       POI_LAT = 45.5625, POI_LON = -84.6975,

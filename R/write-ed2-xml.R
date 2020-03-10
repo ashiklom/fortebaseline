@@ -13,7 +13,7 @@ write_ed2_xml <- function(trait_values) {
     model = list(revision = "git"),
     pfts = pft_list
   )
-  PEcAn.ED2::write.config.xml.ED2(settings, trait_values)
+  write.config.xml.ED2(settings, trait_values)
 }
 
 #' Convert `data.frame` to PFT list suitable for `write_ed2_xml` input
