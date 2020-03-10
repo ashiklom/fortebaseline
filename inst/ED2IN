@@ -192,11 +192,11 @@ $ED_NL
    NL%IMETAVG = -1
    NL%IMETRAD = 0
    NL%INITIAL_CO2 = 370
-   NL%IPHENYS1 = 
-   NL%IPHENYSF = 
-   NL%IPHENYF1 = 
-   NL%IPHENYFF = 
-   NL%PHENPATH = ''
+   NL%IPHENYS1 = 0
+   NL%IPHENYSF = 0
+   NL%IPHENYF1 = 0
+   NL%IPHENYFF = 0
+   NL%PHENPATH = 0
    NL%IEDCNFGF = '/data/workflows/PEcAn_99000000167/run/99000001251/config.xml'
    NL%EVENT_FILE = '/data/workflows/PEcAn_99000000167/run/99000001251/myevents.xml'
    NL%DT_CENSUS = 1
