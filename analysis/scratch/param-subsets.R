@@ -140,12 +140,17 @@ time_averages_all %>%
   ## theme_cowplot()
 
 ##################################################
-param_diffs <- function(dat) {
+params_wide2 <- params_wide %>%
+  mutate_at(vars(ends_with("water_conductance")), log10)
+
+param_diffs_df <- function(dat) {
   sdat <- distinct(dat, case, param_id, model, crown, rtm, traits)
-  params_sdat <- params_wide %>%
-    ## select_if(~any(!is.na(.x))) %>%
-    mutate(in_dat = param_id %in% sdat$param_id) %>%
-    mutate_at(vars(ends_with("water_conductance")), log10)
+  params_wide2 %>%
+    mutate(in_dat = param_id %in% sdat$param_id)
+}
+
+param_diffs <- function(dat) {
+  params_sdat <- param_diffs_df(dat)
   params_sdat_long <- pivot_longer(params_sdat, -c(param_id, in_dat))
   mean_diff <- params_sdat_long %>%
     ## group_by(name) %>%
@@ -175,6 +180,59 @@ param_diffs <- function(dat) {
           axis.title = element_blank(),
           strip.text = element_text(size = 4))
 }
+
+diffdat <- both_wide %>%
+  mutate(npft_eff = 1 / (`Early hardwood`^2 + `Mid hardwood`^2 + `Late hardwood`^2 + Pine^2))
+
+diffdat %>%
+  semi_join(filter(
+    diffdat,
+    year > 1980,
+    ## npft_eff > 1.2,
+    `mmean_npp_py` >= 6, `mmean_npp_py` <= 7,
+    mmean_lai_py > 3.14, mmean_lai_py < 4.80
+  ), "case") %>%
+  mutate(prod_eff = mmean_npp_py / mmean_lai_py) %>%
+  ## select(param_id, year, model, matches("mmean_(npp|lai)"), prod_eff, npft_eff,
+  ##        `Early hardwood`, `Mid hardwood`, `Late hardwood`, Pine) %>%
+  select(param_id, year, model, matches("mmean_(npp|lai)"), prod_eff, npft_eff) %>%
+  pivot_longer(-c(param_id, year, model)) %>%
+  mutate(name = fct_inorder(name)) %>%
+  filter(!is.na(model)) %>%
+  ggplot() +
+  aes(x = year, y = value, group = factor(param_id)) +
+  geom_line() +
+  facet_grid(vars(name), vars(model), scales = "free_y")
+
+diverse_dat %>%
+  distinct(case, model, crown, rtm, traits) %>%
+  count(crown, rtm, traits)
+
+params_diverse <- diverse_dat %>%
+  param_diffs_df() %>%
+  group_by(in_dat) %>%
+  summarize_at(
+    vars(-c(param_id)),
+    list(Mean = mean, SD = sd)
+  ) %>%
+  pivot_longer(-in_dat, "parameter", "value") %>%
+  extract(parameter, c("PFT", "trait", "stat"), "(^.*)\\.(.*)_([[:alpha:]]+$)") %>%
+  pivot_wider(names_from = c("in_dat", "stat"), values_from = "value")
+
+params_diverse %>%
+  mutate(reldiff = (TRUE_Mean - FALSE_Mean) / TRUE_SD) %>%
+  arrange(desc(abs(reldiff))) %>%
+  print(n = 20)
+
+
+params_diverse %>%
+
+
+
+
+diffdat %>%
+  filter(year > 1980, npft_eff > 2) %>%
+  param_diffs()
 
 # Let's look at 1920
 y1920 <- both_wide %>%
