@@ -1,4 +1,341 @@
+# pairs-plots.R
+both_wide %>%
+  filter(year == 1920) %>%
+  select(model_id, starts_with("mmean"), `Early hardwood`:`Pine`) %>%
+  GGally::ggpairs(
+    .,
+    aes(color = model_id),
+    size = 0.5,
+    alpha = 0.2,
+    columns = names(.)[-1]
+  )
+
+tern_data %>%
+  filter(year == 1920, model_id == "FMS") %>%
+  ggplot() +
+  aes(x = Early, y = `Mid/Late`, z = Pine) +
+  ggtern::geom_tri_tern(bins = 10) +
+  scale_fill_viridis_c(na.value = "white") +
+  ggtern::coord_tern()
+
+get_density <- function(x, y, z, ...) {
+  dens <- misc3d::kde3d(x, y, z, ...)
+  ix <- findInterval(x, dens$x)
+  iy <- findInterval(y, dens$y)
+  iz <- findInterval(z, dens$z)
+  ii <- cbind(ix, iy, iz)
+  dens$d[ii]
+}
+
+pft_tern_pl
+
+tern_data2 <- tern_data %>%
+  group_by(model_id) %>%
+  mutate(dens = get_density(`Early hardwood`, `ML`, `Pine`)) %>%
+  ungroup()
+ggplot(tern_data2) +
+  aes(x = `Early hardwood`, y = `ML`, z = `Pine`, color = dens) +
+  geom_point() +
+  facet_wrap(vars(model_id), ncol = 2) +
+  scale_color_viridis_c() +
+  ggtern::coord_tern()
+
+
+pft_data %>%
+  mutate(model_id = substr(case, 4, 6)) %>%
+  left_join(models, "model_id") %>%
+  ggplot() +
+  aes(x = year, y = agb_frac, group = case, color = color) +
+  geom_line(alpha = 0.2, size = 0.2) +
+  facet_grid(vars(pft), vars(fct_relabel(model, ~gsub(" ", "\n", .)))) +
+  labs(y = "AGB fraction") +
+  scale_color_identity() +
+  theme_cowplot() +
+  theme(
+    axis.title.x = element_blank(),
+    axis.text.x = element_text(angle = 90),
+    strip.background = element_blank()
+  )
+
+##################################################
+# parameter-analysis.R
+wcplot_data = both_wide %>%
+  filter(year == 1920) %>%
+  select(param_id:traits, `Early hardwood`:Pine) %>%
+  left_join(select(params_wide, param_id, ends_with("water_conductance")),
+            "param_id") %>%
+  ## mutate_at(vars(ends_with("water_conductance")), log10) %>%
+  mutate(npft_eff = 1 / (`Early hardwood`^2 + `Mid hardwood`^2 + `Late hardwood`^2 + Pine^2))
+
+wcplot_data %>%
+  arrange(npft_eff) %>%
+  ## mutate(npft_eff = na_if(npft_eff, 1)) %>%
+  ggplot() +
+  aes(x = Early.water_conductance, y = Mid.water_conductance, color = npft_eff,
+      size = npft_eff) +
+  geom_point(alpha = 0.5) +
+  facet_wrap(vars(model), scales = "fixed") +
+  scale_color_viridis_c(na.value = "gray80")
+
+wcplot_data_2 <- wcplot_data %>%
+  pivot_longer(`Early hardwood`:Pine, names_to = "pft", values_to = "frac") %>%
+  pivot_longer(ends_with("water_conductance"), names_to = "trait_name", values_to = "trait_value") %>%
+  separate(trait_name, c("trait_pft", "trait_name"), sep = "\\.") %>%
+  mutate(pft_short = factor(pft, pfts("pft"), pfts("shortname"))) %>%
+  filter(trait_pft == pft_short)
+
+ggplot(wcplot_data_2) +
+  aes(x = trait_value, y = frac, color = pft_short) +
+  geom_point(alpha = 0.2, size = 0.3) +
+  geom_smooth(se = FALSE) +
+  scale_color_viridis_d() +
+  facet_wrap(vars(model), scales = "fixed")
+
+wcplot_data_long = wcplot_data %>%
+  select(model, npft_eff, ends_with("water_conductance")) %>%
+  pivot_longer(ends_with("water_conductance")) %>%
+  mutate(name = gsub("\\.water_conductance", "", name),
+         npft_eff_cut = cut(npft_eff, c(-Inf, 1.1, 2, 3, Inf)))
+
+wcplot_data_long %>%
+  filter_at(vars(model, npft_eff), negate(is.na)) %>%
+  ggplot() +
+  aes(x = npft_eff_cut, y = value, color = name) +
+  geom_boxplot() +
+  ## geom_jitter(size = 0.2, alpha = 0.4) +
+  scale_y_log10() +
+  facet_wrap(vars(model), scales = "fixed",
+             nrow = 4)
+
+wcplot_data %>%
+  filter(!is.na(model), !is.na(npft_eff)) %>%
+  mutate(npft_eff_cut = cut(npft_eff, c(-Inf, 1.1, 2, 3, Inf))) %>%
+  ggplot(aes(x = npft_eff_cut, y = Mid.water_conductance)) +
+  geom_violin() +
+  geom_jitter(size = 0.4, alpha = 0.4) +
+  facet_wrap(vars(model), scales = "fixed") +
+  scale_y_log10()
+
+wcplot_data %>%
+  filter(npft_eff > 1) %>%
+  plotly::plot_ly(
+    x = ~Early.water_conductance,
+    y = ~Mid.water_conductance,
+    z = ~Late.water_conductance,
+    color = ~npft_eff
+  )
+
+
+params_wide
+
+both_wide %>%
+  filter(year == 1980)
+
+##################################################
+# pft-composition-plots.R
+dev.size()
+
+### STOP HERE
 stop()
+
+saveRDS(sensitivity_raw_results, "analysis/data/retrieved/sensitivity-raw-results.rds")
+
+library(tidyverse)
+library(here)
+library(fortebaseline)
+sensitivity_raw_results <- readRDS(here(
+  "analysis",
+  "data",
+  "retrieved",
+  "sensitivity-raw-results.rds"
+))
+
+pn2 <- sensplot(sensitivity_sub, "1975-1999", fpvar, "mmean_npp_py") +
+  ggtitle("1975-1999") +
+  labs(y = "Partial variance")
+p12 <- cowplot::plot_grid(p1, p2, nrow = 1, rel_widths = c(0.8, 1))
+cowplot::ggsave2(
+  here("analysis", "figures", "partial-variance-npp.png"),
+  pn1, width = 10, height = 8
+)
+
+p1 <- sensplot(sensitivity_sub, "1920-1950", fpvar, "mmean_lai_py") +
+  ggtitle("1920-1950") +
+  labs(y = "Partial variance") +
+  guides(color = FALSE)
+p2 <- sensplot(sensitivity_sub, "1975-1999", fpvar, "mmean_lai_py") +
+  ggtitle("1975-1999") +
+  labs(y = "Partial variance")
+p12 <- cowplot::plot_grid(p1, p2, nrow = 1, rel_widths = c(0.8, 1))
+cowplot::ggsave2(
+  here("analysis", "figures", "partial-variance-lai.png"),
+  p12, width = 16.3, height = 8.4
+)
+
+## sensplot(sensitivity_sub, "1920-1950", elasticity)
+## sensplot(sensitivity_sub, "1975-1999", elasticity)
+
+
+sensitivity_sub %>%
+  filter(sgroup == "1975-1999", model == "FTP")
+
+
+slai <- sensitivity_sub %>%
+  filter(yvar == "mmean_lai_py") %>%
+
+
+sensitivity_proc %>%
+  ungroup() %>%
+  filter(sgroup == sgroup[1]) %>%
+  group_by(model_id, yvar) %>%
+  arrange(desc(pvar), .by_group = TRUE) %>%
+  slice(1:5) %>%
+  separate(xvar, c("pft", "param"), extra = "merge")
+
+
+sensitivity_proc %>%
+  ungroup() %>%
+  filter(is.finite(elasticity)) %>%
+  arrange(desc(pvar))
+
+summary(sensitivity_proc)
+
+s <- combined_sens_inputs %>%
+  group_by(model_id, sgroup, yvar, xvar) %>%
+  group_split()
+
+s1 <- s[[1]]
+s1 %>%
+  select(y, x, ymedian, xmedian) %>%
+  pmap()
+sensitivity_analysis(s1$y, s1$x, s1$ymedian[1], s1$xmedian[1])
+
+
+sensitivity_results = sensitivity_inputs %>%
+  group_by(model_id, sgroup, yvar, xvar) %>%
+  summarize(sens_out = sensitivity_analysis(y, x, ))
+
+both_wide
+
+model <- both_wide$model[1]
+year <- 1920
+
+median_yr = median_wide %>%
+  filter(year == !!year, model == !!model) %>%
+  select(param_id, year, !!sensitivity_vars)
+
+
+s <- sensitivity_analysis()
+
+both_wide
+
+dsub <- both_wide %>%
+  filter(model == !!model, year == !!year) %>%
+  select(
+    param_id,
+    mmean_npp_py, mmean_lai_py,
+    EH = `Early hardwood`,
+    MH = `Mid hardwood`,
+    LH = `Late hardwood`,
+    Pine
+  ) %>%
+  left_join()
+
+##################################################
+# specific-parameters.R
+
+### STOP HERE
+stop()
+
+dev.size()
+
+all_params <- both_wide %>%
+  filter(year == 1999) %>%
+  mutate(param_id = as.numeric(substr(case, 0, 3))) %>%
+  count(param_id) %>%
+  filter(n == 8)
+
+both_wide %>%
+  mutate(param_id = as.numeric(substr(case, 0, 3))) %>%
+  semi_join(all_params, "param_id") %>%
+  rename(EH = `Early hardwood`, MH = `Mid hardwood`, LH = `Late hardwood`) %>%
+  rename_all(~gsub("mmean_", "", .x)) %>%
+  rename_all(~gsub("_py", "", .x)) %>%
+  mutate(
+    bbeta = dbeta(EH, 2, 2) + dbeta(MH, 2, 2) +
+      dbeta(LH, 2, 2) + dbeta(Pine, 2, 2)
+  ) %>%
+  filter(year == 1999, bbeta > 3) %>%
+  arrange(desc(npp)) %>%
+  select(case, bbeta, EH, MH, LH, Pine, npp = npp, everything())
+
+
+both_wide %>%
+  mutate(param_id = as.numeric(substr(case, 0, 3))) %>%
+  filter(param_id == 448)
+
+##################################################
+# structure-results.R
+
+# Look at each model indidivually
+dcrown <- default_results %>%
+  filter(!multiple_scatter, !trait_plasticity) %>%
+  mutate(crown_model = if_else(crown_model, "finite", "closed") %>%
+           factor(c("closed", "finite")))
+
+dcrown_sa <- dcrown %>%
+  select(crown_model, scalar) %>%
+  unnest(scalar) %>%
+  select(-c(case:param_id)) %>%
+  pivot_longer(-c(crown_model, datetime)) %>%
+  annual_mean()
+
+dcrown_sa %>%
+  filter(name %in% c("mmean_gpp_py", "mmean_npp_py")) %>%
+  ggplot() +
+  aes(x = year, y = value, color = crown_model, group = crown_model) +
+  geom_line() +
+  facet_grid(vars(name), scales = "free_y")
+
+dcrown_pa <- dcrown %>%
+  select(crown_model, pft_py) %>%
+  unnest(pft_py) %>%
+  select(-c(case:param_id)) %>%
+  pivot_longer(-c(crown_model:pft)) %>%
+  filter(month(datetime) %in% 6:8) %>%
+  annual_mean() %>%
+  mutate(pft = set_pft(pft))
+
+dcrown_pa %>%
+  filter(name == "mmean_bstorage_py") %>%
+  ggplot() +
+  aes(x = year, y = value, color = crown_model, group = crown_model) +
+  geom_line() +
+  facet_grid(vars(pft), scales = "free_y")
+
+dcrown_ca <- dcrown %>%
+  select(crown_model, cohort) %>%
+  unnest(cohort) %>%
+  select(-c(case:param_id))
+
+## dcrown_ca %>%
+default_results %>%
+  select(casename, cohort) %>%
+  unnest(cohort) %>%
+  filter(
+    month(datetime) == 7,
+    year(datetime) %in% c(1910, 1920, 1950, 1980)
+  ) %>%
+  mutate(pft = set_pft(pft),
+         datetime = year(datetime)) %>%
+  ggplot() +
+  aes(x = dbh, y = hite, color = pft) +
+  geom_segment(aes(xend = 0, yend = hite)) +
+  geom_point() +
+  facet_grid(vars(datetime), vars(casename))
+
+##################################################
+# zz-old.R
 
 plan <- bind_plans(plan, drake_plan(
   #########################################

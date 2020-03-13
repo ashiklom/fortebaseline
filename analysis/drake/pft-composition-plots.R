@@ -108,5 +108,3 @@ plan <- bind_plans(plan, drake_plan(
     width = 10, height = 6
   )
 ))
-
-stop()

@@ -45,33 +45,3 @@ plan <- bind_plans(plan, drake_plan(
     "analysis/figures/lai-pft.png"
   ))
 ))
-
-### STOP HERE
-stop()
-
-dev.size()
-
-all_params <- both_wide %>%
-  filter(year == 1999) %>%
-  mutate(param_id = as.numeric(substr(case, 0, 3))) %>%
-  count(param_id) %>%
-  filter(n == 8)
-
-both_wide %>%
-  mutate(param_id = as.numeric(substr(case, 0, 3))) %>%
-  semi_join(all_params, "param_id") %>%
-  rename(EH = `Early hardwood`, MH = `Mid hardwood`, LH = `Late hardwood`) %>%
-  rename_all(~gsub("mmean_", "", .x)) %>%
-  rename_all(~gsub("_py", "", .x)) %>%
-  mutate(
-    bbeta = dbeta(EH, 2, 2) + dbeta(MH, 2, 2) +
-      dbeta(LH, 2, 2) + dbeta(Pine, 2, 2)
-  ) %>%
-  filter(year == 1999, bbeta > 3) %>%
-  arrange(desc(npp)) %>%
-  select(case, bbeta, EH, MH, LH, Pine, npp = npp, everything())
-
-
-both_wide %>%
-  mutate(param_id = as.numeric(substr(case, 0, 3))) %>%
-  filter(param_id == 448)

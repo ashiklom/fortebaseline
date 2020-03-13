@@ -62,7 +62,7 @@ stopifnot(dir_exists(drake_dir))
 plan <- drake_plan()
 src_files <- dir_ls(drake_dir, regexp = "zzskip", invert = TRUE)
 # Possibly here to allow skipping files with `stop()`
-walk(src_files, possibly(source, NULL))
+walk(src_files, source)
 
 if ("--poster" %in% cmdargs) source("analysis/drake_poster.R")
 if ("--postgrad" %in% cmdargs) source("analysis/drake_postgrad.R")
