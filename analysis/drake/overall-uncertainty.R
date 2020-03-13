@@ -27,8 +27,8 @@ plan <- bind_plans(plan, drake_plan(
 
 ### Read files
 plan <- bind_plans(plan, drake_plan(
-  scalar_vars = sprintf("mmean_%s_py", c("gpp", "plresp", "npp")),
-  scalar_cols = c("case", "datetime", scalar_vars),
+  scalar_variables = sprintf("mmean_%s_py", c("gpp", "plresp", "npp")),
+  scalar_cols = c("case", "datetime", scalar_variables),
   scalar_data = setDT(fst(file_in(!!scalar_file))[, scalar_cols]) %>%
     .[, lapply(.SD, mean), .(case, year = year(datetime))] %>%
     # Unit conversion: kg m-2 -> Mg ha-1
@@ -133,10 +133,7 @@ plan <- bind_plans(plan, drake_plan(
     file_out("analysis/figures/summary-ts-plot.png"),
     summary_ts_plot_gg,
     width = 10, height = 6
-  ),
-  default_ts_plot_knit = knitr::include_graphics(file_in(
-    "analysis/figures/summary-ts-plot.png"
-  ))
+  )
 ))
 
 plan <- bind_plans(plan, drake_plan(
