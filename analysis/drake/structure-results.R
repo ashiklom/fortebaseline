@@ -174,10 +174,11 @@ plan <- bind_plans(plan, drake_plan(
       ),
       switch = "y"
     ) +
-    cowplot::theme_cowplot() +
     labs(y = expression("Flux" ~ ("MgC" ~ "ha"^-1 ~ "year"^-1)),
          color = "Parameters") +
-    theme(axis.text.x = element_text(angle = 90, vjust = 0.5),
+    theme_bw() +
+    theme(text = element_text(size = 14),
+          axis.text.x = element_text(angle = 90, vjust = 0.5),
           axis.title.x = element_blank(),
           legend.position = "bottom",
           strip.background = element_blank(),
@@ -214,8 +215,9 @@ plan <- bind_plans(plan, drake_plan(
     scale_color_manual(values = pfts("color")) +
     labs(y = "LAI", color = "Plant functional type") +
     guides(color = guide_legend(override.aes = list(size = 2))) +
-    cowplot::theme_cowplot() +
+    theme_bw() +
     theme(
+      text = element_text(size = 14),
       axis.title.x = element_blank(),
       axis.text.x = element_text(angle = 90, vjust = 0.5),
       legend.position = "bottom",
