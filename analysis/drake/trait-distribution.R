@@ -48,7 +48,5 @@ plan <- bind_plans(plan, drake_plan(
     file_out(!!path(fig_dir, "param-dist.png")),
     param_dist_gg,
     width = 15.3, height = 9.9
-  ),
-  param_dist_knit = knitr::include_graphics(file_in(!!path(
-    fig_dir, "param-dist.png")))
+  )
 ))

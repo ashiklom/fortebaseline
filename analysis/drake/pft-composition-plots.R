@@ -23,10 +23,7 @@ plan <- bind_plans(plan, drake_plan(
     file_out("analysis/figures/pft-jitterplot.png"),
     pft_jitterplot_gg,
     width = 6.6, height = 6.4
-  ),
-  pft_jitterplot_knit = knitr::include_graphics(file_in(
-    "analysis/figures/pft-jitterplot.png"
-  ))
+  )
 ))
 
 ### PFT ternary plot
@@ -57,10 +54,7 @@ plan <- bind_plans(plan, drake_plan(
     file_out("analysis/figures/pft-tern.png"),
     pft_tern_gg,
     width = 10, height = 4
-  ),
-  pft_tern_knit = knitr::include_graphics(file_in(
-    "analysis/figures/pft-tern.png"
-  ))
+  )
 ))
 
 ### Effective number of PFTs

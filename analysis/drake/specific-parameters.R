@@ -40,8 +40,5 @@ plan <- bind_plans(plan, drake_plan(
     file_out("analysis/figures/lai-pft.png"),
     lai_pft_plot_gg,
     width = 9.7, height = 6.1
-  ),
-  lai_pft_plot_knit = knitr::include_graphics(file_in(
-    "analysis/figures/lai-pft.png"
-  ))
+  )
 ))

@@ -62,8 +62,5 @@ plan <- bind_plans(plan, drake_plan(
     file_out("analysis/figures/npp-lai-pairs.png"),
     npp_lai_pairs_gg,
     width = 14, height = 8
-  ),
-  npp_lai_pairs_knit = knitr::include_graphics(file_in(
-    "analysis/figures/npp-lai-pairs.png"
-  ))
+  )
 ))

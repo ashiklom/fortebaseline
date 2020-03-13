@@ -86,10 +86,7 @@ plan <- bind_plans(plan, drake_plan(
     file_out("analysis/figures/structure-compare-default.png"),
     structure_compare_default_gg,
     width = 6.5, height = 4.2
-  ),
-  structure_compare_default_knit = knitr::include_graphics(file_in(
-    "analysis/figures/structure-compare-default.png"
-  ))
+  )
 ))
 
 ### Light levels by model type figure
@@ -122,10 +119,7 @@ plan <- bind_plans(plan, drake_plan(
     file_out("analysis/figures/default-light-levels.png"),
     structure_default_light_gg,
     width = 7.16, height = 5.96
-  ),
-  structure_default_light_knit = knitr::include_graphics(file_in(
-    "analysis/figures/default-light-levels.png"
-  ))
+  )
 ))
 
 ### Now compare default and median parameters
@@ -192,10 +186,7 @@ plan <- bind_plans(plan, drake_plan(
     file_out("analysis/figures/default-median-fluxes.png"),
     default_median_fluxes_gg,
     width = 10.1, height = 7
-  ),
-  default_median_fluxes_knit = knitr::include_graphics(file_in(
-    "analysis/figures/default-median-fluxes.png"
-  ))
+  )
 ))
 
 plan <- bind_plans(plan, drake_plan(
@@ -234,9 +225,5 @@ plan <- bind_plans(plan, drake_plan(
     file_out("analysis/figures/default-median-lai.png"),
     default_median_lai_gg,
     width = 10.1, height = 7
-  ),
-  default_median_lai_knit = knitr::include_graphics(file_in(
-    "analysis/figures/default-median-lai.png"
-  ))
+  )
 ))
-
