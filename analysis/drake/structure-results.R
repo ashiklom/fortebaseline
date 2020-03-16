@@ -158,6 +158,8 @@ plan <- bind_plans(plan, drake_plan(
   both_results = bind_rows(default_results, median_results),
   both_long_s = both_results %>%
     select(casename, runtype, scalar) %>%
+    mutate(runtype = factor(runtype, c("default", "median"),
+                       c("ED-2.2 default", "Posterior median"))) %>%
     unnest(scalar) %>%
     select(-c(case:param_id), -age, -area, -area_si,
            -latitude, -longitude, -starts_with("mmsq")) %>%
