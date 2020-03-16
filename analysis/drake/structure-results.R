@@ -59,17 +59,25 @@ plan <- bind_plans(plan, drake_plan(
     left_join(models, "model_id") %>%
     # Convert kgC m-2 yr-1 to MgC ha-1 yr-1
     mutate(npp = npp * 10) %>%
-    pivot_longer(c(npp, lai)),
+    pivot_longer(c(npp, lai), names_to = "variable"),
   structure_compare_default_gg = ggplot(structure_default_data) +
     aes(x = year, y = value, linetype = crown, color = traits, group = model) +
     geom_line() +
+    geom_pointrange(
+      aes(x = 1999, y = mean, ymin = low, ymax = hi),
+      data = observations %>%
+        semi_join(structure_default_data, "variable") %>%
+        left_join(models, "model"),
+      color = "black",
+      show.legend = FALSE
+    ) +
     labs(linetype = "Crown model", color = "Trait plasticity") +
     facet_grid(
-      vars(name = factor(name, c("npp", "lai"))), vars(rtm),
+      vars(variable = factor(variable, c("npp", "lai"))), vars(rtm),
       scales = "free_y",
       switch = "y",
       labeller = labeller(
-        name = as_labeller(c(
+        variable = as_labeller(c(
           "npp" = "atop(NPP, (MgC ~ ha^-1 ~ yr^-1))",
           "lai" = "LAI"
         ), default = label_parsed),
@@ -77,15 +85,18 @@ plan <- bind_plans(plan, drake_plan(
       )
     ) +
     scale_color_manual(values = c("#F5793A", "#0F2080")) +
-    cowplot::theme_cowplot() +
-    theme(axis.title = element_blank(),
-          axis.text.x = element_text(angle = 90, vjust = 0.5),
-          strip.background = element_blank(),
-          strip.placement = "outside"),
+    theme_bw() +
+    theme(
+      text = element_text(size = 14),
+      axis.title = element_blank(),
+      axis.text.x = element_text(angle = 90, vjust = 0.5),
+      strip.background = element_blank(),
+      strip.placement = "outside"
+    ),
   structure_compare_default_png = ggsave(
     file_out("analysis/figures/structure-compare-default.png"),
     structure_compare_default_gg,
-    width = 6.5, height = 4.2
+    width = 6.5, height = 4.2, dpi = 300
   )
 ))
 
