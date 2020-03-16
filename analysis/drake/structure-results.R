@@ -166,18 +166,28 @@ plan <- bind_plans(plan, drake_plan(
   default_median_fluxes_gg = both_long_s %>%
     filter(grepl("mmean_(gpp|npp|plresp)_py", name)) %>%
     mutate(
-      name = stringr::str_remove(name, "mmean_") %>%
+      variable = stringr::str_remove(name, "mmean_") %>%
         stringr::str_remove("_py") %>%
         factor(c("gpp", "plresp", "npp"), c("GPP", "RA", "NPP")),
       # Unit conversion
       value = value * 10
     ) %>%
+    select(-name) %>%
     left_join(models, c("casename" = "model_id")) %>%
     ggplot() +
     aes(x = year, y = value, color = runtype) +
     geom_line() +
+    geom_pointrange(
+      aes(x = 1999, y = mean, ymin = low, ymax = hi),
+      data = observations %>%
+        filter(variable == "npp") %>%
+        mutate(variable = factor(variable, c("gpp", "plresp", "npp"),
+                                 c("GPP", "RA", "NPP"))),
+      color = "black",
+      show.legend = FALSE
+    ) +
     facet_grid(
-      vars(name), vars(model),
+      vars(variable), vars(model),
       scales = "free_y",
       labeller = labeller(
         .default = label_value,
@@ -197,7 +207,7 @@ plan <- bind_plans(plan, drake_plan(
   default_median_fluxes_png = ggsave(
     file_out("analysis/figures/default-median-fluxes.png"),
     default_median_fluxes_gg,
-    width = 10.1, height = 7
+    width = 10.1, height = 7, dpi = 300
   )
 ))
 
