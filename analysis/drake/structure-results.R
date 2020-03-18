@@ -252,3 +252,39 @@ plan <- bind_plans(plan, drake_plan(
     width = 10.1, height = 7
   )
 ))
+
+# Aboveground biomass distribution figure
+plan <- bind_plans(plan, drake_plan(
+  default_agb_distribution_gg = default_results %>%
+    select(runtype, casename, cohort) %>%
+    unnest(cohort) %>%
+    group_by(casename, pft, year = year(datetime), datetime) %>%
+    # Sum over PFTs
+    summarize(agb = sum(agb_co, na.rm = TRUE)) %>%
+    # Average over years
+    summarize(agb = mean(agb, na.rm = TRUE)) %>%
+    ungroup() %>%
+    group_by(casename, year) %>%
+    mutate(f_agb = agb / sum(agb)) %>%
+    ungroup() %>%
+    mutate(pft = set_pft(pft)) %>%
+    left_join(models, c("casename" = "model_id")) %>%
+    ggplot() +
+    aes(x = year, y = f_agb, fill = pft) +
+    geom_area() +
+    facet_wrap(vars(model), ncol = 4,
+               labeller = labeller(model = label_wrap_gen(10))) +
+    scale_fill_manual(values = pfts("color")) +
+    theme_bw() +
+    theme(text = element_text(size = 14),
+          axis.title.x = element_blank(),
+          axis.text.x = element_text(angle = 90, vjust = 0.5),
+          legend.position = "bottom") +
+    labs(fill = "PFT",
+         y = expression("Aboveground biomass fraction")),
+  default_agb_distribution_png = ggsave(
+    file_out("analysis/figures/default-agb-distribution.png"),
+    default_agb_distribution_gg,
+    width = 6.5, height = 4.2, dpi = 300
+  )
+))
