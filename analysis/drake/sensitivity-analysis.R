@@ -74,23 +74,27 @@ plan <- bind_plans(plan, drake_plan(
       MH = `Mid hardwood`,
       LH = `Late hardwood`
     ) %>%
-    select(case, model_id, param_id, sgroup, sensitivity_vars) %>%
+    select(case, model_id, param_id, sgroup, all_of(sensitivity_vars)) %>%
     group_by(case, model_id, param_id, sgroup) %>%
     summarize_all(mean, na.rm = TRUE) %>%
     ungroup() %>%
-    pivot_longer(sensitivity_vars, names_to = "yvar", values_to = "y") %>%
+    pivot_longer(
+      all_of(sensitivity_vars),
+      names_to = "yvar",
+      values_to = "y"
+    ) %>%
     left_join(params_wide, "param_id") %>%
     pivot_longer(-c(case, model_id, param_id, sgroup, yvar, y),
                  names_to = "xvar", values_to = "x"),
   median_sens_inputs = median_wide %>%
     inner_join(sensitivity_groups, "year") %>%
-    select(model_id, sgroup, sensitivity_vars,
+    select(model_id, sgroup, all_of(sensitivity_vars),
            matches(paste(pfts("shortname"), collapse = "|"))) %>%
     group_by(model_id, sgroup) %>%
     summarize_all(mean, na.rm = TRUE) %>%
     ungroup() %>%
     pivot_longer(
-      sensitivity_vars,
+      all_of(sensitivity_vars),
       names_to = "yvar",
       values_to = "ymedian"
     ) %>%
