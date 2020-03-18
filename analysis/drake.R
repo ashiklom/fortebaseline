@@ -67,8 +67,10 @@ walk(src_files, source)
 if ("--poster" %in% cmdargs) source("analysis/drake_poster.R")
 if ("--postgrad" %in% cmdargs) source("analysis/drake_postgrad.R")
 
-# Parallelism configuration. Not sure which of these is better...
-future::plan(future.callr::callr)
+# Parallelism is based on `future`. Parallelism method can be set by adding code
+# like the following to .Rprofile-local:
+#     future::plan(future::multicore)
+# Default method is "sequential"; i.e. no parallelism.
 
 dconf <- drake_config(
   plan,
