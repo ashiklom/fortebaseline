@@ -46,16 +46,6 @@ fig("default-light-levels.png")
 
 \clearpage
 
-```{r param-dist, fig.cap = param_dist_cap}
-### Figure S2
-param_dist_cap <- paste(
-  "Input parameter distributions from PEcAn trait meta-analysis."
-)
-fig("param-dist.png")
-```
-
-\clearpage
-
 ```{r pairs-time, fig.cap = pairs_time_cap}
 ### Figure S3
 pairs_time_cap <- paste(

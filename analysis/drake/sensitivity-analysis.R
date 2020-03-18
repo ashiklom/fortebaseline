@@ -188,11 +188,3 @@ plan <- bind_plans(plan, drake_plan(
     "analysis", "figures", "partial-variance-npp-end.png"
   )), sensitivity_period2_gg, width = 7.6, height = 8.4)
 ))
-
-plan <- bind_plans(plan, drake_plan(
-  ed2_param_table = readr::read_csv(file_in(
-    "analysis/data/derived-data/parameter-table.csv"
-  )) %>%
-    filter(Ran == "yes")
-))
-
