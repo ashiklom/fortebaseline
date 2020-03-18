@@ -2014,3 +2014,45 @@ ggplot(pinus_sla) +
   guides(color = FALSE)
 
 pinus[TraitID == 11, .N, .(DataName, DataID)]
+
+##################################################
+# Effects of averaging period (all, 1925-1950, 1975-end)
+drake::loadd(ts_both2)
+drake::loadd(models)
+
+all_ts_means <- ts_both2 %>%
+  group_by(variable, model_id, case) %>%
+  summarize(all_mean = mean(value, na.rm = TRUE)) %>%
+  ungroup()
+
+firsthalf_means <- ts_both2 %>%
+  filter(year >= 1920, year <= 1950) %>%
+  group_by(variable, model_id, case) %>%
+  summarize(peak_mean = mean(value, na.rm = TRUE)) %>%
+  ungroup()
+
+late_means <- ts_both2 %>%
+  filter(year > 1975) %>%
+  group_by(variable, model_id, case) %>%
+  summarize(last_mean = mean(value, na.rm = TRUE)) %>%
+  ungroup()
+
+df_compare <- all_ts_means %>%
+  left_join(firsthalf_means, c("variable", "model_id", "case")) %>%
+  left_join(late_means, c("variable", "model_id", "case"))
+
+df_compare %>%
+  filter(variable %in% c("npp", "lai")) %>%
+  mutate(
+    variable = factor(variable, c("npp", "lai", "prod_eff", "d2"),
+                      c("NPP", "LAI", "Prod. Eff.", "Neff[PFT]"))
+  ) %>%
+  left_join(models, "model_id") %>%
+  ggplot() +
+  aes(x = all_mean, y = peak_mean) +
+  geom_point(size = 0.5, alpha = 0.3) +
+  geom_abline(color = "red", linetype = "dashed") +
+  facet_wrap(
+    vars(variable, model), scales = "free", ncol = 8,
+    labeller = labeller(model = label_wrap_gen(10), variable = label_value)) +
+  theme_bw()
