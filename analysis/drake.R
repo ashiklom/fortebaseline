@@ -72,15 +72,11 @@ if ("--postgrad" %in% cmdargs) source("analysis/drake_postgrad.R")
 #     future::plan(future::multicore)
 # Default method is "sequential"; i.e. no parallelism.
 
-dconf <- drake_config(
-  plan,
-  parallelism = "future",
-  jobs = availableCores()
-)
+dargs <- list(plan = plan, parallelism = "future", jobs = availableCores())
 
 if ("make" %in% cmdargs) {
   message("Running `drake::make`")
-  make(config = dconf)
+  do.call(drake::make, dargs)
 } else if (!interactive()) {
-  dconf
+  do.call(drake::config, dargs)
 }
