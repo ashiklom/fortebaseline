@@ -58,6 +58,7 @@ do_sensitivity <- function(y, x, ymedian, xmedian) {
 plan <- bind_plans(plan, drake_plan(
   sensitivity_vars = c("mmean_npp_py", "mmean_lai_py", "EH", "MH", "LH", "Pine"),
   sensitivity_groups = bind_rows(
+    tibble(year = 1902:1999, sgroup = "1902-1999"),
     tibble(year = 1920:1950, sgroup = "1920-1950"),
     tibble(year = 1975:1999, sgroup = "1975-1999")
   ),
@@ -150,6 +151,18 @@ plan <- bind_plans(plan, drake_plan(
       xvar = factor(xvar, ed2_param_table[["ED Name"]],
                     ed2_param_table[["Display name"]])
     ),
+  sensitivity_periodall_gg =
+    sensplot(sensitivity_sub, "1902-1999", fpvar, "mmean_npp_py") +
+    labs(y = "Partial variance", color = "Plant functional type") +
+    guides(color = guide_legend(
+      nrow = 2, byrow = TRUE,
+      override.aes = list(size = 4, linetype = 0)
+    )) +
+    theme(strip.background = element_blank(),
+          legend.position = "bottom"),
+  sensitivity_periodall_png = cowplot::ggsave2(file_out(!!here(
+    "analysis", "figures", "partial-variance-npp-all.png"
+  )), sensitivity_periodall_gg, width = 7.6, height = 8.4),
   sensitivity_period1_gg =
     sensplot(sensitivity_sub, "1920-1950", fpvar, "mmean_npp_py") +
     labs(y = "Partial variance", color = "Plant functional type") +
@@ -160,9 +173,20 @@ plan <- bind_plans(plan, drake_plan(
     theme(strip.background = element_blank(),
           legend.position = "bottom"),
   sensitivity_period1_png = cowplot::ggsave2(file_out(!!here(
-    "analysis", "figures", "partial-variance-npp.png"
-  )), sensitivity_period1_gg, width = 7.6, height = 8.4
-  )
+    "analysis", "figures", "partial-variance-npp-peak.png"
+  )), sensitivity_period1_gg, width = 7.6, height = 8.4),
+  sensitivity_period2_gg =
+    sensplot(sensitivity_sub, "1975-1999", fpvar, "mmean_npp_py") +
+    labs(y = "Partial variance", color = "Plant functional type") +
+    guides(color = guide_legend(
+      nrow = 2, byrow = TRUE,
+      override.aes = list(size = 4, linetype = 0)
+    )) +
+    theme(strip.background = element_blank(),
+          legend.position = "bottom"),
+  sensitivity_period2_png = cowplot::ggsave2(file_out(!!here(
+    "analysis", "figures", "partial-variance-npp-end.png"
+  )), sensitivity_period2_gg, width = 7.6, height = 8.4)
 ))
 
 plan <- bind_plans(plan, drake_plan(
