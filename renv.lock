@@ -347,10 +347,10 @@
     },
     "drake": {
       "Package": "drake",
-      "Version": "7.10.0",
+      "Version": "7.11.0",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "b9986084d504d6fc9edaec79021db696"
+      "Hash": "331e17bca2f794d492b03a81d7bbcdd1"
     },
     "ed4forte": {
       "Package": "ed4forte",
@@ -419,6 +419,18 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "c6a8cdc67d337ac3df901b0ea73b8cec"
+    },
+    "fortedata": {
+      "Package": "fortedata",
+      "Version": "0.1.0",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteRepo": "fortedata",
+      "RemoteUsername": "FoRTExperiment",
+      "RemoteRef": "master",
+      "RemoteSha": "b734be9f82488320aa8674635b1bda9b4491257f",
+      "Hash": "7c9336c6d70e57fb6e60a83187ea8800"
     },
     "fs": {
       "Package": "fs",
