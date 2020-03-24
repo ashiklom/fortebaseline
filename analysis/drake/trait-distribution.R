@@ -36,7 +36,7 @@ plan <- bind_plans(plan, drake_plan(
                               default_value),
       `Display name` = fct_recode(`Display name`, "log10(Water cond.)" = "Water cond.")
     ),
-  param_dist_gg = trait_distribution %>%
+  param_dist_data = trait_distribution %>%
     unnest(draws) %>%
     mutate(
       draws = if_else(trait == "water_conductance",
@@ -47,8 +47,8 @@ plan <- bind_plans(plan, drake_plan(
                        Median),
       `Display name` = fct_recode(`Display name`,
                                   "log10(Water cond.)" = "Water cond.")
-    ) %>%
-    ggplot() +
+    ),
+  param_dist_gg = ggplot(param_dist_data) +
     aes(x = pft, y = draws, fill = pft) +
     geom_violin(alpha = 0.5) +
     geom_point(aes(y = default_value,
