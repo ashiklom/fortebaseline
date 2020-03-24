@@ -140,6 +140,21 @@ time_averages_all %>%
   ## theme_cowplot()
 
 ##################################################
+
+params_wide_super = params_wide %>%
+  mutate_at(vars(ends_with("water_conductance")), log10) %>%
+  inner_join(superlatives, "param_id")
+params_super = params_wide_super %>%
+  pivot_longer(-c(param_id, model, category),
+               names_to = "variable",
+               values_to = "value") %>%
+  extract(variable, c("PFT", "trait"), "(.*?)\\.(.*)") %>%
+  mutate(pft = factor(PFT, pfts("shortname"), pfts("pft"))) %>%
+  left_join(ed2_param_table, c("trait" = "ED Name")) %>%
+  mutate(
+    `Display name` = fct_recode(`Display name`, "log10(Water cond.)" = "Water cond.")
+  )
+
 params_wide2 <- params_wide %>%
   mutate_at(vars(ends_with("water_conductance")), log10)
 
@@ -434,3 +449,34 @@ params_wide %>%
   select(starts_with("Early")) %>%
   select_if(~any(!is.na(.x))) %>%
   pairs(pch = ".", col = "red", add = TRUE)
+
+pft_fit_obs <- pft_data %>%
+  mutate(param_id = as.numeric(substr(case, 1, 3)),
+         model_id = substr(case, 4, 6)) %>%
+  left_join(models, "model_id") %>%
+  semi_join(fit_observed, "param_id") %>%
+  left_join(fit_observed, c("model", "param_id")) %>%
+  mutate(fits_obs = !is.na(category))
+
+ggplot(pft_fit_obs) +
+  aes(x = year, y = mmean_lai_py, color = pft,
+      linetype = fits_obs, size = fits_obs) +
+  geom_line() +
+  facet_grid(vars(param_id), vars(model), scales = "fixed") +
+  coord_cartesian(ylim = c(0, 10)) +
+  scale_linetype_manual(values = c("TRUE" = "solid", "FALSE" = "4212")) +
+  scale_size_manual(values = c("TRUE" = 1.2, "FALSE" = 0.7)) +
+  theme_bw()
+
+both_wide_obs <- both_wide %>%
+  semi_join(fit_observed, "param_id") %>%
+  left_join(fit_observed, c("model", "param_id")) %>%
+  mutate(fit_obs = !is.na(category))
+
+ggplot(both_wide_obs) +
+  aes(x = year, y = mmean_npp_py,
+      linetype = fit_obs, size = fit_obs) +
+  geom_line() +
+  scale_linetype_manual(values = c("TRUE" = "solid", "FALSE" = "4212")) +
+  scale_size_manual(values = c("TRUE" = 1.2, "FALSE" = 0.7)) +
+  facet_grid(vars(param_id), vars(model), scales = "fixed")
