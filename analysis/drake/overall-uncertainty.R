@@ -56,12 +56,19 @@ plan <- bind_plans(plan, drake_plan(
 
 ### Summary plot
 plan <- bind_plans(plan, drake_plan(
+  # Observed NPP from Gough et al. 2008 Ag For Met.
+  obs_npp = list(lo = 6.07, mean = 6.54, hi = 7.01),
+  # Observed LAI from Ameriflux BADM files for US_UMB
+  obs_lai = list(mean = 3.97, sd = 0.423) %>%
+    modifyList(., list(lo = .$mean - 1.96 * .$sd,
+                       hi = .$mean + 1.96 * .$sd)) %>%
+    .[c("lo", "mean", "hi")],
   observations = expand_grid(
     tribble(
       ~variable, ~low, ~mean, ~hi,
-      "npp", 6, 6.5, 7,
-      "lai", 3.97 - 1.96 * 0.423, 3.97, 3.97 + 1.96 * 0.423,
-      "prod_eff", 6 / (3.97 - 1.96 * 0.423), 6.5 / 3.97, 7 / (3.97 + 1.96 * 0.423)
+      "npp", obs_npp$lo, obs_npp$mean, obs_npp$hi,
+      "lai", obs_lai$lo, obs_lai$mean, obs_lai$hi,
+      "prod_eff", obs_npp$lo / obs_lai$hi, obs_npp$mean / obs_lai$mean, obs_npp$hi / obs_lai$lo  #nolint
     ),
     model = models[["model"]]
   ),
