@@ -106,13 +106,15 @@ plan <- bind_plans(plan, drake_plan(
     geom_ribbon(aes(ymin = lo2, ymax = hi2), fill = "gray70") +
     geom_ribbon(aes(ymin = lo1, ymax = hi1), fill = "gray40") +
     geom_line(
-      aes(y = value, group = case, color = label),
-      data = ts_params
+      aes(y = value, group = case, color = category),
+      data = ts_superlatives,
+      size = 0.5
     ) +
     geom_pointrange(
       aes(x = 2000, y = mean, ymin = low, ymax = hi),
       data = observations,
       color = "black",
+      fatten = 2,
       inherit.aes = FALSE
     ) +
     facet_grid(
@@ -129,14 +131,15 @@ plan <- bind_plans(plan, drake_plan(
       labeller = labeller(variable = label_parsed, model = label_value)
     ) +
     scale_color_brewer(palette = "Set1") +
-    labs(color = "Param. set") +
+    labs(color = "Superlative") +
     theme_cowplot() +
     theme(
       axis.title = element_blank(),
       axis.text.x = element_text(angle = 90, vjust = 0.5),
       strip.background = element_blank(),
       strip.placement = "outside",
-      strip.text.y = element_text(size = rel(0.78))
+      strip.text.y = element_text(size = rel(0.78)),
+      strip.text.x = element_text(size = rel(0.9))
     ),
   summary_ts_plot_png = ggsave(
     file_out("analysis/figures/summary-ts-plot.png"),
@@ -146,6 +149,9 @@ plan <- bind_plans(plan, drake_plan(
 ))
 
 plan <- bind_plans(plan, drake_plan(
+  ts_superlatives = summary_ts_data %>%
+    mutate(param_id = as.numeric(substr(case, 0, 3))) %>%
+    inner_join(superlatives, c("param_id", "model")),
   ts_params = summary_ts_data %>%
     mutate(param_id = as.numeric(substr(case, 0, 3))) %>%
     inner_join(use_params, "param_id") %>%
