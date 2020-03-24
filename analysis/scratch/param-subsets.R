@@ -184,14 +184,138 @@ param_diffs <- function(dat) {
 diffdat <- both_wide %>%
   mutate(npft_eff = 1 / (`Early hardwood`^2 + `Mid hardwood`^2 + `Late hardwood`^2 + Pine^2))
 
+last_ten <- diffdat %>%
+  filter(year > 1990) %>%
+  group_by_at(vars(param_id:traits)) %>%
+  summarize_at(vars(ends_with("_py"), ends_with("hardwood"), Pine, npft_eff), mean) %>%
+  ungroup()
+
+last_ten %>%
+  filter(
+    mmean_npp_py >= 6, mmean_npp_py <= 7,
+    mmean_lai_py >= 3.14, mmean_lai_py <= 4.80
+  ) %>%
+  count(model)
+
+last_ten %>%
+  arrange(desc(npft_eff)) %>%
+  top_n(10)
+
+loadd(trait_distribution)
+
+good_cases <- good_dat %>%
+  distinct(param_id, model)
+
+good_cases %>%
+  count(model)
+
+good_params <- params_wide %>%
+  inner_join(good_cases, "param_id") %>%
+  select(model, param_id, everything())
+
+good_mat <- good_params %>%
+  filter(model == model[[1]]) %>%
+  mutate_at(vars(ends_with("water_conductance")), log10) %>%
+  select_if(~any(!is.na(.))) %>%
+  select(-model, -param_id)
+
+good_pc <- princomp(good_mat)
+
+good_params_long <- good_params %>%
+  ## mutate_at(vars(ends_with("water_conductance")), log10) %>%
+  pivot_longer(-c(param_id, model), names_to = "variable", values_to = "value") %>%
+  extract(variable, c("PFT", "trait"), "(.*?)\\.(.*)")
+
+td <- trait_distribution %>%
+  select(PFT = shortname, trait, distn, parama, paramb) %>%
+  mutate(
+    pfun = map(paste0("p", distn), rlang::as_function),
+    pfun = pmap(list(pfun, parama, paramb), function(f, a, b) function(x) f(x, a, b))
+  ) %>%
+  select(PFT, trait, pfun)
+
+td2 <- good_params_long %>%
+  left_join(td, c("PFT", "trait")) %>%
+  mutate(pval = map2_dbl(pfun, value, possibly(rlang::exec, NA_real_)))
+
+td2 %>%
+  filter(pval < 0.05 | pval > 0.95) %>%
+  count(model, PFT, trait, sort = TRUE)
+
+td2 %>%
+  filter(model == model[[1]]) %>%
+  pull(pval) %>%
+  hist()
+
+td_summary <- td2 %>%
+  group_by(model, PFT, trait) %>%
+  summarize(
+    Count = n(),
+    Mean = mean(pval),
+    Min = min(pval),
+    Max = max(pval),
+    Range = Max - Min
+  ) %>%
+  ungroup()
+
+td_summary %>%
+  group_by(PFT, trait) %>%
+  summarize(vmean = var(Mean)) %>%
+  ungroup() %>%
+  arrange(desc(vmean))
+
+td2 %>%
+  filter(PFT == "Pine", trait == "water_conductance") %>%
+  ggplot() +
+  aes(x = model, y = pval) +
+  geom_point()
+
+  filter(model == "finite two-stream static") %>%
+  arrange(Range)
+
+td2 %>%
+  filter(model == model[[1]]) %>%
+  arrange(pval)
+
+good_params_pft <- good_params_long %>%
+  mutate(PFT = factor(PFT, pfts("shortname"))) %>%
+  arrange(PFT) %>%
+  pivot_wider(names_from = "PFT", values_from = "value") %>%
+  mutate(paramtype = "good")
+
+all_params_pft <- params_wide %>%
+  mutate_at(vars(ends_with("water_conductance")), log10) %>%
+  pivot_longer(-param_id, names_to = "variable", values_to = "value") %>%
+  extract(variable, c("PFT", "trait"), "(.*?)\\.(.*)") %>%
+  pivot_wider(names_from = "PFT", values_from = "value") %>%
+  mutate(paramtype = "all")
+
+good_all_params <- bind_rows(all_params_pft, good_params_pft) %>%
+  mutate(paramtype = fct_inorder(paramtype))
+
+pdf("analysis/figures/zz-trait-pairs.pdf")
+for (t in unique(good_params_pft$trait)) {
+  d <- good_all_params %>%
+    filter(trait == !!t) %>%
+    select(Early:Pine, paramtype)
+  tryCatch({
+    palette(c("gray80", "black"))
+    pairs(d[,1:4], main = t, col = as.numeric(d[[5]]),
+          pch = 19)
+  }, error = function(e) {
+      message("Error for trait ", t)
+      message(conditionMessage(e))
+    }
+  )
+}
+dev.off()
+
+good_params_pft
+
+param_diffs(good_dat)
+
 diffdat %>%
-  semi_join(filter(
-    diffdat,
-    year > 1980,
-    ## npft_eff > 1.2,
-    `mmean_npp_py` >= 6, `mmean_npp_py` <= 7,
-    mmean_lai_py > 3.14, mmean_lai_py < 4.80
-  ), "case") %>%
+  semi_join(good_dat, "case") %>%
   mutate(prod_eff = mmean_npp_py / mmean_lai_py) %>%
   ## select(param_id, year, model, matches("mmean_(npp|lai)"), prod_eff, npft_eff,
   ##        `Early hardwood`, `Mid hardwood`, `Late hardwood`, Pine) %>%
@@ -257,8 +381,8 @@ observations
 
 # Closest match to UMBS
 both_wide %>%
-  filter(year == 1995, `mmean_npp_py` >= 6, `mmean_npp_py` <= 7,
-         mmean_lai_py > 3, mmean_lai_py < 5) %>%
+  filter(year > 1990, `mmean_npp_py` >= 6, `mmean_npp_py` <= 7,
+         mmean_lai_py > 3.14, mmean_lai_py < 4.80) %>%
   param_diffs()
 
 y1920 %>%
