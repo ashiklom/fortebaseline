@@ -26,19 +26,21 @@ plan <- bind_plans(plan, drake_plan(
 ))
 
 ### Read files
+get_annual_means <- function(file, vars) {
+  .datatable.aware <- TRUE                #nolint
+  all_cols <- c("case", "datetime", vars)
+  dat <- data.table::setDT(fst::fst(file)[, all_cols])
+  dat_avg <- dat[, lapply(.SD, mean), .(case, year = lubridate::year(datetime))]
+  for (j in vars) {
+    data.table::set(dat_avg, j = j, value = dat_avg[, ..j] * 10)
+  }
+  dat_long <- data.table::melt(dat_avg, id.vars = c("case", "year"))
+  tibble::as_tibble(dat_long)
+}
+
 plan <- bind_plans(plan, drake_plan(
   scalar_variables = sprintf("mmean_%s_py", c("gpp", "plresp", "npp")),
-  scalar_cols = c("case", "datetime", scalar_variables),
-  scalar_data = setDT(fst(file_in(!!scalar_file))[, scalar_cols]) %>%
-    .[, lapply(.SD, mean), .(case, year = year(datetime))] %>%
-    # Unit conversion: kg m-2 -> Mg ha-1
-    .[, `:=`(
-      mmean_gpp_py = mmean_gpp_py * 10,
-      mmean_plresp_py = mmean_plresp_py * 10,
-      mmean_npp_py = mmean_npp_py * 10
-    )] %>%
-    melt(id.vars = c("case", "year")) %>%
-    as_tibble(),
+  scalar_data = get_annual_means(file_in(!!scalar_file), scalar_variables),
   pft_cols = c("case", "datetime", "pft", "agb_py", "mmean_lai_py"),
   pft_data = setDT(fst(file_in(!!pft_file))[, pft_cols]) %>%
     .[between(month(datetime), 6, 8), lapply(.SD, mean),
