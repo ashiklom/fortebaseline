@@ -46,3 +46,50 @@ umbs_npp_summary <- umbs_npp %>%
 
 # NPP_LAI data
 npp_lai_file <- path(data_dir, "NPP_LAI_All AF Litter Traps .xlsx")
+
+##################################################
+data_dir <- path("analysis", "data", "retrieved")
+data_dir2 <- path(data_dir, "umbs-ameriflux")
+
+proc_dat <- function(f) {
+  read_csv(
+    f,
+    comment = "#",
+    col_types = cols(
+      TIMESTAMP_START = col_datetime(format = "%Y%m%d%H%M"),
+      TIMESTAMP_END = col_datetime(format = "%Y%m%d%H%M"),
+      .default = col_double()
+    )) %>%
+  mutate_if(is_double, ~na_if(.x, -9999))
+  ## filter_at(vars(-starts_with("TIMESTAMP")), any_vars(!is.na(.)))
+}
+
+umbs_data <- dir_ls(data_dir2, regexp = "AMF_.*\\.csv") %>%
+  map(proc_dat)
+
+names(umbs_data) <- names(umbs_data) %>%
+  path_file() %>%
+  str_remove("^AMF_US-") %>%
+  str_remove("\\.csv$")
+
+umbs_df <- bind_rows(umbs_data, .id = "site")
+
+umbs_annual <- umbs_df %>%
+  group_by(site, year = lubridate::year(TIMESTAMP_START)) %>%
+  summarize(NEE = mean(NEE_PI_F, na.rm = TRUE)) %>%
+  ungroup() %>%
+  # Unit conversion
+  mutate(NEE = udunits2::ud.convert(NEE * 12.011, "ug m-2 s-1", "Mg ha-1 year-1"))
+
+ggplot(umbs_annual) +
+  aes(x = year, y = NEE, color = site) +
+  geom_line()
+
+
+um3 <- path(data_dir2, "AMF_US-UM3_BASE_HH_1-5.csv") %>%
+
+um3 %>%
+  mutate(NEE = if_else(is.na(NEE_PI), NEE_PI_F, NEE_PI)) %>%
+  ggplot() +
+  aes(x = TIMESTAMP_START, y = NEE) +
+  geom_line()
