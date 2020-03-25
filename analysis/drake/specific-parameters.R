@@ -1,6 +1,7 @@
 plan <- bind_plans(plan, drake_plan(
   fit_observed_params = fit_observed %>%
     distinct(param_id) %>%
+    slice(c(5, 2, 1, 4, 3, 6)) %>%
     mutate(label = toupper(letters[seq_len(n())])),
   fit_observed_param_values = params %>%
     inner_join(fit_observed_params, "param_id") %>%
