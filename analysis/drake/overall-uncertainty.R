@@ -106,7 +106,7 @@ plan <- bind_plans(plan, drake_plan(
     geom_ribbon(aes(ymin = lo2, ymax = hi2), fill = "gray70") +
     geom_ribbon(aes(ymin = lo1, ymax = hi1), fill = "gray40") +
     geom_line(
-      aes(y = value, group = case, color = category),
+      aes(y = value, group = case, color = label),
       data = ts_superlatives,
       size = 0.5
     ) +
@@ -131,7 +131,7 @@ plan <- bind_plans(plan, drake_plan(
       labeller = labeller(variable = label_parsed, model = label_value)
     ) +
     scale_color_brewer(palette = "Set1") +
-    labs(color = "Superlative") +
+    labs(color = "Param. set") +
     theme_cowplot() +
     theme(
       axis.title = element_blank(),
@@ -151,9 +151,6 @@ plan <- bind_plans(plan, drake_plan(
 plan <- bind_plans(plan, drake_plan(
   ts_superlatives = summary_ts_data %>%
     mutate(param_id = as.numeric(substr(case, 0, 3))) %>%
-    inner_join(superlatives, c("param_id", "model")),
-  ts_params = summary_ts_data %>%
-    mutate(param_id = as.numeric(substr(case, 0, 3))) %>%
-    inner_join(use_params, "param_id") %>%
-    mutate(label = fct_rev(label))
+    inner_join(fit_observed, c("param_id", "model")) %>%
+    left_join(fit_observed_params, "param_id")
 ))

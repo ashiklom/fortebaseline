@@ -721,3 +721,15 @@ plan <- bind_plans(plan, drake_plan(
     fig_dir, "pairs-time-averaged.png"
   ))),
 ))
+
+plan <- bind_plans(plan, drake_plan(
+  # Old, specific parameters
+  use_params = tribble(
+    ~param_id, ~label, ~why,
+    399, "A", "MH-dominated in 1999, high NPP",
+    39,  "B", "LH-dominated in 1999, high NPP",
+    362, "C", "High competition in 1999, high NPP",
+    284, "D", "EH-dominated in 1999, high NPP",
+    114, "E", "Pine-dominated in 1999, high NPP"
+  )
+))
