@@ -117,8 +117,8 @@ sensplot <- function(dat, sgroup, metric, yvar) {
   dat %>%
     filter(sgroup == !!sgroup) %>%
     top_n_sensitivity_plot(yvar, !!metric, 8, "free") +
-    facet_wrap(vars(model), scales = "free", drop = TRUE, ncol = 2,
-               dir = "v") +
+    facet_wrap(vars(model), scales = "free_y",
+               drop = TRUE, ncol = 2, dir = "v") +
     scale_color_manual(values = pfts("color")) +
     cowplot::theme_cowplot() +
     theme(
