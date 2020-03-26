@@ -15,11 +15,8 @@ plan <- bind_plans(plan, drake_plan(
     as_tibble() %>%
     left_join(pft_wide, c("case", "year")) %>%
     left_join(lai_wide, c("case", "year")) %>%
-    left_join(
-      cases %>%
-        select(case, model_id, param_id),
-      c("case", "model_id")
-    ) %>%
+    mutate(model_id = substr(case, 4, 6),
+           param_id = as.numeric(substr(case, 0, 3))) %>%
     left_join(models, c("model_id")) %>%
     mutate(
       npft_eff = 1 / (`Early hardwood`^2 + `Mid hardwood`^2 +
