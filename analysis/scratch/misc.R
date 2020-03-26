@@ -2056,3 +2056,58 @@ df_compare %>%
     vars(variable, model), scales = "free", ncol = 8,
     labeller = labeller(model = label_wrap_gen(10), variable = label_value)) +
   theme_bw()
+
+##################################################
+loadd(both_wide)
+loadd(high_diversity)
+loadd(last_ten)
+
+high_diversity %>%
+  distinct(param_id)
+
+last_ten %>%
+  semi_join(high_diversity, c("param_id", "model")) %>%
+  ## filter(mmean_lai_py > 1) %>%
+  select(param_id, model, mmean_npp_py, mmean_lai_py) %>%
+  pivot_longer(-c(param_id, model)) %>%
+  ggplot() +
+  aes(x = model, y = value, color = factor(param_id)) +
+  geom_point() +
+  geom_text_repel(aes(label = factor(param_id))) +
+  facet_wrap(vars(name), scales = "free_y")
+
+pltdat <- last_ten %>%
+  semi_join(high_diversity, c("param_id", "model")) %>%
+  mutate(x = as.numeric(model) + (runif(n(), -0.3, 0.3)),
+         pid = as.numeric(factor(param_id)))
+
+ggplot(pltdat) +
+  scatterpie::geom_scatterpie(
+    aes(x = x, y = mmean_npp_py, group = pid),
+    cols = as.character(pfts("pft")),
+    data = pltdat
+  ) +
+  scale_x_continuous(
+    breaks = seq_along(levels(pltdat$model)),
+    labels = levels(pltdat$model)
+  ) +
+  scale_fill_manual(values = pfts("color"))
+
+last_ten %>%
+  filter(is.na(model))
+
+ggplot(filter(last_ten, !is.na(model))) +
+  aes(x = npft_eff, y = mmean_npp_py) +
+  geom_point() +
+  facet_wrap(vars(model), scales = "fixed",
+             ncol = 2)
+
+sensitivity_proc %>%
+  filter(sgroup == "1990-1999")
+
+build_times(type = "build") %>%
+  arrange(desc(system)) %>%
+  print(n = 30)
+
+drake_cache_log() %>%
+  filter(grepl("^942", hash))
