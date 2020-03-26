@@ -68,25 +68,28 @@ plan <- bind_plans(plan, drake_plan(
     pivot_longer(-c(param_id, pft)) %>%
     unite(variable, c(pft, name), sep = ".") %>%
     pivot_wider(names_from = "variable", values_from = "value"),
-  sensitivity_inputs = both_wide %>%
-    inner_join(sensitivity_groups, "year") %>%
-    rename(
-      EH = `Early hardwood`,
-      MH = `Mid hardwood`,
-      LH = `Late hardwood`
-    ) %>%
-    select(case, model_id, param_id, sgroup, all_of(sensitivity_vars)) %>%
-    group_by(case, model_id, param_id, sgroup) %>%
-    summarize_all(mean, na.rm = TRUE) %>%
-    ungroup() %>%
-    pivot_longer(
-      all_of(sensitivity_vars),
-      names_to = "yvar",
-      values_to = "y"
-    ) %>%
-    left_join(params_wide, "param_id") %>%
-    pivot_longer(-c(case, model_id, param_id, sgroup, yvar, y),
-                 names_to = "xvar", values_to = "x"),
+  sensitivity_inputs = target(
+      both_wide %>%
+        inner_join(sensitivity_groups, "year") %>%
+        rename(
+          EH = `Early hardwood`,
+          MH = `Mid hardwood`,
+          LH = `Late hardwood`
+        ) %>%
+        select(case, model_id, param_id, sgroup, all_of(sensitivity_vars)) %>%
+        group_by(case, model_id, param_id, sgroup) %>%
+        summarize_all(mean, na.rm = TRUE) %>%
+        ungroup() %>%
+        pivot_longer(
+          all_of(sensitivity_vars),
+          names_to = "yvar",
+          values_to = "y"
+        ) %>%
+        left_join(params_wide, "param_id") %>%
+        pivot_longer(-c(case, model_id, param_id, sgroup, yvar, y),
+                     names_to = "xvar", values_to = "x"),
+      format = "fst_tbl"
+    ),
   median_sens_inputs = median_wide %>%
     inner_join(sensitivity_groups, "year") %>%
     select(model_id, sgroup, all_of(sensitivity_vars),
@@ -104,8 +107,11 @@ plan <- bind_plans(plan, drake_plan(
       names_to = "xvar",
       values_to = "xmedian"
     ),
-  combined_sens_inputs = sensitivity_inputs %>%
-    left_join(median_sens_inputs, c("model_id", "sgroup", "yvar", "xvar")),
+  combined_sens_inputs = target(
+    sensitivity_inputs %>%
+      left_join(median_sens_inputs, c("model_id", "sgroup", "yvar", "xvar")),
+    format = "fst_tbl"
+  ),
   sensitivity_raw_results = combined_sens_inputs %>%
     group_by(model_id, sgroup, yvar, xvar) %>%
     summarize(result = list(do_sensitivity(y, x, ymedian, xmedian)))
