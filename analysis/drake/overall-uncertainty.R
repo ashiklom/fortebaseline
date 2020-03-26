@@ -107,7 +107,7 @@ plan <- bind_plans(plan, drake_plan(
     geom_ribbon(aes(ymin = lo1, ymax = hi1), fill = "gray40") +
     geom_line(
       aes(y = value, group = case, color = label),
-      data = ts_superlatives,
+      data = ts_fit_observed,
       size = 0.5
     ) +
     geom_pointrange(
@@ -149,7 +149,7 @@ plan <- bind_plans(plan, drake_plan(
 ))
 
 plan <- bind_plans(plan, drake_plan(
-  ts_superlatives = summary_ts_data %>%
+  ts_fit_observed = summary_ts_data %>%
     mutate(param_id = as.numeric(substr(case, 0, 3))) %>%
     inner_join(fit_observed, c("param_id", "model")) %>%
     left_join(fit_observed_params, "param_id")
