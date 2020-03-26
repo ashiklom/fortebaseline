@@ -60,7 +60,7 @@ plan <- bind_plans(plan, drake_plan(
   sensitivity_groups = bind_rows(
     tibble(year = 1902:1999, sgroup = "1902-1999"),
     tibble(year = 1920:1950, sgroup = "1920-1950"),
-    tibble(year = 1975:1999, sgroup = "1975-1999")
+    tibble(year = 1990:1999, sgroup = "1990-1999")
   ),
   params_wide = params %>%
     rename(pft = name) %>%
@@ -182,7 +182,7 @@ plan <- bind_plans(plan, drake_plan(
     "analysis", "figures", "partial-variance-npp-peak.png"
   )), sensitivity_period1_gg, width = 7.6, height = 8.4),
   sensitivity_period2_gg =
-    sensplot(sensitivity_sub, "1975-1999", fpvar, "mmean_npp_py") +
+    sensplot(sensitivity_sub, "1990-1999", fpvar, "mmean_npp_py") +
     labs(y = "Partial variance", color = "Plant functional type") +
     guides(color = guide_legend(
       nrow = 2, byrow = TRUE,
