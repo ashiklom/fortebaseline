@@ -1,6 +1,6 @@
 ### PFT plot
 plan <- bind_plans(plan, drake_plan(
-  pft_histogram = pft_data %>%
+  pft_histogram_data = pft_data %>%
     filter(year %in% c(1910, 1920, 1950, 1980)) %>%
     mutate(
       year = factor(year),
@@ -12,8 +12,8 @@ plan <- bind_plans(plan, drake_plan(
     group_by(pft, year, model_id, agb_frac_bin) %>%
     summarize(nagb_frac = n()) %>%
     ungroup() %>%
-    left_join(models, "model_id") %>%
-    ggplot() +
+    left_join(models, "model_id"),
+  pft_histogram = ggplot(pft_histogram_data) +
     aes(x = agb_frac_bin, y = nagb_frac, fill = pft) +
     geom_col(position = "dodge") +
     facet_grid(vars(year), vars(model),

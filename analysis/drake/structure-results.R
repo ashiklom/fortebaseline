@@ -222,10 +222,10 @@ plan <- bind_plans(plan, drake_plan(
     pivot_longer(-c(casename:datetime, pft)) %>%
     filter(month(datetime) %in% 6:8) %>%
     annual_mean(),
-  default_median_lai_gg = both_long_p %>%
+  default_median_lai_data = both_long_p %>%
     filter(name == "mmean_lai_py") %>%
-    left_join(models, c("casename" = "model_id")) %>%
-    ggplot() +
+    left_join(models, c("casename" = "model_id")),
+  default_median_lai_gg = ggplot(default_median_lai_data) +
     aes(x = year, y = value, color = pft, group = pft) +
     geom_line() +
     facet_grid(
@@ -255,7 +255,7 @@ plan <- bind_plans(plan, drake_plan(
 
 # Aboveground biomass distribution figure
 plan <- bind_plans(plan, drake_plan(
-  default_agb_distribution_gg = default_results %>%
+  default_agb_distribution_data = default_results %>%
     select(runtype, casename, cohort) %>%
     unnest(cohort) %>%
     group_by(casename, pft, year = year(datetime), datetime) %>%
@@ -268,8 +268,8 @@ plan <- bind_plans(plan, drake_plan(
     mutate(f_agb = agb / sum(agb)) %>%
     ungroup() %>%
     mutate(pft = set_pft(pft)) %>%
-    left_join(models, c("casename" = "model_id")) %>%
-    ggplot() +
+    left_join(models, c("casename" = "model_id")),
+  default_agb_distribution_gg = ggplot(default_agb_distribution_data) +
     aes(x = year, y = f_agb, fill = pft) +
     geom_area() +
     facet_wrap(vars(model), ncol = 4,
