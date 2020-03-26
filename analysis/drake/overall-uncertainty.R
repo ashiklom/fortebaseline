@@ -1,30 +1,3 @@
-plan <- bind_plans(plan, drake_plan(
-  cohort_file_dl = target(
-    download.file(osf_url(cohort_osf), file_out(!!cohort_file)),
-    trigger = trigger(change = get_timestamp(cohort_osf),
-                      condition = !file.exists(cohort_file)),
-    hpc = FALSE
-  ),
-  pft_file_dl = target(
-    download.file(osf_url(pft_osf), file_out(!!pft_file)),
-    trigger = trigger(change = get_timestamp(pft_osf),
-                      condition = !file.exists(pft_file)),
-    hpc =  FALSE
-  ),
-  scalar_file_dl = target(
-    download.file(osf_url(scalar_osf), file_out(!!scalar_file)),
-    trigger = trigger(change = get_timestamp(scalar_osf),
-                      condition = !file.exists(scalar_file)),
-    hpc = FALSE
-  ),
-  soil_file_dl = target(
-    download.file(osf_url(soil_osf), file_out(!!soil_file)),
-    trigger = trigger(change = get_timestamp(soil_osf),
-                      condition = !file.exists(soil_file)),
-    hpc = FALSE
-  )
-))
-
 ### Read files
 get_annual_means <- function(file, vars) {
   .datatable.aware <- TRUE                #nolint
