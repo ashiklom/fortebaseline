@@ -46,28 +46,34 @@ fig("default-light-levels.png")
 
 \clearpage
 
-```{r pairs-time, fig.cap = pairs_time_cap}
-### Figure S3
-pairs_time_cap <- paste(
-  "ED-2.2 predictions of annual mean NPP and growing-season LAI",
-  "averaged over 1925-1950 (left) and 1975-1999 (right)",
-  "by model type.",
-  "Each point indicates a single ensemble run with a different set of parameters.",
-  "Solid line is the best-fit generalized additive model (GAM).",
-  "Dashed lines indicate the error bounds of present-day observed NPP and LAI.",
-  "Text labels match the rows in Figure 9 below."
+```{r pft-histogram-plot, fig.cap = pft_histogram_cap}
+### Figure S2
+pft_histogram_cap <- paste(
+  "ED-2.2 ensemble predictions of PFT aboveground biomass fractions."
 )
-fig("npp-lai-pairs.png")
+fig("pft-histogram.png")
 ```
 
 \clearpage
 
-```{r pft-ts-plot, fig.cap = pft_ts_cap}
-### Figure S4
-pft_ts_cap <- paste(
-  "ED-2.2 ensemble predictions of PFT aboveground biomass fractions."
+```{r params-fit-observed, fig.cap = params_fit_observed_cap}
+### Figure S3
+params_fit_observed_cap <- paste(
+  "PFT parameters resulting in runs that fit observed NPP and LAI."
 )
-fig("pft-ts-plot.png")
+
+fig("params-fit-observed.png")
+```
+
+\clearpage
+
+```{r params-high-diversity, fig.cap = params_high_diversity_cap}
+### Figure S4
+params_high_diversity_cap <- paste(
+  "PFT parameters resulting in runs that produce NPFT > 2 and total LAI > 1."
+)
+
+fig("params-high-diversity.png")
 ```
 
 \clearpage
