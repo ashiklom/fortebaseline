@@ -47,9 +47,26 @@ plan <- bind_plans(plan, drake_plan(
   superlatives = bind_rows(fit_observed, high_diversity)
 ))
 
+specific_param_dist_plot <-
+  function(all_param_data, specific_param_data) {
+    ggplot(all_param_data) +
+      aes(x = shortname, y = draws) +
+      geom_violin(alpha = 0.3, fill = "gray80") +
+      geom_point(aes(y = value, color = label),
+                 position = position_dodge(width = 0.3),
+                 data = specific_param_data) +
+      # Parameter values
+      facet_wrap(vars(`Display name`), scales = "free_y") +
+      labs(x = "PFT", color = "Param. set") +
+      scale_color_brewer(palette = "Set1") +
+      theme_cowplot() +
+      theme(axis.title = element_blank(),
+            axis.ticks.x = element_blank(),
+            legend.position = "right",
+            legend.box = "vertical")
+}
+
 plan <- bind_plans(plan, drake_plan(
-  ## drop_params = c("SLA", "Root:Leaf"),
-  drop_params = c(),
   params_wide_fit_observed = params_wide %>%
     mutate_at(vars(ends_with("water_conductance")), log10) %>%
     inner_join(fit_observed_params, "param_id"),
@@ -65,28 +82,42 @@ plan <- bind_plans(plan, drake_plan(
     mutate(
       `Display name` = fct_recode(`Display name`,
                                   "log10(Water cond.)" = "Water cond.")
-    ) %>%
-    filter(!`Display name` %in% drop_params),
-  params_fit_observed_gg = param_dist_data %>%
-    filter(!`Display name` %in% drop_params) %>%
-    ggplot() +
-    aes(x = shortname, y = draws) +
-    geom_violin(alpha = 0.3, fill = "gray80") +
-    geom_point(aes(y = value, color = label),
-               position = position_dodge(width = 0.3),
-               data = params_fit_observed) +
-    # Parameter values
-    facet_wrap(vars(`Display name`), scales = "free_y") +
-    labs(x = "PFT", color = "Param. set") +
-    scale_color_brewer(palette = "Set1") +
-    theme_cowplot() +
-    theme(axis.title = element_blank(),
-          axis.ticks.x = element_blank(),
-          legend.position = "right",
-          legend.box = "vertical"),
+    ),
+  params_fit_observed_gg = specific_param_dist_plot(
+    param_dist_data,
+    params_fit_observed
+  ),
   params_fit_observed_png = ggsave(
     file_out("analysis/figures/params-fit-observed.png"),
     params_fit_observed_gg,
+    width = 15.3, height = 9.9, dpi = 300
+  )
+))
+
+plan <- bind_plans(plan, drake_plan(
+  params_wide_high_diversity = params_wide %>%
+    mutate_at(vars(ends_with("water_conductance")), log10) %>%
+    inner_join(high_diversity_params, "param_id"),
+  params_high_diversity = params_wide_high_diversity %>%
+    pivot_longer(
+      -c(param_id, label),
+      names_to = "variable",
+      values_to = "value"
+    ) %>%
+    extract(variable, c("PFT", "trait"), "(.*?)\\.(.*)") %>%
+    mutate(shortname = factor(PFT, pfts("shortname"))) %>%
+    left_join(ed2_param_table, c("trait" = "ED Name")) %>%
+    mutate(
+      `Display name` = fct_recode(`Display name`,
+                                  "log10(Water cond.)" = "Water cond.")
+    ),
+  params_high_diversity_gg = specific_param_dist_plot(
+    param_dist_data,
+    params_high_diversity
+  ),
+  params_high_diversity_png = ggsave(
+    file_out("analysis/figures/params-high-diversity.png"),
+    params_high_diversity_gg,
     width = 15.3, height = 9.9, dpi = 300
   )
 ))
