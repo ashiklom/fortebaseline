@@ -56,8 +56,19 @@ fig("pft-histogram.png")
 
 \clearpage
 
-```{r params-fit-observed, fig.cap = params_fit_observed_cap}
+```{r fitobs-pie, fig.cap = fitobs_pie_cap}
 ### Figure S3
+fitobs_pie_cap <- paste(
+  "NPP predictions from best-fit parameters."
+)
+
+fig("pie-fitobs.png")
+```
+
+\clearpage
+
+```{r params-fit-observed, fig.cap = params_fit_observed_cap}
+### Figure S4
 params_fit_observed_cap <- paste(
   "PFT parameters resulting in runs that fit observed NPP and LAI."
 )
@@ -67,8 +78,19 @@ fig("params-fit-observed.png")
 
 \clearpage
 
+```{r diversity-pie, fig.cap = diversity_pie_cap}
+### Figure S5
+diversity_pie_cap <- paste(
+  "NPP predictions from most diverse parameters."
+)
+
+fig("pie-diversity.png")
+```
+
+\clearpage
+
 ```{r params-high-diversity, fig.cap = params_high_diversity_cap}
-### Figure S4
+### Figure S5
 params_high_diversity_cap <- paste(
   "PFT parameters resulting in runs that produce NPFT > 2 and total LAI > 1."
 )

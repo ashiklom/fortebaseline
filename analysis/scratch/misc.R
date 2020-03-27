@@ -2076,6 +2076,39 @@ last_ten %>%
   geom_text_repel(aes(label = factor(param_id))) +
   facet_wrap(vars(name), scales = "free_y")
 
+scatter_pie <- function(indat, filterdat, ...) {
+  pltdat <- indat %>%
+    semi_join(filterdat, c("param_id", "model")) %>%
+    mutate(x = as.numeric(model) + (runif(n(), -0.3, 0.3)),
+           pid = as.numeric(factor(param_id)))
+
+  colorvec <- pfts("color")
+  names(colorvec) <- pfts("pft")
+
+  ggplot(pltdat) +
+    scatterpie::geom_scatterpie(
+      aes(x = x, y = mmean_npp_py, group = pid),
+      cols = as.character(pfts("pft")),
+      data = pltdat,
+      ...
+    ) +
+    scale_x_continuous(
+      breaks = seq_along(levels(pltdat$model)),
+      labels = gsub(" ", "\n", levels(pltdat$model))
+    ) +
+    scale_fill_manual(
+      breaks = pfts("pft"),
+      values = colorvec
+    ) +
+    labs(y = expression(NPP ~ (MgC ~ ha^-1)),
+         fill = "PFT") +
+    theme_bw() +
+    theme(axis.title.x = element_blank(),
+          legend.position = "bottom")
+}
+
+scatter_pie(last_ten, high_diversity, pie_scale = 1.5)
+
 pltdat <- last_ten %>%
   semi_join(high_diversity, c("param_id", "model")) %>%
   mutate(x = as.numeric(model) + (runif(n(), -0.3, 0.3)),
@@ -2089,9 +2122,13 @@ ggplot(pltdat) +
   ) +
   scale_x_continuous(
     breaks = seq_along(levels(pltdat$model)),
-    labels = levels(pltdat$model)
+    labels = gsub(" ", "\n", levels(pltdat$model))
   ) +
-  scale_fill_manual(values = pfts("color"))
+  scale_fill_manual(values = pfts("color")) +
+  labs(y = expression(NPP ~ (MgC ~ ha^-1))) +
+  theme_bw() +
+  theme(axis.title.x = element_blank(),
+        legend.position = "bottom")
 
 last_ten %>%
   filter(is.na(model))
@@ -2111,3 +2148,8 @@ build_times(type = "build") %>%
 
 drake_cache_log() %>%
   filter(grepl("^942", hash))
+
+indat <- last_ten
+filterdat <- high_diversity
+filterdat_values <- high_diversity_param_values
+obslis <- obs_npp

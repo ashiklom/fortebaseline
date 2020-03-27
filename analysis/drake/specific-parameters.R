@@ -83,3 +83,67 @@ plan <- bind_plans(plan, drake_plan(
     width = 9.7, height = 6.1, dpi = 300
   )
 ))
+
+scatter_pie <- function(indat, filterdat, filterdat_values,
+                        obslist, ...) {
+  pltdat <- indat %>%
+    semi_join(filterdat, "param_id") %>%
+    left_join(distinct(filterdat_values, param_id, label),
+              "param_id") %>%
+    mutate(x = as.numeric(model) + (runif(n(), -0.2, 0.2)),
+           pid = as.numeric(factor(param_id)))
+
+  colorvec <- pfts("color")
+  names(colorvec) <- pfts("pft")
+
+  ggplot(pltdat) +
+    scatterpie::geom_scatterpie(
+      aes(x = x, y = mmean_npp_py, group = pid),
+      cols = as.character(pfts("pft")),
+      data = pltdat,
+      ...
+    ) +
+    geom_label_repel(
+      aes(x = x, y = mmean_npp_py, group = pid, label = label)
+    ) +
+    geom_hline(yintercept = c(obslist$lo, obslist$hi), linetype = "dashed") +
+    scale_x_continuous(
+      breaks = seq_along(levels(pltdat$model)),
+      labels = gsub(" ", "\n", levels(pltdat$model))
+    ) +
+    scale_fill_manual(
+      breaks = pfts("pft"),
+      values = colorvec
+    ) +
+    labs(y = expression(NPP ~ (MgC ~ ha^-1)),
+         fill = "PFT") +
+    theme_bw() +
+    theme(axis.title.x = element_blank(),
+          legend.position = "bottom")
+}
+
+
+plan <- bind_plans(plan, drake_plan(
+  fitobs_pie = scatter_pie(
+    last_ten,
+    fit_observed,
+    fit_observed_param_values,
+    obs_npp
+  ),
+  fitobs_pie_png = ggsave(
+    file_out("analysis/figures/pie-fitobs.png"),
+    fitobs_pie,
+    width = 6.2, height = 5.0, dpi = 300
+  ),
+  diversity_pie = scatter_pie(
+    last_ten,
+    high_diversity,
+    high_diversity_param_values,
+    obs_npp
+  ),
+  diversity_pie_png = ggsave(
+    file_out("analysis/figures/pie-diversity.png"),
+    diversity_pie,
+    width = 6.2, height = 5.0, dpi = 300
+  )
+))

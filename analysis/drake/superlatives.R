@@ -39,9 +39,7 @@ plan <- bind_plans(plan, drake_plan(
     mutate(category = "Fit observations") %>%
     select(param_id, model, category),
   high_diversity = last_ten %>%
-    ## arrange(desc(npft_eff)) %>%
-    ## top_n(10) %>%
-    filter(npft_eff > 2) %>%
+    filter(npft_eff > 2, mmean_lai_py > 1) %>%
     mutate(category = "Most diverse") %>%
     select(param_id, model, category),
   superlatives = bind_rows(fit_observed, high_diversity)
