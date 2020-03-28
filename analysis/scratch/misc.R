@@ -2183,15 +2183,3 @@ ggplot(d) +
     cols = c("A", "B"),
     data = d
   )
-
-##################################################
-umbs <- sf::st_sfc(sf::st_point(c(-84.6975, 45.5625)), crs = 4326)
-states <- rnaturalearth::ne_states(returnclass = "sf")
-
-library(ggplot2)
-
-ggplot(states) +
-  geom_sf() +
-  geom_sf(data = umbs, size = 3) +
-  coord_sf(xlim = c(-90, -80), ylim = c(40, 48)) +
-  theme_bw()

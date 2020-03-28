@@ -31,8 +31,19 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r structure-compare-light, fig.cap = structure_default_light_cap}
+```{r umbs-map, fig.cap = umbs_map_cap}
 ### Figure S1
+umbs_map_cap <- paste(
+  "Location of University of Michigan Biological Station (UMBS; black dot)",
+  "in the US Upper Midwest."
+)
+fig("umbs-map.png")
+```
+
+\clearpage
+
+```{r structure-compare-light, fig.cap = structure_default_light_cap}
+### Figure S2
 structure_default_light_cap <- paste(
   "Radiation profiles of cohorts from ED2 runs with",
   "default parameters, across different configurations.",
@@ -47,7 +58,7 @@ fig("default-light-levels.png")
 \clearpage
 
 ```{r pft-histogram-plot, fig.cap = pft_histogram_cap}
-### Figure S2
+### Figure S3
 pft_histogram_cap <- paste(
   "ED-2.2 ensemble predictions of PFT aboveground biomass fractions."
 )
@@ -57,7 +68,7 @@ fig("pft-histogram.png")
 \clearpage
 
 ```{r fitobs-pie, fig.cap = fitobs_pie_cap}
-### Figure S3
+### Figure S4
 fitobs_pie_cap <- paste(
   "NPP predictions from best-fit parameters."
 )
@@ -68,7 +79,7 @@ fig("pie-fitobs.png")
 \clearpage
 
 ```{r params-fit-observed, fig.cap = params_fit_observed_cap}
-### Figure S4
+### Figure S5
 params_fit_observed_cap <- paste(
   "PFT parameters resulting in runs that fit observed NPP and LAI."
 )
@@ -79,7 +90,7 @@ fig("params-fit-observed.png")
 \clearpage
 
 ```{r diversity-pie, fig.cap = diversity_pie_cap}
-### Figure S5
+### Figure S6
 diversity_pie_cap <- paste(
   "NPP predictions from most diverse parameters."
 )
@@ -90,7 +101,7 @@ fig("pie-diversity.png")
 \clearpage
 
 ```{r params-high-diversity, fig.cap = params_high_diversity_cap}
-### Figure S5
+### Figure S7
 params_high_diversity_cap <- paste(
   "PFT parameters resulting in runs that produce NPFT > 2 and total LAI > 1."
 )
