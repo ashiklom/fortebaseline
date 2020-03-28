@@ -85,65 +85,64 @@ plan <- bind_plans(plan, drake_plan(
 ))
 
 scatter_pie <- function(indat, filterdat, filterdat_values,
-                        obslist, ...) {
+                        obs_npp, obs_lai) {
   pltdat <- indat %>%
     semi_join(filterdat, "param_id") %>%
     left_join(distinct(filterdat_values, param_id, label),
               "param_id") %>%
-    mutate(x = as.numeric(model) + (runif(n(), -0.2, 0.2)),
-           pid = as.numeric(factor(param_id)))
+    filter(!is.na(mmean_lai_py)) %>%
+    mutate(pid = as.numeric(factor(param_id)))
 
   colorvec <- pfts("color")
   names(colorvec) <- pfts("pft")
 
   ggplot(pltdat) +
     scatterpie::geom_scatterpie(
-      aes(x = x, y = mmean_npp_py, group = pid),
+      aes(x = mmean_lai_py, y = mmean_npp_py, group = pid),
       cols = as.character(pfts("pft")),
       data = pltdat,
-      ...
+      pie_scale = 2
     ) +
-    geom_label_repel(
-      aes(x = x, y = mmean_npp_py, group = pid, label = label)
+    geom_text_repel(
+      aes(x = mmean_lai_py, y = mmean_npp_py, group = pid, label = label)
     ) +
-    geom_hline(yintercept = c(obslist$lo, obslist$hi), linetype = "dashed") +
-    scale_x_continuous(
-      breaks = seq_along(levels(pltdat$model)),
-      labels = gsub(" ", "\n", levels(pltdat$model))
-    ) +
+    geom_hline(yintercept = c(obs_npp$lo, obs_npp$hi), linetype = "dashed") +
+    geom_vline(xintercept = c(obs_lai$lo, obs_lai$hi), linetype = "dashed") +
+    facet_wrap(vars(model), ncol = 4) +
     scale_fill_manual(
       breaks = pfts("pft"),
       values = colorvec
     ) +
-    labs(y = expression(NPP ~ (MgC ~ ha^-1)),
-         fill = "PFT") +
+    labs(
+      x = "LAI",
+      y = expression(NPP ~ (MgC ~ ha^-1)),
+      fill = "PFT"
+    ) +
     theme_bw() +
-    theme(axis.title.x = element_blank(),
-          legend.position = "bottom")
+    theme(legend.position = "bottom")
 }
-
 
 plan <- bind_plans(plan, drake_plan(
   fitobs_pie = scatter_pie(
     last_ten,
     fit_observed,
     fit_observed_param_values,
-    obs_npp
+    obs_npp, obs_lai
   ),
   fitobs_pie_png = ggsave(
     file_out("analysis/figures/pie-fitobs.png"),
     fitobs_pie,
-    width = 6.2, height = 5.0, dpi = 300
+    width = 9, height = 5.2, dpi = 300
   ),
   diversity_pie = scatter_pie(
     last_ten,
     high_diversity,
     high_diversity_param_values,
-    obs_npp
+    obs_npp, obs_lai
   ),
   diversity_pie_png = ggsave(
     file_out("analysis/figures/pie-diversity.png"),
     diversity_pie,
-    width = 6.2, height = 5.0, dpi = 300
+    width = 9, height = 5.2, dpi = 300
   )
 ))

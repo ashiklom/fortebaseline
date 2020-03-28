@@ -2149,7 +2149,37 @@ build_times(type = "build") %>%
 drake_cache_log() %>%
   filter(grepl("^942", hash))
 
+##################################################
 indat <- last_ten
-filterdat <- high_diversity
-filterdat_values <- high_diversity_param_values
-obslis <- obs_npp
+filterdat <- fit_observed
+filterdat_values <- fit_observed_param_values
+obs_npp <- obs_npp
+obs_lai <- obs_lai
+
+pltdat <- indat %>%
+  semi_join(filterdat, "param_id") %>%
+  left_join(distinct(filterdat_values, param_id, label),
+            "param_id") %>%
+  mutate(pid = as.numeric(factor(param_id))) %>%
+  filter(!is.na(mmean_lai_py))
+
+ggplot(pltdat) +
+  aes(x = mmean_lai_py, y = mmean_npp_py) +
+  scatterpie::geom_scatterpie(
+    aes(x = mmean_lai_py, y = mmean_npp_py, group = pid),
+    cols = as.character(pfts("pft")),
+    data = pltdat
+  )
+
+d <- tibble(
+  x = c(0.2, 0.4),
+  y = c(0.1, 0.5),
+  A = c(0.0, 0.7),
+  B = c(1.0, 0.3)
+)
+ggplot(d) +
+  scatterpie::geom_scatterpie(
+    aes(x = x, y = y),
+    cols = c("A", "B"),
+    data = d
+  )
