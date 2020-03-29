@@ -49,6 +49,7 @@ plan <- bind_plans(plan, drake_plan(
         lai = obs_lai$mean * f_area,
         pft = factor(shortname, pfts("shortname"), pfts("pft"))
       ) %>%
-      arrange(desc(f_area))
+      arrange(desc(f_area)) %>%
+      filter(!is.na(pft))
   }
 ))

@@ -225,27 +225,38 @@ plan <- bind_plans(plan, drake_plan(
   default_median_lai_data = both_long_p %>%
     filter(name == "mmean_lai_py") %>%
     left_join(models, c("casename" = "model_id")),
-  default_median_lai_gg = ggplot(default_median_lai_data) +
-    aes(x = year, y = value, color = pft, group = pft) +
-    geom_line() +
-    facet_grid(
-      vars(runtype), vars(model),
-      labeller = labeller(
-        .default = label_value,
-        model = function(labels) gsub(" ", "\n", labels)
-      )
-    ) +
-    scale_color_manual(values = pfts("color")) +
-    labs(y = "LAI", color = "Plant functional type") +
-    guides(color = guide_legend(override.aes = list(size = 2))) +
-    theme_bw() +
-    theme(
-      text = element_text(size = 14),
-      axis.title.x = element_blank(),
-      axis.text.x = element_text(angle = 90, vjust = 0.5),
-      legend.position = "bottom",
-      strip.background = element_blank()
-    ),
+  default_median_lai_gg = {
+    obs2 <- tidyr::crossing(
+      forte_inv_summary,
+      runtype = unique(default_median_lai_data$runtype),
+      model = levels(default_median_lai_data$model)
+    ) %>%
+      rename(value = lai) %>%
+      mutate(year = 2000)
+
+    ggplot(default_median_lai_data) +
+        aes(x = year, y = value, color = pft, group = pft) +
+        geom_line() +
+        geom_point(data = obs2) +
+        facet_grid(
+          vars(runtype), vars(model),
+          labeller = labeller(
+            .default = label_value,
+            model = function(labels) gsub(" ", "\n", labels)
+          )
+        ) +
+        scale_color_manual(values = pfts("color")) +
+        labs(y = "LAI", color = "Plant functional type") +
+        guides(color = guide_legend(override.aes = list(size = 2))) +
+        theme_bw() +
+        theme(
+          text = element_text(size = 14),
+          axis.title.x = element_blank(),
+          axis.text.x = element_text(angle = 90, vjust = 0.5),
+          legend.position = "bottom",
+          strip.background = element_blank()
+        )
+    },
   default_median_lai_png = ggsave(
     file_out("analysis/figures/default-median-lai.png"),
     default_median_lai_gg,
