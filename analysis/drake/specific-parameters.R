@@ -1,8 +1,17 @@
-lai_pft_plot <- function(dat, label) {
-    ggplot(dat) +
-    aes(x = year, y = mmean_lai_py, color = pft,
-        linetype = fit_obs, size = fit_obs) +
-    geom_line() +
+lai_pft_plot <- function(dat, label, obs) {
+
+  obs2 <- tidyr::crossing(
+    obs,
+    label = unique(dat$label),
+    model = levels(dat$model)
+  ) %>%
+    rename(mmean_lai_py = lai) %>%
+    mutate(year = 2000)
+
+  ggplot(dat) +
+    aes(x = year, y = mmean_lai_py, color = pft) +
+    geom_line(aes(linetype = fit_obs, size = fit_obs)) +
+    geom_point(data = obs2) +
     facet_grid(
       vars(label),
       vars(fct_relabel(model, ~gsub(" ", "\n", .x))),
@@ -43,7 +52,11 @@ plan <- bind_plans(plan, drake_plan(
     left_join(models, "model_id") %>%
     left_join(fit_observed, c("model", "param_id")) %>%
     mutate(fit_obs = !is.na(category)),
-  lai_pft_plot_fitobs_gg = lai_pft_plot(lai_pft_fitobs_data, "Fit observed") +
+  lai_pft_plot_fitobs_gg = lai_pft_plot(
+    lai_pft_fitobs_data,
+    "Fit observed",
+    forte_inv_summary
+  ) +
     coord_cartesian(ylim = c(0, 8)),
   lai_pft_plot_fitobs_png = ggsave(
     file_out("analysis/figures/lai-pft-fitobs.png"),
@@ -74,8 +87,11 @@ plan <- bind_plans(plan, drake_plan(
     left_join(models, "model_id") %>%
     left_join(high_diversity, c("model", "param_id")) %>%
     mutate(fit_obs = !is.na(category)),
-  lai_pft_plot_diverse_gg = lai_pft_plot(lai_pft_diverse_data,
-                                         expression(N["PFT, eff"] > 2)) +
+  lai_pft_plot_diverse_gg = lai_pft_plot(
+    lai_pft_diverse_data,
+    expression(N["PFT, eff"] > 2),
+    forte_inv_summary
+  ) +
     coord_cartesian(ylim = c(0, 7)),
   lai_pft_plot_diverse_png = ggsave(
     file_out("analysis/figures/lai-pft-diverse.png"),
