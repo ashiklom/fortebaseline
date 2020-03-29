@@ -14,3 +14,41 @@ plan <- bind_plans(plan, drake_plan(
     width = 6, height = 6.5, dpi = 300
   )
 ))
+
+plan <- bind_plans(plan, drake_plan(
+  forte_inv_summary = {
+    species_pft_map <- tribble(
+      ~Species, ~PFT,
+      "POGR", "Early",
+      "FAGR", "Late",
+      "ACSA", "Late",
+      "QURU", "Mid",
+      "ACPE", "Mid",
+      "ACRU", "Mid",
+      "BEPA", "Early",
+      "????", "Other",
+      "BEAL", "Other",
+      "AMEL", "Other",
+      "TSCA", "Other",
+      "PIST", "Pine",
+      "PIRE", "Other",
+      "ADRU", "Other",
+      "QUR", "Mid",
+      "POTR", "Early"
+    )
+
+    inv <- fortedata::fd_inventory() %>%
+      inner_join(species_pft_map, "Species")
+
+    inv %>%
+      group_by(shortname = PFT) %>%
+      summarize(basal_area = sum(DBH_cm ^ 2, na.rm = TRUE)) %>%
+      ungroup() %>%
+      mutate(
+        f_area = basal_area / sum(basal_area),
+        lai = obs_lai$mean * f_area,
+        pft = factor(shortname, pfts("shortname"), pfts("pft"))
+      ) %>%
+      arrange(desc(f_area))
+  }
+))
