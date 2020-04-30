@@ -197,6 +197,7 @@ plan <- bind_plans(plan, drake_plan(
       ),
       switch = "y"
     ) +
+    scale_color_manual(values = c("#F5793A", "#0F2080")) +
     labs(y = expression("Flux" ~ ("MgC" ~ "ha"^-1 ~ "year"^-1)),
          color = "Parameters") +
     theme_bw() +
