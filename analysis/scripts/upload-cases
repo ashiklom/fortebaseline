@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-rsync -az inst/ed2_slurm.sh pic:/projects/birthright/shik544/forte-ed-runs/ed2_slurm.sh
-rsync -az --info=progress2 analysis/data/model_output/cases/ pic:/projects/birthright/shik544/forte-ed-runs/cases/
